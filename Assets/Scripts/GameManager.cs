@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour, IResetable {
     }
 
     private void Update() {
-        Debug.Log(GetPosOnField() + "    Dragshift: " + PieceView.DragShift+ "    Piece: " + GetPieceClampedPosOnField());
+      //  Debug.Log(GetPosOnField() + "    Dragshift: " + PieceView.DragShift+ "    Piece: " + GetPieceClampedPosOnField());
     }
 
     public bool CanPlace(PieceData data) {
