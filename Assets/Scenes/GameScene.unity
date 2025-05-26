@@ -273,6 +273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CellType>k__BackingField: 0
+  _objectsContainer: {fileID: 0}
 --- !u!65 &153504028
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -395,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CellType>k__BackingField: 0
+  _objectsContainer: {fileID: 0}
 --- !u!65 &166595962
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -806,10 +808,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 946048037}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 358.138}
-  m_SizeDelta: {x: 0, y: 178.476}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &366060020
 MonoBehaviour:
@@ -1138,7 +1140,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 4.5, y: -10.73, z: 1.4000001}
-  m_LocalScale: {x: 55.580624, y: -0.13831794, z: 55.580624}
+  m_LocalScale: {x: 55.580624, y: 0.1, z: 55.580624}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1156,6 +1158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CellType>k__BackingField: 0
+  _objectsContainer: {fileID: 0}
 --- !u!65 &423762968
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1946,6 +1949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CellType>k__BackingField: 0
+  _objectsContainer: {fileID: 0}
 --- !u!65 &936217090
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2106,8 +2110,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1215.0223}
-  m_SizeDelta: {x: 0, y: 1129.5249}
+  m_AnchoredPosition: {x: 0, y: -1372.4407}
+  m_SizeDelta: {x: 0, y: 135.159}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &946048038
 MonoBehaviour:
@@ -3263,6 +3267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CellType>k__BackingField: 0
+  _objectsContainer: {fileID: 0}
 --- !u!65 &1291345708
 BoxCollider:
   m_ObjectHideFlags: 0
