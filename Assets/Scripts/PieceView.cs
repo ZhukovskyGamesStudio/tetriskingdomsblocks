@@ -49,7 +49,12 @@ public class PieceView : MonoBehaviour {
         var posOnField = GameManager.Instance.GetPosOnField();
         var clampedPosOnField = GameManager.Instance.GetPieceClampedPosOnField();
         var targetPos = targetMousePos;
-        if (clampedPosOnField.x >= 0 && clampedPosOnField.y >= 0) {
+
+        int maxClampFieldPositionZ = GameManager.Instance._fieldSize - _data.Cells.GetLength(1)+1;
+        int maxClampFieldPositionX = GameManager.Instance._fieldSize - _data.Cells.GetLength(0)+1;
+
+        if (clampedPosOnField.x >= 0 && clampedPosOnField.y >= 0 && clampedPosOnField.x < maxClampFieldPositionX && clampedPosOnField.y  < maxClampFieldPositionZ)
+        {
             Vector3 clampedPos = new Vector3(posOnField.x, transform.position.y, posOnField.y);
             var clampedShiftedPos = clampedPos;
             if (CalculateShift().x % 1 == 0) {

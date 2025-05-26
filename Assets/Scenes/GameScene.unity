@@ -218,6 +218,7 @@ RectTransform:
   - {fileID: 295883735875885430}
   - {fileID: 311083185}
   - {fileID: 1650805546}
+  - {fileID: 1854437446}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -788,7 +789,7 @@ GameObject:
   - component: {fileID: 366060021}
   - component: {fileID: 366060020}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: PlaceAllThreeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2070,11 +2071,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0d1f4eddd0ce84590e7327d6bbc71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fieldSize: 10
   _fieldContainer: {fileID: 1506630862}
   _fieldStart: {fileID: 1245969503}
   _fieldEnd: {fileID: 1200205012}
   _raycastCamera: {fileID: 519596689}
+  _mainCamera: {fileID: 519420031}
+  _floatingTextPrefab: {fileID: -52307583430235026, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
+  _mainCanvasRectTransform: {fileID: 52259832}
+  _floatingTextContainer: {fileID: 1854437446}
 --- !u!1 &946048036
 GameObject:
   m_ObjectHideFlags: 0
@@ -4494,6 +4498,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1650805545}
   m_CullTransparentMesh: 1
+--- !u!1 &1854437445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1854437446}
+  m_Layer: 5
+  m_Name: FloatingTextContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1854437446
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854437445}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 52259832}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1958099812
 GameObject:
   m_ObjectHideFlags: 0
@@ -4868,11 +4907,11 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 941771433}
   - {fileID: 519420032}
   - {fileID: 519596690}
   - {fileID: 52259832}
   - {fileID: 1958099815}
-  - {fileID: 941771433}
   - {fileID: 423762966}
   - {fileID: 984156514}
   - {fileID: 2133942825}

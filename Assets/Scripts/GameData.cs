@@ -19,5 +19,6 @@ public class TaskData {
 public enum ResourceType {
     None = 0,
     Wood,
-    Rocks
+    Rocks,
+    Food,
 }

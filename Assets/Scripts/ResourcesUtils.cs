@@ -5,6 +5,8 @@ public static class ResourcesUtils {
                 return ResourceType.Wood;
             case CellType.Mountain:
                 return ResourceType.Rocks;
+            case CellType.Village:
+                return ResourceType.Food;
         }
 
         return ResourceType.None;
