@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 public static class TetrisPieces
 {
+    //change to dictionary with key figureForm(new enum)
     public static List<bool[,]> PieceShapesTable = new List<bool[,]> {
         // big I horizontal
         new bool[,] {

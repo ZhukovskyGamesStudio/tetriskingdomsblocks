@@ -2071,14 +2071,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0d1f4eddd0ce84590e7327d6bbc71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainGameConfig: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
   _fieldContainer: {fileID: 1506630862}
   _fieldStart: {fileID: 1245969503}
   _fieldEnd: {fileID: 1200205012}
   _raycastCamera: {fileID: 519596689}
-  _mainCamera: {fileID: 519420031}
   _floatingTextPrefab: {fileID: -52307583430235026, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
-  _mainCanvasRectTransform: {fileID: 52259832}
   _floatingTextContainer: {fileID: 1854437446}
+  currentCellsToSpawn: []
+  currentLevelConfig: {fileID: 11400000, guid: 5309f3c2273b4e549b65359afe393759, type: 2}
 --- !u!1 &946048036
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,8 @@ public class PieceView : MonoBehaviour {
             for (int y = 0; y < height; y++) {
                 bool cell = data.Cells[x, y];
                 if (cell) {
-                    var prefab = PiecesViewTable.Instance.GetCellByType(data.Type);
+                  //  var prefab = PiecesViewTable.Instance.GetCellByType(data.Type.cellType);
+                  var prefab = data.Type.cellPrefab;
                     var go = Instantiate(prefab, transform);
                     go.transform.localPosition = (new Vector3(x, 0, y) + shift + Vector3.one / 2f) * GameManager.CELL_SIZE;
                     go.transform.localScale *= Mathf.Clamp(GameManager.CELL_SIZE - 2, 1, 100000);
@@ -50,8 +51,8 @@ public class PieceView : MonoBehaviour {
         var clampedPosOnField = GameManager.Instance.GetPieceClampedPosOnField();
         var targetPos = targetMousePos;
 
-        int maxClampFieldPositionZ = GameManager.Instance._fieldSize - _data.Cells.GetLength(1)+1;
-        int maxClampFieldPositionX = GameManager.Instance._fieldSize - _data.Cells.GetLength(0)+1;
+        int maxClampFieldPositionZ = GameManager.Instance.mainGameConfig.fieldSize - _data.Cells.GetLength(1)+1;
+        int maxClampFieldPositionX = GameManager.Instance.mainGameConfig.fieldSize - _data.Cells.GetLength(0)+1;
 
         if (clampedPosOnField.x >= 0 && clampedPosOnField.y >= 0 && clampedPosOnField.x < maxClampFieldPositionX && clampedPosOnField.y  < maxClampFieldPositionZ)
         {

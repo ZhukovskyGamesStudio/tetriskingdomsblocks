@@ -5,14 +5,16 @@ using Random = UnityEngine.Random;
 public static class PieceUtils {
     public static PieceData GetNewPiece() {
         var l = Enum.GetNames(typeof(CellType));
+           var cellsToSpawn = GameManager.Instance.currentCellsToSpawn;
         var data = new PieceData() {
-            Type = Enum.Parse<CellType>(l[Random.Range(1, l.Length)]),
+           // Type = Enum.Parse<CellType>(l[Random.Range(1, l.Length)]),
+           Type = cellsToSpawn[Random.Range(0, cellsToSpawn.Count)],
             Cells = TetrisPieces.PieceShapesTable[Random.Range(0, TetrisPieces.PieceShapesTable.Count)]
         };
         return data;
     }
 
-    public static bool CanPlacePiece(CellType[,] field, bool[,] piece) {
+    public static bool CanPlacePiece(CellTypeInfo[,] field, bool[,] piece) {
         int fieldWidth = field.GetLength(0);
         int fieldHeight = field.GetLength(1);
         int pieceWidth = piece.GetLength(0);
@@ -29,7 +31,7 @@ public static class PieceUtils {
         return false;
     }
 
-    private static bool CanPlaceAt(CellType[,] field, bool[,] piece, int offsetX, int offsetY) {
+    private static bool CanPlaceAt(CellTypeInfo[,] field, bool[,] piece, int offsetX, int offsetY) {
         int pieceWidth = piece.GetLength(0);
         int pieceHeight = piece.GetLength(1);
 
@@ -39,7 +41,7 @@ public static class PieceUtils {
                     continue;
                 }
 
-                if (field[offsetX + x, offsetY + y] != CellType.Empty) {
+                if (field[offsetX + x, offsetY + y] !=null) {
                     return false;
                 }
             }

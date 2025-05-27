@@ -9,11 +9,10 @@ public class GameManager : MonoBehaviour, IResetable
 {
     public static GameManager Instance;
 
-    [SerializeField]
-    public int _fieldSize { get; private set; }
+    public MainGameConfig mainGameConfig;
 
     public const int CELL_SIZE = 1;
-    private CellType[,] _field;
+    private CellTypeInfo[,] _field;
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
     [SerializeField]
@@ -33,6 +32,12 @@ public class GameManager : MonoBehaviour, IResetable
     [SerializeField]
     private Transform _floatingTextContainer;
 
+    [SerializeField]
+    public List<CellTypeInfo> currentCellsToSpawn;
+    
+    [SerializeField]
+    public LevelConfig currentLevelConfig;
+    
     public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
 
     private int _placedPiecesAmount;
@@ -66,6 +71,11 @@ public class GameManager : MonoBehaviour, IResetable
 
     private void StartGame()
     {
+        var startCells = currentLevelConfig.cellTypesTableConfig;
+
+        for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
+            currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
+        
         GenerateNewPieces();
     }
 
@@ -153,7 +163,7 @@ public class GameManager : MonoBehaviour, IResetable
         {
             for (int y = 0; y < data.Cells.GetLength(1); y++)
             {
-                if (data.Cells[x, y] && _field[pos.x + x, pos.y + y] != CellType.Empty)
+                if (data.Cells[x, y] && _field[pos.x + x, pos.y + y] != null)
                 {
                     return false;
                 }
@@ -168,7 +178,8 @@ public class GameManager : MonoBehaviour, IResetable
         PlacePiece(pieceData, GetPieceClampedPosOnField());
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
-        CollectResources(pieceData);
+        if(mainGameConfig.resourceOnPlaceCell)
+           CollectResourcesOnPlace(pieceData);
         ExplodeCells();
         GoalView.Instance.UpdateTask(GameData);
 
@@ -200,16 +211,29 @@ public class GameManager : MonoBehaviour, IResetable
                     continue;
                 }
 
-                var place = new Vector2Int((int)Mathf.Clamp(pos.x + x, 0, _fieldSize), (int)Mathf.Clamp(pos.y + y, 0, _fieldSize));
-                var go = Instantiate(PiecesViewTable.Instance.GetCellByType(pieceData.Type), _fieldContainer);
+                var place = new Vector2Int((int)Mathf.Clamp(pos.x + x, 0, mainGameConfig.fieldSize), (int)Mathf.Clamp(pos.y + y, 0, mainGameConfig.fieldSize));
+               // var go = Instantiate(PiecesViewTable.Instance.GetCellByType(pieceData.Type.cellType), _fieldContainer);
+               var go = Instantiate(pieceData.Type.cellPrefab, _fieldContainer);
                 go.transform.localPosition = new Vector3(place.x, -0.05f, place.y);
                 _field[place.x, place.y] = pieceData.Type;
                 _cells[place.x, place.y] = go;
+
+                string needText = " +";
+                var resourcesForPlace = _field[place.x, place.y].resourcesForPlace;
+                for (int i = 0; i < resourcesForPlace.Length; i++)
+                    needText += resourcesForPlace[i].resourceCount+ " "+resourcesForPlace[i].resourceType.ToString()+" ";
+
+                if (resourcesForPlace.Length != 0)
+                {
+                var canvasPosition =
+                    _raycastCamera.WorldToScreenPoint(go.transform.position);
+                ShowFloatingText(needText, canvasPosition, 50);
+                }
             }
         }
     }
 
-    private void CollectResources(PieceData placedPiece)
+    private void CollectResourcesOnPlace(PieceData placedPiece)
     {
         for (int x = 0; x < placedPiece.Cells.GetLength(0); x++)
         {
@@ -220,15 +244,19 @@ public class GameManager : MonoBehaviour, IResetable
                     continue;
                 }
 
-                var resourceType = ResourcesUtils.ResourceByCellType(placedPiece.Type);
-                if (resourceType == ResourceType.None)
+                var needResources = placedPiece.Type.resourcesForPlace;
+                for (int i = 0; i < needResources.Length; i++)
                 {
-                    continue;
-                }
+                    var resourceType = needResources[i];
+                    if (resourceType == null)
+                    {
+                        continue;
+                    }
 
-                if (!GameData.CollectedResources.TryAdd(resourceType, 1))
-                {
-                    GameData.CollectedResources[resourceType] += 1;
+                    if (!GameData.CollectedResources.TryAdd(resourceType.resourceType, resourceType.resourceCount))
+                    {
+                        GameData.CollectedResources[resourceType.resourceType] += resourceType.resourceCount;
+                    }
                 }
             }
         }
@@ -246,7 +274,7 @@ public class GameManager : MonoBehaviour, IResetable
 
             for (int x = 0; x < width; x++)
             {
-                if (_field[x, y] == CellType.Empty)
+                if (_field[x, y] == null)
                 {
                     fullRow = false;
                     break;
@@ -256,10 +284,6 @@ public class GameManager : MonoBehaviour, IResetable
             if (fullRow)
             {
                 DestroyLine(y, width, true);
-                /* for (int x = 0; x < width; x++)
-                 {
-                     DestroyCell(x, y);
-                 }*/
             }
         }
 
@@ -270,7 +294,7 @@ public class GameManager : MonoBehaviour, IResetable
 
             for (int y = 0; y < height; y++)
             {
-                if (_field[x, y] == CellType.Empty)
+                if (_field[x, y] == null)
                 {
                     fullColumn = false;
                     break;
@@ -280,71 +304,77 @@ public class GameManager : MonoBehaviour, IResetable
             if (fullColumn)
             {
                 DestroyLine(x, height, false);
-                /*bool fullSameResourcesColumn = true;
-                CellType currentCellType = CellType.Empty;
-
-                    for (int y = 0; y < height; y++)
-                    { 
-                    if (fullSameResourcesColumn)
-                    {
-                        if (currentCellType == CellType.Empty)
-                            currentCellType = _field[x, y];
-                        else if (currentCellType != _field[x, y])
-                            fullSameResourcesColumn = false;
-                    }
-                        DestroyCell(x, y);
-                    }
-
-                if (fullSameResourcesColumn)
-                    Debug.Log("full same");
-                else
-                    Debug.Log("not full same");*/
             }
         }
     }
 
-    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLeight, bool isRow)
+    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow)
     {
-        bool fullSameResourcesColumn = true;
+        bool fullSameResourcesColumn = mainGameConfig.bonusResourcesOnDestroyLine ? true : false;
         CellType currentCellType = CellType.Empty;
-        for (int secondAxis = 0; secondAxis < secondAxisLeight; secondAxis++)
+        int bonusResourcesOnDestroyLine = 0;
+        ResourceType currentBonusResourceType = ResourceType.None;
+        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
         {
-            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
+            Vector2 curPosition = !isRow
+                ? new Vector2(mainAxisCurrentValue, secondAxis)
+                : new Vector2(secondAxis, mainAxisCurrentValue);
+            var cellInfo = _field[(int)curPosition.x, (int)curPosition.y];
             if (fullSameResourcesColumn)
             {
                 if (currentCellType == CellType.Empty)
-                    currentCellType = _field[(int)curPosition.x, (int)curPosition.y];
-                else if (currentCellType != _field[(int)curPosition.x, (int)curPosition.y])
+                    currentCellType = cellInfo.cellType;
+                else if (currentCellType != cellInfo.cellType)
                     fullSameResourcesColumn = false;
             }
+
+            string floatingText = "+ ";
+
+            for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
+            {
+                if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(
+                        cellInfo.resourcesForDestroy[i].resourceType, cellInfo.resourcesForDestroy[i].resourceCount))
+                    GameData.CollectedResources[cellInfo.resourcesForDestroy[i].resourceType] +=
+                        cellInfo.resourcesForDestroy[i].resourceCount;
+                floatingText += cellInfo.resourcesForDestroy[i].resourceType.ToString() + " " + cellInfo
+                    .resourcesForDestroy[i]
+                    .resourceCount + " ";
+                if (fullSameResourcesColumn)
+                {
+                    bonusResourcesOnDestroyLine +=
+                        cellInfo.resourcesForDestroy[i]
+                            .resourceCount; //fix this if on destroy resources types be more than 1;
+                    currentBonusResourceType = cellInfo.resourcesForDestroy[i].resourceType;
+                }
+            }
+
+            if (cellInfo.resourcesForDestroy.Length != 0)
+            {
+            var canvasPosition =
+                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
+            ShowFloatingText(floatingText, canvasPosition, 50);
+            }
+            // CollectResources( _field[(int)curPosition.x, (int)curPosition.y]);
             DestroyCell((int)curPosition.x, (int)curPosition.y);
         }
 
-        if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(ResourcesUtils.ResourceByCellType(currentCellType), 10))
+        if (fullSameResourcesColumn &&
+            !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine))
         {
-                GameData.CollectedResources[ResourcesUtils.ResourceByCellType(currentCellType)] += 10;
+            GameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
-            var needPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x,(int)curPosition.y].transform.position);
+            var needPosition =
+                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText(ResourcesUtils.ResourceByCellType(currentCellType).ToString() + " +10", needPosition,100);
-
+            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition,
+                100);
         }
         else
             Debug.Log("not full same");
     }
     private void DestroyCell(int x, int y)
     {
-      /*  RectTransformUtility.ScreenPointToLocalPointInRectangle(
-          _mainCanvasRectTransform.transform as RectTransform,
-          _mainCamera.WorldToScreenPoint(_cells[x, y].transform.position),
-          _mainCamera,
-          out Vector2 canvasPosition);*/
-
-        var canvasPosition = _raycastCamera.WorldToScreenPoint(_cells[x, y].transform.position);
-
-        ShowFloatingText(ResourcesUtils.ResourceByCellType(_field[x, y]).ToString(), canvasPosition,50);
-
-        _field[x, y] = CellType.Empty;
+        _field[x, y] = null;
         Destroy(_cells[x, y].gameObject);
     }
 
@@ -392,9 +422,9 @@ public class GameManager : MonoBehaviour, IResetable
     {
         _nextBlocks = new List<PieceData>();
         _placedPiecesAmount = 0;
-        _fieldSize = 10;
-        _field = new CellType[_fieldSize, _fieldSize];
-        _cells = new CellView[_fieldSize, _fieldSize];
+        mainGameConfig.fieldSize = 10;
+        _field = new CellTypeInfo[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
+        _cells = new CellView[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
         GameData = new GameData();
     }
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize)
@@ -416,7 +446,7 @@ public class GameManager : MonoBehaviour, IResetable
 public class PieceData
 {
     public bool[,] Cells;
-    public CellType Type;
+    public CellTypeInfo Type;
 }
 
 [SerializeField]
@@ -424,6 +454,9 @@ public enum CellType
 {
     Empty = 0,
     Forest,
+    Metal,
     Village,
-    Mountain
+    Mountain,
+    MiniCity,
+    
 }

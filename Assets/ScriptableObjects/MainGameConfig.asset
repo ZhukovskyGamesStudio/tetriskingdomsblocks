@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc9074928f59f474e877b5ea7d376a80, type: 3}
+  m_Name: MainGameConfig
+  m_EditorClassIdentifier: 
+  resourceOnPlaceCell: 0
+  resourceOnDestroyCell: 1
+  bonusResourcesOnDestroyLine: 1
+  resourcePerSameLine: 10
+  minResourcesToTask: 3
+  maxResourcesToTask: 9
+  fieldSize: 10
+  levelConfig: {fileID: 11400000, guid: 5309f3c2273b4e549b65359afe393759, type: 2}
