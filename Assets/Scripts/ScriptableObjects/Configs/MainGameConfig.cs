@@ -10,6 +10,8 @@ public class MainGameConfig : ScriptableObject
     public int minResourcesToTask;
     public int maxResourcesToTask;
 
+    public CraftingCellInfo[] cellsToCraft;
+    
     public int fieldSize;
 
 }

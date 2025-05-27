@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour, IResetable
     [SerializeField]
     public LevelConfig currentLevelConfig;
     
+    public List<CraftingCellInfo> currentCraftedCells = new List<CraftingCellInfo>();
+    
+    
     public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
 
     private int _placedPiecesAmount;
@@ -71,11 +74,12 @@ public class GameManager : MonoBehaviour, IResetable
 
     private void StartGame()
     {
+        /*
         var startCells = currentLevelConfig.cellTypesTableConfig;
 
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
-        
+        */
         GenerateNewPieces();
     }
 
@@ -314,6 +318,9 @@ public class GameManager : MonoBehaviour, IResetable
         CellType currentCellType = CellType.Empty;
         int bonusResourcesOnDestroyLine = 0;
         ResourceType currentBonusResourceType = ResourceType.None;
+        
+        Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
+        
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
         {
             Vector2 curPosition = !isRow
@@ -330,6 +337,9 @@ public class GameManager : MonoBehaviour, IResetable
 
             string floatingText = "+ ";
 
+            if (!cellTypesInLine.TryAdd(cellInfo.cellType, 1))
+                cellTypesInLine[cellInfo.cellType]++;
+            
             for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
             {
                 if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(
@@ -371,6 +381,27 @@ public class GameManager : MonoBehaviour, IResetable
         }
         else
             Debug.Log("not full same");
+        
+        for (int i = 0; i < currentCraftedCells.Count; i++)
+        {
+            bool addNewCell = true;
+            for (int j = 0; j < currentCraftedCells[i].cellTypeToCraft.Length; j++)
+            {
+                if (!cellTypesInLine.ContainsKey(currentCraftedCells[i].cellTypeToCraft[j]))
+                {
+                    addNewCell = false;
+                    break;
+                }
+            }
+
+            if (addNewCell)
+            {
+                currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
+                currentCraftedCells.RemoveAt(i);
+            }
+            
+            Debug.Log(addNewCell + " add new cell");
+        }
     }
     private void DestroyCell(int x, int y)
     {
@@ -422,10 +453,21 @@ public class GameManager : MonoBehaviour, IResetable
     {
         _nextBlocks = new List<PieceData>();
         _placedPiecesAmount = 0;
-        mainGameConfig.fieldSize = 10;
+       // mainGameConfig.fieldSize = 10;
         _field = new CellTypeInfo[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
         _cells = new CellView[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
+        
+        currentCraftedCells = new List<CraftingCellInfo>();
+        foreach (var craftedCell in mainGameConfig.cellsToCraft)
+            currentCraftedCells.Add(craftedCell);
+        
+        var startCells = currentLevelConfig.cellTypesTableConfig;
+        currentCellsToSpawn = new List<CellTypeInfo>();
+        for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
+            currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
+        
         GameData = new GameData();
+        
     }
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize)
     {
@@ -458,5 +500,5 @@ public enum CellType
     Village,
     Mountain,
     MiniCity,
-    
+    FoodSource
 }
