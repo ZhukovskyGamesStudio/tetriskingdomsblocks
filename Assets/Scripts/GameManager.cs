@@ -1,6 +1,7 @@
 using Mono.Cecil;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
@@ -24,8 +25,14 @@ public class GameManager : MonoBehaviour, IResetable
     private Transform _fieldStart, _fieldEnd;
 
     [SerializeField]
+    private TaskUIView[] _taskUIViews;
+    
+    [SerializeField]
     private Camera _raycastCamera;
 
+    [SerializeField]
+    private TMP_Text helperText;
+    
     [SerializeField]
     private FloatingTextView _floatingTextPrefab;
 
@@ -36,6 +43,12 @@ public class GameManager : MonoBehaviour, IResetable
     
     [SerializeField]
     public LevelConfig currentLevelConfig;
+    
+    private List<TaskInfoAndUI> _currentTasks;
+
+    public Dictionary<ResourceType, int> _monoLinesCount;
+    
+    public Dictionary<CellType, int> _placedCellsCount;
     
     public List<CraftingCellInfo> currentCraftedCells = new List<CraftingCellInfo>();
     
@@ -66,9 +79,9 @@ public class GameManager : MonoBehaviour, IResetable
 
     private void GenerateTask()
     {
-        var generatedGoal = TasksUtils.GenerateNewResourceTask();
+        /*var generatedGoal = TasksUtils.GenerateNewResourceTask();
         GameData.TaskData.GoalToCollect.Add(generatedGoal.Key, generatedGoal.Value);
-        GoalView.Instance.InitTask(GameData);
+        GoalView.Instance.InitTask(GameData);*/
     }
 
     private void StartGame()
@@ -184,11 +197,11 @@ public class GameManager : MonoBehaviour, IResetable
         if(mainGameConfig.resourceOnPlaceCell)
            CollectResourcesOnPlace(pieceData);
         ExplodeCells();
-        GoalView.Instance.UpdateTask(GameData);
+      //  GoalView.Instance.UpdateTask(GameData);
 
         if (CheckWin())
         {
-            Win();
+           // Win();
             return;
         }
 
@@ -225,7 +238,8 @@ public class GameManager : MonoBehaviour, IResetable
                 var resourcesForPlace = _field[place.x, place.y].resourcesForPlace;
                 for (int i = 0; i < resourcesForPlace.Length; i++)
                     needText += resourcesForPlace[i].resourceCount+ " "+resourcesForPlace[i].resourceType.ToString()+" ";
-
+                if (!_placedCellsCount.TryAdd(pieceData.Type.cellType, 1))
+                    _placedCellsCount[pieceData.Type.cellType]++;
                 if (resourcesForPlace.Length != 0)
                 {
                 var canvasPosition =
@@ -234,6 +248,8 @@ public class GameManager : MonoBehaviour, IResetable
                 }
             }
         }
+
+        CheckPlacedCellsForTask();
     }
 
     private void CollectResourcesOnPlace(PieceData placedPiece)
@@ -257,14 +273,70 @@ public class GameManager : MonoBehaviour, IResetable
                     }
 
                     if (!GameData.CollectedResources.TryAdd(resourceType.resourceType, resourceType.resourceCount))
-                    {
                         GameData.CollectedResources[resourceType.resourceType] += resourceType.resourceCount;
-                    }
+                    
                 }
+            }
+        }
+
+        CheckResourceCountForTasks();
+    }
+
+    private void CheckResourceCountForTasks()
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.getResource &&
+                GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource, out int resourceCount))
+            {
+                _currentTasks[i].taskUIView.currentTaskValue.text = resourceCount + " / " + _currentTasks[i].taskInfo.count;
+                _currentTasks[i].taskUIView.filledBarImage.value =
+                    resourceCount;
+                if (resourceCount >= _currentTasks[i].taskInfo.count)
+                    _currentTasks.RemoveAt(i);
             }
         }
     }
 
+    private void CheckPlacedCellsForTask()
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeNeedCell &&
+                _placedCellsCount.TryGetValue(_currentTasks[i].taskInfo.needCell.cellType, out int count))
+            {
+                _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
+                _currentTasks[i].taskUIView.filledBarImage.value =
+                    count;
+                if (_currentTasks[i].taskInfo.count <= count)
+                    _currentTasks.RemoveAt(i);
+            }
+        }
+    }
+    private void CheckMonoLinesForTasks()
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeMonoLine &&
+                _monoLinesCount.TryGetValue(_currentTasks[i].taskInfo.needResource, out int count))
+            {
+                _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
+                _currentTasks[i].taskUIView.filledBarImage.value =
+                    count;
+                if (_currentTasks[i].taskInfo.count <= count)
+                    _currentTasks.RemoveAt(i);
+            }
+        }
+    }
+
+    private void CheckUnlockedCellForTask(CellTypeInfo needCell)
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeMonoLine &&_currentTasks[i].taskInfo.needCell == needCell)
+                _currentTasks.RemoveAt(i);
+        }
+    }
     private void ExplodeCells()
     {
         int width = _field.GetLength(0);
@@ -311,7 +383,7 @@ public class GameManager : MonoBehaviour, IResetable
         }
     }
 
-    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow)
+    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow)//cut this to pieces
     {
         bool fullSameResourcesColumn = mainGameConfig.bonusResourcesOnDestroyLine ? true : false;
         CellType currentCellType = CellType.Empty;
@@ -354,6 +426,7 @@ public class GameManager : MonoBehaviour, IResetable
                         cellInfo.resourcesForDestroy[i]
                             .resourceCount; //fix this if on destroy resources types be more than 1;
                     currentBonusResourceType = cellInfo.resourcesForDestroy[i].resourceType;
+
                 }
             }
 
@@ -367,13 +440,18 @@ public class GameManager : MonoBehaviour, IResetable
             DestroyCell((int)curPosition.x, (int)curPosition.y);
         }
 
-        if (fullSameResourcesColumn &&
-            !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine))
+        if (fullSameResourcesColumn /* &&
+            !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine)*/)
         {
+            if (!_monoLinesCount.TryAdd(currentBonusResourceType, 1))
+                _monoLinesCount[currentBonusResourceType]++;
+            CheckMonoLinesForTasks();
             GameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
-            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
+            Vector2 curPosition =
+                !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition =
-                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
+                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform
+                    .position);
 
             ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition,
                 100);
@@ -392,15 +470,21 @@ public class GameManager : MonoBehaviour, IResetable
                     break;
                 }
             }
-
+//task for craft cell
             if (addNewCell)
             {
                 currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
+                CheckUnlockedCellForTask(currentCraftedCells[i].cellsToCraft);
                 currentCraftedCells.RemoveAt(i);
             }
             
-            Debug.Log(addNewCell + " add new cell");
+            Debug.Log(addNewCell + " add new cell" + currentCraftedCells.Count);
         }
+
+        CheckResourceCountForTasks();
+        
+        if(_currentTasks.Count == 0)
+            Win();
     }
     private void DestroyCell(int x, int y)
     {
@@ -410,13 +494,18 @@ public class GameManager : MonoBehaviour, IResetable
 
     private bool CheckWin()
     {
-        var goal = GameData.TaskData.GoalToCollect.First();
+        /*var goal = GameData.TaskData.GoalToCollect.First();
         if (GameData.CollectedResources.TryGetValue(goal.Key, out int hasValue))
         {
             if (hasValue >= goal.Value)
             {
                 return true;
             }
+        }*/
+        if (_currentTasks.Count == 0)
+        {
+            Win();
+            return true;
         }
 
         return false;
@@ -464,7 +553,51 @@ public class GameManager : MonoBehaviour, IResetable
         currentCellsToSpawn = new List<CellTypeInfo>();
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
+
+        _placedCellsCount = new Dictionary<CellType, int>();
         
+        _currentTasks = new List<TaskInfoAndUI>();
+        foreach (var uiTaskView in _taskUIViews)
+        {
+            uiTaskView.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < currentLevelConfig.tasks.Length; i++)
+        {
+            var task = currentLevelConfig.tasks[i];
+            var taskUI = _taskUIViews[i];
+            taskUI.gameObject.SetActive(true);
+            _currentTasks.Add(new TaskInfoAndUI(task, taskUI) );
+
+            switch (task.taskType)
+            {
+                case TaskInfo.TaskType.getResource:
+
+                    taskUI.currentTaskInfo.text = " Get" + task.count + " " + task.needResource;
+                    break;
+                
+                case TaskInfo.TaskType.placeMonoLine:
+
+                    taskUI.currentTaskInfo.text = " Place mono line " + task.count + " times with " + task.needResource;
+                    break;
+                
+                case TaskInfo.TaskType.placeNeedCell:
+
+                    taskUI.currentTaskInfo.text = " Place " + task.needCell.cellName + " " + task.count + " times";
+                    break;
+                
+                case TaskInfo.TaskType.unlockCell:
+
+                    taskUI.currentTaskInfo.text = " Unlock " + task.needCell.cellName;
+                    break;
+            }
+                    taskUI.currentTaskValue.text = "0 / " + task.count;
+               taskUI.filledBarImage.value = 0;
+               taskUI.filledBarImage.maxValue = task.count;
+            //show task info in texts
+        }
+_monoLinesCount = new Dictionary<ResourceType, int>();
+        
+        helperText.text = currentLevelConfig.guideForLevelText;
         GameData = new GameData();
         
     }

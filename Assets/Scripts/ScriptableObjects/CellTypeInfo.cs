@@ -8,4 +8,5 @@ public class CellTypeInfo : ScriptableObject
     public string cellForm;
     public ResourceTypeAndCountSubClass[] resourcesForPlace;
     public ResourceTypeAndCountSubClass[] resourcesForDestroy;
+    public string cellName;
 }

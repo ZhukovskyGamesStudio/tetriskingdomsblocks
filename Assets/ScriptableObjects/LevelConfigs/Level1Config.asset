@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level1Config
   m_EditorClassIdentifier: 
-  guideForLevel: {fileID: 0}
+  tasks:
+  - {fileID: 11400000, guid: 5c2ebc440cb94be4c906bde6776602bd, type: 2}
+  - {fileID: 11400000, guid: 89e10523fb2aa0e49ae4a5904130cd0c, type: 2}
+  guideForLevelText: Place forest to the field and try fill all line
   cellTypesTableConfig: {fileID: 11400000, guid: e4e5c5bc76be722458eb5703469f185b, type: 2}

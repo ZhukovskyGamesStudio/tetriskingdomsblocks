@@ -21,7 +21,7 @@ public class GoalView : MonoBehaviour {
         Instance = this;
     }
 
-    public void InitTask(GameData data) {
+    /*public void InitTask(GameData data) {
         SetTaskState();
         var kvp = data.TaskData.GoalToCollect.First();
         _taskText.text = $"Collect {kvp.Value} {kvp.Key}";
@@ -34,7 +34,7 @@ public class GoalView : MonoBehaviour {
         data.CollectedResources.TryGetValue(kvp.Key, out int hasAmount);
         _slider.value = hasAmount;
         _sliderText.text = $"{hasAmount}/{kvp.Value}";
-    }
+    }*/
 
     private void SetTaskState() {
         if (_isGameEnded) {
