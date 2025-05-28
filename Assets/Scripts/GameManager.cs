@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour, IResetable
 
     private ObjectPool<FloatingTextView> _floatingTextsPool;
 
+    public List<CellTypeInfo> currentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
 
     private void Awake()
@@ -598,6 +599,10 @@ public class GameManager : MonoBehaviour, IResetable
 _monoLinesCount = new Dictionary<ResourceType, int>();
         
         helperText.text = currentLevelConfig.guideForLevelText;
+        
+        currentGuaranteedFirstCells = new List<CellTypeInfo>();
+        foreach(var cellInfo in currentLevelConfig.currentGuaranteedFirstCells)
+            currentGuaranteedFirstCells.Add(cellInfo);
         GameData = new GameData();
         
     }

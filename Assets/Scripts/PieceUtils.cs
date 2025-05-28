@@ -8,6 +8,11 @@ public static class PieceUtils {
         var l = Enum.GetNames(typeof(CellType));
         var cellsToSpawn = GameManager.Instance.currentCellsToSpawn;
         var cellInfo = cellsToSpawn[Random.Range(0, cellsToSpawn.Count)];
+        if (GameManager.Instance.currentGuaranteedFirstCells.Count != 0)
+        {
+            cellInfo = GameManager.Instance.currentGuaranteedFirstCells[0];
+            GameManager.Instance.currentGuaranteedFirstCells.RemoveAt(0);
+        }
         var cells = cellInfo.cellForm == ""
             ? TetrisPieces.PieceShapesTable.Values.ElementAt(Random.Range(0,
                 TetrisPieces.PieceShapesTable.Values.Count))

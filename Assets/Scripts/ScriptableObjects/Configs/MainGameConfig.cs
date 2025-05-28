@@ -12,6 +12,8 @@ public class MainGameConfig : ScriptableObject
 
     public LevelConfig[] levels;
     public CraftingCellInfo[] cellsToCraft;
+
+    public CellTypeInfo[] guaranteedFirstCells;
     
     public int fieldSize;
 
