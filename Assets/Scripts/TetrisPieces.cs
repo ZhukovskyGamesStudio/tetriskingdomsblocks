@@ -3,190 +3,279 @@ using System.Collections.Generic;
 public static class TetrisPieces
 {
     //change to dictionary with key figureForm(new enum)
-    public static List<bool[,]> PieceShapesTable = new List<bool[,]> {
+    public static Dictionary<string,bool[,]> PieceShapesTable = new() {
         // big I horizontal
-        new bool[,] {
-            { true, true, true, true }
+        {
+            "bigIhorizontal", new bool[,]
+            {
+                { true, true, true, true }
+            }
         },
 
         // big I
-         new bool[,] {
-            { true},
-              { true},
-               { true},
-            { true}
+        {
+            "bigI", new bool[,]
+            {
+                { true },
+                { true },
+                { true },
+                { true }
+            }
         },
 
-          // I horizontal
-        new bool[,] {
-            { true, true, true}
+        // I horizontal
+        {
+            "Ihorizontal", new bool[,]
+            {
+                { true, true, true }
+            }
         },
         // I 
-        new bool[,] {
-            { true},
-              { true},
-            { true}
+        {
+            "I", new bool[,]
+            {
+                { true },
+                { true },
+                { true }
+            }
         },
-          // , horizontal
-        new bool[,] {
-            { true, true}
+        // , horizontal
+        {
+            "smallIhorizontal", new bool[,]
+            {
+                { true, true }
+            }
         },
 
-         // ,
-         new bool[,] {
-            { true},
-            { true}
+        // ,
+        {
+            "smallI", new bool[,]
+            {
+                { true },
+                { true }
+            }
         },
 
-          // .
-        new bool[,] {
-            { true}
+        // .
+        {
+            "oneBlock", new bool[,]
+            {
+                { true }
+            }
         },
 
         // O
-        new bool[,] {
-            { true, true },
-            { true, true }
+        {
+            "smallSquare", new bool[,]
+            {
+                { true, true },
+                { true, true }
+            }
         },
 
-         // big O
-        new bool[,] {
-            { true, true ,true},
-            { true, true ,true},
-            { true, true ,true}
+        // big O
+        {
+            "bigSquare", new bool[,]
+            {
+                { true, true, true },
+                { true, true, true },
+                { true, true, true }
+            }
         },
 
         // +
-         new bool[,] {
-            { false, true ,false},
-            { true, true ,true},
-            { false, true ,false}
+        {
+            "plus", new bool[,]
+            {
+                { false, true, false },
+                { true, true, true },
+                { false, true, false }
+            }
         },
 
-           // donut
-        new bool[,] {
-            { true, true ,true},
-            { true, false ,true},
-            { true, true ,true}
+        // donut
+        {
+            "donut", new bool[,]
+            {
+                { true, true, true },
+                { true, false, true },
+                { true, true, true }
+            }
         },
 
         //rainbow
-          new bool[,] {
-            { true, true ,true},
-            { true, false ,true},
-            { true, false ,true}
+        {
+            "rainbow", new bool[,]
+            {
+                { true, true, true },
+                { true, false, true },
+                { true, false, true }
+            }
         },
 
-             //smile
-          new bool[,] {
-            { true, false ,true},
-            { true, false ,true},
-            { true, true ,true}
+        //smile
+        {
+            "smile", new bool[,]
+            {
+                { true, false, true },
+                { true, false, true },
+                { true, true, true }
+            }
         },
 
-             // corner left down
-        new bool[,] {
-            { true, false },
-            { true, true }
+        // corner left down
+        {
+            "cornerLeftDown", new bool[,]
+            {
+                { true, false },
+                { true, true }
+            }
         },
-          // corner right down
-        new bool[,] {
-            { false, true },
-            { true, true }
+        // corner right down
+        {
+            "cornerRightDown", new bool[,]
+            {
+                { false, true },
+                { true, true }
+            }
         },
-          // corner left up
-        new bool[,] {
-            { true, true },
-            { true, false }
+        // corner left up
+        {
+            "cornerLeftUp", new bool[,]
+            {
+                { true, true },
+                { true, false }
+            }
         },
-          // corner right up
-        new bool[,] {
-            { true, true },
-            { false, true }
+        // corner right up
+        {
+            "cornerRightUp", new bool[,]
+            {
+                { true, true },
+                { false, true }
+            }
         },
 
         // T small
-        new bool[,] {
-            { true, true, true },
-            { false, true, false }
+        {
+            "TSmall", new bool[,]
+            {
+                { true, true, true },
+                { false, true, false }
+            }
         },
 
         // , .
-        new bool[,] {
-            { true, false, false },
-            { true, false, true }
+        {
+            "oneAndTwoHorizontal", new bool[,]
+            {
+                { true, false, false },
+                { true, false, true }
+            }
         },
 
-           // , . vertical
-        new bool[,] {
-            { true, false},
-            { false, false},
-            { true, true}
+        // , . vertical
+        {
+            "oneAndTwo", new bool[,]
+            {
+                { true, false },
+                { false, false },
+                { true, true }
+            }
         },
 
         // T
-         new bool[,] {
-            { true, true, true },
-            { false, true, false },
-             { false, true, false }
+        {
+            "T", new bool[,]
+            {
+                { true, true, true },
+                { false, true, false },
+                { false, true, false }
+            }
         },
 
-         // T rotated
-         new bool[,] {
-            { true, false, false },
-            { true, true, true },
-             { true, false, false }
+        // T rotated
+        {
+            "TRotated", new bool[,]
+            {
+                { true, false, false },
+                { true, true, true },
+                { true, false, false }
+            }
         },
 
         // S
-        new bool[,] {
-            { false, true, true },
-            { true, true, false }
+        {
+            "S", new bool[,]
+            {
+                { false, true, true },
+                { true, true, false }
+            }
         },
 
         // S rotated
-        new bool[,] {
-            { true, false},
-            { true, true},
-            { false, true}
+        {
+            "SRotated", new bool[,]
+            {
+                { true, false },
+                { true, true },
+                { false, true }
+            }
         },
 
         // Z
-        new bool[,] {
-            { true, true, false },
-            { false, true, true }
+        {
+            "Z", new bool[,]
+            {
+                { true, true, false },
+                { false, true, true }
+            }
         },
 
-         // Z rotated
-        new bool[,] {
-            { false, true},
-            { true, true},
-            { true, false}
+        // Z rotated
+        {
+            "ZRotated", new bool[,]
+            {
+                { false, true },
+                { true, true },
+                { true, false }
+            }
         },
 
         // J
-        new bool[,] {
-            { true, false, false },
-            { true, true, true }
+        {
+            "J", new bool[,]
+            {
+                { true, false, false },
+                { true, true, true }
+            }
         },
 
         // L
-        new bool[,] {
-            { false, false, true },
-            { true, true, true }
+        {
+            "L", new bool[,]
+            {
+                { false, false, true },
+                { true, true, true }
+            }
         },
 
         //U
-         new bool[,] {
-            { true, false, true },
-            { true, true, true }
-        }
-         ,
+        {
+            "U", new bool[,]
+            {
+                { true, false, true },
+                { true, true, true }
+            }
+        },
 
         //U rotated
-         new bool[,] {
-            { true, true, true },
-            { true, false, true }
+        {
+            "URotated", new bool[,]
+            {
+                { true, true, true },
+                { true, false, true }
+            }
         }
     };
 }

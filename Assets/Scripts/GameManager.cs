@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour, IResetable
     [SerializeField]
     private Transform _floatingTextContainer;
 
-    [SerializeField]
     public List<CellTypeInfo> currentCellsToSpawn;
     
     [SerializeField]
