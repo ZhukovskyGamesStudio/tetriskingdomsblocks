@@ -51,8 +51,8 @@ public class PieceView : MonoBehaviour {
         var clampedPosOnField = GameManager.Instance.GetPieceClampedPosOnField();
         var targetPos = targetMousePos;
 
-        int maxClampFieldPositionZ = GameManager.Instance.mainGameConfig.fieldSize - _data.Cells.GetLength(1)+1;
-        int maxClampFieldPositionX = GameManager.Instance.mainGameConfig.fieldSize - _data.Cells.GetLength(0)+1;
+        int maxClampFieldPositionZ = GameManager.Instance.MainGameConfig.fieldSize - _data.Cells.GetLength(1)+1;
+        int maxClampFieldPositionX = GameManager.Instance.MainGameConfig.fieldSize - _data.Cells.GetLength(0)+1;
 
         if (clampedPosOnField.x >= 0 && clampedPosOnField.y >= 0 && clampedPosOnField.x < maxClampFieldPositionX && clampedPosOnField.y  < maxClampFieldPositionZ)
         {
