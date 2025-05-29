@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: MineCellInfo
+  m_Name: MiniCityCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
-  cellType: 4
+  cellPrefab: {fileID: 3199888184775657234, guid: c8327af7c7351ec4daaf5ac0eea9ed70, type: 3}
+  cellType: 5
   cellForm: 
   resourcesForPlace:
   - resourceType: 2
@@ -21,5 +21,5 @@ MonoBehaviour:
   resourcesForDestroy:
   - resourceType: 2
     resourceCount: 2
-  cellName: Mine
-  MultiplayerForSameResourceType: 2
+  cellName: MiniCity
+  MultiplayerForSameResourceType: 0

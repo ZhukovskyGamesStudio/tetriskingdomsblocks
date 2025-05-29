@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: MineCellInfo
+  m_Name: IronOreCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
-  cellType: 4
+  cellPrefab: {fileID: 3199888184775657234, guid: 5fad8174b3d7a574fb1e92094d3ee37f, type: 3}
+  cellType: 2
   cellForm: 
   resourcesForPlace:
-  - resourceType: 2
-    resourceCount: 2
+  - resourceType: 4
+    resourceCount: 1
   resourcesForDestroy:
-  - resourceType: 2
-    resourceCount: 2
-  cellName: Mine
-  MultiplayerForSameResourceType: 2
+  - resourceType: 4
+    resourceCount: 1
+  cellName: Iron ore
+  MultiplayerForSameResourceType: 0

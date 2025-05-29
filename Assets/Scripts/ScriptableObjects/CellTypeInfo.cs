@@ -9,4 +9,5 @@ public class CellTypeInfo : ScriptableObject
     public ResourceTypeAndCountSubClass[] resourcesForPlace;
     public ResourceTypeAndCountSubClass[] resourcesForDestroy;
     public string cellName;
+    public int MultiplayerForSameResourceType;
 }

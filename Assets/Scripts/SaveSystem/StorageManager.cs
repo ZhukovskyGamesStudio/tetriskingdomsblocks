@@ -18,6 +18,7 @@ public static class StorageManager {
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
         gameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
+     //   Debug.Log(gameDataMain.CurMaxLevel);
     }
 
     public static bool IsNewPlayer() {

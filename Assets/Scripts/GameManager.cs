@@ -332,8 +332,22 @@ public class GameManager : MonoBehaviour, IResetable {
         CellType currentCellType = CellType.Empty;
         int bonusResourcesOnDestroyLine = 0;
         ResourceType currentBonusResourceType = ResourceType.None;
+        Dictionary<ResourceType, int> resourcesMultiplayers = new Dictionary<ResourceType, int>();
+        Dictionary<CellTypeInfo, int> cellTypesInLine = new Dictionary<CellTypeInfo, int>();
 
-        Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
+        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
+        {
+            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
+            var cellInfo = _field[(int)curPosition.x, (int)curPosition.y];
+            if (cellInfo.MultiplayerForSameResourceType != 0 && !resourcesMultiplayers.TryAdd(cellInfo.resourcesForDestroy[0].resourceType, cellInfo.MultiplayerForSameResourceType))
+            {
+                if (cellInfo.MultiplayerForSameResourceType <
+                    resourcesMultiplayers[cellInfo.resourcesForDestroy[0].resourceType])
+                    resourcesMultiplayers[cellInfo.resourcesForDestroy[0].resourceType] =
+                        cellInfo.MultiplayerForSameResourceType;
+            }
+        }
+
 
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
@@ -347,14 +361,18 @@ public class GameManager : MonoBehaviour, IResetable {
 
             string floatingText = "+ ";
 
-            if (!cellTypesInLine.TryAdd(cellInfo.cellType, 1))
-                cellTypesInLine[cellInfo.cellType]++;
+            if (!cellTypesInLine.TryAdd(cellInfo, 1))
+                cellTypesInLine[cellInfo]++;
 
-            for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++) {
+            for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
+            {
+                int resourceMultiplayer = 1;
+                resourcesMultiplayers.TryGetValue(cellInfo.resourcesForDestroy[i].resourceType, out resourceMultiplayer);
+                int count = cellInfo.resourcesForDestroy[i].resourceCount * resourceMultiplayer;
                 if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(cellInfo.resourcesForDestroy[i].resourceType,
-                        cellInfo.resourcesForDestroy[i].resourceCount))
-                    GameData.CollectedResources[cellInfo.resourcesForDestroy[i].resourceType] += cellInfo.resourcesForDestroy[i].resourceCount;
-                floatingText += cellInfo.resourcesForDestroy[i].resourceType.ToString() + " " + cellInfo.resourcesForDestroy[i].resourceCount +
+                        count))
+                    GameData.CollectedResources[cellInfo.resourcesForDestroy[i].resourceType] += count;
+                floatingText += cellInfo.resourcesForDestroy[i].resourceType.ToString() + " " + count +
                                 " ";
                 if (fullSameResourcesColumn) {
                     bonusResourcesOnDestroyLine +=
@@ -385,24 +403,60 @@ public class GameManager : MonoBehaviour, IResetable {
         } else
             Debug.Log("not full same");
 
-        for (int i = 0; i < _currentCraftedCells.Count; i++) {
-            bool addNewCell = true;
-            for (int j = 0; j < _currentCraftedCells[i].cellTypeToCraft.Length; j++) {
-                if (!cellTypesInLine.ContainsKey(_currentCraftedCells[i].cellTypeToCraft[j])) {
-                    addNewCell = false;
-                    break;
+        for (int i = 0; i < _currentCraftedCells.Count; i++)
+        {
+            bool addNewCell = false;
+            for (int j = 0; j < _currentCraftedCells[i].cellTypeToCraft.Length; j++)
+            {
+                if (cellTypesInLine.ContainsKey(_currentCraftedCells[i].cellTypeToCraft[j]))
+                {
+                    for (int x = 0; x < _currentCraftedCells[i].cellTypeToCraftSecond.Length; x++)
+                    {
+                        if (cellTypesInLine.ContainsKey(_currentCraftedCells[i].cellTypeToCraftSecond[x]))
+                        {
+                            currentCellsToSpawn.Add(_currentCraftedCells[i].cellsToCraft);
+                            CheckUnlockedCellForTask(_currentCraftedCells[i].cellsToCraft);
+                            _currentCraftedCells.RemoveAt(i);
+                            i--;
+                            addNewCell = true;
+                            break;
+                        }
+                    }
+
+                    if (addNewCell) break;
                 }
             }
 
+
 //task for craft cell
-            if (addNewCell) {
-                currentCellsToSpawn.Add(_currentCraftedCells[i].cellsToCraft);
-                CheckUnlockedCellForTask(_currentCraftedCells[i].cellsToCraft);
-                _currentCraftedCells.RemoveAt(i);
-            }
+            /* if (addNewCell)
+             {
+                 currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
+                 CheckUnlockedCellForTask(currentCraftedCells[i].cellsToCraft);
+                 currentCraftedCells.RemoveAt(i);
+             }*/
 
             Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
+
         }
+        /*  for (int i = 0; i < _currentCraftedCells.Count; i++) {
+              bool addNewCell = true;
+              for (int j = 0; j < _currentCraftedCells[i].cellTypeToCraft.Length; j++) {
+                  if (!cellTypesInLine.ContainsKey(_currentCraftedCells[i].cellTypeToCraft[j])) {
+                      addNewCell = false;
+                      break;
+                  }
+              }
+
+  //task for craft cell
+              if (addNewCell) {
+                  currentCellsToSpawn.Add(_currentCraftedCells[i].cellsToCraft);
+                  CheckUnlockedCellForTask(_currentCraftedCells[i].cellsToCraft);
+                  _currentCraftedCells.RemoveAt(i);
+              }
+
+              Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
+          }*/
 
         CheckResourceCountForTasks();
 
@@ -461,6 +515,7 @@ public class GameManager : MonoBehaviour, IResetable {
         GenerateField();
         GenerateTask();
         StartGame();
+       // Debug.Log(StorageManager.gameDataMain + " cur level");
         if (StorageManager.gameDataMain.CurMaxLevel < 20)
             _currentLevelConfig = MainGameConfig.levels[StorageManager.gameDataMain.CurMaxLevel];
         else {

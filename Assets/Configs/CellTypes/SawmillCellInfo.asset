@@ -15,6 +15,11 @@ MonoBehaviour:
   cellPrefab: {fileID: 4948077585785927334, guid: 8aceddccba9388a4d9d8e6ca9710eddc, type: 3}
   cellType: 1
   cellForm: T
-  resourcesForPlace: []
-  resourcesForDestroy: []
+  resourcesForPlace:
+  - resourceType: 1
+    resourceCount: 2
+  resourcesForDestroy:
+  - resourceType: 1
+    resourceCount: 2
   cellName: Sawmill
+  MultiplayerForSameResourceType: 2
