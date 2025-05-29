@@ -5,5 +5,6 @@ public class CraftingCellInfo : ScriptableObject
 {
     public CellTypeInfo cellsToCraft;
 
-    public CellType[] cellTypeToCraft;
+    public CellTypeInfo[] cellTypeToCraft;
+    public CellTypeInfo[] cellTypeToCraftSecond;
 }

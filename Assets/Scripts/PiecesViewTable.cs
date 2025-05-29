@@ -15,7 +15,7 @@ public class PiecesViewTable : MonoBehaviour {
         Instance = this;
     }
 
-    public CellView GetCellByType(CellType type) {
+  /*  public CellView GetCellByType(CellType type) {
         foreach (var VARIABLE in _cellViews) {
             if (VARIABLE.CellType == type) {
                 return VARIABLE;
@@ -23,5 +23,5 @@ public class PiecesViewTable : MonoBehaviour {
         }
 
         throw new KeyNotFoundException();
-    }
+    }*/
 }

@@ -88,6 +88,7 @@ public class PieceView : MonoBehaviour {
     private void OnMouseDrag() {
         OnDrag();
     }
+    
 
     private void OnMouseDown() {
         OnStartDrag();

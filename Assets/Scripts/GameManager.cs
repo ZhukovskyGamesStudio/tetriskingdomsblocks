@@ -205,7 +205,6 @@ public class GameManager : MonoBehaviour, IResetable
 
         if (_placedPiecesAmount % 3 == 0)
         {
-            Debug.Log("auto generate new pieces");
             GenerateNewPieces();
         }
 
@@ -382,15 +381,15 @@ public class GameManager : MonoBehaviour, IResetable
         }
     }
 
-    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow)//cut this to pieces
+    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow) //cut this to pieces
     {
         bool fullSameResourcesColumn = mainGameConfig.bonusResourcesOnDestroyLine ? true : false;
         CellType currentCellType = CellType.Empty;
         int bonusResourcesOnDestroyLine = 0;
         ResourceType currentBonusResourceType = ResourceType.None;
-        
-        Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
-        
+
+        Dictionary<CellTypeInfo, int> cellTypesInLine = new Dictionary<CellTypeInfo, int>();
+
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
         {
             Vector2 curPosition = !isRow
@@ -407,9 +406,9 @@ public class GameManager : MonoBehaviour, IResetable
 
             string floatingText = "+ ";
 
-            if (!cellTypesInLine.TryAdd(cellInfo.cellType, 1))
-                cellTypesInLine[cellInfo.cellType]++;
-            
+            if (!cellTypesInLine.TryAdd(cellInfo, 1))
+                cellTypesInLine[cellInfo]++;
+
             for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
             {
                 if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(
@@ -425,21 +424,22 @@ public class GameManager : MonoBehaviour, IResetable
                         cellInfo.resourcesForDestroy[i]
                             .resourceCount; //fix this if on destroy resources types be more than 1;
                     currentBonusResourceType = cellInfo.resourcesForDestroy[i].resourceType;
-
                 }
             }
 
             if (cellInfo.resourcesForDestroy.Length != 0)
             {
-            var canvasPosition =
-                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-            ShowFloatingText(floatingText, canvasPosition, 50);
+                var canvasPosition =
+                    _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform
+                        .position);
+                ShowFloatingText(floatingText, canvasPosition, 50);
             }
+
             // CollectResources( _field[(int)curPosition.x, (int)curPosition.y]);
             DestroyCell((int)curPosition.x, (int)curPosition.y);
         }
 
-        if (fullSameResourcesColumn && currentBonusResourceType != ResourceType.None/* &&
+        if (fullSameResourcesColumn && currentBonusResourceType != ResourceType.None /* &&
             !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine)*/)
         {
             if (!_monoLinesCount.TryAdd(currentBonusResourceType, 1))
@@ -457,33 +457,46 @@ public class GameManager : MonoBehaviour, IResetable
         }
         else
             Debug.Log("not full same");
-        
+
         for (int i = 0; i < currentCraftedCells.Count; i++)
         {
-            bool addNewCell = true;
+            bool addNewCell = false;
             for (int j = 0; j < currentCraftedCells[i].cellTypeToCraft.Length; j++)
             {
-                if (!cellTypesInLine.ContainsKey(currentCraftedCells[i].cellTypeToCraft[j]))
+                if (cellTypesInLine.ContainsKey(currentCraftedCells[i].cellTypeToCraft[j]))
                 {
-                    addNewCell = false;
-                    break;
+                    for (int x = 0; x < currentCraftedCells[i].cellTypeToCraftSecond.Length; x++)
+                    {
+                        if (cellTypesInLine.ContainsKey(currentCraftedCells[i].cellTypeToCraftSecond[x]))
+                        {
+                            currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
+                            CheckUnlockedCellForTask(currentCraftedCells[i].cellsToCraft);
+                            currentCraftedCells.RemoveAt(i);
+                            i--;
+                            addNewCell = true;
+                            break;
+                        }
+                    }
+                    if(addNewCell)break;
                 }
             }
+           
+
 //task for craft cell
-            if (addNewCell)
+           /* if (addNewCell)
             {
                 currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
                 CheckUnlockedCellForTask(currentCraftedCells[i].cellsToCraft);
                 currentCraftedCells.RemoveAt(i);
-            }
-            
+            }*/
+
             Debug.Log(addNewCell + " add new cell" + currentCraftedCells.Count);
         }
 
         CheckResourceCountForTasks();
-        
+
         //if(_currentTasks.Count == 0)
-         //   Win();
+        //   Win();
     }
     private void DestroyCell(int x, int y)
     {
@@ -541,7 +554,6 @@ public class GameManager : MonoBehaviour, IResetable
 
     public void Reset()
     {
-        
         GenerateField();
         GenerateTask();
         StartGame();
@@ -551,36 +563,37 @@ public class GameManager : MonoBehaviour, IResetable
         {
             Debug.Log("meta");
         }
-        
-       // _nextBlocks = new List<PieceData>();
-      
+
+        // _nextBlocks = new List<PieceData>();
+
         _placedPiecesAmount = 0;
-       // mainGameConfig.fieldSize = 10;
+        // mainGameConfig.fieldSize = 10;
         _field = new CellTypeInfo[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
         _cells = new CellView[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
-        
+
         currentCraftedCells = new List<CraftingCellInfo>();
         foreach (var craftedCell in mainGameConfig.cellsToCraft)
             currentCraftedCells.Add(craftedCell);
-        
+
         var startCells = currentLevelConfig.cellTypesTableConfig;
         currentCellsToSpawn = new List<CellTypeInfo>();
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
-Debug.Log(currentCellsToSpawn.Count + " cells to spawn");
+        Debug.Log(currentCellsToSpawn.Count + " cells to spawn");
         _placedCellsCount = new Dictionary<CellType, int>();
-        
+
         _currentTasks = new List<TaskInfoAndUI>();
         foreach (var uiTaskView in _taskUIViews)
         {
             uiTaskView.gameObject.SetActive(false);
         }
+
         for (int i = 0; i < currentLevelConfig.tasks.Length; i++)
         {
             var task = currentLevelConfig.tasks[i];
             var taskUI = _taskUIViews[i];
             taskUI.gameObject.SetActive(true);
-            _currentTasks.Add(new TaskInfoAndUI(task, taskUI) );
+            _currentTasks.Add(new TaskInfoAndUI(task, taskUI));
 
             switch (task.taskType)
             {
@@ -588,39 +601,40 @@ Debug.Log(currentCellsToSpawn.Count + " cells to spawn");
 
                     taskUI.currentTaskInfo.text = " Get" + task.count + " " + task.needResource;
                     break;
-                
+
                 case TaskInfo.TaskType.placeMonoLine:
 
                     taskUI.currentTaskInfo.text = " Place mono line " + task.count + " times with " + task.needResource;
                     break;
-                
+
                 case TaskInfo.TaskType.placeNeedCell:
 
                     taskUI.currentTaskInfo.text = " Place " + task.needCell.cellName + " " + task.count + " times";
                     break;
-                
+
                 case TaskInfo.TaskType.unlockCell:
 
                     taskUI.currentTaskInfo.text = " Unlock " + task.needCell.cellName;
                     break;
             }
-                    taskUI.currentTaskValue.text = "0 / " + task.count;
-               taskUI.filledBarImage.value = 0;
-               taskUI.filledBarImage.maxValue = task.count;
+
+            taskUI.currentTaskValue.text = "0 / " + task.count;
+            taskUI.filledBarImage.value = 0;
+            taskUI.filledBarImage.maxValue = task.count;
             //show task info in texts
         }
-_monoLinesCount = new Dictionary<ResourceType, int>();
-        
+
+        _monoLinesCount = new Dictionary<ResourceType, int>();
+
         helperText.text = currentLevelConfig.guideForLevelText;
-        
+
         currentGuaranteedFirstCells = new List<CellTypeInfo>();
-        foreach(var cellInfo in currentLevelConfig.currentGuaranteedFirstCells)
-            currentGuaranteedFirstCells.Add(cellInfo); 
-        
+        foreach (var cellInfo in currentLevelConfig.currentGuaranteedFirstCells)
+            currentGuaranteedFirstCells.Add(cellInfo);
+
         GameData = new GameData();
-        
+
         GenerateNewPieces();
-        
     }
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize)
     {

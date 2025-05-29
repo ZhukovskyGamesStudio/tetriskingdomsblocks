@@ -21,4 +21,6 @@ public enum ResourceType {
     Wood,
     Rocks,
     Food,
+    Metal,
+    TetrisPieces
 }
