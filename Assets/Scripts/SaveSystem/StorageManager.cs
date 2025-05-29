@@ -1,24 +1,26 @@
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
-using System.Collections.Generic;
-public class StorageManager
-{
-    public GameDataForSave gameDataMain = new GameDataForSave();
-    public void SavaToJson()
-    {
+
+public static class StorageManager {
+    private const string SaveKey = "tetrisGame";
+    public static GameDataForSave gameDataMain = new GameDataForSave();
+
+
+    public static void CreateNewSaveData() {
+        gameDataMain = new GameDataForSave();
+        SaveGame();
+    }
+    public static void SaveGame() {
         string gameData = JsonUtility.ToJson(null);
-        string filePath = Application.persistentDataPath + "/data.fish";
-        Debug.Log(filePath);
-        File.WriteAllText(filePath, gameData);
+        PlayerPrefs.SetString(SaveKey, gameData);
     }
 
-    public void LoadFromJson()
-    {
-        string filePath = Application.persistentDataPath + "/data.fish";
-        string gameData = File.ReadAllText(filePath);
-
-        gameDataMain = JsonUtility.FromJson<GameDataForSave>(gameData);
+    public static void LoadGame() {
+        string json = PlayerPrefs.GetString(SaveKey);
+        gameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
     }
 
+    public static bool IsNewPlayer() {
+        return !PlayerPrefs.HasKey(SaveKey);
+    }
 }

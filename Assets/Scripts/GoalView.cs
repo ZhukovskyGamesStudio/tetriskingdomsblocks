@@ -64,4 +64,7 @@ public class GoalView : MonoBehaviour {
     public void StartAgain() {
         GameManager.Instance.Restart();
     }
+    public void ExitGame() {
+        GameManager.Instance.GoToMeta();
+    }
 }
