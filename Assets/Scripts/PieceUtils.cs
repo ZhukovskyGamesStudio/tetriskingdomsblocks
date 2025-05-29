@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 public static class PieceUtils {
     public static PieceData GetNewPiece() {
-        var l = Enum.GetNames(typeof(CellType));
+       // var l = Enum.GetNames(typeof(CellType));
         var cellsToSpawn = GameManager.Instance.currentCellsToSpawn;
         var cellInfo = cellsToSpawn[Random.Range(0, cellsToSpawn.Count)];
         if (GameManager.Instance.currentGuaranteedFirstCells.Count != 0)

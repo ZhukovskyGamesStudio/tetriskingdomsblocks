@@ -2980,6 +2980,7 @@ GameObject:
   m_Component:
   - component: {fileID: 941771433}
   - component: {fileID: 941771434}
+  - component: {fileID: 941771435}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3032,6 +3033,20 @@ MonoBehaviour:
   currentCellsToSpawn: []
   currentLevelConfig: {fileID: 11400000, guid: 5309f3c2273b4e549b65359afe393759, type: 2}
   currentCraftedCells: []
+  currentLevel: 0
+  currentGuaranteedFirstCells: []
+--- !u!114 &941771435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941771432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 999c256ac890a924885f46d67133f5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &946048036
 GameObject:
   m_ObjectHideFlags: 0

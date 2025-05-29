@@ -6,7 +6,7 @@ public class RuntimeStateResetter : MonoBehaviour {
     static void Init() {
         foreach (GameObject resetable in FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None)) {
             if ((resetable.GetComponent<IResetable>() != null)) {
-                resetable.GetComponent<IResetable>().Reset();
+            //    resetable.GetComponent<IResetable>().Reset();
             }
         }
     }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public class GameData {
+public partial class GameData {
 
     public TaskData TaskData = new TaskData();
     

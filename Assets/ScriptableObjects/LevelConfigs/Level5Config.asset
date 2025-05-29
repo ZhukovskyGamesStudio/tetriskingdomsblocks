@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
-  m_Name: Level1Config
+  m_Name: Level5Config
   m_EditorClassIdentifier: 
   tasks:
-  - {fileID: 11400000, guid: 5c2ebc440cb94be4c906bde6776602bd, type: 2}
-  guideForLevelText: Place forest to the field and try fill all line
-  currentGuaranteedFirstCells: []
-  cellTypesTableConfig: {fileID: 11400000, guid: 8dc01eb0bd785c9419cd2f1358fcef25, type: 2}
+  - {fileID: 11400000, guid: f3cdcd3391fb6bf4a8515535338c9d00, type: 2}
+  guideForLevelText: Place new cell - village
+  currentGuaranteedFirstCells:
+  - {fileID: 11400000, guid: 38ad498241b75dd4692bdfc6fce85491, type: 2}
+  cellTypesTableConfig: {fileID: 11400000, guid: d9eb674750ade55429e2b8af78abc691, type: 2}

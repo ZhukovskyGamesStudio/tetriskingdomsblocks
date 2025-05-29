@@ -1,4 +1,4 @@
-using Mono.Cecil;
+
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -51,8 +51,8 @@ public class GameManager : MonoBehaviour, IResetable
     public Dictionary<CellType, int> _placedCellsCount;
     
     public List<CraftingCellInfo> currentCraftedCells = new List<CraftingCellInfo>();
-    
-    
+
+    public int currentLevel;
     public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
 
     private int _placedPiecesAmount;
@@ -64,16 +64,13 @@ public class GameManager : MonoBehaviour, IResetable
 
     private void Awake()
     {
-        Reset();
         Instance = this;
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
     }
 
     private void Start()
     {
-        GenerateField();
-        GenerateTask();
-        StartGame();
+       
     }
 
     private void GenerateField() { }
@@ -93,7 +90,7 @@ public class GameManager : MonoBehaviour, IResetable
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
         */
-        GenerateNewPieces();
+        
     }
 
     public void GenerateNewPieces()
@@ -208,6 +205,7 @@ public class GameManager : MonoBehaviour, IResetable
 
         if (_placedPiecesAmount % 3 == 0)
         {
+            Debug.Log("auto generate new pieces");
             GenerateNewPieces();
         }
 
@@ -441,7 +439,7 @@ public class GameManager : MonoBehaviour, IResetable
             DestroyCell((int)curPosition.x, (int)curPosition.y);
         }
 
-        if (fullSameResourcesColumn /* &&
+        if (fullSameResourcesColumn && currentBonusResourceType != ResourceType.None/* &&
             !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine)*/)
         {
             if (!_monoLinesCount.TryAdd(currentBonusResourceType, 1))
@@ -484,8 +482,8 @@ public class GameManager : MonoBehaviour, IResetable
 
         CheckResourceCountForTasks();
         
-        if(_currentTasks.Count == 0)
-            Win();
+        //if(_currentTasks.Count == 0)
+         //   Win();
     }
     private void DestroyCell(int x, int y)
     {
@@ -525,6 +523,9 @@ public class GameManager : MonoBehaviour, IResetable
 
     private void Win()
     {
+        currentLevel++;
+        DataPersistenceManager.Instance.SaveGame();
+        Debug.Log(" win");
         GoalView.Instance.SetWinState();
     }
 
@@ -540,7 +541,19 @@ public class GameManager : MonoBehaviour, IResetable
 
     public void Reset()
     {
-        _nextBlocks = new List<PieceData>();
+        
+        GenerateField();
+        GenerateTask();
+        StartGame();
+        if (currentLevel < 20)
+            currentLevelConfig = mainGameConfig.levels[currentLevel];
+        else
+        {
+            Debug.Log("meta");
+        }
+        
+       // _nextBlocks = new List<PieceData>();
+      
         _placedPiecesAmount = 0;
        // mainGameConfig.fieldSize = 10;
         _field = new CellTypeInfo[mainGameConfig.fieldSize, mainGameConfig.fieldSize];
@@ -554,7 +567,7 @@ public class GameManager : MonoBehaviour, IResetable
         currentCellsToSpawn = new List<CellTypeInfo>();
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
-
+Debug.Log(currentCellsToSpawn.Count + " cells to spawn");
         _placedCellsCount = new Dictionary<CellType, int>();
         
         _currentTasks = new List<TaskInfoAndUI>();
@@ -602,8 +615,11 @@ _monoLinesCount = new Dictionary<ResourceType, int>();
         
         currentGuaranteedFirstCells = new List<CellTypeInfo>();
         foreach(var cellInfo in currentLevelConfig.currentGuaranteedFirstCells)
-            currentGuaranteedFirstCells.Add(cellInfo);
+            currentGuaranteedFirstCells.Add(cellInfo); 
+        
         GameData = new GameData();
+        
+        GenerateNewPieces();
         
     }
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize)
