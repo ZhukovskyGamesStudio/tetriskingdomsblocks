@@ -11,14 +11,14 @@ public static class StorageManager {
         SaveGame();
     }
     public static void SaveGame() {
-        string gameData = JsonUtility.ToJson(null);
-        PlayerPrefs.SetString(SaveKey, gameData);
+        string json = JsonUtility.ToJson(gameDataMain);
+        PlayerPrefs.SetString(SaveKey, json);
     }
 
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
         gameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-     //   Debug.Log(gameDataMain.CurMaxLevel);
+       Debug.Log(gameDataMain.CurMaxLevel);
     }
 
     public static bool IsNewPlayer() {

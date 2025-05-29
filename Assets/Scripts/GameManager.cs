@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour, IResetable {
     private CellTypeInfo[,] _field;
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
+    //[SerializeField]
+   // private TMP_Text _buttonEndGameText;
+    
     [SerializeField]
     private Transform _fieldContainer;
 
@@ -37,6 +40,8 @@ public class GameManager : MonoBehaviour, IResetable {
     private Transform _floatingTextContainer;
 
     public List<CellTypeInfo> currentCellsToSpawn;
+    [field:SerializeField]
+    public float[] CellsChanceToSpawn { get; private set; }
 
     [SerializeField]
     private LevelConfig _currentLevelConfig;
@@ -246,14 +251,33 @@ public class GameManager : MonoBehaviour, IResetable {
         CheckResourceCountForTasks();
     }
 
-    private void CheckResourceCountForTasks() {
-        for (int i = 0; i < _currentTasks.Count; i++) {
-            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.getResource &&
-                GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource, out int resourceCount)) {
-                _currentTasks[i].taskUIView.currentTaskValue.text = resourceCount + " / " + _currentTasks[i].taskInfo.count;
-                _currentTasks[i].taskUIView.filledBarImage.value = resourceCount;
-                if (resourceCount >= _currentTasks[i].taskInfo.count)
-                    _currentTasks.RemoveAt(i);
+    private void CheckResourceCountForTasks()
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.getResource)
+            {
+                if (_currentTasks[i].taskInfo.needResource == ResourceType.None &&
+                    GameData.CollectedResources.Count != 0)
+                {
+                    foreach (var resource in GameData.CollectedResources)
+                    {
+                        if (_currentTasks[i].taskInfo.count <= resource.Value)
+                        {
+                            _currentTasks.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+                else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource,
+                             out int resourceCount))
+                {
+                    _currentTasks[i].taskUIView.currentTaskValue.text =
+                        resourceCount + " / " + _currentTasks[i].taskInfo.count;
+                    _currentTasks[i].taskUIView.filledBarImage.value = resourceCount;
+                    if (resourceCount >= _currentTasks[i].taskInfo.count)
+                        _currentTasks.RemoveAt(i);
+                }
             }
         }
     }
@@ -366,8 +390,10 @@ public class GameManager : MonoBehaviour, IResetable {
 
             for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
             {
-                int resourceMultiplayer = 1;
-                resourcesMultiplayers.TryGetValue(cellInfo.resourcesForDestroy[i].resourceType, out resourceMultiplayer);
+                resourcesMultiplayers.TryGetValue(cellInfo.resourcesForDestroy[i].resourceType, out int resourceMultiplayer);
+                Debug.Log(resourceMultiplayer + " resource multiplayer");
+                if (resourceMultiplayer == 0)
+                    resourceMultiplayer = 1;
                 int count = cellInfo.resourcesForDestroy[i].resourceCount * resourceMultiplayer;
                 if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(cellInfo.resourcesForDestroy[i].resourceType,
                         count))
@@ -419,6 +445,7 @@ public class GameManager : MonoBehaviour, IResetable {
                             _currentCraftedCells.RemoveAt(i);
                             i--;
                             addNewCell = true;
+                            CalculateCellSpawnChances();
                             break;
                         }
                     }
@@ -427,36 +454,9 @@ public class GameManager : MonoBehaviour, IResetable {
                 }
             }
 
-
-//task for craft cell
-            /* if (addNewCell)
-             {
-                 currentCellsToSpawn.Add(currentCraftedCells[i].cellsToCraft);
-                 CheckUnlockedCellForTask(currentCraftedCells[i].cellsToCraft);
-                 currentCraftedCells.RemoveAt(i);
-             }*/
-
             Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
 
         }
-        /*  for (int i = 0; i < _currentCraftedCells.Count; i++) {
-              bool addNewCell = true;
-              for (int j = 0; j < _currentCraftedCells[i].cellTypeToCraft.Length; j++) {
-                  if (!cellTypesInLine.ContainsKey(_currentCraftedCells[i].cellTypeToCraft[j])) {
-                      addNewCell = false;
-                      break;
-                  }
-              }
-
-  //task for craft cell
-              if (addNewCell) {
-                  currentCellsToSpawn.Add(_currentCraftedCells[i].cellsToCraft);
-                  CheckUnlockedCellForTask(_currentCraftedCells[i].cellsToCraft);
-                  _currentCraftedCells.RemoveAt(i);
-              }
-
-              Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
-          }*/
 
         CheckResourceCountForTasks();
 
@@ -480,6 +480,7 @@ public class GameManager : MonoBehaviour, IResetable {
         }*/
         if (_currentTasks.Count == 0) {
             Win();
+           // _buttonEndGameText.text = "Next level";
             return true;
         }
 
@@ -492,7 +493,7 @@ public class GameManager : MonoBehaviour, IResetable {
                 return false;
             }
         }
-
+        //_buttonEndGameText.text = "Restart";
         return true;
     }
 
@@ -511,6 +512,18 @@ public class GameManager : MonoBehaviour, IResetable {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+
+    private void CalculateCellSpawnChances()
+    {
+        float lastChance = 0;
+        CellsChanceToSpawn = new float[currentCellsToSpawn.Count];
+       Debug.Log(CellsChanceToSpawn.Length + " ch list count"); 
+        for (int i = 0; i < currentCellsToSpawn.Count; i++)
+        {
+            lastChance += currentCellsToSpawn[i].ChanceToSpawn;
+            CellsChanceToSpawn[i] = lastChance;
+        }
+    }
     public void Reset() {
         GenerateField();
         GenerateTask();
@@ -537,6 +550,7 @@ public class GameManager : MonoBehaviour, IResetable {
         currentCellsToSpawn = new List<CellTypeInfo>();
         for (int i = 0; i < startCells.cellsToSpawn.Length; i++)
             currentCellsToSpawn.Add(startCells.cellsToSpawn[i]);
+        CalculateCellSpawnChances();
         Debug.Log(currentCellsToSpawn.Count + " cells to spawn");
         _placedCellsCount = new Dictionary<CellType, int>();
 

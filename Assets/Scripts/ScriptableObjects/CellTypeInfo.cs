@@ -10,4 +10,5 @@ public class CellTypeInfo : ScriptableObject
     public ResourceTypeAndCountSubClass[] resourcesForDestroy;
     public string cellName;
     public int MultiplayerForSameResourceType;
+    public float ChanceToSpawn;
 }

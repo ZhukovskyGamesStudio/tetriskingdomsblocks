@@ -1,13 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
     public static PieceData GetNewPiece() {
        // var l = Enum.GetNames(typeof(CellType));
         var cellsToSpawn = GameManager.Instance.currentCellsToSpawn;
-        var cellInfo = cellsToSpawn[Random.Range(0, cellsToSpawn.Count)];
+        CellTypeInfo cellInfo = null;
+        var chancesToSpawn = GameManager.Instance.CellsChanceToSpawn;
+        float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
+        for (int i = 0; i < chancesToSpawn.Length; i++)
+        {
+            if (chancesToSpawn[i] > chance)
+            {
+                cellInfo = cellsToSpawn[i];
+                break;
+            }
+            Debug.Log(chancesToSpawn[i]+" chance to spawn"+chance);
+        }
+        
         if (GameManager.Instance.currentGuaranteedFirstCells.Count != 0)
         {
             cellInfo = GameManager.Instance.currentGuaranteedFirstCells[0];

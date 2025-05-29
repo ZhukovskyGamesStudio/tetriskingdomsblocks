@@ -17,9 +17,12 @@ MonoBehaviour:
   cellForm: 
   resourcesForPlace:
   - resourceType: 2
-    resourceCount: 2
-  resourcesForDestroy:
-  - resourceType: 2
-    resourceCount: 2
+    resourceCount: 5
+  - resourceType: 3
+    resourceCount: 5
+  - resourceType: 1
+    resourceCount: 5
+  resourcesForDestroy: []
   cellName: MiniCity
   MultiplayerForSameResourceType: 0
+  ChanceToSpawn: 1
