@@ -10,6 +10,11 @@ public class PieceView : MonoBehaviour {
     public static Vector2Int PieceMaxSize;
     private List<CellView> _cells = new List<CellView>();
 
+    private void Update()
+    {
+        if(_isDragging)
+            OnDrag();
+    }
     public void SetData(PieceData data) {
         _data = data;
         _startingPosition = transform.position;
@@ -46,6 +51,10 @@ public class PieceView : MonoBehaviour {
 
     public void OnDrag() {
         var targetMousePos = GameManager.Instance.ScreenToWorldPoint;
+        if (Input.touchCount > 0)
+        {
+            targetMousePos = GameManager.Instance.TouchToWorldPoint;
+        }
         targetMousePos.y = transform.position.y;
         var posOnField = GameManager.Instance.GetPosOnField();
         var clampedPosOnField = GameManager.Instance.GetPieceClampedPosOnField();
@@ -85,9 +94,9 @@ public class PieceView : MonoBehaviour {
         }
     }
 
-    private void OnMouseDrag() {
+  /*  private void OnMouseDrag() {
         OnDrag();
-    }
+    }*/
     
 
     private void OnMouseDown() {

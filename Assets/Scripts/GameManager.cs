@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour, IResetable {
     private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
 
     public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
-
+    public Vector3 TouchToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.GetTouch(0).position);
     private int _placedPiecesAmount;
 
     private ObjectPool<FloatingTextView> _floatingTextsPool;
@@ -301,14 +301,18 @@ public class GameManager : MonoBehaviour, IResetable {
                 _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
                 _currentTasks[i].taskUIView.filledBarImage.value = count;
                 if (_currentTasks[i].taskInfo.count <= count)
+                {
                     _currentTasks.RemoveAt(i);
+                    i--;
+                }
+                    
             }
         }
     }
 
     private void CheckUnlockedCellForTask(CellTypeInfo needCell) {
         for (int i = 0; i < _currentTasks.Count; i++) {
-            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeMonoLine && _currentTasks[i].taskInfo.needCell == needCell)
+            if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.unlockCell && _currentTasks[i].taskInfo.needCell == needCell)
                 _currentTasks.RemoveAt(i);
         }
     }
