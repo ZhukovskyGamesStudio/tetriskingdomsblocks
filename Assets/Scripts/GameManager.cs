@@ -207,7 +207,7 @@ public class GameManager : MonoBehaviour, IResetable {
                 go.transform.localPosition = new Vector3(place.x, -0.05f, place.y);
                 _field[place.x, place.y] = pieceData.Type;
                 _cells[place.x, place.y] = go;
-
+                go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
             }
         }
@@ -224,7 +224,7 @@ public class GameManager : MonoBehaviour, IResetable {
             _placedCellsCount[pieceData.Type.cellType]++;
         if (resourcesForPlace.Length != 0) {
             var canvasPosition = _raycastCamera.WorldToScreenPoint(go.transform.position);
-            ShowFloatingText(needText, canvasPosition, 50);
+            ShowFloatingText(needText, canvasPosition, 50, 1);
         }
     }
 
@@ -413,7 +413,7 @@ public class GameManager : MonoBehaviour, IResetable {
 
             if (cellInfo.resourcesForDestroy.Length != 0) {
                 var canvasPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-                ShowFloatingText(floatingText, canvasPosition, 50);
+                ShowFloatingText(floatingText, canvasPosition, 50,1);
             }
 
             // CollectResources( _field[(int)curPosition.x, (int)curPosition.y]);
@@ -429,10 +429,11 @@ public class GameManager : MonoBehaviour, IResetable {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 100);
+            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 75,1.5f);
         } else
             Debug.Log("not full same");
 
+        string unlockedCellText = "";
         for (int i = 0; i < _currentCraftedCells.Count; i++)
         {
             bool addNewCell = false;
@@ -446,6 +447,8 @@ public class GameManager : MonoBehaviour, IResetable {
                         {
                             currentCellsToSpawn.Add(_currentCraftedCells[i].cellsToCraft);
                             CheckUnlockedCellForTask(_currentCraftedCells[i].cellsToCraft);
+                            unlockedCellText += _currentCraftedCells[i].cellsToCraft.cellName + "\n";
+
                             _currentCraftedCells.RemoveAt(i);
                             i--;
                             addNewCell = true;
@@ -457,11 +460,11 @@ public class GameManager : MonoBehaviour, IResetable {
                     if (addNewCell) break;
                 }
             }
-
             Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
-
         }
 
+        if (unlockedCellText != "")
+            ShowFloatingText(unlockedCellText +" is unlocked!", _floatingTextContainer.position, 125,2.5f);
         CheckResourceCountForTasks();
 
         //if(_currentTasks.Count == 0)
@@ -470,7 +473,8 @@ public class GameManager : MonoBehaviour, IResetable {
 
     private void DestroyCell(int x, int y) {
         _field[x, y] = null;
-        Destroy(_cells[x, y].gameObject);
+        _cells[x, y].DestroyCell();
+      //  Destroy(_cells[x, y].gameObject);
     }
 
     private bool CheckWin() {
@@ -610,10 +614,10 @@ public class GameManager : MonoBehaviour, IResetable {
         GenerateNewPieces();
     }
 
-    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize) {
+    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime) {
         //  var screenPoint = (Input.mousePosition - _mainCanvasRectTransform.position) / _mainCanvasRectTransform.localScale.x;
         var floatingText = _floatingTextsPool.Get();
-        floatingText.SetText(newPosition, needText, textSize);
+        floatingText.SetText(newPosition, needText, textSize, showTime);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
