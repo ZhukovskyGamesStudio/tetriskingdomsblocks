@@ -224,7 +224,7 @@ public class GameManager : MonoBehaviour, IResetable {
             _placedCellsCount[pieceData.Type.cellType]++;
         if (resourcesForPlace.Length != 0) {
             var canvasPosition = _raycastCamera.WorldToScreenPoint(go.transform.position);
-            ShowFloatingText(needText, canvasPosition, 50, 1);
+            ShowFloatingText(needText, canvasPosition, 20, 1);
         }
     }
 
@@ -260,14 +260,21 @@ public class GameManager : MonoBehaviour, IResetable {
                 if (_currentTasks[i].taskInfo.needResource == ResourceType.None &&
                     GameData.CollectedResources.Count != 0)
                 {
+                    ResourceType maxResourceType = ResourceType.None;
                     foreach (var resource in GameData.CollectedResources)
                     {
+                        if (maxResourceType == ResourceType.None || GameData.CollectedResources[maxResourceType] < resource.Value)
+                            maxResourceType = resource.Key;
                         if (_currentTasks[i].taskInfo.count <= resource.Value)
                         {
                             _currentTasks.RemoveAt(i);
                             break;
+                           // Debug.Log(resource.Key);
                         }
                     }
+                        _currentTasks[i].taskUIView.currentTaskValue.text =
+                            GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count + " "+maxResourceType;
+                        _currentTasks[i].taskUIView.filledBarImage.value = GameData.CollectedResources[maxResourceType];
                 }
                 else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource,
                              out int resourceCount))
@@ -413,7 +420,7 @@ public class GameManager : MonoBehaviour, IResetable {
 
             if (cellInfo.resourcesForDestroy.Length != 0) {
                 var canvasPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-                ShowFloatingText(floatingText, canvasPosition, 50,1);
+                ShowFloatingText(floatingText, canvasPosition, 20,1);
             }
 
             // CollectResources( _field[(int)curPosition.x, (int)curPosition.y]);
@@ -429,7 +436,7 @@ public class GameManager : MonoBehaviour, IResetable {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 75,1.5f);
+            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 30,1.5f);
         } else
             Debug.Log("not full same");
 
@@ -464,7 +471,7 @@ public class GameManager : MonoBehaviour, IResetable {
         }
 
         if (unlockedCellText != "")
-            ShowFloatingText(unlockedCellText +" is unlocked!", _floatingTextContainer.position, 125,2.5f);
+            ShowFloatingText(unlockedCellText +" is unlocked!", _floatingTextContainer.position, 40,2.5f);
         CheckResourceCountForTasks();
 
         //if(_currentTasks.Count == 0)
@@ -576,7 +583,10 @@ public class GameManager : MonoBehaviour, IResetable {
             switch (task.taskType) {
                 case TaskInfo.TaskType.getResource:
 
-                    taskUI.currentTaskInfo.text = " Get" + task.count + " " + task.needResource;
+                    if (task.needResource == ResourceType.None)
+                        taskUI.currentTaskInfo.text = " Get" + task.count + " of any resource";
+                    else
+                        taskUI.currentTaskInfo.text = " Get" + task.count + " " + task.needResource;
                     break;
 
                 case TaskInfo.TaskType.placeMonoLine:

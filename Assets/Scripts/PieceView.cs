@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 using UnityEngine;
+using Lofelt.NiceVibrations;
+
 
 public class PieceView : MonoBehaviour {
     private PieceData _data;
@@ -88,6 +91,8 @@ public class PieceView : MonoBehaviour {
         _isDragging = false;
         if (GameManager.Instance.CanPlace(_data)) {
             GameManager.Instance.PlacePiece(_data);
+            
+            //HapticPatterns.PlayEmphasis(1.0f, 0.0f);
             Destroy(gameObject);
         } else {
             transform.position = _startingPosition;
