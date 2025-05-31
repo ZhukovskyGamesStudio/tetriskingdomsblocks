@@ -34,7 +34,7 @@ public class FloatingTextView : MonoBehaviour
         currentTween.Kill();
         currentTween = DOTween.Sequence()
             .Append(transform.DOMoveY(transform.position.y + 150, showTime))
-            .Join(transform.DOScale(transform.localScale * 1.5f, showTime));
+            .Join(transform.DOScale(transform.localScale * 1.5f, showTime-0.2f));
     }
    /* public IEnumerator MoveText()//mb change to dotween
     {

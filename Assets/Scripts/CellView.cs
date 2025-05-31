@@ -24,7 +24,8 @@ public class CellView : MonoBehaviour {
     {
         _currentTween = DOTween.Sequence()
             .Append(transform.DOScale(transform.localScale * 1.1f, 0.25f))
-            .Append(transform.DOScale(transform.localScale * 1f, 0.2f));
+            .Append(transform.DOScale(transform.localScale * 0.95f, 0.2f))
+            .Append(transform.DOScale(transform.localScale * 1f, 0.1f));
     }
     public void DestroyCell()
     {
