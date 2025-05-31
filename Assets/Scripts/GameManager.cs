@@ -38,7 +38,16 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
 
     [SerializeField]
     private Transform _floatingTextContainer;
+    
+    [SerializeField]
+    private Transform _cameraContainer;
+    
+    [SerializeField]
+    private RectTransform _tasksContainer;
 
+    [field:SerializeField]
+    public Transform _markedCell{ get; private set; }
+    
     public List<CellTypeInfo> currentCellsToSpawn;
     [field:SerializeField]
     public float[] CellsChanceToSpawn { get; private set; }
@@ -62,15 +71,22 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
 
     public List<CellTypeInfo> currentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
+    private float _screenRatio;
 
     private void Awake() {
         ChangeToLoading.TryChange();
         Instance = this;
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
+        _screenRatio = (float)Screen.width / Screen.height;
     }
 
     private void Start() {
         Reset();
+        Application.targetFrameRate = 60;
+        var helperTextTransform =  helperText.transform;
+        helperTextTransform.position = new Vector3(helperTextTransform.position.x,helperTextTransform.position.y * (_screenRatio / 0.56f), helperTextTransform.position.z) ;
+      //  Debug.Log(_cameraContainer.position.y + " " + (_screenRatio / 0.45f));
+        _cameraContainer.position = new Vector3(_cameraContainer.position.x,_cameraContainer.position.y / (_screenRatio / 0.5f), _cameraContainer.position.z) ;
     }
 
     private void GenerateField() { }
@@ -204,7 +220,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                     (int)Mathf.Clamp(pos.y + y, 0, MainGameConfig.fieldSize));
                 // var go = Instantiate(PiecesViewTable.Instance.GetCellByType(pieceData.Type.cellType), _fieldContainer);
                 var go = Instantiate(pieceData.Type.cellPrefab, _fieldContainer);
-                go.transform.localPosition = new Vector3(place.x, -0.05f, place.y);
+                go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
                 _field[place.x, place.y] = pieceData.Type;
                 _cells[place.x, place.y] = go;
                 go.GetComponent<CellView>().PlaceCellOnField();
@@ -337,7 +353,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     private void ExplodeCells() {
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
-
+        string unlockedCellText = "";
         // Проверка строк
         for (int y = 0; y < height; y++) {
             bool fullRow = true;
@@ -350,7 +366,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             }
 
             if (fullRow) {
-                DestroyLine(y, width, true);
+                DestroyLine(y, width, true, ref unlockedCellText);
             }
         }
 
@@ -366,10 +382,11 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             }
 
             if (fullColumn) {
-                DestroyLine(x, height, false);
+                DestroyLine(x, height, false, ref unlockedCellText);
             }
         }
-
+        if (unlockedCellText != "")
+            ShowFloatingText(unlockedCellText +" is unlocked!", _floatingTextContainer.position, 40,2.5f);
         DestroyAllMarkedCells();
     }
 
@@ -382,7 +399,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             DestroyCell((int)cell.x, (int)cell.y);
         }
     }
-    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow) //cut this to pieces
+    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow, ref string unlockedCellText) //cut this to pieces
     {
         bool fullSameResourcesColumn = MainGameConfig.bonusResourcesOnDestroyLine ? true : false;
         CellType currentCellType = CellType.Empty;
@@ -461,7 +478,6 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         } else
             Debug.Log("not full same");
 
-        string unlockedCellText = "";
         for (int i = 0; i < _currentCraftedCells.Count; i++)
         {
             bool addNewCell = false;
@@ -491,8 +507,6 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
         }
 
-        if (unlockedCellText != "")
-            ShowFloatingText(unlockedCellText +" is unlocked!", _floatingTextContainer.position, 40,2.5f);
         CheckResourceCountForTasks();
 
         //if(_currentTasks.Count == 0)
@@ -632,6 +646,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             //show task info in texts
         }
 
+        _tasksContainer.sizeDelta = new Vector2(_tasksContainer.sizeDelta.x,_tasksContainer.sizeDelta.y * _currentTasks.Count/3);
         _monoLinesCount = new Dictionary<ResourceType, int>();
 
         helperText.text = _currentLevelConfig.GuideForLevelText;
