@@ -43,20 +43,20 @@ public class GoalView : MonoBehaviour {
 
         _winState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(false);
-        _taskState.gameObject.SetActive(true);
+        //_taskState.gameObject.SetActive(true);
     }
 
     public void SetWinState() {
         _isGameEnded = true;
         _winState.gameObject.SetActive(true);
-        _taskState.gameObject.SetActive(false);
+        //_taskState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(false);
     }
     
     public void SetLoseState() {
         _isGameEnded = true;
         _winState.gameObject.SetActive(false);
-        _taskState.gameObject.SetActive(false);
+        //_taskState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(true);
     }
 

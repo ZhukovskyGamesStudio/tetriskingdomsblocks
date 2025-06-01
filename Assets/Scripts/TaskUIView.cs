@@ -10,12 +10,15 @@ public class TaskUIView : MonoBehaviour
    public Slider filledBarImage;
    private Tween currentTween;
    
-   public void AddTextAnimation()
+   public void AddTextAnimation(float needSliderValue)
    {
       currentTween.Kill();
-      currentTween = DOTween.Sequence()
-         .Append(currentTaskValue.transform.DOScale(Vector3.one * 1.5f, 0.3f))
+      currentTween = DOTween.Sequence()    
+         .Append(currentTaskValue.transform.DOScale(Vector3.one * 1.5f, 0.3f)) 
          .Append(currentTaskValue.transform.DOScale(Vector3.one * 0.95f, 0.2f))
-         .Append(currentTaskValue.transform.DOScale(Vector3.one, 0.07f));
+         .Append(currentTaskValue.transform.DOScale(Vector3.one, 0.07f))
+         .Join(filledBarImage.DOValue(needSliderValue,0.4f));
+     
+         
    }
 }

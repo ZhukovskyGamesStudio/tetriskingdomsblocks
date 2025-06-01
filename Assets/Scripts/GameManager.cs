@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -39,11 +40,11 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     [SerializeField]
     private Transform _floatingTextContainer;
     
-    [SerializeField]
+    [field:SerializeField]
     private Transform _cameraContainer;
     
     [SerializeField]
-    private RectTransform _tasksContainer;
+    private RectTransform _bgTasksImage;
 
     [field:SerializeField]
     public Transform _markedCell{ get; private set; }
@@ -52,6 +53,9 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     [field:SerializeField]
     public float[] CellsChanceToSpawn { get; private set; }
 
+    [field:SerializeField]
+    public TMP_Text _mainTextUp { get; private set; }
+    
     [SerializeField]
     private LevelConfig _currentLevelConfig;
 
@@ -73,18 +77,21 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     public GameData GameData { get; private set; }
     private float _screenRatio;
 
+    private Tween _currentTween;
+
     private void Awake() {
         ChangeToLoading.TryChange();
         Instance = this;
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         _screenRatio = (float)Screen.width / Screen.height;
+        Debug.Log("sr = "+_screenRatio);
     }
 
     private void Start() {
         Reset();
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 144;
         var helperTextTransform =  helperText.transform;
-        helperTextTransform.position = new Vector3(helperTextTransform.position.x,helperTextTransform.position.y * (_screenRatio / 0.56f), helperTextTransform.position.z) ;
+        helperTextTransform.parent.position = new Vector3(helperTextTransform.position.x,helperTextTransform.position.y * (_screenRatio / 0.56f), helperTextTransform.position.z) ;
       //  Debug.Log(_cameraContainer.position.y + " " + (_screenRatio / 0.45f));
         _cameraContainer.position = new Vector3(_cameraContainer.position.x,_cameraContainer.position.y / (_screenRatio / 0.5f), _cameraContainer.position.z) ;
     }
@@ -97,6 +104,13 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         GoalView.Instance.InitTask(GameData);*/
     }
 
+    private void ShakeCamera()
+    {
+        _currentTween.Kill();
+        _currentTween = DOTween.Sequence()
+            .Append(_cameraContainer.transform.DOMoveY(_cameraContainer.transform.position.y * 1.02f, 0.12f))
+            .Append(_cameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.5f), 0.08f));
+    }
     private void StartGame() {
         /*
         var startCells = currentLevelConfig.cellTypesTableConfig;
@@ -228,6 +242,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             }
         }
 
+        ShakeCamera();
         CheckPlacedCellsForTask();
     }
 
@@ -279,30 +294,40 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                     ResourceType maxResourceType = ResourceType.None;
                     foreach (var resource in GameData.CollectedResources)
                     {
-                        if (maxResourceType == ResourceType.None || GameData.CollectedResources[maxResourceType] < resource.Value)
+                        if (maxResourceType == ResourceType.None ||
+                            GameData.CollectedResources[maxResourceType] < resource.Value)
                             maxResourceType = resource.Key;
                     }
 
-                    _currentTasks[i].taskUIView.AddTextAnimation();
+                    if (GameData.CollectedResources[maxResourceType] !=
+                        (int)_currentTasks[i].taskUIView.filledBarImage.value)
+                    {
+                        _currentTasks[i].taskUIView.AddTextAnimation(GameData.CollectedResources[maxResourceType]);
                         _currentTasks[i].taskUIView.currentTaskValue.text =
-                            GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count + " "+maxResourceType;
-                        _currentTasks[i].taskUIView.filledBarImage.value = GameData.CollectedResources[maxResourceType];
+                            GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count +
+                            " " +
+                            maxResourceType;
+                        //   _currentTasks[i].taskUIView.filledBarImage.value = GameData.CollectedResources[maxResourceType];
                         if (_currentTasks[i].taskInfo.count <= GameData.CollectedResources[maxResourceType])
                         {
                             _currentTasks.RemoveAt(i);
                             break;
-                           // Debug.Log(resource.Key);
+                            // Debug.Log(resource.Key);
                         }
+                    }
                 }
                 else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource,
                              out int resourceCount))
                 {
-                    _currentTasks[i].taskUIView.AddTextAnimation();
-                    _currentTasks[i].taskUIView.currentTaskValue.text =
-                        resourceCount + " / " + _currentTasks[i].taskInfo.count;
-                    _currentTasks[i].taskUIView.filledBarImage.value = resourceCount;
-                    if (resourceCount >= _currentTasks[i].taskInfo.count)
-                        _currentTasks.RemoveAt(i);
+                    if ((int)_currentTasks[i].taskUIView.filledBarImage.value != resourceCount)
+                    {
+                        _currentTasks[i].taskUIView.AddTextAnimation(resourceCount);
+                        _currentTasks[i].taskUIView.currentTaskValue.text =
+                            resourceCount + " / " + _currentTasks[i].taskInfo.count;
+                       // _currentTasks[i].taskUIView.filledBarImage.value = resourceCount;
+                        if (resourceCount >= _currentTasks[i].taskInfo.count)
+                            _currentTasks.RemoveAt(i);
+                    }
                 }
             }
         }
@@ -312,28 +337,35 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeNeedCell &&
                 _placedCellsCount.TryGetValue(_currentTasks[i].taskInfo.needCell.cellType, out int count)) {
-                _currentTasks[i].taskUIView.AddTextAnimation();
+                if ((int)_currentTasks[i].taskUIView.filledBarImage.value != count)
+                {
+                _currentTasks[i].taskUIView.AddTextAnimation(count);
                 _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
-                _currentTasks[i].taskUIView.filledBarImage.value = count;
+               // _currentTasks[i].taskUIView.filledBarImage.value = count;
                 if (_currentTasks[i].taskInfo.count <= count)
                     _currentTasks.RemoveAt(i);
+                }
             }
         }
     }
 
-    private void CheckMonoLinesForTasks() {
-        for (int i = 0; i < _currentTasks.Count; i++) {
+    private void CheckMonoLinesForTasks()
+    {
+        for (int i = 0; i < _currentTasks.Count; i++)
+        {
             if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeMonoLine &&
-                _monoLinesCount.TryGetValue(_currentTasks[i].taskInfo.needResource, out int count)) {
-                _currentTasks[i].taskUIView.AddTextAnimation();
-                _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
-                _currentTasks[i].taskUIView.filledBarImage.value = count;
-                if (_currentTasks[i].taskInfo.count <= count)
+                _monoLinesCount.TryGetValue(_currentTasks[i].taskInfo.needResource, out int count))
+            {
+                if ((int)_currentTasks[i].taskUIView.filledBarImage.value != count)
                 {
-                    _currentTasks.RemoveAt(i);
-                    i--;
+                    _currentTasks[i].taskUIView.AddTextAnimation( _currentTasks[i].taskUIView.filledBarImage.value);
+                    _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
+                    if (_currentTasks[i].taskInfo.count <= count)
+                    {
+                        _currentTasks.RemoveAt(i);
+                        i--;
+                    }
                 }
-                    
             }
         }
     }
@@ -344,7 +376,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                 _currentTasks[i].taskInfo.needCell == needCell)
             {
                 _currentTasks[i].taskUIView.currentTaskValue.text = "1/1";
-            _currentTasks[i].taskUIView.AddTextAnimation();
+            _currentTasks[i].taskUIView.AddTextAnimation(1);
                 _currentTasks.RemoveAt(i);
             }
         }
@@ -402,17 +434,30 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow, ref string unlockedCellText) //cut this to pieces
     {
         bool fullSameResourcesColumn = MainGameConfig.bonusResourcesOnDestroyLine ? true : false;
-        CellType currentCellType = CellType.Empty;
         int bonusResourcesOnDestroyLine = 0;
         ResourceType currentBonusResourceType = ResourceType.None;
         Dictionary<ResourceType, int> resourcesMultiplayers = new Dictionary<ResourceType, int>();
         Dictionary<CellTypeInfo, int> cellTypesInLine = new Dictionary<CellTypeInfo, int>();
 
+        CellType currentCellType = CellType.Empty;
+        fullSameResourcesColumn = true;
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
         {
-            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
+            Vector2 curPosition = !isRow
+                ? new Vector2(mainAxisCurrentValue, secondAxis)
+                : new Vector2(secondAxis, mainAxisCurrentValue);
             var cellInfo = _field[(int)curPosition.x, (int)curPosition.y];
-            if (cellInfo.MultiplayerForSameResourceType != 0 && !resourcesMultiplayers.TryAdd(cellInfo.resourcesForDestroy[0].resourceType, cellInfo.MultiplayerForSameResourceType))
+            if (fullSameResourcesColumn)
+            {
+                if (currentCellType == CellType.Empty)
+                    currentCellType = cellInfo.cellType;
+                else if (currentCellType != cellInfo.cellType)
+                    fullSameResourcesColumn = false;
+            }
+
+            if (cellInfo.MultiplayerForSameResourceType != 0 &&
+                !resourcesMultiplayers.TryAdd(cellInfo.resourcesForDestroy[0].resourceType,
+                    cellInfo.MultiplayerForSameResourceType))
             {
                 if (cellInfo.MultiplayerForSameResourceType <
                     resourcesMultiplayers[cellInfo.resourcesForDestroy[0].resourceType])
@@ -421,16 +466,12 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             }
         }
 
-
-        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
-            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
+        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
+        {
+            Vector2 curPosition = !isRow
+                ? new Vector2(mainAxisCurrentValue, secondAxis)
+                : new Vector2(secondAxis, mainAxisCurrentValue);
             var cellInfo = _field[(int)curPosition.x, (int)curPosition.y];
-            if (fullSameResourcesColumn) {
-                if (currentCellType == CellType.Empty)
-                    currentCellType = cellInfo.cellType;
-                else if (currentCellType != cellInfo.cellType)
-                    fullSameResourcesColumn = false;
-            }
 
             string floatingText = "+ ";
 
@@ -439,26 +480,32 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
 
             for (int i = 0; i < cellInfo.resourcesForDestroy.Length; i++)
             {
-                resourcesMultiplayers.TryGetValue(cellInfo.resourcesForDestroy[i].resourceType, out int resourceMultiplayer);
-                Debug.Log(resourceMultiplayer + " resource multiplayer");
+                resourcesMultiplayers.TryGetValue(cellInfo.resourcesForDestroy[i].resourceType,
+                    out int resourceMultiplayer);
+                Debug.Log(resourceMultiplayer + " resource multiplayer" + cellInfo.resourcesForDestroy[i].resourceType);
                 if (resourceMultiplayer == 0)
                     resourceMultiplayer = 1;
                 int count = cellInfo.resourcesForDestroy[i].resourceCount * resourceMultiplayer;
-                if (fullSameResourcesColumn && !GameData.CollectedResources.TryAdd(cellInfo.resourcesForDestroy[i].resourceType,
+                if (!GameData.CollectedResources.TryAdd(cellInfo.resourcesForDestroy[i].resourceType,
                         count))
                     GameData.CollectedResources[cellInfo.resourcesForDestroy[i].resourceType] += count;
                 floatingText += cellInfo.resourcesForDestroy[i].resourceType.ToString() + " " + count +
                                 " ";
-                if (fullSameResourcesColumn) {
+                if (fullSameResourcesColumn)
+                {
                     bonusResourcesOnDestroyLine +=
-                        cellInfo.resourcesForDestroy[i].resourceCount; //fix this if on destroy resources types be more than 1;
+                        cellInfo.resourcesForDestroy[i]
+                            .resourceCount; //fix this if on destroy resources types be more than 1;
                     currentBonusResourceType = cellInfo.resourcesForDestroy[i].resourceType;
                 }
             }
 
-            if (cellInfo.resourcesForDestroy.Length != 0) {
-                var canvasPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-                ShowFloatingText(floatingText, canvasPosition, 20,1);
+            if (cellInfo.resourcesForDestroy.Length != 0)
+            {
+                var canvasPosition =
+                    _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform
+                        .position);
+                ShowFloatingText(floatingText, canvasPosition, 20, 1);
             }
 
             // CollectResources( _field[(int)curPosition.x, (int)curPosition.y]);
@@ -466,16 +513,21 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         }
 
         if (fullSameResourcesColumn && currentBonusResourceType != ResourceType.None /* &&
-            !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine)*/) {
+            !GameData.CollectedResources.TryAdd(currentBonusResourceType, bonusResourcesOnDestroyLine)*/)
+        {
             if (!_monoLinesCount.TryAdd(currentBonusResourceType, 1))
                 _monoLinesCount[currentBonusResourceType]++;
+            Debug.Log("mono line "+ currentBonusResourceType + " "+_monoLinesCount[currentBonusResourceType]);
             CheckMonoLinesForTasks();
             GameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
-            var needPosition = _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
+            var needPosition =
+                _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 30,1.5f);
-        } else
+            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 30,
+                1.5f);
+        }
+        else
             Debug.Log("not full same");
 
         for (int i = 0; i < _currentCraftedCells.Count; i++)
@@ -504,6 +556,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                     if (addNewCell) break;
                 }
             }
+
             Debug.Log(addNewCell + " add new cell" + _currentCraftedCells.Count);
         }
 
@@ -551,10 +604,17 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         StorageManager.gameDataMain.CurMaxLevel++;
         StorageManager.SaveGame();
         Debug.Log(" win");
+        _mainTextUp.text = "You win!";
+        foreach (var taskUI in _taskUIViews)
+            taskUI.gameObject.SetActive(false);
+
         GoalView.Instance.SetWinState();
     }
 
     private void Lose() {
+        _mainTextUp.text = "You lose:(";
+        foreach (var taskUI in _taskUIViews)
+            taskUI.gameObject.SetActive(false);
         GoalView.Instance.SetLoseState();
     }
 
@@ -646,7 +706,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             //show task info in texts
         }
 
-        _tasksContainer.sizeDelta = new Vector2(_tasksContainer.sizeDelta.x,_tasksContainer.sizeDelta.y * _currentTasks.Count/3);
+        _bgTasksImage.sizeDelta = new Vector2(_bgTasksImage.sizeDelta.x,_bgTasksImage.sizeDelta.y * _currentTasks.Count/3);
         _monoLinesCount = new Dictionary<ResourceType, int>();
 
         helperText.text = _currentLevelConfig.GuideForLevelText;
