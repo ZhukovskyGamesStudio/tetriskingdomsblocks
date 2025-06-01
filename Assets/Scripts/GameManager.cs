@@ -250,7 +250,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         string needText = " +";
         var resourcesForPlace = _field[place.x, place.y].resourcesForPlace;
         for (int i = 0; i < resourcesForPlace.Length; i++)
-            needText += resourcesForPlace[i].resourceCount + " " + resourcesForPlace[i].resourceType.ToString() + " ";
+            needText += resourcesForPlace[i].resourceCount + " <sprite name=" + resourcesForPlace[i].resourceType + ">" + " ";
         if (!_placedCellsCount.TryAdd(pieceData.Type.cellType, 1))
             _placedCellsCount[pieceData.Type.cellType]++;
         if (resourcesForPlace.Length != 0) {
@@ -679,9 +679,9 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                 case TaskInfo.TaskType.getResource:
 
                     if (task.needResource == ResourceType.None)
-                        taskUI.currentTaskInfo.text = " Get" + task.count + " of any resource";
+                        taskUI.currentTaskInfo.text = " Get " + task.count + " of any resource";
                     else
-                        taskUI.currentTaskInfo.text = " Get" + task.count + " " + task.needResource;
+                        taskUI.currentTaskInfo.text = " Get " + task.count + " " + task.needResource;
                     break;
 
                 case TaskInfo.TaskType.placeMonoLine:
