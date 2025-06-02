@@ -86,7 +86,7 @@ public class PieceView : MonoBehaviour {
           
            // targetPos = Vector3.Lerp(targetMousePos, clampedShiftedPos, 0.95f);
            targetPos = clampedShiftedPos;
-            targetPos = new Vector3(targetPos.x,_cellsContainer.position.y-1.1f,targetPos.z+0.05f) ;
+            targetPos = new Vector3(targetPos.x,_cellsContainer.position.y-1.05f,targetPos.z+0.05f) ;
             _markedCellsContainer.gameObject.SetActive(true);
             _markedCellsContainer.position = targetPos;
         }
