@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ public class GoalView : MonoBehaviour {
     private Slider _slider;
 
     [SerializeField]
-    private GameObject _taskState, _winState, _loseState;
+    private RectTransform _taskState, _winState, _loseState;
 
     public static GoalView Instance;
     private bool _isGameEnded;
@@ -46,21 +47,46 @@ public class GoalView : MonoBehaviour {
         //_taskState.gameObject.SetActive(true);
     }
 
-    public void SetWinState() {
+    public void SetWinState()
+    {
+        WinAnimation();
         _isGameEnded = true;
         _winState.gameObject.SetActive(true);
         //_taskState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(false);
     }
     
-    public void SetLoseState() {
+    public void SetLoseState()
+    {
+        LoseAnimation();
         _isGameEnded = true;
         _winState.gameObject.SetActive(false);
         //_taskState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(true);
     }
 
+    private void WinAnimation()
+    {
+        var _currentTween = DOTween.Sequence()
+            .Append(GameManager.Instance.BgTasksImage.DOAnchorPosY(
+                GameManager.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
 
+            .Append(GameManager.Instance.OpenedDoorEndGame.DOMoveY(GameManager.Instance.OpenedDoorEndGame.position.y + 2f, 0.7f))
+            .Append(GameManager.Instance.OpenedDoorEndGame.DOMoveY(GameManager.Instance.OpenedDoorEndGame.position.y + 1.8f, 0.07f))
+            .Append(GameManager.Instance.OpenedDoorEndGame.DOMoveY(GameManager.Instance.OpenedDoorEndGame.position.y + 2.3f, 0.1f))
+            .Join(_winState.DOAnchorPosY(_winState.anchoredPosition.y - 500, 0.6f))
+
+            .Append(GameManager.Instance.CameraContainer.DOMoveZ(GameManager.Instance.CameraContainer.position.z + 5, 3f));
+    }
+
+    private void LoseAnimation()
+    {
+        var _currentTween = DOTween.Sequence()
+            .Append(GameManager.Instance.BgTasksImage.DOAnchorPosY(
+                GameManager.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
+            .Append(_loseState.DOAnchorPosY(_loseState.anchoredPosition.y - 500, 0.6f));
+    }
+    
     public void StartAgain() {
         GameManager.Instance.Restart();
     }

@@ -41,13 +41,17 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     private Transform _floatingTextContainer;
     
     [field:SerializeField]
-    private Transform _cameraContainer;
+    public Transform CameraContainer;
     
     [SerializeField]
-    private RectTransform _bgTasksImage;
+    public RectTransform BgTasksImage;
 
     [field:SerializeField]
     public Transform _markedCell{ get; private set; }
+
+    [field: SerializeField] 
+    public Transform OpenedDoorEndGame;
+
     
     public List<CellTypeInfo> currentCellsToSpawn;
     [field:SerializeField]
@@ -93,7 +97,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         var helperTextTransform =  helperText.transform;
         helperTextTransform.parent.position = new Vector3(helperTextTransform.position.x,helperTextTransform.position.y * (_screenRatio / 0.56f), helperTextTransform.position.z) ;
       //  Debug.Log(_cameraContainer.position.y + " " + (_screenRatio / 0.45f));
-        _cameraContainer.position = new Vector3(_cameraContainer.position.x,_cameraContainer.position.y / (_screenRatio / 0.5f), _cameraContainer.position.z) ;
+        CameraContainer.position = new Vector3(CameraContainer.position.x,CameraContainer.position.y / (_screenRatio / 0.5f), CameraContainer.position.z) ;
     }
 
     private void GenerateField() { }
@@ -108,8 +112,8 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     {
         _currentTween.Kill();
         _currentTween = DOTween.Sequence()
-            .Append(_cameraContainer.transform.DOMoveY(_cameraContainer.transform.position.y * 1.02f, 0.12f))
-            .Append(_cameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.5f), 0.08f));
+            .Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
+            .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.5f), 0.08f));
     }
     private void StartGame() {
         /*
@@ -488,7 +492,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                 if (!GameData.CollectedResources.TryAdd(cellInfo.resourcesForDestroy[i].resourceType,
                         count))
                     GameData.CollectedResources[cellInfo.resourcesForDestroy[i].resourceType] += count;
-                floatingText += cellInfo.resourcesForDestroy[i].resourceType.ToString() + " " + count +
+                floatingText +=  " <sprite name=" + cellInfo.resourcesForDestroy[i].resourceType + "> " + count +
                                 " ";
                 if (fullSameResourcesColumn)
                 {
@@ -516,14 +520,14 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         {
             if (!_monoLinesCount.TryAdd(currentBonusResourceType, 1))
                 _monoLinesCount[currentBonusResourceType]++;
-            Debug.Log("mono line "+ currentBonusResourceType + " "+_monoLinesCount[currentBonusResourceType]);
+            //Debug.Log("mono line "+ currentBonusResourceType + " "+_monoLinesCount[currentBonusResourceType]);
             CheckMonoLinesForTasks();
             GameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition =
                 _raycastCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText(currentBonusResourceType.ToString() + " +" + bonusResourcesOnDestroyLine, needPosition, 30,
+            ShowFloatingText("<sprite name=" + currentBonusResourceType + "> " + bonusResourcesOnDestroyLine, needPosition, 30,
                 1.5f);
         }
         else
@@ -705,7 +709,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             //show task info in texts
         }
 
-        _bgTasksImage.sizeDelta = new Vector2(_bgTasksImage.sizeDelta.x,_bgTasksImage.sizeDelta.y * _currentTasks.Count/3);
+        BgTasksImage.sizeDelta = new Vector2(BgTasksImage.sizeDelta.x,BgTasksImage.sizeDelta.y * _currentTasks.Count/3);
         _monoLinesCount = new Dictionary<ResourceType, int>();
 
         helperText.text = _currentLevelConfig.GuideForLevelText;
