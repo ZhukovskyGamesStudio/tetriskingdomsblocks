@@ -305,8 +305,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                         _currentTasks[i].taskUIView.AddTextAnimation(GameData.CollectedResources[maxResourceType]);
                         _currentTasks[i].taskUIView.currentTaskValue.text =
                             GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count +
-                            " " +
-                            maxResourceType;
+                            " <sprite name=" + maxResourceType + ">";
                         //   _currentTasks[i].taskUIView.filledBarImage.value = GameData.CollectedResources[maxResourceType];
                         if (_currentTasks[i].taskInfo.count <= GameData.CollectedResources[maxResourceType])
                         {
@@ -681,12 +680,12 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                     if (task.needResource == ResourceType.None)
                         taskUI.currentTaskInfo.text = " Get " + task.count + " of any resource";
                     else
-                        taskUI.currentTaskInfo.text = " Get " + task.count + " " + task.needResource;
+                        taskUI.currentTaskInfo.text = " Get " + task.count + " <sprite name=" + task.needResource + ">";
                     break;
 
                 case TaskInfo.TaskType.placeMonoLine:
 
-                    taskUI.currentTaskInfo.text = " Place mono line " + task.count + " times with " + task.needResource;
+                    taskUI.currentTaskInfo.text = " Place mono line " + task.count + " times with " + " <sprite name=" + task.needResource + ">";
                     break;
 
                 case TaskInfo.TaskType.placeNeedCell:
