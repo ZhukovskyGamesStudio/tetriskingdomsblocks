@@ -33,6 +33,9 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
 
     [SerializeField]
     private TMP_Text helperText;
+    
+    [SerializeField]
+    private Transform _downUITransform;
 
     [SerializeField]
     private FloatingTextView _floatingTextPrefab;
@@ -62,6 +65,8 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     
     [SerializeField]
     private LevelConfig _currentLevelConfig;
+    
+    public SpawnedForOneCharTextView _characterInfoTextHelper;
 
     private List<TaskInfoAndUI> _currentTasks;
 
@@ -94,8 +99,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     private void Start() {
         Reset();
         Application.targetFrameRate = 144;
-        var helperTextTransform =  helperText.transform;
-        helperTextTransform.parent.position = new Vector3(helperTextTransform.position.x,helperTextTransform.position.y * (_screenRatio / 0.56f), helperTextTransform.position.z) ;
+        _downUITransform.position = new Vector3(_downUITransform.position.x,_downUITransform.position.y * (_screenRatio / 0.56f), _downUITransform.position.z) ;
       //  Debug.Log(_cameraContainer.position.y + " " + (_screenRatio / 0.45f));
         CameraContainer.position = new Vector3(CameraContainer.position.x,CameraContainer.position.y / (_screenRatio / 0.5f), CameraContainer.position.z) ;
     }
@@ -303,34 +307,38 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
                             maxResourceType = resource.Key;
                     }
 
-                    if (GameData.CollectedResources[maxResourceType] !=
-                        (int)_currentTasks[i].taskUIView.filledBarImage.value)
-                    {
-                        _currentTasks[i].taskUIView.AddTextAnimation(GameData.CollectedResources[maxResourceType]);
-                        _currentTasks[i].taskUIView.currentTaskValue.text =
-                            GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count +
-                            " <sprite name=" + maxResourceType + ">";
+                //    if (GameData.CollectedResources[maxResourceType] !=
+                  //      (int)_currentTasks[i].taskUIView.filledBarImage.value)
+                 //   {
+                       // _currentTasks[i].taskUIView.AddTextAnimation(GameData.CollectedResources[maxResourceType]);
+                      //  _currentTasks[i].taskUIView.currentTaskValue.text =
+                        //    GameData.CollectedResources[maxResourceType] + " / " + _currentTasks[i].taskInfo.count +
+                        //    " <sprite name=" + maxResourceType + ">";
                         //   _currentTasks[i].taskUIView.filledBarImage.value = GameData.CollectedResources[maxResourceType];
                         if (_currentTasks[i].taskInfo.count <= GameData.CollectedResources[maxResourceType])
                         {
+                            _currentTasks[i].taskUIView.CompleteTask();
                             _currentTasks.RemoveAt(i);
                             break;
                             // Debug.Log(resource.Key);
                         }
-                    }
+                   // }
                 }
                 else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].taskInfo.needResource,
                              out int resourceCount))
                 {
-                    if ((int)_currentTasks[i].taskUIView.filledBarImage.value != resourceCount)
-                    {
-                        _currentTasks[i].taskUIView.AddTextAnimation(resourceCount);
-                        _currentTasks[i].taskUIView.currentTaskValue.text =
-                            resourceCount + " / " + _currentTasks[i].taskInfo.count;
+                   // if ((int)_currentTasks[i].taskUIView.filledBarImage.value != resourceCount)
+                  //  {
+                       // _currentTasks[i].taskUIView.AddTextAnimation(resourceCount);
+                     //   _currentTasks[i].taskUIView.currentTaskValue.text =
+                      //      resourceCount + " / " + _currentTasks[i].taskInfo.count;
                        // _currentTasks[i].taskUIView.filledBarImage.value = resourceCount;
-                        if (resourceCount >= _currentTasks[i].taskInfo.count)
+                       if (resourceCount >= _currentTasks[i].taskInfo.count)
+                       {
+                           _currentTasks[i].taskUIView.CompleteTask();
                             _currentTasks.RemoveAt(i);
-                    }
+                       }
+                  // }
                 }
             }
         }
@@ -340,12 +348,14 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeNeedCell &&
                 _placedCellsCount.TryGetValue(_currentTasks[i].taskInfo.needCell.cellType, out int count)) {
-                if ((int)_currentTasks[i].taskUIView.filledBarImage.value != count)
-                {
-                _currentTasks[i].taskUIView.AddTextAnimation(count);
-                _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
+                //if ((int)_currentTasks[i].taskUIView.filledBarImage.value != count)
+               // {
+               // _currentTasks[i].taskUIView.AddTextAnimation(count);
+              //  _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
                // _currentTasks[i].taskUIView.filledBarImage.value = count;
                 if (_currentTasks[i].taskInfo.count <= count)
+                {
+                    _currentTasks[i].taskUIView.CompleteTask();
                     _currentTasks.RemoveAt(i);
                 }
             }
@@ -359,16 +369,17 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.placeMonoLine &&
                 _monoLinesCount.TryGetValue(_currentTasks[i].taskInfo.needResource, out int count))
             {
-                if ((int)_currentTasks[i].taskUIView.filledBarImage.value != count)
-                {
-                    _currentTasks[i].taskUIView.AddTextAnimation( _currentTasks[i].taskUIView.filledBarImage.value);
-                    _currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
+               // if (_currentTasks[i].taskInfo.needResource == count)
+               // {
+                    //_currentTasks[i].taskUIView.AddTextAnimation();
+                    //_currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
                     if (_currentTasks[i].taskInfo.count <= count)
                     {
+                        _currentTasks[i].taskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
                         i--;
                     }
-                }
+                //}
             }
         }
     }
@@ -378,8 +389,9 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             if (_currentTasks[i].taskInfo.taskType == TaskInfo.TaskType.unlockCell &&
                 _currentTasks[i].taskInfo.needCell == needCell)
             {
-                _currentTasks[i].taskUIView.currentTaskValue.text = "1/1";
-            _currentTasks[i].taskUIView.AddTextAnimation(1);
+                //_currentTasks[i].taskUIView.currentTaskValue.text = "1/1";
+           // _currentTasks[i].taskUIView.AddTextAnimation(1);
+            _currentTasks[i].taskUIView.CompleteTask();
                 _currentTasks.RemoveAt(i);
             }
         }
@@ -677,42 +689,44 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
             var taskUI = _taskUIViews[i];
             taskUI.gameObject.SetActive(true);
             _currentTasks.Add(new TaskInfoAndUI(task, taskUI));
-
+            string needTasktext = "";
             switch (task.taskType) {
                 case TaskInfo.TaskType.getResource:
 
                     if (task.needResource == ResourceType.None)
-                        taskUI.currentTaskInfo.text = " Get " + task.count + " of any resource";
+                        needTasktext = " Get " + task.count + " of any resource";
                     else
-                        taskUI.currentTaskInfo.text = " Get " + task.count + " <sprite name=" + task.needResource + ">";
+                        needTasktext = " Get " + task.count + " <sprite name=" + task.needResource + ">";
                     break;
 
                 case TaskInfo.TaskType.placeMonoLine:
 
-                    taskUI.currentTaskInfo.text = " Place mono line " + task.count + " times with " + " <sprite name=" + task.needResource + ">";
+                    needTasktext = " Place mono line " + task.count + " times with " + " <sprite name=" + task.needResource + ">";
                     break;
 
                 case TaskInfo.TaskType.placeNeedCell:
 
-                    taskUI.currentTaskInfo.text = " Place " + task.needCell.cellName + " " + task.count + " times";
+                    needTasktext = " Place " + task.needCell.cellName + " " + task.count + " times";
                     break;
 
                 case TaskInfo.TaskType.unlockCell:
 
-                    taskUI.currentTaskInfo.text = " Unlock " + task.needCell.cellName;
+                    needTasktext = " Unlock " + task.needCell.cellName;
                     break;
             }
 
-            taskUI.currentTaskValue.text = "0 / " + task.count;
-            taskUI.filledBarImage.value = 0;
-            taskUI.filledBarImage.maxValue = task.count;
+            StartCoroutine(taskUI.taskInfoTextHelper.StartSpawnText(needTasktext));
+
+            // taskUI.currentTaskValue.text = "0 / " + task.count;
+            // taskUI.filledBarImage.value = 0;
+            // taskUI.filledBarImage.maxValue = task.count;
             //show task info in texts
         }
 
-        BgTasksImage.sizeDelta = new Vector2(BgTasksImage.sizeDelta.x,BgTasksImage.sizeDelta.y * _currentTasks.Count/3);
+        //BgTasksImage.sizeDelta = new Vector2(BgTasksImage.sizeDelta.x,BgTasksImage.sizeDelta.y * _currentTasks.Count/3);
         _monoLinesCount = new Dictionary<ResourceType, int>();
 
-        helperText.text = _currentLevelConfig.GuideForLevelText;
+        StartCoroutine(_characterInfoTextHelper.StartSpawnText(_currentLevelConfig.GuideForLevelText));
 
         currentGuaranteedFirstCells = new List<CellTypeInfo>();
         foreach (var cellInfo in _currentLevelConfig.CurrentGuaranteedFirstCells)
