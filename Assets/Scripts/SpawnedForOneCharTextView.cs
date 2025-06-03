@@ -21,7 +21,7 @@ public class SpawnedForOneCharTextView : MonoBehaviour
         {
             if (needString[i] == '<')
             {
-                yield return new WaitForSeconds(0.15f);
+                yield return new WaitForSeconds(0.05f);
                 isStartingIconText = true;
                 iconText += needString[i];
             }
