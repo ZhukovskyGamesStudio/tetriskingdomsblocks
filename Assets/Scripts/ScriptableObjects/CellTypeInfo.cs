@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CellTypeInfo", menuName = "Scriptable Objects/CellTypeInfo")]
 public class CellTypeInfo : ScriptableObject
 {
-    public CellView cellPrefab;
     public CellType cellType;
+    public CellView cellPrefab;
     public string cellForm;
     public Color MarkCellColor;
     public ResourceTypeAndCountSubClass[] resourcesForPlace;

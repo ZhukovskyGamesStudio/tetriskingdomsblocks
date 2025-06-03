@@ -3,22 +3,22 @@ using UnityEngine;
 
 public static class StorageManager {
     private const string SaveKey = "tetrisGame";
-    public static GameDataForSave gameDataMain = new GameDataForSave();
+    public static GameDataForSave GameDataMain = new GameDataForSave();
 
 
     public static void CreateNewSaveData() {
-        gameDataMain = new GameDataForSave();
+        GameDataMain = new GameDataForSave();
         SaveGame();
     }
     public static void SaveGame() {
-        string json = JsonUtility.ToJson(gameDataMain);
+        string json = JsonUtility.ToJson(GameDataMain);
         PlayerPrefs.SetString(SaveKey, json);
     }
 
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
-        gameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-       Debug.Log(gameDataMain.CurMaxLevel);
+        GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
+       Debug.Log(GameDataMain.CurMaxLevel);
     }
 
     public static bool IsNewPlayer() {

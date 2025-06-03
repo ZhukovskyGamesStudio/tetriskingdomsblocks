@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MainGameConfig", menuName = "Scriptable Objects/MainGameConfig")]
@@ -14,6 +15,8 @@ public class MainGameConfig : ScriptableObject
     public CraftingCellInfo[] cellsToCraft;
 
     public CellTypeInfo[] guaranteedFirstCells;
+
+    public List<CellTypeInfo> CellsConfigs;
     
     public int fieldSize;
 
