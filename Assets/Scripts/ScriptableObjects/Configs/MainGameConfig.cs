@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "MainGameConfig", menuName = "Scriptable Objects/MainGameConfig")]
 public class MainGameConfig : ScriptableObject
@@ -7,14 +8,8 @@ public class MainGameConfig : ScriptableObject
     public bool resourceOnDestroyCell;
     public bool bonusResourcesOnDestroyLine;
 
-    public int minResourcesToTask;
-    public int maxResourcesToTask;
-
-    public LevelConfig[] levels;
-    public CraftingCellInfo[] cellsToCraft;
-
-    public CellTypeInfo[] guaranteedFirstCells;
-    
-    public int fieldSize;
+    [FormerlySerializedAs("levels")] public LevelConfig[] Levels;
+    [FormerlySerializedAs("cellsToCraft")] public CraftingCellInfo[] CellsToCraft;
+    [FormerlySerializedAs("fieldSize")] public int FieldSize;
 
 }

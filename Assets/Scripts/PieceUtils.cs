@@ -6,8 +6,7 @@ using Random = UnityEngine.Random;
 
 public static class PieceUtils {
     public static PieceData GetNewPiece() {
-       // var l = Enum.GetNames(typeof(CellType));
-        var cellsToSpawn = GameManager.Instance.currentCellsToSpawn;
+        var cellsToSpawn = GameManager.Instance._currentCellsToSpawn;
         CellTypeInfo cellInfo = null;
         var chancesToSpawn = GameManager.Instance.CellsChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
@@ -20,25 +19,18 @@ public static class PieceUtils {
             }
         }
         
-        if (GameManager.Instance.currentGuaranteedFirstCells.Count != 0)
+        if (GameManager.Instance.CurrentGuaranteedFirstCells.Count != 0)
         {
-            cellInfo = GameManager.Instance.currentGuaranteedFirstCells[0];
-            GameManager.Instance.currentGuaranteedFirstCells.RemoveAt(0);
+            cellInfo = GameManager.Instance.CurrentGuaranteedFirstCells[0];
+            GameManager.Instance.CurrentGuaranteedFirstCells.RemoveAt(0);
         }
-       /* var cells = cellInfo.cellForm == ""
-            ? TetrisPieces.PieceShapesTable.Values.ElementAt(Random.Range(0,
-                TetrisPieces.PieceShapesTable.Values.Count))
-            : TetrisPieces.PieceShapesTable[cellInfo.cellForm];*/
-       
-       var cells = cellInfo.cellForm == null
+       var cells = cellInfo.CellForm == null
            ?  GetRandomFigure()
-           : TetrisPieces.PieceShapesTable[cellInfo.cellForm.FormName];
+           : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
        
         var data = new PieceData()
         {
-            // Type = Enum.Parse<CellType>(l[Random.Range(1, l.Length)]),
             Type = cellInfo,
-            //   Cells = TetrisPieces.PieceShapesTable[Random.Range(0, TetrisPieces.PieceShapesTable.Count)]
             Cells = cells,
         };
         return data;

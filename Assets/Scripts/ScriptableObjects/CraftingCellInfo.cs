@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "CraftingCellInfo", menuName = "Scriptable Objects/CraftingCellInfo")]
 public class CraftingCellInfo : ScriptableObject
 {
-    public CellTypeInfo cellsToCraft;
+    [FormerlySerializedAs("cellsToCraft")] public CellTypeInfo CellsToCraft;
 
-    public CellTypeInfo[] cellTypeToCraft;
-    public CellTypeInfo[] cellTypeToCraftSecond;
+    [FormerlySerializedAs("cellTypeToCraft")] public CellTypeInfo[] CellTypeToCraft;
+    [FormerlySerializedAs("cellTypeToCraftSecond")] public CellTypeInfo[] CellTypeToCraftSecond;
 }

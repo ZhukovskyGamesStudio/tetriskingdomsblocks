@@ -1,4 +1,5 @@
 public static class ResourcesUtils {
+    //
     public static  ResourceType ResourceByCellType(CellType type) {
         switch (type) {
             case CellType.Forest:

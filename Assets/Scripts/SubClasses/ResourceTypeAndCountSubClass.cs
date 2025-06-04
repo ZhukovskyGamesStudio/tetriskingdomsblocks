@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class ResourceTypeAndCountSubClass
 {
-    public ResourceType resourceType;
-    public int resourceCount;
+    [FormerlySerializedAs("resourceType")] public ResourceType ResourceType;
+    [FormerlySerializedAs("resourceCount")] public int ResourceCount;
 }

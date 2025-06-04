@@ -14,14 +14,4 @@ public class PiecesViewTable : MonoBehaviour {
     private void Awake() {
         Instance = this;
     }
-
-  /*  public CellView GetCellByType(CellType type) {
-        foreach (var VARIABLE in _cellViews) {
-            if (VARIABLE.CellType == type) {
-                return VARIABLE;
-            }
-        }
-
-        throw new KeyNotFoundException();
-    }*/
 }

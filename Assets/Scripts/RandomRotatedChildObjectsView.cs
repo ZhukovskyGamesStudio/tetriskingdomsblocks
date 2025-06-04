@@ -14,7 +14,6 @@ public class RandomRotatedChildObjectsView : MonoBehaviour
                 child.localRotation.z
             ));
             child.gameObject.isStatic = true;
-            Debug.Log(child.name + " lrotated" + randomY);
         }
     }
 }

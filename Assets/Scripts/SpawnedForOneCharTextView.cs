@@ -38,7 +38,7 @@ public class SpawnedForOneCharTextView : MonoBehaviour
             else
             {
                 _needText.text += needString[i];
-                yield return new WaitForSeconds(0.15f);
+                yield return new WaitForSeconds(0.05f);
             }
         }
     }
