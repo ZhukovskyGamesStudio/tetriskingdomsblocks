@@ -5,7 +5,7 @@ public class CellTypeInfo : ScriptableObject
 {
     public CellView cellPrefab;
     public CellType cellType;
-    public string cellForm;
+    public FigureFormConfig cellForm;
     public Color MarkCellColor;
     public ResourceTypeAndCountSubClass[] resourcesForPlace;
     public ResourceTypeAndCountSubClass[] resourcesForDestroy;

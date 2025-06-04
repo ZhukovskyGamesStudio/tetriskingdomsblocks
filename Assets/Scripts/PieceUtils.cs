@@ -18,7 +18,6 @@ public static class PieceUtils {
                 cellInfo = cellsToSpawn[i];
                 break;
             }
-            Debug.Log(chancesToSpawn[i]+" chance to spawn"+chance);
         }
         
         if (GameManager.Instance.currentGuaranteedFirstCells.Count != 0)
@@ -26,10 +25,15 @@ public static class PieceUtils {
             cellInfo = GameManager.Instance.currentGuaranteedFirstCells[0];
             GameManager.Instance.currentGuaranteedFirstCells.RemoveAt(0);
         }
-        var cells = cellInfo.cellForm == ""
+       /* var cells = cellInfo.cellForm == ""
             ? TetrisPieces.PieceShapesTable.Values.ElementAt(Random.Range(0,
                 TetrisPieces.PieceShapesTable.Values.Count))
-            : TetrisPieces.PieceShapesTable[cellInfo.cellForm];
+            : TetrisPieces.PieceShapesTable[cellInfo.cellForm];*/
+       
+       var cells = cellInfo.cellForm == null
+           ?  GetRandomFigure()
+           : TetrisPieces.PieceShapesTable[cellInfo.cellForm.FormName];
+       
         var data = new PieceData()
         {
             // Type = Enum.Parse<CellType>(l[Random.Range(1, l.Length)]),
@@ -40,6 +44,18 @@ public static class PieceUtils {
         return data;
     }
 
+    public static bool[,] GetRandomFigure()
+    {
+        var chancesToSpawn = GameManager.Instance.FiguresChanceToSpawn;
+        float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
+        for (int i = 0; i < chancesToSpawn.Length; i++)
+        {
+            if (chancesToSpawn[i] > chance)
+                return TetrisPieces.PieceShapesTable[GameManager.Instance.FigureFormsConfig[i].FormName];
+        }
+
+        return null;
+    }
     public static bool CanPlacePiece(CellTypeInfo[,] field, bool[,] piece) {
         int fieldWidth = field.GetLength(0);
         int fieldHeight = field.GetLength(1);

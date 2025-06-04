@@ -10,6 +10,8 @@ public class PieceView : MonoBehaviour {
     private bool _isDragging;
     public static Vector3 DragShift;
     public static Vector2Int PieceMaxSize;
+    [SerializeField]
+    private BoxCollider _collider;
     [field:SerializeField]
     public Transform _markedCellsContainer { get; private set; }
     [field:SerializeField]
@@ -27,6 +29,7 @@ public class PieceView : MonoBehaviour {
         var width = _data.Cells.GetLength(0);
         var height = _data.Cells.GetLength(1);
         var shift = CalculateShift();
+        _collider.size = new Vector3(width,0.3f, height);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 bool cell = data.Cells[x, y];
@@ -54,15 +57,16 @@ public class PieceView : MonoBehaviour {
 
     public void OnStartDrag() {
         _isDragging = true;
+        GameManager.Instance.cusorToCellOffset = transform.position - GameManager.Instance.ScreenToWorldPoint;
         DragShift = CalculateShift() + Vector3.one/2;
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
     }
 
     public void OnDrag() {
-        var targetMousePos = GameManager.Instance.ScreenToWorldPoint;
+        var targetMousePos = GameManager.Instance.ScreenToWorldPoint + GameManager.Instance.cusorToCellOffset;
         if (Input.touchCount > 0)
         {
-            targetMousePos = GameManager.Instance.TouchToWorldPoint;
+            targetMousePos = GameManager.Instance.TouchToWorldPoint+ GameManager.Instance.cusorToCellOffset;
         }
         targetMousePos.y = _cellsContainer.position.y;
         var posOnField = GameManager.Instance.GetPosOnField();
@@ -94,7 +98,7 @@ public class PieceView : MonoBehaviour {
         {
             _markedCellsContainer.gameObject.SetActive(false);
         }
-        
+        Debug.Log(targetMousePos);
         _cellsContainer.position = targetMousePos;
       //  transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
     }

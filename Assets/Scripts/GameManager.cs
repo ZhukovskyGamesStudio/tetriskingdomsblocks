@@ -71,13 +71,14 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     private List<TaskInfoAndUI> _currentTasks;
 
     private Dictionary<ResourceType, int> _monoLinesCount;
-
+    [SerializeField] private LayerMask _targetMasks;
     private Dictionary<CellType, int> _placedCellsCount;
 
     private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
 
-    public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
-    public Vector3 TouchToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.GetTouch(0).position);
+  //  public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
+  public Vector3 ScreenToWorldPoint => Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit,Mathf.Infinity,  _targetMasks) ? hit.point : Vector3.zero ;
+    public Vector3 TouchToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.GetTouch(0).position) ;
     private int _placedPiecesAmount;
 
     private ObjectPool<FloatingTextView> _floatingTextsPool;
@@ -85,18 +86,24 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     public List<CellTypeInfo> currentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
     private float _screenRatio;
-
+    
+    [field:SerializeField]
+    public FigureFormConfig[] FigureFormsConfig  { get; private set; }
+    public float[] FiguresChanceToSpawn { get; private set; }
+    
     private Tween _currentTween;
+    [HideInInspector]
+    public Vector3 cusorToCellOffset;
 
     private void Awake() {
         ChangeToLoading.TryChange();
         Instance = this;
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         _screenRatio = (float)Screen.width / Screen.height;
-        Debug.Log("sr = "+_screenRatio);
     }
 
     private void Start() {
+        CalculateFiguresSpawnChances();
         Reset();
         Application.targetFrameRate = 144;
         _downUITransform.position = new Vector3(_downUITransform.position.x,_downUITransform.position.y * (_screenRatio / 0.56f), _downUITransform.position.z) ;
@@ -147,7 +154,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     }
 
     public Vector2Int GetPosOnField() {
-        Vector3 coord = GetCoord();
+        Vector3 coord = GetCoord() + cusorToCellOffset;
         if (PieceView.PieceMaxSize.x % 2 == 0) {
             coord += Vector3.left / 2f;
         }
@@ -168,7 +175,7 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
     }
 
     public Vector2Int GetPieceClampedPosOnField() {
-        Vector3 coord = GetCoord();
+        Vector3 coord = GetCoord() + cusorToCellOffset;
         coord += new Vector3(PieceView.DragShift.x, 0, PieceView.DragShift.z) + Vector3.forward;
         /*
        if (CalculateShift().x % 1 != 0) {
@@ -637,12 +644,20 @@ private List<Vector2> _cellsToDestroy = new List<Vector2>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-
+    private void CalculateFiguresSpawnChances()
+    {
+        float lastChance = 0;
+        FiguresChanceToSpawn = new float[FigureFormsConfig.Length];
+        for (int i = 0; i < FigureFormsConfig.Length; i++)
+        {
+            lastChance += FigureFormsConfig[i].Cost;
+            FiguresChanceToSpawn[i] = lastChance;
+        }
+    }
     private void CalculateCellSpawnChances()
     {
         float lastChance = 0;
         CellsChanceToSpawn = new float[currentCellsToSpawn.Count];
-       Debug.Log(CellsChanceToSpawn.Length + " ch list count"); 
         for (int i = 0; i < currentCellsToSpawn.Count; i++)
         {
             lastChance += currentCellsToSpawn[i].ChanceToSpawn;
