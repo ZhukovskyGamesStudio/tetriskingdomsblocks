@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
   m_Name: MountainsCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 3199888184775657234, guid: f892ab96dd2655745bbbb2b2e218d637, type: 3}
-  cellType: 4
-  cellForm: {fileID: 0}
+  CellPrefab: {fileID: 3199888184775657234, guid: f892ab96dd2655745bbbb2b2e218d637, type: 3}
+  CellType: 7
+  CellForm: {fileID: 0}
   MarkCellColor: {r: 0.25796545, g: 0.2655549, b: 0.2924528, a: 0}
-  resourcesForPlace:
-  - resourceType: 2
-    resourceCount: 1
-  resourcesForDestroy:
-  - resourceType: 2
-    resourceCount: 1
-  cellName: Mountain
+  ResourcesForPlace:
+  - ResourceType: 2
+    ResourceCount: 1
+  ResourcesForDestroy:
+  - ResourceType: 2
+    ResourceCount: 1
+  CellName: Mountain
   MultiplayerForSameResourceType: 0
   ChanceToSpawn: 1

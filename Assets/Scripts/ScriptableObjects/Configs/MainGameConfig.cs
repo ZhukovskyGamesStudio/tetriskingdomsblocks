@@ -13,4 +13,5 @@ public class MainGameConfig : ScriptableObject
     [FormerlySerializedAs("cellsToCraft")] public CraftingCellInfo[] CellsToCraft;
     [FormerlySerializedAs("fieldSize")] public int FieldSize;
 
+    public List<CellTypeInfo> CellsConfigs;
 }

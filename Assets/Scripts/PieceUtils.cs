@@ -47,7 +47,7 @@ public static class PieceUtils {
 
         return null;
     }
-    public static bool CanPlacePiece(CellTypeInfo[,] field, bool[,] piece) {
+    public static bool CanPlacePiece(CellType[,] field, bool[,] piece) {
         int fieldWidth = field.GetLength(0);
         int fieldHeight = field.GetLength(1);
         int pieceWidth = piece.GetLength(0);

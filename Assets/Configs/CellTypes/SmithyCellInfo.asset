@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
   m_Name: SmithyCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
-  cellType: 2
-  cellForm: {fileID: 0}
+  CellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
+  CellType: 4
+  CellForm: {fileID: 0}
   MarkCellColor: {r: 0.50980395, g: 0.24645148, b: 0.17647058, a: 0}
-  resourcesForPlace:
-  - resourceType: 4
-    resourceCount: 2
-  resourcesForDestroy:
-  - resourceType: 4
-    resourceCount: 2
-  cellName: smithy
+  ResourcesForPlace:
+  - ResourceType: 4
+    ResourceCount: 2
+  ResourcesForDestroy:
+  - ResourceType: 4
+    ResourceCount: 2
+  CellName: smithy
   MultiplayerForSameResourceType: 2
   ChanceToSpawn: 0.5

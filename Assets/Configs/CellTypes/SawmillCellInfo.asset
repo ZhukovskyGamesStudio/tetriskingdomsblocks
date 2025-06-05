@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
   m_Name: SawmillCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 4948077585785927334, guid: 8aceddccba9388a4d9d8e6ca9710eddc, type: 3}
-  cellType: 1
-  cellForm: {fileID: 11400000, guid: 4353b061f22d17641b6a97fcc159ba82, type: 2}
+  CellPrefab: {fileID: 4948077585785927334, guid: 8aceddccba9388a4d9d8e6ca9710eddc, type: 3}
+  CellType: 2
+  CellForm: {fileID: 11400000, guid: 4353b061f22d17641b6a97fcc159ba82, type: 2}
   MarkCellColor: {r: 0.26735216, g: 0.5, b: 0.12028301, a: 0}
-  resourcesForPlace:
-  - resourceType: 1
-    resourceCount: 2
-  resourcesForDestroy:
-  - resourceType: 1
-    resourceCount: 2
-  cellName: Sawmill
+  ResourcesForPlace:
+  - ResourceType: 1
+    ResourceCount: 2
+  ResourcesForDestroy:
+  - ResourceType: 1
+    ResourceCount: 2
+  CellName: Sawmill
   MultiplayerForSameResourceType: 2
   ChanceToSpawn: 1

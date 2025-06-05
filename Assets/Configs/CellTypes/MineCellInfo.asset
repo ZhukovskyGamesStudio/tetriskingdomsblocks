@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
   m_Name: MineCellInfo
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
-  cellType: 4
-  cellForm: {fileID: 0}
+  CellPrefab: {fileID: 3199888184775657234, guid: c18c211e700eeb14cbf7a983f1af4be3, type: 3}
+  CellType: 8
+  CellForm: {fileID: 0}
   MarkCellColor: {r: 0.25796545, g: 0.2655549, b: 0.2924528, a: 0}
-  resourcesForPlace:
-  - resourceType: 2
-    resourceCount: 2
-  resourcesForDestroy:
-  - resourceType: 2
-    resourceCount: 2
-  cellName: Mine
+  ResourcesForPlace:
+  - ResourceType: 2
+    ResourceCount: 2
+  ResourcesForDestroy:
+  - ResourceType: 2
+    ResourceCount: 2
+  CellName: Mine
   MultiplayerForSameResourceType: 2
   ChanceToSpawn: 1

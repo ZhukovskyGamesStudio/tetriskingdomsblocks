@@ -17,7 +17,7 @@ public static class StorageManager {
 
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
-        gameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
+        GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
     }
 
     public static bool IsNewPlayer() {
