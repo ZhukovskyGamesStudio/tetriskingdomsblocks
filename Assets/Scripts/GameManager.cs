@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class GameManager : MonoBehaviour, IResetable
     public MainGameConfig MainGameConfig;
 
     public const int CELL_SIZE = 1;
-    private CellTypeInfo[,] _field;
+    private CellType[,] _field;
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
     private List<Vector2> _cellsToDestroy = new List<Vector2>();
@@ -114,11 +115,9 @@ public class GameManager : MonoBehaviour, IResetable
     {
     }
 
-    private void ShakeCamera()
-    {
+    private void ShakeCamera() {
         _currentTween.Kill();
-        _currentTween = DOTween.Sequence()
-            .Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
+        _currentTween = DOTween.Sequence().Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
             .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.5f), 0.08f));
     }
 
@@ -232,7 +231,7 @@ public class GameManager : MonoBehaviour, IResetable
                 // var go = Instantiate(PiecesViewTable.Instance.GetCellByType(pieceData.Type.cellType), _fieldContainer);
                 var go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                _field[place.x, place.y] = pieceData.Type;
+                _field[place.x, place.y] = pieceData.Type.cellType;
                 _cells[place.x, place.y] = go;
                 go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
@@ -298,10 +297,8 @@ public class GameManager : MonoBehaviour, IResetable
                     GameData.CollectedResources.Count != 0)
                 {
                     ResourceType maxResourceType = ResourceType.None;
-                    foreach (var resource in GameData.CollectedResources)
-                    {
-                        if (maxResourceType == ResourceType.None ||
-                            GameData.CollectedResources[maxResourceType] < resource.Value)
+                    foreach (var resource in GameData.CollectedResources) {
+                        if (maxResourceType == ResourceType.None || GameData.CollectedResources[maxResourceType] < resource.Value)
                             maxResourceType = resource.Key;
                     }
 
@@ -433,10 +430,8 @@ public class GameManager : MonoBehaviour, IResetable
         DestroyAllMarkedCells();
     }
 
-    private void DestroyAllMarkedCells()
-    {
-        for (int i = 0; i < _cellsToDestroy.Count; i++)
-        {
+    private void DestroyAllMarkedCells() {
+        for (int i = 0; i < _cellsToDestroy.Count; i++) {
             var cell = _cellsToDestroy[i];
             _cellsToDestroy.RemoveAt(i--);
             DestroyCell((int)cell.x, (int)cell.y);
@@ -450,18 +445,15 @@ public class GameManager : MonoBehaviour, IResetable
         int bonusResourcesOnDestroyLine = 0;
         ResourceType currentBonusResourceType = ResourceType.None;
         Dictionary<ResourceType, int> resourcesMultiplayers = new Dictionary<ResourceType, int>();
-        Dictionary<CellTypeInfo, int> cellTypesInLine = new Dictionary<CellTypeInfo, int>();
+        Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
 
         CellType currentCellType = CellType.Empty;
         fullSameResourcesColumn = true;
-        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++)
-        {
-            Vector2 curPosition = !isRow
-                ? new Vector2(mainAxisCurrentValue, secondAxis)
-                : new Vector2(secondAxis, mainAxisCurrentValue);
-            var cellInfo = _field[(int)curPosition.x, (int)curPosition.y];
-            if (fullSameResourcesColumn)
-            {
+        for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
+            Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
+            var cellType = _field[(int)curPosition.x, (int)curPosition.y];
+            var config = Instance.MainGameConfig.CellsConfigs.First(c => c.cellType == cellType);
+            if (fullSameResourcesColumn) {
                 if (currentCellType == CellType.Empty)
                     currentCellType = cellInfo.CellType;
                 else if (currentCellType != cellInfo.CellType)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
@@ -65,7 +64,7 @@ public static class PieceUtils {
         return false;
     }
 
-    private static bool CanPlaceAt(CellTypeInfo[,] field, bool[,] piece, int offsetX, int offsetY) {
+    private static bool CanPlaceAt(CellType[,] field, bool[,] piece, int offsetX, int offsetY) {
         int pieceWidth = piece.GetLength(0);
         int pieceHeight = piece.GetLength(1);
 
@@ -75,7 +74,7 @@ public static class PieceUtils {
                     continue;
                 }
 
-                if (field[offsetX + x, offsetY + y] !=null) {
+                if (field[offsetX + x, offsetY + y] != CellType.Empty) {
                     return false;
                 }
             }
