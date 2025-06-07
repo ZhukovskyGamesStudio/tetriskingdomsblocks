@@ -3,6 +3,7 @@ using System.Linq;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,9 @@ public class GameManager : MonoBehaviour, IResetable
     private CellType[,] _field;
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
+    [field: SerializeField] public Transform HolesForBGContainer { get; private set; }
+    [field: SerializeField] public Transform BlackBGContainer { get; private set; }
+    
     private List<Vector2> _cellsToDestroy = new List<Vector2>();
     //[SerializeField]
     // private TMP_Text _buttonEndGameText;
@@ -61,6 +65,7 @@ public class GameManager : MonoBehaviour, IResetable
 
     private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
 
+    public static UnityEvent OnCellIsPlaced = new UnityEvent();
     //  public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
     public Vector3 ScreenToWorldPoint => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
         out RaycastHit hit, Mathf.Infinity, _targetMasks)
@@ -78,7 +83,7 @@ public class GameManager : MonoBehaviour, IResetable
 
     public List<CellTypeInfo> CurrentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
-    private float _screenRatio;
+    public float _screenRatio{ get; private set; }
 
     [field: SerializeField] public FigureFormConfig[] FigureFormsConfig { get; private set; }
     public float[] FiguresChanceToSpawn { get; private set; }
@@ -100,11 +105,11 @@ public class GameManager : MonoBehaviour, IResetable
         CalculateFiguresSpawnChances();
         Reset();
         Application.targetFrameRate = 144;
-        _downUITransform.position = new Vector3(_downUITransform.position.x,
-            _downUITransform.position.y * (_screenRatio / 0.56f), _downUITransform.position.z);
+       // _downUITransform.position = new Vector3(_downUITransform.position.x,
+           // _downUITransform.position.y * (_screenRatio / 0.56f), _downUITransform.position.z);
         //  Debug.Log(_cameraContainer.position.y + " " + (_screenRatio / 0.45f));
         CameraContainer.position = new Vector3(CameraContainer.position.x,
-            CameraContainer.position.y / (_screenRatio / 0.5f), CameraContainer.position.z);
+            CameraContainer.position.y / (_screenRatio / 0.486f), CameraContainer.position.z);
     }
 
     private void GenerateField()
@@ -242,24 +247,38 @@ public class GameManager : MonoBehaviour, IResetable
 
         ShakeCamera();
         CheckPlacedCellsForTask();
+        
+        if(StorageManager.GameDataMain.CurMaxLevel == 0)
+            OnCellIsPlaced.Invoke();
     }
 
     private void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go)
     {
-        string needText = " +";
         var cellType = _field[place.x, place.y];
         var resourcesForPlace =
             Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
+        var  onCanvasPosition =_mainCamera.WorldToScreenPoint(go.transform.position);
         for (int i = 0; i < resourcesForPlace.Length; i++)
-            needText += resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType +
-                        ">" + " ";
+        {
+            bool isShortAnimation = true;
+            for (int j = 0; j < _currentTasks.Count; j++)
+            {
+                if (isShortAnimation && _currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource)
+                {
+                    if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||(_currentTasks[j].TaskInfo.NeedResource == resourcesForPlace[i].ResourceType))
+                    {
+                        ShowFloatingText( (" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType +
+                                   ">" + " "), new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)) , 20, 1, _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
+                        isShortAnimation = false; 
+                    }
+                }
+            }
+            if(isShortAnimation)
+                ShowFloatingText( (" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType +
+                                   ">" + " "), new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
+        }
         if (!_placedCellsCount.TryAdd(pieceData.Type.CellType, 1))
             _placedCellsCount[pieceData.Type.CellType]++;
-        if (resourcesForPlace.Length != 0)
-        {
-            var canvasPosition = _mainCamera.WorldToScreenPoint(go.transform.position);
-            ShowFloatingText(needText, canvasPosition, 20, 1);
-        }
     }
 
     private void CollectResourcesOnPlace(PieceData placedPiece)
@@ -411,7 +430,6 @@ public class GameManager : MonoBehaviour, IResetable
             }
         }
 
-        // Проверка столбцов
         for (int x = 0; x < width; x++)
         {
             bool fullColumn = true;
@@ -432,7 +450,7 @@ public class GameManager : MonoBehaviour, IResetable
         }
 
         if (unlockedCellText != "")
-            ShowFloatingText(unlockedCellText + " is unlocked!", _floatingTextContainer.position, 40, 2.5f);
+            ShowFloatingText(unlockedCellText + " is unlocked!", _floatingTextContainer.position, 40, 2.5f, Vector2.zero);
         DestroyAllMarkedCells();
     }
 
@@ -508,7 +526,7 @@ public class GameManager : MonoBehaviour, IResetable
 
             ShowFloatingText("<sprite name=" + currentBonusResourceType + "> " + bonusResourcesOnDestroyLine,
                 needPosition, 30,
-                1.5f);
+                1.5f, Vector2.zero);
         }
         else
             Debug.Log("not full same");
@@ -528,11 +546,15 @@ public class GameManager : MonoBehaviour, IResetable
             : new Vector2(secondAxis, mainAxisCurrentValue);
         var cellType = _field[(int)curPosition.x, (int)curPosition.y];
         var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
-        string floatingText = "+ ";
+        //string floatingText = "+ ";
 
         if (!cellTypesInLine.TryAdd(cellType, 1))
             cellTypesInLine[cellType]++;
 
+        var canvasPosition =
+            _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform
+                .position);
+        
         for (int i = 0; i < config.ResourcesForDestroy.Length; i++)
         {
             resourcesMultiplayers.TryGetValue(config.ResourcesForDestroy[i].ResourceType,
@@ -543,8 +565,8 @@ public class GameManager : MonoBehaviour, IResetable
             if (!GameData.CollectedResources.TryAdd(config.ResourcesForDestroy[i].ResourceType,
                     count))
                 GameData.CollectedResources[config.ResourcesForDestroy[i].ResourceType] += count;
-            floatingText += " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + "> " + count +
-                            " ";
+           // floatingText += " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + "> " + count +
+            //                " ";
             if (fullSameResourcesColumn)
             {
                 bonusResourcesOnDestroyLine +=
@@ -552,15 +574,36 @@ public class GameManager : MonoBehaviour, IResetable
                         .ResourceCount; //fix this if on destroy resources types be more than 1;
                 currentBonusResourceType = config.ResourcesForDestroy[i].ResourceType;
             }
+            
+            
+                bool isShortAnimation = true;
+                for (int j = 0; j < _currentTasks.Count; j++)
+                {
+                    if (isShortAnimation && _currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource)
+                    {
+                        if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||(_currentTasks[j].TaskInfo.NeedResource == config.ResourcesForDestroy[i].ResourceType))
+                        {
+                            ShowFloatingText( (" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType +
+                                               ">" + " "), new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)) , 20, 1, _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
+                            isShortAnimation = false; 
+                        }
+                    }
+                }
+                if(isShortAnimation)
+                    ShowFloatingText( (" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType +
+                                       ">" + " "), new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
+            
+            
+            
         }
 
-        if (config.ResourcesForDestroy.Length != 0)
+       /* if (config.ResourcesForDestroy.Length != 0)
         {
             var canvasPosition =
                 _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform
                     .position);
-            ShowFloatingText(floatingText, canvasPosition, 20, 1);
-        }
+          //  ShowFloatingText(floatingText, canvasPosition, 20, 1);
+        }*/
 
         _cellsToDestroy.Add(new Vector2(curPosition.x, curPosition.y));
         return bonusResourcesOnDestroyLine;
@@ -689,6 +732,9 @@ public class GameManager : MonoBehaviour, IResetable
         foreach (var craftedCell in MainGameConfig.CellsToCraft)
             _currentCraftedCells.Add(craftedCell);
 
+        if (_currentLevelConfig.TutorialObject != null)
+            Instantiate(_currentLevelConfig.TutorialObject);
+        
         var startCells = _currentLevelConfig.CellTypesTableConfig;
         _currentCellsToSpawn = new List<CellTypeInfo>();
         for (int i = 0; i < startCells.CellsToSpawn.Length; i++)
@@ -752,10 +798,10 @@ public class GameManager : MonoBehaviour, IResetable
         }
     }
 
-    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime)
+    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition)
     {
         var floatingText = _floatingTextsPool.Get();
-        floatingText.SetText(newPosition, needText, textSize, showTime);
+        floatingText.SetText(newPosition, needText, textSize, showTime, finalposition);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject)

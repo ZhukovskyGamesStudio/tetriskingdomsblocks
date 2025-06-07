@@ -13,4 +13,7 @@ public class LevelConfig : ScriptableObject {
 
     [field: SerializeField]
     public CellsAndResourceTypesTableConfig CellTypesTableConfig { get; private set; }
+    
+      [field: SerializeField]
+        public Transform TutorialObject { get; private set; }
 }

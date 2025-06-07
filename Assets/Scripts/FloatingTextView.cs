@@ -11,7 +11,7 @@ public class FloatingTextView : MonoBehaviour
     [FormerlySerializedAs("floatingTextAnimator")] [SerializeField] private Animator _floatingTextAnimator;
     private Tween _currentTween;
 
-    public void SetText(Vector2 newPosition, string newText, float textSize, float showTime)
+    public void SetText(Vector2 newPosition, string newText, float textSize, float showTime, Vector2 finalPosition)
     {
         transform.localScale = Vector3.one;
         gameObject.SetActive(true);
@@ -19,19 +19,28 @@ public class FloatingTextView : MonoBehaviour
         _floatingText.color = Color.white;
         _floatingText.fontSize = textSize;
         _floatingText.text = newText;
-        MoveUpText(showTime);
-        Invoke("HideText", showTime);
+        MoveUpText(showTime, finalPosition);
+        if (finalPosition != Vector2.zero)
+            Invoke("HideText", showTime + 1.5f);
+        else
+            Invoke("HideText", showTime);
     }
 
     public void HideText() => GameManager.Instance.ReleaseFloatingText(this);
 
 
-    public void MoveUpText(float showTime)
+    public void MoveUpText(float showTime, Vector2 finalPosition)
     {
         _currentTween.Kill();
-        _currentTween = DOTween.Sequence()
-            .Append(transform.DOMoveY(transform.position.y + 150, showTime))
-            .Join(transform.DOScale(transform.localScale * 1.5f, showTime-0.2f));
+        if (finalPosition != Vector2.zero)
+            _currentTween = DOTween.Sequence()
+                .Append(transform.DOMoveY(transform.position.y + 150, showTime))
+                .Join(transform.DOScale(transform.localScale * 1.5f, showTime - 0.2f))
+                .Append(transform.DOMove(finalPosition, 1.5f));
+        else
+            _currentTween = DOTween.Sequence()
+                .Append(transform.DOMoveY(transform.position.y + 150, showTime))
+                .Join(transform.DOScale(transform.localScale * 1.5f, showTime - 0.2f));
     }
 
     public void OnDestroy()
