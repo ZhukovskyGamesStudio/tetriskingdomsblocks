@@ -4,10 +4,12 @@ using System.Linq;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
-    public static PieceData GetNewPiece() {
-        var cellsToSpawn = GameManager.Instance._currentCellsToSpawn;
+    public static PieceData GetNewPiece()
+    {
+        bool isMetaGame = GameManager.Instance == null;
+        var cellsToSpawn = !isMetaGame ? GameManager.Instance._currentCellsToSpawn : MetaManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn = !isMetaGame ?GameManager.Instance.CellsChanceToSpawn: MetaManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
-        var chancesToSpawn = GameManager.Instance.CellsChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         for (int i = 0; i < chancesToSpawn.Length; i++)
         {
@@ -18,7 +20,7 @@ public static class PieceUtils {
             }
         }
         
-        if (GameManager.Instance.CurrentGuaranteedFirstCells.Count != 0)
+        if (!isMetaGame && GameManager.Instance.CurrentGuaranteedFirstCells.Count != 0)
         {
             cellInfo = GameManager.Instance.CurrentGuaranteedFirstCells[0];
             GameManager.Instance.CurrentGuaranteedFirstCells.RemoveAt(0);
@@ -37,12 +39,14 @@ public static class PieceUtils {
 
     public static bool[,] GetRandomFigure()
     {
-        var chancesToSpawn = GameManager.Instance.FiguresChanceToSpawn;
+        bool isMetaGame = GameManager.Instance == null;
+        var chancesToSpawn = isMetaGame ? MetaManager.Instance.FiguresChanceToSpawn:GameManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
+        var figureForms = isMetaGame ? MetaManager.Instance.FigureFormsConfig:GameManager.Instance.FigureFormsConfig;
         for (int i = 0; i < chancesToSpawn.Length; i++)
         {
             if (chancesToSpawn[i] > chance)
-                return TetrisPieces.PieceShapesTable[GameManager.Instance.FigureFormsConfig[i].FormName];
+                return TetrisPieces.PieceShapesTable[figureForms[i].FormName];
         }
 
         return null;

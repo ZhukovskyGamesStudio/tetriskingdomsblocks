@@ -36,7 +36,9 @@ public class FloatingTextView : MonoBehaviour
             _currentTween = DOTween.Sequence()
                 .Append(transform.DOMoveY(transform.position.y + 150, showTime))
                 .Join(transform.DOScale(transform.localScale * 1.5f, showTime - 0.2f))
-                .Append(transform.DOMove(finalPosition, 1.5f));
+                .Append(transform.DOMove(finalPosition, 1.5f))
+                .Join(transform.DOScale(Vector3.zero, 1.5f));
+        
         else
             _currentTween = DOTween.Sequence()
                 .Append(transform.DOMoveY(transform.position.y + 150, showTime))
