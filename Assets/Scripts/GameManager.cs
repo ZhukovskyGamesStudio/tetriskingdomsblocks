@@ -57,9 +57,6 @@ public class GameManager : CellsManager, IResetable
     public List<CellTypeInfo> CurrentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
 
-    private Tween _currentTween;
-
-
     private void Awake()
     {
         ChangeToLoading.TryChange();
@@ -87,14 +84,6 @@ public class GameManager : CellsManager, IResetable
 
     private void GenerateTask()
     {
-    }
-
-    private void ShakeCamera()
-    {
-        _currentTween.Kill();
-        _currentTween = DOTween.Sequence()
-            .Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
-            .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.5f), 0.08f));
     }
 
     private void StartGame()
@@ -138,7 +127,6 @@ public class GameManager : CellsManager, IResetable
     {
         base.PlacePiece(pieceData, pos, fieldSize);
 
-        ShakeCamera();
         CheckPlacedCellsForTask();
 
         if (StorageManager.GameDataMain.CurMaxLevel == 0)

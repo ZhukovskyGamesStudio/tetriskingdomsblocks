@@ -55,14 +55,15 @@ public class MetaManager : CellsManager {
         for (int i = 0; i < startCells.Count; i++)
             _currentCellsToSpawn.Add(startCells[i]);
         CalculateCellSpawnChances();
-        if (StorageManager.GameDataMain.MetaField.Field != null)
+        if (StorageManager.GameDataMain.FieldRows != null)
         {
-            _field = StorageManager.GameDataMain.MetaField.Field;
+            _field = new CellType[StorageManager.GameDataMain.FieldRows.Length,StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
 
             for (int i = 0; i < _field.GetLength(0); i++)
             {
                 for (int j = 0; j < _field.GetLength(1); j++)
                 {
+                    _field[i,j] = StorageManager.GameDataMain.FieldRows[i].RowCells[j];
                     var cellType = _field[i, j];
                     if (cellType != CellType.Empty)
                     {
@@ -91,10 +92,27 @@ public class MetaManager : CellsManager {
     {
         PlacePiece(pieceData, GetPieceClampedPosOnField(), MainMetaConfig.FieldSize);
         _nextBlock = null;
-        if (StorageManager.GameDataMain.MetaField == null)
-            StorageManager.GameDataMain.MetaField = new MetaFieldData();
+      //  if (StorageManager.GameDataMain.Field == null)
+         //   StorageManager.GameDataMain.Field;
 
-        StorageManager.GameDataMain.MetaField.Field = _field;
+        StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
+
+
+       // StorageManager.GameDataMain.TestArrayToSave = new CellTypesArray[_field.GetLength(0)];
+
+
+        for (int i = 0; i < _field.GetLength(0); i++)
+        {
+            StorageManager.GameDataMain.FieldRows[i].RowCells = new CellType[_field.GetLength(1)];
+            for (int j = 0; j < _field.GetLength(1); j++)
+            {
+                StorageManager.GameDataMain.FieldRows[i].RowCells[j] = _field[i, j];
+                //var cellType = _field[i, j];
+                //StorageManager.GameDataMain.MetaField.Field[i, j] = _field[i, j];
+            }
+        }
+
+        StorageManager.SaveGame();
     }
     private void DestroyChildren()
     {

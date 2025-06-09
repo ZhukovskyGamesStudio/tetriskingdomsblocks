@@ -11,10 +11,17 @@ public class GameDataForSave {
 
     public int CoinsAmount;
     public int GemsAmount;
-    public MetaFieldData MetaField = new MetaFieldData();
+   // public CellType[][] Field;
+  //  public CellTypesArray[] TestArrayToSave;
+   public MetaFieldData[] FieldRows;
 }
 
-[Serializable]
-public class MetaFieldData {
-    public CellType[,] Field;
+[System.Serializable]
+public struct MetaFieldData {
+    public CellType[] RowCells;
 }
+/*[System.Serializable]
+public struct CellTypesArray
+{
+    public CellType[] CellRow;
+}*/

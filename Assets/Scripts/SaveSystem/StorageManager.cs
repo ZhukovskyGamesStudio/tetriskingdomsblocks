@@ -12,6 +12,8 @@ public static class StorageManager {
     }
     public static void SaveGame() {
         string json = JsonUtility.ToJson(GameDataMain);
+        Debug.Log(json);
+        Debug.Log("try get json");
         PlayerPrefs.SetString(SaveKey, json);
     }
 

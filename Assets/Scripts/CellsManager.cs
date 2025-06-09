@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class CellsManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class CellsManager : MonoBehaviour
     public const int CELL_SIZE = 1;
     protected CellType[,] _field;
     protected CellView[,] _cells;
+    private Tween _currentTween;
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
     [HideInInspector] public Vector3 CusorToCellOffset;
@@ -134,6 +136,8 @@ protected void CalculateFiguresSpawnChances()
                 SpawnResourceFx(pieceData, place, go);
             }
         }
+
+        ShakeCamera();
     }
     
     public virtual void PlacePiece(PieceData pieceData)
@@ -144,7 +148,13 @@ protected void CalculateFiguresSpawnChances()
     {
     }
     
-    
+    protected void ShakeCamera()
+    {
+        _currentTween.Kill();
+        _currentTween = DOTween.Sequence()
+            .Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
+            .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.486f), 0.08f));
+    }
 
     public void PlaceCell()
     {

@@ -72,7 +72,6 @@ public class PieceView : MonoBehaviour {
         if (Input.touchCount > 0)
             targetMousePos = cellManager.TouchToWorldPoint+ cellManager.CusorToCellOffset;
        
-        Debug.Log(targetMousePos);
         targetMousePos.y = _cellsContainer.position.y;
         var posOnField = cellManager.GetPosOnField();
         var clampedPosOnField = cellManager.GetPieceClampedPosOnField();
