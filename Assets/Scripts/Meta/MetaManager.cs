@@ -75,6 +75,8 @@ public class MetaManager : CellsManager {
                 }
             }
         }
+
+        GetResourceCollectMarks();
     }
     
     private void CalculateCellSpawnChances()
@@ -92,28 +94,60 @@ public class MetaManager : CellsManager {
     {
         PlacePiece(pieceData, GetPieceClampedPosOnField(), MainMetaConfig.FieldSize);
         _nextBlock = null;
-      //  if (StorageManager.GameDataMain.Field == null)
-         //   StorageManager.GameDataMain.Field;
 
         StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
-
-
-       // StorageManager.GameDataMain.TestArrayToSave = new CellTypesArray[_field.GetLength(0)];
-
 
         for (int i = 0; i < _field.GetLength(0); i++)
         {
             StorageManager.GameDataMain.FieldRows[i].RowCells = new CellType[_field.GetLength(1)];
             for (int j = 0; j < _field.GetLength(1); j++)
-            {
                 StorageManager.GameDataMain.FieldRows[i].RowCells[j] = _field[i, j];
-                //var cellType = _field[i, j];
-                //StorageManager.GameDataMain.MetaField.Field[i, j] = _field[i, j];
-            }
         }
 
         StorageManager.SaveGame();
     }
+
+    private void GetResourceCollectMarks()
+    {
+        var connectedGroups = SameCellsGroupCalculater.FindConnectedCellTypeGroups(_field);
+
+
+        for (int i = 0; i < connectedGroups.Count; i++)
+        {
+          //  Debug.Log($"Группа {i + 1} (размер {connectedGroups[i].Count}):");
+            Vector3 collectResourceMarkPosition = Vector3.zero;
+            
+            foreach (var (row, col) in connectedGroups[i])
+            {
+                var resourceType =MetaManager.Instance.MainMetaConfig.CellsConfigs.First
+                    (c => c.CellType == _field[row, col]).ResourcesForDestroy;//make afk collect info in config
+                if(resourceType.Length != 0)
+                Debug.Log($"  [{row}, {col}] = {_field[row, col]} + {resourceType[0].ResourceType} resource type]");
+                collectResourceMarkPosition += _cells[row, col].transform.position;
+            }
+            collectResourceMarkPosition /= connectedGroups[i].Count;
+        Debug.Log($"Найдено {connectedGroups.Count} групп связанных клеток + avg pos {collectResourceMarkPosition}" );
+        }
+    }
+
+    /*IEnumerator GetAFKTime(Action<DateTime> callback)
+    {
+        UnityWebRequest request = UnityWebRequest.Get("https://worldtimeapi.org/api/ip");
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            string json = request.downloadHandler.text;
+            ServerTimeData data = JsonUtility.FromJson<ServerTimeData>(json);
+            callback(DateTime.Parse(data.datetime));
+        }
+        else
+        {
+            Debug.Log("Need internet connction to get rewards");
+            callback(DateTime.UtcNow);
+        }
+    }*/
+
     private void DestroyChildren()
     {
         if (_cellContainer.childCount > 0)
