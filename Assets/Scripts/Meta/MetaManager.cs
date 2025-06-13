@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MetaManager : CellsManager {
+public class MetaManager : BaseManager {
     //protected HeroType[,] _heroesOnField;
     public static MetaManager Instance { get; private set; }
     [SerializeField] private Transform _cellContainer;
@@ -19,7 +20,13 @@ public class MetaManager : CellsManager {
     }
 
     public void Play() {
+        if(StorageManager.GameDataMain.HealthCount != 0)
         SceneManager.LoadScene("GameScene");
+        else
+        {
+            
+            //floating window with "watch ad and get health"
+        }
     }
 
     public void BuyPiece() {
@@ -44,7 +51,7 @@ public class MetaManager : CellsManager {
         go.SetData(nextPiece);
     }
 
-    private void SetupGame()
+    protected override void SetupGame()
     {
         //_placedPiecesAmount = 0;
         _field = new CellType[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
@@ -55,7 +62,7 @@ public class MetaManager : CellsManager {
         for (int i = 0; i < startCells.Count; i++)
             _currentCellsToSpawn.Add(startCells[i]);
         CalculateCellSpawnChances();
-        if (StorageManager.GameDataMain.FieldRows != null)
+        if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length != 0)
         {
             _field = new CellType[StorageManager.GameDataMain.FieldRows.Length,StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
 
@@ -77,6 +84,8 @@ public class MetaManager : CellsManager {
         }
 
         GetResourceCollectMarks();
+        
+        base.SetupGame();
     }
     
     private void CalculateCellSpawnChances()

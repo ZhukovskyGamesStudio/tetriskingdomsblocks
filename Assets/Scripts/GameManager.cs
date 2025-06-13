@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -7,7 +8,7 @@ using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
-public class GameManager : CellsManager, IResetable
+public class GameManager : BaseManager, IResetable
 {
     public static GameManager Instance;
 
@@ -66,12 +67,17 @@ public class GameManager : CellsManager, IResetable
         _screenRatio = (float)Screen.width / Screen.height;
     }
 
+    public void Reset()
+    {
+        throw new NotImplementedException();
+    }
+
     protected override void Start()
     {
         base.Start();
 
         CalculateFiguresSpawnChances();
-        Reset();
+        SetupGame();
 
 
         //  CameraContainer.position = new Vector3(CameraContainer.position.x,
@@ -564,9 +570,21 @@ public class GameManager : CellsManager, IResetable
         GoalView.Instance.SetLoseState();
     }
 
+    public void RemoveHealthAfterLose()
+    {
+        RemoveHealth();
+    }
+    
     public void Restart()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if(StorageManager.GameDataMain.HealthCount != 0)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        else
+        {
+            
+            //floating window with "watch ad and get health"
+        }
+     
     }
 
     private void CalculateCellSpawnChances()
@@ -580,8 +598,9 @@ public class GameManager : CellsManager, IResetable
         }
     }
 
-    public void Reset()
+    protected override void SetupGame()
     {
+       
         GenerateField();
         GenerateTask();
         StartGame();
@@ -622,6 +641,7 @@ public class GameManager : CellsManager, IResetable
         GameData = new GameData();
 
         GenerateNewPieces();
+        base.SetupGame();
     }
 
     private void SetTaskDescriptions(TaskInfo[] tasksArray)

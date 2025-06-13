@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CellsManager : MonoBehaviour
+public class BaseManager : MonoBehaviour
 {
     public const int CELL_SIZE = 1;
     protected CellType[,] _field;
     protected CellView[,] _cells;
     private Tween _currentTween;
+    private DateTime _lastHealthRecoveryTime;
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
     [HideInInspector] public Vector3 CusorToCellOffset;
@@ -38,7 +41,10 @@ public class CellsManager : MonoBehaviour
     [SerializeField] protected LayerMask _targetMasks;
     [SerializeField] private Transform _fieldStart, _fieldEnd;
     [field: SerializeField] public FigureFormConfig[] FigureFormsConfig { get; protected set; }
-
+    [field: SerializeField] private Image _healthBar;
+    [SerializeField] private TMP_Text _healthTimerText;
+    [SerializeField] private int _minutesToHealthRecovery;
+public const int MAX_HEALTH_COUNT = 5;
     protected virtual void Start()
     {
         _screenRatio = (float)Screen.width / Screen.height;
@@ -47,7 +53,32 @@ public class CellsManager : MonoBehaviour
 
         Application.targetFrameRate = 144;
     }
-protected void CalculateFiguresSpawnChances()
+
+    private void Update()
+    {
+        if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT)
+        {
+            TimeSpan timeSinceLastUpdate = DateTime.Now - _lastHealthRecoveryTime;
+            int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
+            
+            if (energyToAdd > 0)
+            {
+                StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
+                _lastHealthRecoveryTime = _lastHealthRecoveryTime.AddMinutes(energyToAdd * _minutesToHealthRecovery);
+                Debug.Log(_lastHealthRecoveryTime + " update heaalth");
+                SaveEnergyData();
+                _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+            }
+            
+            UpdateTimerUI();
+        }
+        else if (_healthTimerText.gameObject.activeSelf)
+        {
+            _healthTimerText.gameObject.SetActive(false);
+        }
+    }
+
+    protected void CalculateFiguresSpawnChances()
     {
         float lastChance = 0;
         FiguresChanceToSpawn = new float[FigureFormsConfig.Length];
@@ -156,7 +187,97 @@ protected void CalculateFiguresSpawnChances()
             .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.486f), 0.08f));
     }
 
-    public void PlaceCell()
+    public TimeSpan GetTimeUntilNextHealth()
     {
+        if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
+        
+        TimeSpan timeSinceLastUpdate = DateTime.Now - _lastHealthRecoveryTime;
+        double minutesPassed = timeSinceLastUpdate.TotalMinutes;
+        double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
+        
+        return TimeSpan.FromMinutes(minutesUntilNext);
+    }
+    
+    private void UpdateTimerUI()
+    {
+        if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT)
+        {
+            if (_healthTimerText != null && _healthTimerText.gameObject.activeSelf)
+                _healthTimerText.gameObject.SetActive(false);
+            return;
+        }
+
+        TimeSpan timeUntilNext = GetTimeUntilNextHealth();
+       
+            if (!_healthTimerText.gameObject.activeSelf)
+                _healthTimerText.gameObject.SetActive(true);
+                
+            _healthTimerText.text = $"{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2}";
+    }
+    
+    private void OnApplicationQuit()
+    {
+        SaveEnergyData();
+    }
+
+    private void SaveEnergyData()
+    {
+        StorageManager.SaveGame();
+    }
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            SaveEnergyData();
+        }
+        else
+        {
+            StorageManager.LoadGame();
+            CalculateOfflineHealth();
+        }
+    }
+
+    protected void RemoveHealth()
+    {
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
+        {
+        StorageManager.GameDataMain.LastHealthRecoveryTime =  DateForSaveData.FromDateTime(DateTime.Now);
+        _lastHealthRecoveryTime = DateTime.Now;
+        }
+        StorageManager.GameDataMain.HealthCount--;
+        _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+        SaveEnergyData();
+    }
+    private void CalculateOfflineHealth()
+    {
+        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTime.ToDateTime();
+        TimeSpan offlineTime = DateTime.Now - _lastHealthRecoveryTime;
+        int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
+       
+            
+        if (healthToAdd > 0)
+        {
+            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
+        }
+       if(StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
+            _lastHealthRecoveryTime.AddMinutes(healthToAdd*_minutesToHealthRecovery); 
+
+    }
+
+    protected virtual void SetupGame()
+    {
+
+            if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
+            {
+            _healthTimerText.gameObject.SetActive(false);
+                Debug.Log("maxHP");
+            }
+        else
+        {
+            Debug.Log("NotmaxHP");
+            CalculateOfflineHealth();
+            _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
+            _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+        }
     }
 }

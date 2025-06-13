@@ -37,6 +37,7 @@ public class GoalView : MonoBehaviour {
     {
         if(_isGameEnded)return;
         LoseAnimation();
+        GameManager.Instance.RemoveHealthAfterLose();
         _isGameEnded = true;
         _winState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(true);

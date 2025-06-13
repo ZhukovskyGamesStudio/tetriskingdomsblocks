@@ -57,7 +57,7 @@ public class PieceView : MonoBehaviour {
 
     public void OnStartDrag() {
         _isDragging = true;
-        CellsManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
+        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         cellManager.CusorToCellOffset = transform.position - cellManager.ScreenToWorldPoint;
         DragShift = CalculateShift() + Vector3.one/2;
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
@@ -65,7 +65,7 @@ public class PieceView : MonoBehaviour {
     }
 
     public void OnDrag() {
-        CellsManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
+        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         int fieldSize = GameManager.Instance == null ? MetaManager.Instance.MainMetaConfig.FieldSize : GameManager.Instance.MainGameConfig.FieldSize;
         var targetMousePos = cellManager.ScreenToWorldPoint + cellManager.CusorToCellOffset;
         
@@ -106,7 +106,7 @@ public class PieceView : MonoBehaviour {
         if (!_isDragging) {
             return;
         }
-        CellsManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
+        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         _markedCellsContainer.gameObject.SetActive(false);
         _isDragging = false;
         if (cellManager.CanPlace(_data)) {
