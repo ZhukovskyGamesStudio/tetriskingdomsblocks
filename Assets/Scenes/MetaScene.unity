@@ -1897,6 +1897,7 @@ GameObject:
   - component: {fileID: 1910540965}
   - component: {fileID: 1910540964}
   - component: {fileID: 1910540966}
+  - component: {fileID: 1910540967}
   m_Layer: 0
   m_Name: MetaManager
   m_TagString: Untagged
@@ -1960,6 +1961,8 @@ MonoBehaviour:
   _healthBar: {fileID: 729065156}
   _healthTimerText: {fileID: 1019071390}
   _minutesToHealthRecovery: 5
+  _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
+  networkTimeAPI: {fileID: 1910540967}
   _cellContainer: {fileID: 1008678280}
   <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
 --- !u!4 &1910540965
@@ -1994,6 +1997,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dialogsPrefabs: []
   _dialogsContainer: {fileID: 148610711}
+--- !u!114 &1910540967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910540963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65772434d9144974e889884b1114acf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2069114973
 GameObject:
   m_ObjectHideFlags: 0

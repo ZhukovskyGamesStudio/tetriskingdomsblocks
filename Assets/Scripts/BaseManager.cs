@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class BaseManager : MonoBehaviour
 {
@@ -44,33 +47,76 @@ public class BaseManager : MonoBehaviour
     [field: SerializeField] private Image _healthBar;
     [SerializeField] private TMP_Text _healthTimerText;
     [SerializeField] private int _minutesToHealthRecovery;
+    [SerializeField] private ParticleSystem _placeCellEffect;
+    [SerializeField] private NetworkTimeAPI networkTimeAPI;
+    protected bool _hasInternetConnection;
+    private float timerNowTimeSecondCounter;
+    private DateTime _currentGameTime;
+    private ObjectPool<ParticleSystem> _placeCellEffectsPool;
 public const int MAX_HEALTH_COUNT = 5;
-    protected virtual void Start()
+
+protected virtual void Awake()
+{
+    ChangeToLoading.TryChange();
+}
+
+protected virtual void Start()
     {
         _screenRatio = (float)Screen.width / Screen.height;
         CameraContainer.position = new Vector3(CameraContainer.position.x,
             CameraContainer.position.y / (_screenRatio / 0.486f), CameraContainer.position.z);
 
+        networkTimeAPI.GetNetworkTime(dateTime =>
+            {
+                _currentGameTime = dateTime;
+                Debug.Log("has connect" + dateTime);
+                _hasInternetConnection = true;
+                SetupGame();
+            },
+            error =>
+            {
+                _currentGameTime = DateTime.Now;
+                Debug.Log("not connect");
+                _hasInternetConnection = false;
+                SetupGame();
+               // _hasInternetConnection = false;
+            });
+        
+        _placeCellEffectsPool =
+            new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
     }
+    
+    private void AddSecondToTimer() =>  _currentGameTime = _currentGameTime.AddSeconds(1);
 
     private void Update()
     {
-        if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT)
+        if (_hasInternetConnection)
         {
-            TimeSpan timeSinceLastUpdate = DateTime.Now - _lastHealthRecoveryTime;
-            int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
-            
-            if (energyToAdd > 0)
+            timerNowTimeSecondCounter += Time.unscaledDeltaTime;
+            if (timerNowTimeSecondCounter >= 1)
             {
-                StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
-                _lastHealthRecoveryTime = _lastHealthRecoveryTime.AddMinutes(energyToAdd * _minutesToHealthRecovery);
-                Debug.Log(_lastHealthRecoveryTime + " update heaalth");
-                SaveEnergyData();
-                _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+                timerNowTimeSecondCounter--;
+                AddSecondToTimer();
             }
-            
-            UpdateTimerUI();
+            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT)
+            {
+                TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
+                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
+
+                if (energyToAdd > 0)
+                {
+                    Debug.Log(_currentGameTime + " " + _lastHealthRecoveryTime);
+                    StorageManager.GameDataMain.HealthCount =
+                        Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
+                    _lastHealthRecoveryTime = _currentGameTime;
+                    StorageManager.GameDataMain.LastHealthRecoveryTime = DateForSaveData.FromDateTime(_currentGameTime);
+                    SaveEnergyData();
+                    _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
+                }
+
+                UpdateTimerUI();
+            }
         }
         else if (_healthTimerText.gameObject.activeSelf)
         {
@@ -165,6 +211,7 @@ public const int MAX_HEALTH_COUNT = 5;
                 _cells[place.x, place.y] = go;
                 go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
+                StartCoroutine(SpawnSmokeParticle(go.transform.position)) ;
             }
         }
 
@@ -181,38 +228,52 @@ public const int MAX_HEALTH_COUNT = 5;
     
     protected void ShakeCamera()
     {
+        Vector3 camPos = CameraContainer.transform.position;
+        float xOffset = camPos.x * Random.Range(-0.03f, 0.03f);
+        float zOffset = camPos.z * Random.Range(-0.03f, 0.03f);
         _currentTween.Kill();
         _currentTween = DOTween.Sequence()
-            .Append(CameraContainer.transform.DOMoveY(CameraContainer.transform.position.y * 1.02f, 0.12f))
-            .Append(CameraContainer.transform.DOMoveY(10f / (_screenRatio / 0.486f), 0.08f));
+            .Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
+            .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(0.97f, 1.03f), 0.2f))
+            .Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
+            .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
+            .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f))
+            .Append(CameraContainer.transform.DOMove(camPos, 0.1f)); 
     }
 
     public TimeSpan GetTimeUntilNextHealth()
     {
         if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
         
-        TimeSpan timeSinceLastUpdate = DateTime.Now - _lastHealthRecoveryTime;
+        TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
         double minutesPassed = timeSinceLastUpdate.TotalMinutes;
         double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
         
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
-    
+
     private void UpdateTimerUI()
     {
-        if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT)
+        if (_hasInternetConnection)
         {
-            if (_healthTimerText != null && _healthTimerText.gameObject.activeSelf)
-                _healthTimerText.gameObject.SetActive(false);
-            return;
-        }
+            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT)
+            {
+                if (_healthTimerText != null && _healthTimerText.gameObject.activeSelf)
+                    _healthTimerText.gameObject.SetActive(false);
+                return;
+            }
 
-        TimeSpan timeUntilNext = GetTimeUntilNextHealth();
-       
+            TimeSpan timeUntilNext = GetTimeUntilNextHealth();
+
             if (!_healthTimerText.gameObject.activeSelf)
                 _healthTimerText.gameObject.SetActive(true);
-                
+
             _healthTimerText.text = $"{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2}";
+        }
+        else
+        {
+            _healthTimerText.text = "No internet connection";
+        }
     }
     
     private void OnApplicationQuit()
@@ -241,43 +302,65 @@ public const int MAX_HEALTH_COUNT = 5;
     {
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
         {
-        StorageManager.GameDataMain.LastHealthRecoveryTime =  DateForSaveData.FromDateTime(DateTime.Now);
-        _lastHealthRecoveryTime = DateTime.Now;
+            _lastHealthRecoveryTime = _currentGameTime;
+            StorageManager.GameDataMain.LastHealthRecoveryTime =
+                DateForSaveData.FromDateTime(_lastHealthRecoveryTime);
         }
+
         StorageManager.GameDataMain.HealthCount--;
-        _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+        _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
         SaveEnergyData();
     }
+
     private void CalculateOfflineHealth()
     {
+        if (!_hasInternetConnection)return;
         _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTime.ToDateTime();
-        TimeSpan offlineTime = DateTime.Now - _lastHealthRecoveryTime;
+        TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
         int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
-       
-            
+
+
         if (healthToAdd > 0)
         {
-            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
+            StorageManager.GameDataMain.HealthCount =
+                Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
         }
-       if(StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
-            _lastHealthRecoveryTime.AddMinutes(healthToAdd*_minutesToHealthRecovery); 
 
+        if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
+            _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
     }
 
+    private IEnumerator SpawnSmokeParticle(Vector3 pos)
+    {
+        var particles = _placeCellEffectsPool.Get();
+        particles.gameObject.SetActive(true);
+        particles.transform.position = new Vector3(pos.x,pos.y-0.1f,pos.z); 
+        particles.Play();
+        yield return new WaitForSeconds(2f);
+        ReleaseParticles(particles);
+    }
+
+    private void ReleaseParticles(ParticleSystem particles)
+    {
+        particles.gameObject.SetActive(false);
+        _placeCellEffectsPool.Release(particles);
+    }
     protected virtual void SetupGame()
     {
-
-            if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
-            {
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
+        {
             _healthTimerText.gameObject.SetActive(false);
-                Debug.Log("maxHP");
-            }
+            Debug.Log("maxHP");
+        }
         else
         {
             Debug.Log("NotmaxHP");
             CalculateOfflineHealth();
-            _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
-            _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount/MAX_HEALTH_COUNT;
+            if (_hasInternetConnection)
+                _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
+            else
+                _healthTimerText.text = "No internet connection";
+            _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
         }
     }
 }

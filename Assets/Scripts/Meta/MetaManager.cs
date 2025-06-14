@@ -13,10 +13,14 @@ public class MetaManager : BaseManager {
     public MainMetaConfig MainMetaConfig { get;private set; }
     private PieceData _nextBlock = new PieceData();
     
-    private void Awake() {
-        ChangeToLoading.TryChange();
+    protected override void Awake() {
+        base.Awake();    
         Instance = this;
-        SetupGame();
+    }
+
+    protected override void Start()
+    {
+       base.Start();
     }
 
     public void Play() {

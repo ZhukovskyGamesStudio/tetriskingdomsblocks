@@ -2991,6 +2991,7 @@ GameObject:
   m_Component:
   - component: {fileID: 941771433}
   - component: {fileID: 941771434}
+  - component: {fileID: 941771435}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3072,6 +3073,8 @@ MonoBehaviour:
   _healthBar: {fileID: 1965484374}
   _healthTimerText: {fileID: 1832037744}
   _minutesToHealthRecovery: 5
+  _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
+  networkTimeAPI: {fileID: 941771435}
   MainGameConfig: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
   <HolesForBGContainer>k__BackingField: {fileID: 937264548}
   <BlackBGContainer>k__BackingField: {fileID: 293830630}
@@ -3088,6 +3091,18 @@ MonoBehaviour:
   <_mainTextUp>k__BackingField: {fileID: 1062988474}
   _characterInfoTextHelper: {fileID: 366060022}
   CurrentGuaranteedFirstCells: []
+--- !u!114 &941771435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941771432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65772434d9144974e889884b1114acf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &946048036
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,9 +21,13 @@ public class CellView : MonoBehaviour {
     public void PlaceCellOnField()
     {
         _currentTween = DOTween.Sequence()
-            .Append(transform.DOScale(transform.localScale * 1.1f, 0.25f))
-            .Append(transform.DOScale(transform.localScale * 0.95f, 0.2f))
-            .Append(transform.DOScale(transform.localScale * 1f, 0.1f));
+            .Append(transform.DOScaleY(transform.localScale.y * 0.6f, 0.25f))
+            .Join(transform.DOScaleX(transform.localScale.x * 1.1f, 0.25f))
+            .Join(transform.DOScaleZ(transform.localScale.z * 1.1f, 0.25f))
+            .Append(transform.DOScaleY(transform.localScale.y * 1.2f, 0.2f))
+            .Join(transform.DOScaleX(transform.localScale.x * 0.8f, 0.2f))
+            .Join(transform.DOScaleZ(transform.localScale.z * 0.8f, 0.2f))
+            .Append(transform.DOScale(new Vector3(1,0.25f,1), 0.25f));
     }
     public void DestroyCell()
     {

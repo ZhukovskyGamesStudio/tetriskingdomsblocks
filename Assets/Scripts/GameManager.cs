@@ -58,9 +58,9 @@ public class GameManager : BaseManager, IResetable
     public List<CellTypeInfo> CurrentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
 
-    private void Awake()
+    protected override void Awake()
     {
-        ChangeToLoading.TryChange();
+        base.Awake();   
         Instance = this;
         _floatingTextsPool =
             new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
@@ -75,11 +75,6 @@ public class GameManager : BaseManager, IResetable
     protected override void Start()
     {
         base.Start();
-
-        CalculateFiguresSpawnChances();
-        SetupGame();
-
-
         //  CameraContainer.position = new Vector3(CameraContainer.position.x,
         //     CameraContainer.position.y / (_screenRatio / 0.486f), CameraContainer.position.z);
     }
@@ -600,7 +595,7 @@ public class GameManager : BaseManager, IResetable
 
     protected override void SetupGame()
     {
-       
+        CalculateFiguresSpawnChances();
         GenerateField();
         GenerateTask();
         StartGame();
