@@ -23,4 +23,8 @@ public class DialogBase : MonoBehaviour {
         await _showHideAnimation.Hide();
         _onClose?.Invoke();
     }
+
+    public void HideByButton() {
+        Hide();
+    }
 }

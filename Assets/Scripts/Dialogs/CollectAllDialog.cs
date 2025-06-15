@@ -1,5 +1,8 @@
+using UnityEngine;
+
 public class CollectAllDialog : DialogBase {
     public void CollectAll() {
+        Hide();
         CollectResources(1);
     }
 
@@ -12,5 +15,7 @@ public class CollectAllDialog : DialogBase {
         CollectResources(MetaManager.Instance.MainMetaConfig.CollectWithAdsMultiplier);
     }
 
-    private void CollectResources(float multiplier) { }
+    private void CollectResources(float multiplier) {
+        Debug.Log("This is not implemented");
+    }
 }

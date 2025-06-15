@@ -11,7 +11,7 @@ public class AdsManager : MonoBehaviour {
     [SerializeField]
     private AnimationClip _adClip;
 
-    [SerializeField]
+    [field:SerializeField]
     public bool IsCanSkipAds { get; private set; }
 
     private bool _isAdSkipped;
@@ -24,7 +24,8 @@ public class AdsManager : MonoBehaviour {
         _isAdSkipped = false;
         _adAnimation.gameObject.SetActive(true);
         _adAnimation.Play(_adClip.name);
-        await UniTask.WaitWhile(() => _adAnimation.isPlaying || _isAdSkipped);
+        await UniTask.WaitWhile(() => _adAnimation.isPlaying && !_isAdSkipped);
+        _adAnimation.gameObject.SetActive(false);
         onAdEnded?.Invoke();
     }
 
