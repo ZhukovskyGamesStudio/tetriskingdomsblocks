@@ -28,6 +28,8 @@ public class GoalView : MonoBehaviour {
     {
         if(_isGameEnded)return;
         WinAnimation();
+        StorageManager.GameDataMain.CurMaxLevel++;
+        StorageManager.SaveGame();
         _isGameEnded = true;
         _winState.gameObject.SetActive(true);
         _loseState.gameObject.SetActive(false);

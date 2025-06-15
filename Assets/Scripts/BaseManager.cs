@@ -44,16 +44,16 @@ public class BaseManager : MonoBehaviour
     [SerializeField] protected LayerMask _targetMasks;
     [SerializeField] private Transform _fieldStart, _fieldEnd;
     [field: SerializeField] public FigureFormConfig[] FigureFormsConfig { get; protected set; }
-    [field: SerializeField] private Image _healthBar;
+    [field: SerializeField] private Transform[] _healthImages;
     [SerializeField] private TMP_Text _healthTimerText;
     [SerializeField] private int _minutesToHealthRecovery;
     [SerializeField] private ParticleSystem _placeCellEffect;
     [SerializeField] private NetworkTimeAPI networkTimeAPI;
     protected bool _hasInternetConnection;
     private float timerNowTimeSecondCounter;
-    private DateTime _currentGameTime;
+    protected DateTime _currentGameTime;
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
-public const int MAX_HEALTH_COUNT = 5;
+public const int MAX_HEALTH_COUNT = 3;
 
 protected virtual void Awake()
 {
@@ -89,7 +89,7 @@ protected virtual void Start()
     
     private void AddSecondToTimer() =>  _currentGameTime = _currentGameTime.AddSeconds(1);
 
-    private void Update()
+    protected virtual void Update()
     {
         if (_hasInternetConnection)
         {
@@ -106,13 +106,12 @@ protected virtual void Start()
 
                 if (energyToAdd > 0)
                 {
-                    Debug.Log(_currentGameTime + " " + _lastHealthRecoveryTime);
                     StorageManager.GameDataMain.HealthCount =
                         Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
                     _lastHealthRecoveryTime = _currentGameTime;
                     StorageManager.GameDataMain.LastHealthRecoveryTime = DateForSaveData.FromDateTime(_currentGameTime);
                     SaveEnergyData();
-                    _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
+                    _healthImages[StorageManager.GameDataMain.HealthCount-1].gameObject.SetActive(true);
                 }
 
                 UpdateTimerUI();
@@ -234,7 +233,7 @@ protected virtual void Start()
         _currentTween.Kill();
         _currentTween = DOTween.Sequence()
             .Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(0.97f, 1.03f), 0.2f))
+            .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
             .Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
             .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
             .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f))
@@ -307,8 +306,8 @@ protected virtual void Start()
                 DateForSaveData.FromDateTime(_lastHealthRecoveryTime);
         }
 
+        _healthImages[StorageManager.GameDataMain.HealthCount-1].gameObject.SetActive(false);
         StorageManager.GameDataMain.HealthCount--;
-        _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
         SaveEnergyData();
     }
 
@@ -347,6 +346,9 @@ protected virtual void Start()
     }
     protected virtual void SetupGame()
     {
+        if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
+            StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
+        
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
         {
             _healthTimerText.gameObject.SetActive(false);
@@ -360,7 +362,10 @@ protected virtual void Start()
                 _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
             else
                 _healthTimerText.text = "No internet connection";
-            _healthBar.fillAmount = (float)StorageManager.GameDataMain.HealthCount / MAX_HEALTH_COUNT;
+            for (int i = 0; i < MAX_HEALTH_COUNT; i++)
+            {
+                _healthImages[i].gameObject.SetActive(StorageManager.GameDataMain.HealthCount > i);
+            }
         }
     }
 }

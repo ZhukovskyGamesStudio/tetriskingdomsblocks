@@ -5,10 +5,11 @@ public class GameDataForSave
 {
     public int CurMaxLevel;
 
-    public int WoodAmount;
+    /*public int WoodAmount;
     public int RocksAmount;
     public int FoodAmount;
-    public int MetalAmount;
+    public int MetalAmount;*/
+    public int[] resourcesCount;
 
     public int CoinsAmount;
     public int GemsAmount;
@@ -17,12 +18,18 @@ public class GameDataForSave
     public int HealthCount;
 
     public DateForSaveData LastExitTime;
-
+    
+    public DateForSaveData LastGetPieceTime;
+    
     public MetaFieldData[] FieldRows;
 
     public GameDataForSave()
     {
-        HealthCount = 5;
+        HealthCount = 3;
+        resourcesCount = new int[4];
+        resourcesCount[0] = 300;
+        resourcesCount[1] = 300;
+        resourcesCount[2] = 300;
     }
 }
 

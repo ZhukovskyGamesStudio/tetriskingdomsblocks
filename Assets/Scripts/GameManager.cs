@@ -548,8 +548,6 @@ public class GameManager : BaseManager, IResetable
 
     private void Win()
     {
-        StorageManager.GameDataMain.CurMaxLevel++;
-        StorageManager.SaveGame();
         _mainTextUp.text = "You win!";
         foreach (var taskUI in _taskUIViews)
             taskUI.gameObject.SetActive(false);

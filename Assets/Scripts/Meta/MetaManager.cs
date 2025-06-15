@@ -12,6 +12,9 @@ public class MetaManager : BaseManager {
     [field:SerializeField]
     public MainMetaConfig MainMetaConfig { get;private set; }
     private PieceData _nextBlock = new PieceData();
+    [SerializeField]private TMP_Text[] _resourcesCountText;
+    [SerializeField]private TMP_Text _getPieceTimerText;
+    private int _minutesToGetPiece = 120;
     
     protected override void Awake() {
         base.Awake();    
@@ -23,6 +26,27 @@ public class MetaManager : BaseManager {
        base.Start();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (_hasInternetConnection &&
+            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime()).TotalHours < 2)
+        {
+            TimeSpan timeUntilNext = GetTimeUntilNextPiece();
+            _getPieceTimerText.text = $"{timeUntilNext.Hours:D1}:{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2} to new piece";
+        }
+    }
+
+    public TimeSpan GetTimeUntilNextPiece()
+    {
+       // if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
+        
+        TimeSpan timeSinceLastUpdate = _currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime();
+        double minutesPassed = timeSinceLastUpdate.TotalMinutes;
+        double minutesUntilNext = _minutesToGetPiece - (minutesPassed % _minutesToGetPiece);
+        
+        return TimeSpan.FromMinutes(minutesUntilNext);
+    }
     public void Play() {
         if(StorageManager.GameDataMain.HealthCount != 0)
         SceneManager.LoadScene("GameScene");
@@ -34,9 +58,34 @@ public class MetaManager : BaseManager {
     }
 
     public void BuyPiece() {
+       if (StorageManager.GameDataMain.resourcesCount[0] >= 100 &&
+           StorageManager.GameDataMain.resourcesCount[1] >= 100 && StorageManager.GameDataMain.resourcesCount[2] >= 100)
+       {
        // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
-
+       StorageManager.GameDataMain.resourcesCount[0] -= 100;
+       StorageManager.GameDataMain.resourcesCount[1] -= 100;
+       StorageManager.GameDataMain.resourcesCount[2] -= 100;
+       UpdateResourcesCountUIText();
        GenerateNewPieces(); // for test
+       
+       }
+    }
+
+    private void UpdateResourcesCountUIText()
+    {
+        for (int i = 0; i < _resourcesCountText.Length; i++)
+            _resourcesCountText[i].text = StorageManager.GameDataMain.resourcesCount[i].ToString();
+    }
+    public void GetPiece() {
+        if (_hasInternetConnection &&
+            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime()).TotalHours >= 2)
+        {
+        // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
+        StorageManager.GameDataMain.LastGetPieceTime = DateForSaveData.FromDateTime(_currentGameTime);
+        GenerateNewPieces(); // for test
+            
+        }
+        
     }
 
     public void CollectAll() {
@@ -88,7 +137,11 @@ public class MetaManager : BaseManager {
         }
 
         GetResourceCollectMarks();
+
+        UpdateResourcesCountUIText();
         
+        if (StorageManager.GameDataMain.LastGetPieceTime.Years == 0)
+            StorageManager.GameDataMain.LastGetPieceTime = DateForSaveData.FromDateTime(_currentGameTime - TimeSpan.FromHours(2)); 
         base.SetupGame();
     }
     
@@ -142,24 +195,6 @@ public class MetaManager : BaseManager {
         Debug.Log($"Найдено {connectedGroups.Count} групп связанных клеток + avg pos {collectResourceMarkPosition}" );
         }
     }
-
-    /*IEnumerator GetAFKTime(Action<DateTime> callback)
-    {
-        UnityWebRequest request = UnityWebRequest.Get("https://worldtimeapi.org/api/ip");
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string json = request.downloadHandler.text;
-            ServerTimeData data = JsonUtility.FromJson<ServerTimeData>(json);
-            callback(DateTime.Parse(data.datetime));
-        }
-        else
-        {
-            Debug.Log("Need internet connction to get rewards");
-            callback(DateTime.UtcNow);
-        }
-    }*/
 
     private void DestroyChildren()
     {
