@@ -36,7 +36,20 @@ public class GameDataForSave
 
 [System.Serializable]
 public struct MetaFieldData {
-    public CellType[] RowCells;
+    public ResourceAndCountData[] RowCells;
+}
+
+[System.Serializable]
+public struct ResourceAndCountData
+{
+    public CellType CellType;
+    public int ResourceCount;
+
+    public ResourceAndCountData(CellType cellType, int resourceCount)
+    {
+        CellType = cellType;
+        ResourceCount = resourceCount;
+    }
 }
 
 [System.Serializable]

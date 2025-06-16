@@ -849,7 +849,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 100, y: 15}
+  m_AnchoredPosition: {x: 100, y: -90}
   m_SizeDelta: {x: 118.5152, y: 58.5299}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &240421248
@@ -1149,7 +1149,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 99.999985, y: -59}
+  m_AnchoredPosition: {x: 688, y: -59}
   m_SizeDelta: {x: 118.5152, y: 58.5299}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &303864912
@@ -1198,7 +1198,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1910540964}
         m_TargetAssemblyTypeName: MetaManager, Assembly-CSharp
-        m_MethodName: BuyPiece
+        m_MethodName: ToggleDestroyPieceMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1286,8 +1286,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Get cell
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
+  m_sharedMaterial: {fileID: -7244873375232470608, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1439,10 +1439,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Delete cell
+  m_text: Destroy pieces mode
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
+  m_sharedMaterial: {fileID: -7244873375232470608, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1466,8 +1466,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1612,8 +1612,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Buy cell
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
+  m_sharedMaterial: {fileID: -7244873375232470608, guid: 3cd57b48cb32aa2408ee0460d689be68, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1882,7 +1882,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 99.999985, y: 84.6001}
+  m_AnchoredPosition: {x: 99.999985, y: -20.39991}
   m_SizeDelta: {x: 118.5152, y: 58.5299}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &827449936
@@ -2115,6 +2115,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 851150026}
   m_CullTransparentMesh: 1
+--- !u!1 &858362967
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 858362968}
+  m_Layer: 5
+  m_Name: ResourceMarksContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &858362968
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858362967}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1212849847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &883484411
 GameObject:
   m_ObjectHideFlags: 0
@@ -3063,6 +3098,7 @@ RectTransform:
   - {fileID: 576607382}
   - {fileID: 2142576964}
   - {fileID: 1207000648}
+  - {fileID: 858362968}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3756,10 +3792,10 @@ RectTransform:
   - {fileID: 303864911}
   m_Father: {fileID: 1212849847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -267.03397, y: -336.28583}
-  m_SizeDelta: {x: 254.0258, y: 262.9102}
+  m_SizeDelta: {x: -523.9742, y: 262.9102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1910540963
 GameObject:
@@ -3847,6 +3883,12 @@ MonoBehaviour:
   - {fileID: 851150028}
   - {fileID: 166677948}
   _getPieceTimerText: {fileID: 305358913}
+  _destroyPieceText: {fileID: 318395517}
+  _resourcesMarksContainer: {fileID: 858362968}
+  _pieceMask:
+    serializedVersion: 2
+    m_Bits: 64
+  resourceMarkViewPrefab: {fileID: 6177281990575553249, guid: 61bbdfbd9e1c08743a8eca4a42db9d36, type: 3}
 --- !u!4 &1910540965
 Transform:
   m_ObjectHideFlags: 0

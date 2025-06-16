@@ -10,4 +10,8 @@ public class MainMetaConfig : ScriptableObject {
     public List<CellTypeInfo> CellsConfigs;
         
     public int FieldSize;
+    
+    public float[] ResourceMultipliers;
+    
+    public float resourceMarksUpdateCouldown;
 }

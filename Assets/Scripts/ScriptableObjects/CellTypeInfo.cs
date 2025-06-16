@@ -12,5 +12,10 @@ public class CellTypeInfo : ScriptableObject
     [FormerlySerializedAs("resourcesForDestroy")] public ResourceTypeAndCountSubClass[] ResourcesForDestroy;
     [FormerlySerializedAs("cellName")] public string CellName;
     public int MultiplayerForSameResourceType;
+
+    public ResourceType AfkResourceType;
+    public int MaxAfkCapacity;
+    public float AfkProduceCountPerSecond;
+    
     public float ChanceToSpawn;
 }
