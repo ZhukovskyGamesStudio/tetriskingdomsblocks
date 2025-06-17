@@ -194,6 +194,7 @@ protected virtual void Start()
     }
 
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+        float cellsAmount = 0;
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -208,11 +209,13 @@ protected virtual void Start()
                 go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
                 SpawnSmokeParticle(go.transform.position).Forget();
+                cellsAmount++;
             }
         }
 
         ShakeCamera();
-        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
+        float vibrationsAmplitude = cellsAmount/9;
+        VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
     }
 
     public virtual void PlacePiece(PieceData pieceData) { }

@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class GameManager : BaseManager, IResetable
 {
@@ -295,6 +296,7 @@ public class GameManager : BaseManager, IResetable
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
         string unlockedCellText = "";
+        bool isDestroying = false;
         // Проверка строк
         for (int y = 0; y < height; y++)
         {
@@ -312,6 +314,7 @@ public class GameManager : BaseManager, IResetable
             if (fullRow)
             {
                 DestroyLine(y, width, true, ref unlockedCellText);
+                isDestroying = true;
             }
         }
 
@@ -331,6 +334,15 @@ public class GameManager : BaseManager, IResetable
             if (fullColumn)
             {
                 DestroyLine(x, height, false, ref unlockedCellText);
+                isDestroying = true;
+            }
+        }
+
+        if (isDestroying) {
+            if (Random.Range(0, 2) == 0)
+                VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
+            else {
+                VibrationsManager.Instance.SpawnVibrationEmhpasis(1, 1);
             }
         }
 
@@ -555,7 +567,7 @@ public class GameManager : BaseManager, IResetable
         }
 
         
-        VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
+        VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetWinState();
     }
 
@@ -567,7 +579,7 @@ public class GameManager : BaseManager, IResetable
         }
         
         
-        VibrationsManager.Instance.SpawnVibration(VibrationType.Lose);
+        VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
     }
 
