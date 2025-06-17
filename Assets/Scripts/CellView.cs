@@ -20,6 +20,7 @@ public class CellView : MonoBehaviour {
 
     public void PlaceCellOnField()
     {
+        return;
         _currentTween = DOTween.Sequence()
             .Append(transform.DOScaleY(transform.localScale.y * 0.6f, 0.25f))
             .Join(transform.DOScaleX(transform.localScale.x * 1.1f, 0.25f))

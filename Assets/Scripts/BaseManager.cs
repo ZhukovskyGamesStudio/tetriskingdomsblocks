@@ -199,6 +199,10 @@ protected virtual void Start()
 
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
         float cellsAmount = 0;
+        GameObject tmpContainer = new();
+        tmpContainer.transform.SetParent(_fieldContainer);
+        List<Vector3> poses = new List<Vector3>();
+        List<GameObject> cells = new List<GameObject>();
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -207,20 +211,64 @@ protected virtual void Start()
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
                 CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
+               
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
+                poses.Add(new Vector3(place.x, -0.45f, place.y));
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
-                go.GetComponent<CellView>().PlaceCellOnField();
+                cells.Add(go.gameObject);
+              
+                //go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
-                SpawnSmokeParticle(go.transform.position).Forget();
+                //SpawnSmokeParticle(go.transform.position).Forget();
                 cellsAmount++;
             }
         }
-
-      
+        tmpContainer.transform.localPosition = GetAveragePosition(poses);
+        foreach (var cell in cells) {
+            cell.transform.SetParent(tmpContainer.transform);
+        }
+       
+        SpawnSmokeUnderPiece(tmpContainer.transform);
+        WigglePiece(tmpContainer.transform);
         ShakeCamera();
         float vibrationsAmplitude = cellsAmount/9;
         VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
+    }
+    
+    public static Vector3 GetAveragePosition(List<Vector3> positions) {
+        if (positions == null || positions.Count == 0) {
+            return Vector3.zero;
+        }
+
+        Vector3 sum = Vector3.zero;
+        for (int i = 0; i < positions.Count; i++) {
+            sum += positions[i];
+        }
+
+        return sum / positions.Count;
+    }
+
+    private void WigglePiece(Transform piece) {
+        DOTween.Sequence()
+            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
+            .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
+            .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
+            .Append(piece.DOScale(new Vector3(1,1,1), 0.25f))
+            .OnComplete(() => {
+                while (piece.childCount > 0) {
+                    piece.GetChild(0).SetParent(_fieldContainer);
+                }
+
+                Destroy(piece.gameObject);
+            });
+    }
+
+    private void SpawnSmokeUnderPiece(Transform piece) {
+        SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
     public virtual void PlacePiece(PieceData pieceData) { }
@@ -334,7 +382,7 @@ protected virtual void Start()
     {
         var particles = _placeCellEffectsPool.Get();
         particles.gameObject.SetActive(true);
-        particles.transform.position = new Vector3(pos.x,pos.y-0.1f,pos.z); 
+        particles.transform.position = new Vector3(pos.x,pos.y-0.2f,pos.z); 
         particles.Play();
         await UniTask.Delay(TimeSpan.FromSeconds(2));
         ReleaseParticles(particles);
