@@ -211,6 +211,7 @@ protected virtual void Start()
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
                 CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
+                go.SetSeed(pieceData.CellGuids[x, y]);
                
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
                 poses.Add(new Vector3(place.x, -0.45f, place.y));

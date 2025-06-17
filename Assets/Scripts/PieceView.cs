@@ -37,7 +37,8 @@ public class PieceView : MonoBehaviour {
                 bool cell = data.Cells[x, y];
                 if (cell) {
                   var prefab = data.Type.CellPrefab;
-                    var go = Instantiate(prefab, _cellsContainer);
+                    CellView go = Instantiate(prefab, _cellsContainer);
+                    go.SetSeed(data.CellGuids[x, y]);
                    // int cellSize = isMetaGame ? MetaManager.Instance.Cell:GameManager.Instance._markedCell;
                     var markedCell = isMetaGame ? MetaManager.Instance._markedCell:GameManager.Instance._markedCell;
                     var markCell = Instantiate(markedCell, _markedCellsContainer);
