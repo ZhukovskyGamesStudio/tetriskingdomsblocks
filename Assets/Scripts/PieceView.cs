@@ -42,7 +42,7 @@ public class PieceView : MonoBehaviour {
                    // int cellSize = isMetaGame ? MetaManager.Instance.Cell:GameManager.Instance._markedCell;
                     var markedCell = isMetaGame ? MetaManager.Instance._markedCell:GameManager.Instance._markedCell;
                     var markCell = Instantiate(markedCell, _markedCellsContainer);
-                    markCell.GetComponent<MeshRenderer>().material.color = new Color(data.Type.MarkCellColor.r, data.Type.MarkCellColor.g, data.Type.MarkCellColor.b,0.5f);
+                    markCell.GetComponent<MeshRenderer>().material.color = new Color(data.Type.MarkCellColor.r, data.Type.MarkCellColor.g, data.Type.MarkCellColor.b,0.75f);
                     go.transform.localPosition = (new Vector3(x, 0, y) + shift + Vector3.one / 2f) * GameManager.CELL_SIZE;
                     markCell.position = new Vector3(go.transform.position.x, go.transform.position.y-0.5f, go.transform.position.z);
                     go.transform.localScale *= Mathf.Clamp(GameManager.CELL_SIZE - 2, 1, 100000);
@@ -63,7 +63,7 @@ public class PieceView : MonoBehaviour {
         _initialScale = _cellsContainer.localScale;
         _cellsContainer.localScale = new Vector3(1f/_cellsContainer.lossyScale.x,1f/_cellsContainer.lossyScale.y,1f/_cellsContainer.lossyScale.z);
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
-        cellManager.CusorToCellOffset = transform.position - cellManager.ScreenToWorldPoint;
+        cellManager.SetCurPieceOffset( transform.position - cellManager.InputCoord());
         DragShift = CalculateShift() + Vector3.one/2;
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
         _initialMarkedScale = _markedCellsContainer.localScale;
@@ -74,10 +74,7 @@ public class PieceView : MonoBehaviour {
     public void OnDrag() {
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         int fieldSize = GameManager.Instance == null ? MetaManager.Instance.MainMetaConfig.FieldSize : GameManager.Instance.MainGameConfig.FieldSize;
-        var targetMousePos = cellManager.ScreenToWorldPoint + cellManager.CusorToCellOffset;
-        
-        if (Input.touchCount > 0)
-            targetMousePos = cellManager.TouchToWorldPoint+ cellManager.CusorToCellOffset;
+        var targetMousePos = cellManager.InputCoord() + cellManager.TotalDragOffset;
        
         targetMousePos.y = _cellsContainer.position.y;
         var posOnField = cellManager.GetPosOnField();

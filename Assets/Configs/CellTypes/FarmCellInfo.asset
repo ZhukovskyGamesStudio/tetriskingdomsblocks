@@ -15,7 +15,7 @@ MonoBehaviour:
   CellPrefab: {fileID: 3199888184775657234, guid: 5d349ea7af382a247aec3c4505dcea85, type: 3}
   CellType: 10
   CellForm: {fileID: 0}
-  MarkCellColor: {r: 0.7830189, g: 0.6984837, b: 0.42475083, a: 0}
+  MarkCellColor: {r: 0.9547169, g: 0.7742292, b: 0.19995016, a: 0}
   ResourcesForPlace:
   - ResourceType: 3
     ResourceCount: 2
@@ -24,4 +24,7 @@ MonoBehaviour:
     ResourceCount: 2
   CellName: Farm
   MultiplayerForSameResourceType: 2
+  AfkResourceType: 0
+  MaxAfkCapacity: 0
+  AfkProduceCountPerSecond: 0
   ChanceToSpawn: 1
