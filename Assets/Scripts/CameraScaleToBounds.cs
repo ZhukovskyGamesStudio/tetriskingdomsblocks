@@ -1,41 +1,62 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraScaleToBounds : MonoBehaviour {
-    [SerializeField] private CinemachineCamera _virtualCamera;
-    [SerializeField] private Transform _targetArea; // The object or root that should always be visible
-    [SerializeField] private float padding = 1.1f;  // Extra zoom out factor
+    [SerializeField]
+    private CinemachineCamera _virtualCamera;
+    
+    private CinemachinePositionComposer _framingComposer; // Optional, if you want to use a composer for camera framing
+    
+    [SerializeField]
+    private Transform _targetArea; // The object or root that should always be visible
 
-    private void Update() {
-        FitCameraToTarget();
+    [SerializeField]
+    private float padding = 1.1f; // Extra zoom out factor
+
+    private float _aspectRatio = -1;
+
+    private void Awake() {
+        _framingComposer= _virtualCamera.GetComponent<CinemachinePositionComposer>();
     }
 
-    public void FitCameraToTarget() {
-        if (_virtualCamera == null || _targetArea == null) { return; }
+    private void Update() {
+        float curAspect = (float)Screen.width / Screen.height;
+        if (!Mathf.Approximately(curAspect, _aspectRatio)) {
+            _aspectRatio = curAspect;
+            FitCameraToTarget(_aspectRatio);
+        }
+    }
+
+    private void FitCameraToTarget(float aspectRatio) {
+        if (_virtualCamera == null || _targetArea == null) {
+            return;
+        }
 
         var bounds = CalculateBounds(_targetArea);
-        var framing = _virtualCamera.GetComponent<CinemachinePositionComposer>();
-
-        if (framing == null) { return; }
-
-        float aspect = (float)Screen.width / Screen.height;
         float fovRad = _virtualCamera.Lens.FieldOfView * Mathf.Deg2Rad;
 
         float width = bounds.size.x;
-        float height = bounds.size.y;
+        float height = bounds.size.z;
 
         // distance needed to fit vertically
         float vertDistance = (height / 2f) / Mathf.Tan(fovRad / 2f);
 
         // distance needed to fit horizontally
-        float horizFovRad = 2f * Mathf.Atan(Mathf.Tan(fovRad / 2f) * aspect);
+        float horizFovRad = 2f * Mathf.Atan(Mathf.Tan(fovRad / 2f) * aspectRatio);
         float horizDistance = (width / 2f) / Mathf.Tan(horizFovRad / 2f);
 
         // pick the greater distance (whichever would otherwise crop)
         float targetDistance = Mathf.Max(vertDistance, horizDistance) * padding;
+        _framingComposer.enabled = true;
+        _framingComposer.CameraDistance = targetDistance;
+        DisableComposer().Forget();
+    }
 
-        framing.CameraDistance = targetDistance;
+    private async UniTask DisableComposer() {
+        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        _framingComposer.enabled = false;
     }
 
     private Bounds CalculateBounds(Transform root) {

@@ -250,7 +250,7 @@ public class GameManager : BaseManager, IResetable
                 if (_currentTasks[i].TaskInfo.Count <= count)
                 {
                     _currentTasks[i].TaskUIView.CompleteTask();
-                    VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
+                    VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.2f);
                     _currentTasks.RemoveAt(i);
                 }
             }

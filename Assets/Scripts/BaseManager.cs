@@ -232,8 +232,14 @@ protected virtual void Start()
        
         SpawnSmokeUnderPiece(tmpContainer.transform);
         WigglePiece(tmpContainer.transform);
-        ShakeCamera();
+      
         float vibrationsAmplitude = cellsAmount/9;
+        if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
+            pieceData.Type.CellType == CellType.Mine) {
+            vibrationsAmplitude *= 1.5f;
+        }
+
+        ShakeCamera(vibrationsAmplitude);
         VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
     }
     
@@ -276,7 +282,15 @@ protected virtual void Start()
 
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
-    protected void ShakeCamera() {
+    protected void ShakeCamera(float percent) {
+        percent = Mathf.LerpUnclamped(0.3f, 1f, percent);
+        var screenShake = _mmfPlayer.GetFeedbackOfType<MMF_CameraShake>();
+        screenShake.CameraShakeProperties.Amplitude = 1.5f * percent;
+        screenShake.CameraShakeProperties.AmplitudeZ = 0.5f * percent;
+        screenShake.CameraShakeProperties.Duration = 1f * percent;
+        
+        var zoom = _mmfPlayer.GetFeedbackOfType<MMF_CameraZoom>();
+        zoom.ZoomFieldOfView = -1 * percent;
         _mmfPlayer.PlayFeedbacks();
         return;
         Vector3 camPos = CameraContainer.transform.position;
