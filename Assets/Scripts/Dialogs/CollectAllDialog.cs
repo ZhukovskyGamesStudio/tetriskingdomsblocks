@@ -1,14 +1,15 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CollectAllDialog : DialogBase {
     public void CollectAll() {
-        Hide();
+        Hide().Forget();
         CollectResources(1);
     }
 
     public void CollectAllWithAds() {
-        Hide();
-        AdsManager.Instance.ShowRewarded(CollectAllWithMultiplier);
+        Hide().Forget();
+        AdsManager.Instance.ShowRewarded(CollectAllWithMultiplier).Forget();
     }
 
     private void CollectAllWithMultiplier() {

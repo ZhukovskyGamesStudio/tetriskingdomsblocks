@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class DialogsManager : MonoBehaviour {
@@ -49,6 +50,6 @@ public class DialogsManager : MonoBehaviour {
             Destroy(_currentDialog.gameObject);
             _currentDialog = null;
             TryShowFromQueue();
-        });
+        }).Forget();
     }
 }

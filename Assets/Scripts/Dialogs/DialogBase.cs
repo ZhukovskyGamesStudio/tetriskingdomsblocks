@@ -25,6 +25,6 @@ public class DialogBase : MonoBehaviour {
     }
 
     public void HideByButton() {
-        Hide();
+        Hide().Forget();
     }
 }

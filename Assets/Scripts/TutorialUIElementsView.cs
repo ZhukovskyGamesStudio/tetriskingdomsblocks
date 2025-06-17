@@ -14,10 +14,10 @@ public class TutorialUIElementsView : MonoBehaviour
         GameManager.OnCellIsPlaced.AddListener(DestroyTutorial);
         foreach (var hole in _holeImages)
         {
-            hole.parent = GameManager.Instance.HolesForBGContainer;
+            hole.SetParent( GameManager.Instance.HolesForBGContainer);
         }
-        _blackBGImage.parent = GameManager.Instance.BlackBGContainer;
-        _fingerImage.parent = GameManager.Instance.BlackBGContainer;
+        _blackBGImage.SetParent(GameManager.Instance.BlackBGContainer);
+        _fingerImage.SetParent(GameManager.Instance.BlackBGContainer);
         StrechImageToFullSreen();
         StartAnimation();
     }

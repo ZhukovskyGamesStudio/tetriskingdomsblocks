@@ -13,12 +13,12 @@ public class AdDialog : DialogBase {
         await base.Show(onClose);
         _adAnimation.Play(_adClip.name);
         await UniTask.WaitWhile(() => _adAnimation.isPlaying);
-        Hide();
+        Hide().Forget();
     }
 
     public void OnClick() {
         if (AdsManager.Instance.IsCanSkipAds) {
-            Hide();
+            Hide().Forget();
         }
     }
 }

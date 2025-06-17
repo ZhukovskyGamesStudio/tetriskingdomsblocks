@@ -10,38 +10,32 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Synty.Interface.FantasyWarriorHUD.Samples
-{
+namespace Synty.Interface.FantasyWarriorHUD.Samples {
     /// <summary>
     ///     Oscillates the value of a list of sliders.
     /// </summary>
-    public class SampleOscillateSliders : MonoBehaviour
-    {
+    public class SampleOscillateSliders : MonoBehaviour {
         [Header("References")]
         public List<Slider> sliders;
 
         [Header("Parameters")]
         public bool autoGetSliders = true;
+
         public float speed = 1f;
         public float offset = 0.5f;
 
-        private void Reset()
-        {
-            sliders = FindObjectsOfType<Slider>().ToList();
+        private void Reset() {
+            sliders = FindObjectsByType<Slider>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).ToList();
         }
 
-        private void Start()
-        {
-            if (autoGetSliders)
-            {
-                sliders = FindObjectsOfType<Slider>().ToList();
+        private void Start() {
+            if (autoGetSliders) {
+                Reset();
             }
         }
 
-        private void Update()
-        {
-            for (int i = 0; i < sliders.Count; i++)
-            {
+        private void Update() {
+            for (int i = 0; i < sliders.Count; i++) {
                 sliders[i].value = (Mathf.Sin((Time.time * speed) + (i * offset)) * 0.5f) + 0.5f;
             }
         }
