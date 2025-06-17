@@ -17,6 +17,8 @@ public class PieceView : MonoBehaviour {
     [field:SerializeField]
     public Transform _cellsContainer { get; private set; }
 
+    private Vector3 _initialScale, _initialMarkedScale;
+
     private void Update()
     {
         if(_isDragging)
@@ -57,10 +59,14 @@ public class PieceView : MonoBehaviour {
 
     public void OnStartDrag() {
         _isDragging = true;
+        _initialScale = _cellsContainer.localScale;
+        _cellsContainer.localScale = new Vector3(1f/_cellsContainer.lossyScale.x,1f/_cellsContainer.lossyScale.y,1f/_cellsContainer.lossyScale.z);
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         cellManager.CusorToCellOffset = transform.position - cellManager.ScreenToWorldPoint;
         DragShift = CalculateShift() + Vector3.one/2;
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
+        _initialMarkedScale = _markedCellsContainer.localScale;
+        _markedCellsContainer.localScale = new Vector3(1f/_markedCellsContainer.lossyScale.x,1f/_markedCellsContainer.lossyScale.y,1f/_markedCellsContainer.lossyScale.z);
         
     }
 
@@ -91,6 +97,7 @@ public class PieceView : MonoBehaviour {
             
             if (CalculateShift().z % 1 == 0) 
                 clampedShiftedPos+= Vector3.forward/2;
+            clampedShiftedPos.x -= 0.28f;
           
             targetPos = new Vector3(clampedShiftedPos.x,_cellsContainer.position.y-1.05f,clampedShiftedPos.z+0.05f) ;
             _markedCellsContainer.gameObject.SetActive(true);
@@ -115,6 +122,8 @@ public class PieceView : MonoBehaviour {
             Destroy(gameObject);
         } else {
             _cellsContainer.position = _startingPosition;
+            _cellsContainer.localScale = _initialScale;
+            _markedCellsContainer.localScale = _initialMarkedScale;
         }
     }
 
