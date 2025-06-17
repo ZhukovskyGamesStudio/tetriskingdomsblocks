@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using MoreMountains.Feedbacks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -58,6 +59,8 @@ public class GameManager : BaseManager, IResetable
 
     public List<CellTypeInfo> CurrentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
+
+   
 
     protected override void Awake()
     {

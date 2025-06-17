@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using MoreMountains.Feedbacks;
 using MoreMountains.FeedbacksForThirdParty;
 using TMPro;
 using UnityEngine;
@@ -55,6 +56,9 @@ public class BaseManager : MonoBehaviour
     private float timerNowTimeSecondCounter;
     protected DateTime _currentGameTime;
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
+    
+    [SerializeField]
+    private MMF_Player _mmfPlayer;
 public const int MAX_HEALTH_COUNT = 3;
 
 protected virtual void Awake()
@@ -213,6 +217,7 @@ protected virtual void Start()
             }
         }
 
+      
         ShakeCamera();
         float vibrationsAmplitude = cellsAmount/9;
         VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
@@ -223,6 +228,8 @@ protected virtual void Start()
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
     protected void ShakeCamera() {
+        _mmfPlayer.PlayFeedbacks();
+        return;
         Vector3 camPos = CameraContainer.transform.position;
         float xOffset = camPos.x * Random.Range(-0.03f, 0.03f);
         float zOffset = camPos.z * Random.Range(-0.03f, 0.03f);
