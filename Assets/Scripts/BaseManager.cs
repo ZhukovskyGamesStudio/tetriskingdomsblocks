@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using MoreMountains.FeedbacksForThirdParty;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -191,53 +193,42 @@ protected virtual void Start()
         return true;
     }
 
-    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize)
-    {
-        for (int x = 0; x < pieceData.Cells.GetLength(0); x++)
-        {
-            for (int y = 0; y < pieceData.Cells.GetLength(1); y++)
-            {
-                if (!pieceData.Cells[x, y])
-                {
+    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+        for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
+            for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
+                if (!pieceData.Cells[x, y]) {
                     continue;
                 }
 
-                var place = new Vector2Int((int)Mathf.Clamp(pos.x + x, 0, fieldSize),
-                    (int)Mathf.Clamp(pos.y + y, 0, fieldSize));
-                var go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
+                Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
+                CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
                 go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
-                StartCoroutine(SpawnSmokeParticle(go.transform.position)) ;
+                SpawnSmokeParticle(go.transform.position).Forget();
             }
         }
 
         ShakeCamera();
-    }
-    
-    public virtual void PlacePiece(PieceData pieceData)
-    {
+        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
     }
 
-    protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go)
-    {
-    }
-    
-    protected void ShakeCamera()
-    {
+    public virtual void PlacePiece(PieceData pieceData) { }
+
+    protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
+
+    protected void ShakeCamera() {
         Vector3 camPos = CameraContainer.transform.position;
         float xOffset = camPos.x * Random.Range(-0.03f, 0.03f);
         float zOffset = camPos.z * Random.Range(-0.03f, 0.03f);
         _currentTween.Kill();
-        _currentTween = DOTween.Sequence()
-            .Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
+        _currentTween = DOTween.Sequence().Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
             .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
             .Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
             .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f))
-            .Append(CameraContainer.transform.DOMove(camPos, 0.1f)); 
+            .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
     }
 
     public TimeSpan GetTimeUntilNextHealth()
@@ -329,13 +320,13 @@ protected virtual void Start()
             _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
     }
 
-    private IEnumerator SpawnSmokeParticle(Vector3 pos)
+    private async UniTask SpawnSmokeParticle(Vector3 pos)
     {
         var particles = _placeCellEffectsPool.Get();
         particles.gameObject.SetActive(true);
         particles.transform.position = new Vector3(pos.x,pos.y-0.1f,pos.z); 
         particles.Play();
-        yield return new WaitForSeconds(2f);
+        await UniTask.Delay(TimeSpan.FromSeconds(2));
         ReleaseParticles(particles);
     }
 

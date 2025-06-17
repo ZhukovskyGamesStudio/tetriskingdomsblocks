@@ -246,6 +246,7 @@ public class GameManager : BaseManager, IResetable
                 if (_currentTasks[i].TaskInfo.Count <= count)
                 {
                     _currentTasks[i].TaskUIView.CompleteTask();
+                    VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
                     _currentTasks.RemoveAt(i);
                 }
             }
@@ -549,17 +550,24 @@ public class GameManager : BaseManager, IResetable
     private void Win()
     {
         _mainTextUp.text = "You win!";
-        foreach (var taskUI in _taskUIViews)
+        foreach (var taskUI in _taskUIViews) {
             taskUI.gameObject.SetActive(false);
+        }
 
+        
+        VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
         GoalView.Instance.SetWinState();
     }
 
     private void Lose()
     {
         _mainTextUp.text = "You lose:(";
-        foreach (var taskUI in _taskUIViews)
+        foreach (var taskUI in _taskUIViews) {
             taskUI.gameObject.SetActive(false);
+        }
+        
+        
+        VibrationsManager.Instance.SpawnVibration(VibrationType.Lose);
         GoalView.Instance.SetLoseState();
     }
 
