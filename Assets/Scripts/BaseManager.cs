@@ -246,17 +246,23 @@ public class BaseManager : MonoBehaviour {
             cell.transform.SetParent(tmpContainer.transform);
         }
 
-        SpawnSmokeUnderPiece(tmpContainer.transform);
-        WigglePiece(tmpContainer.transform);
+       
+      
+        ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
+    }
 
-        float vibrationsAmplitude = cellsAmount / 9;
-        if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
-            pieceData.Type.CellType == CellType.Mine) {
-            vibrationsAmplitude *= 1.5f;
-        }
+    private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+        DropPeaceTween(pieceContainer, () => {
+            SpawnSmokeUnderPiece(tmpContainer.transform);
+            float vibrationsAmplitude = cellsAmount / 9;
+            if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
+                pieceData.Type.CellType == CellType.Mine) {
+                vibrationsAmplitude *= 1.5f;
+            }
 
-        ShakeCamera(vibrationsAmplitude);
-        VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
+            ShakeCamera(vibrationsAmplitude);
+            VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
+        });
     }
 
     public static Vector3 GetAveragePosition(List<Vector3> positions) {
@@ -272,11 +278,20 @@ public class BaseManager : MonoBehaviour {
         return sum / positions.Count;
     }
 
-    private void WigglePiece(Transform piece) {
-        DOTween.Sequence().Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
-            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
-            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
-            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f)).OnComplete(() => {
+    private void DropPeaceTween(Transform piece, Action dropCallback) {
+        var pos = piece.localPosition;
+        piece.position += Vector3.up*1.5f;
+        DOTween.Sequence()
+            .Append(piece.DOLocalMoveY(pos.y, 0.15f))
+            .AppendCallback(()=>dropCallback?.Invoke())
+            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
+            .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
+            .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
+            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f))
+            .OnComplete(() => {
                 while (piece.childCount > 0) {
                     piece.GetChild(0).SetParent(_fieldContainer);
                 }
@@ -392,7 +407,9 @@ public class BaseManager : MonoBehaviour {
         particles.transform.position = new Vector3(pos.x, pos.y - 0.2f, pos.z);
         particles.Play();
         await UniTask.Delay(TimeSpan.FromSeconds(2));
-        ReleaseParticles(particles);
+        if (particles) {
+            ReleaseParticles(particles);
+        }
     }
 
     private void ReleaseParticles(ParticleSystem particles) {
