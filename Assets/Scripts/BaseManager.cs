@@ -44,7 +44,7 @@ public class BaseManager : MonoBehaviour
     [SerializeField] protected Transform _fieldContainer;
     public Transform CameraContainer;
     [SerializeField] protected LayerMask _targetMasks;
-    [SerializeField] private Transform _fieldStart, _fieldEnd;
+    [SerializeField] protected Transform _fieldStart, _fieldEnd;
     [field: SerializeField] public FigureFormConfig[] FigureFormsConfig { get; protected set; }
     [field: SerializeField] private Transform[] _healthImages;
     [SerializeField] private TMP_Text _healthTimerText;

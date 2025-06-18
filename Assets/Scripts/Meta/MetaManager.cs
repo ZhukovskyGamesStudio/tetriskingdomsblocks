@@ -30,6 +30,9 @@ public class MetaManager : BaseManager {
     [SerializeField] private LayerMask _pieceMask;
     [SerializeField] private ResourceMarkView resourceMarkViewPrefab;
     private Sequence hummerSequence;
+    private bool _isDraggingCamera;
+    public bool IsDraggingPiece;
+    private Vector3 _dragStartPosition;
     [HideInInspector]
     public Vector3 ScreenToWorldPointOnPiece => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
         out RaycastHit hit, Mathf.Infinity, _pieceMask)
@@ -72,12 +75,32 @@ public class MetaManager : BaseManager {
             _getPieceTimerText.text = $"{timeUntilNext.Hours:D1}:{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2} to new piece";
         }
 
-        if (Input.GetMouseButtonDown(0) && _isDestroyPieceMode)
+        if (Input.GetMouseButtonDown(0) )
         {
+            if(_isDestroyPieceMode)
             TryDestroyPiece();
+            _isDraggingCamera = true;
+            _dragStartPosition = Input.mousePosition;
         }
+        else if(Input.GetMouseButtonUp(0))
+            _isDraggingCamera = false;
+        
+        if(_isDraggingCamera && !IsDraggingPiece)
+            DragCamera();
     }
 
+    private void DragCamera()
+    {
+            Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
+        Vector3 move = new Vector3(pos.x * MainMetaConfig.CameraDragSpeed, 0, pos.y * MainMetaConfig.CameraDragSpeed);
+            
+        var needPosition =CameraContainer.transform.position-move;
+        
+        CameraContainer.position =  new Vector3(Mathf.Clamp(needPosition.x,_fieldStart.position.x,_fieldEnd.position.x),
+            needPosition.y, 
+            Mathf.Clamp(needPosition.z,_fieldStart.position.z,_fieldEnd.position.z));
+        _dragStartPosition = Input.mousePosition;
+    }
     private void TryDestroyPiece()
     {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
@@ -219,8 +242,8 @@ public class MetaManager : BaseManager {
     {
         var mark = _resourcesMarksPool.Get();
         mark.gameObject.SetActive(true);
-        pos = _mainCamera.WorldToScreenPoint(pos);
-        mark.transform.position = new Vector2(pos.x,pos.y); 
+        //pos = _mainCamera.WorldToScreenPoint(pos);
+        mark.transform.position = new Vector3(pos.x,pos.y+1,pos.z); 
         mark.SetResourceMarkInfo(maxResource,currentResource,resourceType,_connectedGroups.Count);
         return mark;
     }
