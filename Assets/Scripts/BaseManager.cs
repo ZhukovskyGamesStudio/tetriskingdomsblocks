@@ -271,7 +271,7 @@ protected virtual void Start()
         SaveEnergyData();
     }
 
-    private void SaveEnergyData()
+    protected virtual void SaveEnergyData()
     {
         StorageManager.SaveGame();
     }

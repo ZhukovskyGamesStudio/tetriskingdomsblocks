@@ -374,12 +374,18 @@ Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
                 StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount =0;
             }
         }
-
+StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
         StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += collectedResouces;
         UpdateResourcesCountUIText();
         StorageManager.SaveGame();
     }
-    
+
+    protected override void SaveEnergyData()
+    {
+        StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+        base.SaveEnergyData();
+    }
+
     private void CalculateCellSpawnChances()
     {
         float lastChance = 0;
@@ -586,10 +592,10 @@ Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
 
                     collectedResouces = Mathf.Min(collectedResouces, maxCollectedResouces);
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
-
-            _connectedGroups.Add(new ResourceMarkAndPieces(
-                SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces, curResource),
-                connectedGroupsPieces[i]));
+var resourceMark = SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces, curResource);
+                          resourceMark.gameObject.SetActive((float)collectedResouces/maxCollectedResouces > 0.1f);         
+            _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark,
+               connectedGroupsPieces[i] ));
         }
     }
 
