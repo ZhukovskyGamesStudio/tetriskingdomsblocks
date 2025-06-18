@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using TMPro;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
@@ -20,9 +22,14 @@ public class MetaManager : BaseManager {
     private int[,] _groupCellIndex;
     private int _minutesToGetPiece = 120;
     private bool _isDestroyPieceMode;
+    [SerializeField] private Transform _hummerContainer;
+    [SerializeField] private Transform _hummerContainerStart;
+    [SerializeField] private Transform _hummerContainerEnd;
+    private Tween _hummerTween;
     [SerializeField] private Transform _resourcesMarksContainer;
     [SerializeField] private LayerMask _pieceMask;
     [SerializeField] private ResourceMarkView resourceMarkViewPrefab;
+    private Sequence hummerSequence;
     [HideInInspector]
     public Vector3 ScreenToWorldPointOnPiece => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
         out RaycastHit hit, Mathf.Infinity, _pieceMask)
@@ -75,15 +82,24 @@ public class MetaManager : BaseManager {
     {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
             out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null)
+        if (hit.collider != null && (StorageManager.GameDataMain.resourcesCount[0] >= 500 &&
+                                     StorageManager.GameDataMain.resourcesCount[1] >= 500 &&
+                                     StorageManager.GameDataMain.resourcesCount[2] >= 500))
         {
             Vector3 cellPos = hit.collider.transform.localPosition;
             
+            StorageManager.GameDataMain.resourcesCount[0] -= 500;
+            StorageManager.GameDataMain.resourcesCount[1] -= 500;
+            StorageManager.GameDataMain.resourcesCount[2] -= 500;
+            
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
             _groupCellIndex[(int)cellPos.x, (int)cellPos.z] = 0;
+            Debug.Log(groupIndex);
                 CollectResourcesFromMark(groupIndex-1);
-                _connectedGroups[groupIndex-1].ResourceMarkView.gameObject.SetActive(false);
-            _cells[(int)cellPos.x, (int)cellPos.z].DestroyCell();
+               _connectedGroups[groupIndex-1].ResourceMarkView.CollectAnimation();
+               // _connectedGroups[groupIndex-1].ResourceMarkView.gameObject.SetActive(false);
+                HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
+            //_cells[(int)cellPos.x, (int)cellPos.z].DestroyCell();
             _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
             StorageManager.GameDataMain.FieldRows[(int)cellPos.x].RowCells[(int)cellPos.z] = new ResourceAndCountData(_field[(int)cellPos.x, (int)cellPos.z],0);
             
@@ -211,7 +227,7 @@ public class MetaManager : BaseManager {
 
     private void ReleaseResourceMark(ResourceMarkView mark)
     {
-        mark.gameObject.SetActive(false);
+        //mark.gameObject.SetActive(false);
         _resourcesMarksPool.Release(mark);
     }
     public TimeSpan GetTimeUntilNextPiece()
@@ -256,16 +272,58 @@ public class MetaManager : BaseManager {
     public void ToggleDestroyPieceMode()
     {
         _isDestroyPieceMode = !_isDestroyPieceMode;
+        _hummerTween.Kill();
+       
+          //  .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
+            //.Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
+           // .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
+           // .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
         if (_isDestroyPieceMode)
         {
-            _destroyPieceText.text = "Cancel";
+            _destroyPieceText.text = "Cancel"; 
+            
+            hummerSequence.Kill();
+            hummerSequence = DOTween.Sequence();
+
+            hummerSequence.Append(_hummerContainer.transform.DOMove(_hummerContainerStart.position, 0.8f));
+            
+            Tween floatTween = _hummerContainer.DOMoveY(_hummerContainer.position.y+1, 0.5f)
+                .SetLoops(1000, LoopType.Yoyo);
+            
+            hummerSequence.Append(floatTween);
         }
         else
         {
+            hummerSequence.Kill();
             _destroyPieceText.text = "Destroy pieces mode";
+            hummerSequence
+                .Append(_hummerContainer.transform.DOMove(_hummerContainerEnd.position, 0.8f));
         }
     }
 
+    private void HummerDestoyPieceAnimation(CellView cell)
+    {
+        DestroyPieceWithHummer(cell).Forget();
+        cell.OffCollider();
+        hummerSequence.Kill();
+        hummerSequence = DOTween.Sequence();
+
+        hummerSequence.Append(_hummerContainer.transform.DOMove(new Vector3(cell.transform.position.x + 1,cell.transform.position.y,cell.transform.position.z) , 0.8f))
+            .Append(_hummerContainer.transform.DORotate(new Vector3(0, 0, 90f), 0.2f))
+        .Append(_hummerContainer.transform.DORotate(new Vector3(0,0,0f), 0.2f))
+            .Append(_hummerContainer.transform.DOMove(_hummerContainerStart.position, 0.8f));
+        
+        Tween floatTween = _hummerContainer.DOMoveY(_hummerContainer.position.y+1, 0.5f)
+            .SetLoops(-1, LoopType.Yoyo);
+        hummerSequence.Append(floatTween);
+    }
+    private async UniTask DestroyPieceWithHummer(CellView cell)
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        cell.DestroyCell();
+        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
+        ShakeCamera();
+    }
     private void UpdateResourcesCountUIText()
     {
         for (int i = 0; i < _resourcesCountText.Length; i++)
@@ -274,11 +332,9 @@ public class MetaManager : BaseManager {
 
     public void GetPiece()
     {
-        Debug.Log((_nextBlock == null) + " " + _hasInternetConnection);
         if (_hasInternetConnection && _nextBlock == null &&
             (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime()).TotalHours >= 2)
         {
-            // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
             StorageManager.GameDataMain.LastGetPieceTime = DateForSaveData.FromDateTime(_currentGameTime);
             GenerateNewPieces(); // for test
         }
@@ -302,7 +358,6 @@ public class MetaManager : BaseManager {
 
     protected override void SetupGame()
     {
-        //_placedPiecesAmount = 0;
         _field = new CellType[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         _cells = new CellView[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         CalculateFiguresSpawnChances();
@@ -311,10 +366,21 @@ public class MetaManager : BaseManager {
         for (int i = 0; i < startCells.Count; i++)
             _currentCellsToSpawn.Add(startCells[i]);
         CalculateCellSpawnChances();
-        if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1)
+      //  Debug.Log(StorageManager.GameDataMain.FieldRows +" "+  (StorageManager.GameDataMain.FieldRows.Length > 1));
+        if(!StorageManager.GameDataMain.FieldSaveIsCreated)
+        {
+            StorageManager.GameDataMain.FieldSaveIsCreated = true;
+            StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
+            for (int i = 0; i < _field.GetLength(0); i++)
+            {
+                StorageManager.GameDataMain.FieldRows[i].RowCells = new ResourceAndCountData[_field.GetLength(1)];
+                for (int j = 0; j < _field.GetLength(1); j++)
+                    StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new ResourceAndCountData(_field[i, j], 0);
+            }
+        }
+        else if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1)
         {
             _field = new CellType[StorageManager.GameDataMain.FieldRows.Length,StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
-Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
             for (int i = 0; i < _field.GetLength(0); i++)
             {
                 for (int j = 0; j < _field.GetLength(1); j++)
@@ -331,17 +397,8 @@ Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
                 }
             }
         }
-        else if(StorageManager.GameDataMain.FieldRows == null)
-        {
-            StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
-            for (int i = 0; i < _field.GetLength(0); i++)
-            {
-            StorageManager.GameDataMain.FieldRows[i].RowCells = new ResourceAndCountData[_field.GetLength(1)];
-            for (int j = 0; j < _field.GetLength(1); j++)
-                StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new ResourceAndCountData(_field[i, j],0);
-            }
-        }
-        Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
+       
+    //    Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
         UpdateResourcesCountUIText();
         
        if (StorageManager.GameDataMain.LastGetPieceTime.Years == 0)
@@ -361,7 +418,7 @@ Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
     {
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
-        Debug.Log(index);
+        
         foreach (var (row, col) in _connectedGroups[index].Pieces)
         {
             var cellConfig = MetaManager.Instance.MainMetaConfig.CellsConfigs.First
@@ -371,10 +428,10 @@ Debug.Log(_field.GetLength(0) + " "+_field.GetLength(1));
             if (cellConfig.AfkResourceType != ResourceType.None)
             {
                 collectedResouces += StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount;
-                StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount =0;
+                StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = 0;
             }
         }
-StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+        StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
         StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += collectedResouces;
         UpdateResourcesCountUIText();
         StorageManager.SaveGame();
@@ -460,6 +517,7 @@ StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_current
         foreach (var curIndex in connectedCellGroups)
         {
             CollectResourcesFromMark(curIndex - 1);
+            _connectedGroups[curIndex - 1].ResourceMarkView.CollectAnimation();
         }
 
         List<(int, int)> cellsInNewGroup = new List<(int, int)>();
@@ -530,6 +588,7 @@ StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_current
             ResourceType curResource = ResourceType.None;
             foreach (var (row, col) in _connectedGroups[i].Pieces)
             {
+                if(_field[row, col] == CellType.Empty)continue;
                 var cellConfig = MetaManager.Instance.MainMetaConfig.CellsConfigs.First
                     (c => c.CellType == _field[row, col]);
                 if (curResource == ResourceType.None)

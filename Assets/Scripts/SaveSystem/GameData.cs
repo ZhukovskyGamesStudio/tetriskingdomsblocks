@@ -13,7 +13,8 @@ public class GameDataForSave
 
     public int CoinsAmount;
     public int GemsAmount;
-
+    public bool FieldSaveIsCreated; //change code with this bool
+    
     public DateForSaveData LastHealthRecoveryTime;
     public int HealthCount;
 

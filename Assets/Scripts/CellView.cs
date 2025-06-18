@@ -6,7 +6,8 @@ public class CellView : MonoBehaviour {
 
     [SerializeField]
     private GameObject _objectsContainer;
-
+    [SerializeField]
+    private Collider _cellCollider;
     private Tween _currentTween;
     private void Start() {
         if (_objectsContainer) {
@@ -29,6 +30,8 @@ public class CellView : MonoBehaviour {
             .Join(transform.DOScaleZ(transform.localScale.z * 0.8f, 0.2f))
             .Append(transform.DOScale(new Vector3(1,0.25f,1), 0.25f));
     }
+
+    public void OffCollider() => _cellCollider.enabled = false; 
     public void DestroyCell()
     {
         Destroy(gameObject, 0.8f);
