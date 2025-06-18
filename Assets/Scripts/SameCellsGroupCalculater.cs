@@ -11,10 +11,11 @@ public class SameCellsGroupCalculater
         (0, -1), // влево
         (0, 1)   // вправо
     };
-    public static List<List<(int row, int col)>> FindConnectedCellTypeGroups(CellType[,] grid)
+    public static (int[,], List<List<(int row, int col)>>) FindConnectedCellTypeGroups(CellType[,] grid)
     {
         var result = new List<List<(int, int)>>();
-        if (grid == null || grid.Length == 0) return result;
+        var cellsIndex = new int[grid.GetLength(0), grid.GetLength(1)];
+        if (grid == null || grid.Length == 0) return (cellsIndex,result);
 
         int rows = grid.GetLength(0);
         int cols = grid.GetLength(1);
@@ -32,11 +33,13 @@ public class SameCellsGroupCalculater
                     var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
 
                     result.Add(group);
+                    foreach (var (row,col) in group)
+                    cellsIndex[row, col] = result.Count;
                 }
             }
         }
 
-        return result;
+        return (cellsIndex,result);
     }
 
     private static List<(int row, int col)> BFSWithCoordinates(CellType[,] grid, bool[,] visited, int startRow, int startCol, ResourceType targetType)
