@@ -18,7 +18,7 @@ public class PieceView : MonoBehaviour {
 
     private Vector3 _initialScale, _initialMarkedScale;
 
-    private Vector2Int _currentPosOnField;
+    private Vector2Int _currentCoord;
 
     private void Update() {
         if (_isDragging)
@@ -84,31 +84,20 @@ public class PieceView : MonoBehaviour {
             ? MetaManager.Instance.MainMetaConfig.FieldSize
             : GameManager.Instance.MainGameConfig.FieldSize;
         var targetMousePos = cellManager.ShiftedDragInputPos();// + cellManager.TotalDragOffset;
-
         targetMousePos.y = _cellsContainer.position.y;
-        var curPos = cellManager.GetPosInCoord();
-        _currentPosOnField = cellManager.GetPieceClampedCoordOnField();
-
+        
+        _currentCoord = cellManager.GetPosInCoord();
+        Debug.Log(_currentCoord);
+        
         int maxClampFieldPositionZ = fieldSize - _data.Cells.GetLength(1) + 1;
         int maxClampFieldPositionX = fieldSize - _data.Cells.GetLength(0) + 1;
-
-        bool isInsideField = _currentPosOnField.x >= 0 && _currentPosOnField.y >= 0 && _currentPosOnField.x < maxClampFieldPositionX &&
-                             _currentPosOnField.y < maxClampFieldPositionZ;
+        var currentCoordOnField = cellManager.GetPieceClampedCoordOnField();
+        bool isInsideField = currentCoordOnField.x >= 0 && currentCoordOnField.y >= 0 && currentCoordOnField.x < maxClampFieldPositionX &&
+                             currentCoordOnField.y < maxClampFieldPositionZ;
         if (isInsideField) {
-            Vector3 clampedPos = new Vector3(curPos.x, _cellsContainer.position.y, curPos.y);
-
-            var clampedShiftedPos = clampedPos;
-
-            if (CalculateShift().x % 1 == 0)
-                clampedShiftedPos += Vector3.right / 2;
-
-            if (CalculateShift().z % 1 == 0)
-                clampedShiftedPos += Vector3.forward / 2;
-            
-            //TODO fix it - this is a hack to fix the offset of the piece
-            var targetMarkedPos = new Vector3(clampedShiftedPos.x - 0.28f, FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, clampedShiftedPos.z + 0.05f);
+            Vector3 targetMarkedPos = new Vector3(_currentCoord.x, FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, _currentCoord.y);
+            targetMarkedPos -= GameManager.PieceCenterToCoordShift();
             _markedCellsContainer.position = targetMarkedPos;
-            
         }
         
         _markedCellsContainer.gameObject.SetActive(isInsideField);
@@ -123,8 +112,8 @@ public class PieceView : MonoBehaviour {
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         _markedCellsContainer.gameObject.SetActive(false);
         _isDragging = false;
-        if (cellManager.CanPlace(_data)) {
-            cellManager.PlacePiece(_data, _currentPosOnField);
+        if (cellManager.CanPlace(_data,_currentCoord)) {
+            cellManager.PlacePiece(_data, _currentCoord);
 
             Destroy(gameObject);
         } else {

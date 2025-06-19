@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using MoreMountains.FeedbacksForThirdParty;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BaseManager : MonoBehaviour {
@@ -19,15 +16,6 @@ public class BaseManager : MonoBehaviour {
     private DateTime _lastHealthRecoveryTime;
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
-
-    [SerializeField]
-    private Vector3 _additionalOffset = new Vector3(0f, 0, 1f);
-
-    private Vector3 _cusorToCellOffset;
-    
-    public Vector3 AdditionalOffset => _additionalOffset;
-
-    public Vector3 TotalDragOffset => _cusorToCellOffset + GameManager.Instance.DragConfig.AdditionalOffset;
 
     [HideInInspector]
     public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
@@ -91,13 +79,14 @@ public class BaseManager : MonoBehaviour {
 
     public const int MAX_HEALTH_COUNT = 3;
 
+    private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
+    public static float PieceVerticalShift;
+
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
     }
 
     protected virtual void Start() {
-        AdjustCameraPos();
-
         networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
@@ -113,13 +102,6 @@ public class BaseManager : MonoBehaviour {
 
         _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
-    }
-
-    private void AdjustCameraPos() {
-        /*
-        _screenRatio = (float)Screen.width / Screen.height;
-        CameraContainer.position = new Vector3(CameraContainer.position.x, CameraContainer.position.y / (_screenRatio / 0.486f),
-            CameraContainer.position.z);*/
     }
 
     private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
@@ -161,36 +143,24 @@ public class BaseManager : MonoBehaviour {
         }
     }
 
-    public bool CanPlace(PieceData data) {
-        Vector2Int pos = GetPieceClampedCoordOnField();
-        return CanPlace(data, pos);
-    }
-
     public Vector2Int GetPosInCoord() {
-        Vector3 position = ShiftedDragInputPos() + TotalDragOffset + GameManager.Instance.DragConfig.OnFieldOffset;
-
-        if (PieceView.PieceMaxSize.x % 2 == 0)
-            position += Vector3.left / 2f;
-
-        if (PieceView.PieceMaxSize.y % 2 == 0)
-            position += Vector3.back / 2f;
-
+        Vector3 position = ShiftedDragInputPos();
+        position += PieceCenterToCoordShift();
         Vector2Int coord = ClampToCoord(position);
         return coord;
     }
+
+    public static Vector3 PieceCenterToCoordShift() =>
+        -new Vector3(PieceView.PieceMaxSize.x / 2f, 0, PieceView.PieceMaxSize.y / 2f) + HalfCoord;
 
     public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
 
     public Vector3 InputPos() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
-    public static float PieceVerticalShift;
+
     public Vector3 ShiftedDragInputPos() => InputPos() + GameManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
 
     public Vector2Int GetPieceClampedCoordOnField() {
-        Vector3 position = ShiftedDragInputPos() + TotalDragOffset + GameManager.Instance.DragConfig.OnFieldOffset;
-
-        Vector2Int coord = ClampToCoord(position);
-        coord -= new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
-        return coord;
+        return GetPosInCoord() - new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
     }
 
     public bool CanPlace(PieceData data, Vector2Int pos) {
@@ -247,8 +217,6 @@ public class BaseManager : MonoBehaviour {
             cell.transform.SetParent(tmpContainer.transform);
         }
 
-       
-      
         ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
     }
 
@@ -281,18 +249,12 @@ public class BaseManager : MonoBehaviour {
 
     private void DropPeaceTween(Transform piece, Action dropCallback) {
         var pos = piece.localPosition;
-        piece.position += Vector3.up*1.5f;
-        DOTween.Sequence()
-            .Append(piece.DOLocalMoveY(pos.y, 0.15f))
-            .AppendCallback(()=>dropCallback?.Invoke())
-            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
-            .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
-            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
-            .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
-            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f))
-            .Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
-            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f))
-            .OnComplete(() => {
+        piece.position += Vector3.up * 1.5f;
+        DOTween.Sequence().Append(piece.DOLocalMoveY(pos.y, 0.15f)).AppendCallback(() => dropCallback?.Invoke())
+            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
+            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f)).OnComplete(() => {
                 while (piece.childCount > 0) {
                     piece.GetChild(0).SetParent(_fieldContainer);
                 }
@@ -305,7 +267,7 @@ public class BaseManager : MonoBehaviour {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
-    public virtual void PlacePiece(PieceData pieceData,Vector2Int coord) { }
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord) { }
 
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
@@ -436,9 +398,5 @@ public class BaseManager : MonoBehaviour {
                 _healthImages[i].gameObject.SetActive(StorageManager.GameDataMain.HealthCount > i);
             }
         }
-    }
-
-    public void SetCurPieceOffset(Vector3 offset) {
-        _cusorToCellOffset = offset;
     }
 }
