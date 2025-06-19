@@ -134,9 +134,7 @@ public class PieceView : MonoBehaviour {
     }
 
     private async UniTask PlacePieceAsync( BaseManager cellManager) {
-        bool isTweening = true;
-        DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, 0.2f)).AppendCallback(() => isTweening = false);
-        await UniTask.WaitWhile(() => isTweening);
+        await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, 0.2f)).AsyncWaitForCompletion();
         cellManager.PlacePiece(_data, _currentCoord,_cells,_cellsContainer);
         Destroy(gameObject);
     }
