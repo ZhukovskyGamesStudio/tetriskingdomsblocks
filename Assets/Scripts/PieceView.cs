@@ -67,10 +67,6 @@ public class PieceView : MonoBehaviour {
         _isDragging = true;
         _cellsContainer.localScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;
-
-        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
-        //cellManager.SetCurPieceOffset(transform.position - cellManager.InputCoord());
-
         GameManager.PieceVerticalShift = Mathf.Abs(CalculateShift().z);
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
     }
