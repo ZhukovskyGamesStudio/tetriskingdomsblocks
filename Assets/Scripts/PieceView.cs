@@ -61,7 +61,7 @@ public class PieceView : MonoBehaviour {
         cellManager.CusorToCellOffset = transform.position - cellManager.ScreenToWorldPoint;
         DragShift = CalculateShift() + Vector3.one/2;
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
-        if (GameManager.Instance == null) MetaManager.Instance.IsDraggingPiece = true;
+       // if (GameManager.Instance == null) MetaManager.Instance.IsDraggingPiece = true;
     }
 
     public void OnDrag() {
@@ -116,7 +116,7 @@ public class PieceView : MonoBehaviour {
         } else {
             _cellsContainer.position = _startingPosition;
         }
-        if (GameManager.Instance == null) MetaManager.Instance.IsDraggingPiece = false;
+       // if (GameManager.Instance == null) MetaManager.Instance.IsDraggingPiece = false;
     }
 
     private void OnMouseDown() {

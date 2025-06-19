@@ -30,9 +30,9 @@ public class MetaManager : BaseManager {
     [SerializeField] private LayerMask _pieceMask;
     [SerializeField] private ResourceMarkView resourceMarkViewPrefab;
     private Sequence hummerSequence;
-    private bool _isDraggingCamera;
-    public bool IsDraggingPiece;
-    private Vector3 _dragStartPosition;
+ //   private bool _isDraggingCamera;
+ //   public bool IsDraggingPiece;
+  //  private Vector3 _dragStartPosition;
     [HideInInspector]
     public Vector3 ScreenToWorldPointOnPiece => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
         out RaycastHit hit, Mathf.Infinity, _pieceMask)
@@ -79,28 +79,28 @@ public class MetaManager : BaseManager {
         {
             if(_isDestroyPieceMode)
             TryDestroyPiece();
-            _isDraggingCamera = true;
-            _dragStartPosition = Input.mousePosition;
+           // _isDraggingCamera = true;
+           // _dragStartPosition = Input.mousePosition;
         }
-        else if(Input.GetMouseButtonUp(0))
-            _isDraggingCamera = false;
+     /*   else if(Input.GetMouseButtonUp(0))
+            _isDraggingCamera = false;*/
         
-        if(_isDraggingCamera && !IsDraggingPiece)
-            DragCamera();
+     /*   if(_isDraggingCamera && !IsDraggingPiece)
+            DragCamera();*/
     }
 
-    private void DragCamera()
+   /* private void DragCamera()
     {
-            Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
-        Vector3 move = new Vector3(pos.x * MainMetaConfig.CameraDragSpeed, 0, pos.y * MainMetaConfig.CameraDragSpeed);
+           Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
+       Vector3 move = new Vector3(pos.x * MainMetaConfig.CameraDragSpeed, 0, pos.y * MainMetaConfig.CameraDragSpeed);
             
-        var needPosition =CameraContainer.transform.position-move;
+       var needPosition =CameraContainer.transform.position-move;
         
         CameraContainer.position =  new Vector3(Mathf.Clamp(needPosition.x,_fieldStart.position.x,_fieldEnd.position.x),
             needPosition.y, 
             Mathf.Clamp(needPosition.z,_fieldStart.position.z,_fieldEnd.position.z));
-        _dragStartPosition = Input.mousePosition;
-    }
+       _dragStartPosition = Input.mousePosition;
+    }*/
     private void TryDestroyPiece()
     {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
@@ -117,7 +117,6 @@ public class MetaManager : BaseManager {
             
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
             _groupCellIndex[(int)cellPos.x, (int)cellPos.z] = 0;
-            Debug.Log(groupIndex);
                 CollectResourcesFromMark(groupIndex-1);
                _connectedGroups[groupIndex-1].ResourceMarkView.CollectAnimation();
                // _connectedGroups[groupIndex-1].ResourceMarkView.gameObject.SetActive(false);
@@ -182,7 +181,6 @@ public class MetaManager : BaseManager {
         }
         
         Dictionary<int, List<(int row, int col)>> cellsGroupIndex = new Dictionary<int, List<(int row, int col)>>();
-        string needToDebug = "";
         for (int i = 0; i < checkedCells.GetLength(0); i++)
         {
             for (int j = 0; j < checkedCells.GetLength(1); j++)
@@ -192,12 +190,8 @@ public class MetaManager : BaseManager {
                     cellsGroupIndex[checkedCells[i, j]].Add((i,j));
                 else
                     cellsGroupIndex.Add(checkedCells[i, j], new List<(int row, int col)> { (i,j)});
-                needToDebug += " " +checkedCells[i, j];
             }
-
-            needToDebug += "\n";
         }
-        Debug.Log(needToDebug);
         ReleaseResourceMark(_connectedGroups[groupIndex-1].ResourceMarkView); ;
         _connectedGroups[groupIndex-1] = new ResourceMarkAndPieces();
             List<int> emptyIndexes = new List<int>();
