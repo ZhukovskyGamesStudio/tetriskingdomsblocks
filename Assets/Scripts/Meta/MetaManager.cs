@@ -204,6 +204,7 @@ public class MetaManager : BaseManager {
                 {
                     Debug.Log(row + " " + col);
                     collectResourceMarkPosition += _cells[row, col].transform.position;
+                    
                 }
                 var cellMarkView =
                     SpawnResourceMark(collectResourceMarkPosition/checkedCell.Value.Count, 0, 0, ResourceType.None);
@@ -222,7 +223,7 @@ public class MetaManager : BaseManager {
                     _connectedGroups.Add(resourceMarkAndPieces);
                     needIndex = _connectedGroups.Count;
                 }
-
+Debug.Log(needIndex);
                 foreach (var (row, col) in checkedCell.Value)
                     _groupCellIndex[row, col] = needIndex;
             }
@@ -425,7 +426,7 @@ public class MetaManager : BaseManager {
     {
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
-        
+        Debug.Log(index + " group index");
         foreach (var (row, col) in _connectedGroups[index].Pieces)
         {
             var cellConfig = MetaManager.Instance.MainMetaConfig.CellsConfigs.First
@@ -524,7 +525,7 @@ public class MetaManager : BaseManager {
         Vector3 newResourceMarkPosition = new Vector3();
         int curGroupIndex = 0;
         if (connectedCellGroups.Count == 0)
-            curGroupIndex = _connectedGroups.Count;
+            curGroupIndex = _connectedGroups.Count+1;
         else
         {
             curGroupIndex = connectedCellGroups[0];
@@ -549,7 +550,7 @@ public class MetaManager : BaseManager {
                 }
             }
         }
-
+Debug.Log(curGroupIndex + " curGroupIndex");
         foreach (var (row, col) in placedCells)
         {
                 _groupCellIndex[row, col] = curGroupIndex;

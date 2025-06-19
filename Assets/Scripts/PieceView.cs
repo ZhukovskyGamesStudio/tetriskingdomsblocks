@@ -90,7 +90,7 @@ public class PieceView : MonoBehaviour {
         targetMousePos.y = _cellsContainer.position.y;
 
         _currentCoord = cellManager.GetPosInCoord();
-        Debug.Log(_currentCoord);
+        //ebug.Log(_currentCoord);
 
         bool canPlace = cellManager.CanPlace(_data, _currentCoord);
         if (canPlace) {

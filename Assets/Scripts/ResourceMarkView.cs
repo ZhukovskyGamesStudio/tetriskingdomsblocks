@@ -19,7 +19,7 @@ public class ResourceMarkView : MonoBehaviour
         if ((float)currentResource / maxResource > 0.1f)
         {
             gameObject.SetActive(true);
-        _resourceMarkText.text = currentResource + "/"+maxResource + "\n <sprite name=" + resourceType + ">";
+        _resourceMarkText.text = currentResource + "/\n"+maxResource + "\n <sprite name=" + resourceType + ">";
         _resourceFillImage.fillAmount = (float)currentResource / maxResource;
         }
 
