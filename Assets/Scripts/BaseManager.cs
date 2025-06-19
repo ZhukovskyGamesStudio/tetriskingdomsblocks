@@ -1,17 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using MoreMountains.FeedbacksForThirdParty;
+using MoreMountains.Feedbacks;
+using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class BaseManager : MonoBehaviour
-{
+public class BaseManager : MonoBehaviour {
     public const int CELL_SIZE = 1;
     protected CellType[,] _field;
     protected CellView[,] _cells;
@@ -19,12 +18,12 @@ public class BaseManager : MonoBehaviour
     private DateTime _lastHealthRecoveryTime;
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
-    [HideInInspector] public Vector3 CusorToCellOffset;
 
-    [HideInInspector] public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
+    [HideInInspector]
+    public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
+
     public float[] CellsChanceToSpawn { get; protected set; }
-    
-    
+
     [HideInInspector]
     public Vector3 ScreenToWorldPoint => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
         out RaycastHit hit, Mathf.Infinity, _targetMasks)
@@ -37,141 +36,136 @@ public class BaseManager : MonoBehaviour
         ? hit.point
         : Vector3.zero;
 
-    [field: SerializeField] public Transform _markedCell { get; protected set; }
+    [field: SerializeField]
+    public Transform _markedCell { get; protected set; }
 
-    [SerializeField] protected Camera _mainCamera;
+    [SerializeField]
+    protected Camera _mainCamera;
 
-    [SerializeField] protected Transform _fieldContainer;
+    [SerializeField]
+    protected Transform _fieldContainer;
+
     public Transform CameraContainer;
-    [SerializeField] protected LayerMask _targetMasks;
-    [SerializeField] protected Transform _fieldStart, _fieldEnd;
-    [field: SerializeField] public FigureFormConfig[] FigureFormsConfig { get; protected set; }
-    [field: SerializeField] private Transform[] _healthImages;
-    [SerializeField] private TMP_Text _healthTimerText;
-    [SerializeField] private int _minutesToHealthRecovery;
-    [SerializeField] private ParticleSystem _placeCellEffect;
-    [SerializeField] private NetworkTimeAPI networkTimeAPI;
+
+    [SerializeField]
+    protected LayerMask _targetMasks;
+
+    [SerializeField]
+    private Transform _fieldStart, _fieldEnd;
+
+    [field: SerializeField]
+    public FigureFormConfig[] FigureFormsConfig { get; protected set; }
+
+    [field: SerializeField]
+    private Transform[] _healthImages;
+
+    [SerializeField]
+    private TMP_Text _healthTimerText;
+
+    [SerializeField]
+    private int _minutesToHealthRecovery;
+
+    [SerializeField]
+    private ParticleSystem _placeCellEffect;
+
+    [SerializeField]
+    private NetworkTimeAPI networkTimeAPI;
+
     protected bool _hasInternetConnection;
     private float timerNowTimeSecondCounter;
     protected DateTime _currentGameTime;
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
-public const int MAX_HEALTH_COUNT = 3;
 
-protected virtual void Awake()
-{
-    ChangeToLoading.TryChange();
-}
+    [SerializeField]
+    private MMF_Player _mmfPlayer;
 
-protected virtual void Start()
-    {
-        _screenRatio = (float)Screen.width / Screen.height;
-        CameraContainer.position = new Vector3(CameraContainer.position.x,
-            CameraContainer.position.y / (_screenRatio / 0.486f), CameraContainer.position.z);
+    public const int MAX_HEALTH_COUNT = 3;
 
-        networkTimeAPI.GetNetworkTime(dateTime =>
-            {
-                _currentGameTime = dateTime;
-                Debug.Log("has connect" + dateTime);
-                _hasInternetConnection = true;
-                SetupGame();
-            },
-            error =>
-            {
-                _currentGameTime = DateTime.Now;
-                Debug.Log("not connect");
-                _hasInternetConnection = false;
-                SetupGame();
-               // _hasInternetConnection = false;
-            });
-        
-        _placeCellEffectsPool =
-            new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
+    private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
+    public static float PieceVerticalShift;
+
+    protected virtual void Awake() {
+        ChangeToLoading.TryChange();
+    }
+
+    protected virtual void Start() {
+        networkTimeAPI.GetNetworkTime(dateTime => {
+            _currentGameTime = dateTime;
+            Debug.Log("has connect" + dateTime);
+            _hasInternetConnection = true;
+            SetupGame();
+        }, error => {
+            _currentGameTime = DateTime.Now;
+            Debug.Log("not connect");
+            _hasInternetConnection = false;
+            SetupGame();
+            // _hasInternetConnection = false;
+        });
+
+        _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
     }
-    
-    private void AddSecondToTimer() =>  _currentGameTime = _currentGameTime.AddSeconds(1);
 
-    protected virtual void Update()
-    {
-        if (_hasInternetConnection)
-        {
+    private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
+
+    protected virtual void Update() {
+        if (_hasInternetConnection) {
             timerNowTimeSecondCounter += Time.unscaledDeltaTime;
-            if (timerNowTimeSecondCounter >= 1)
-            {
+            if (timerNowTimeSecondCounter >= 1) {
                 timerNowTimeSecondCounter--;
                 AddSecondToTimer();
             }
-            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT)
-            {
+
+            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT) {
                 TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
                 int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
 
-                if (energyToAdd > 0)
-                {
+                if (energyToAdd > 0) {
                     StorageManager.GameDataMain.HealthCount =
                         Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
                     _lastHealthRecoveryTime = _currentGameTime;
-                    StorageManager.GameDataMain.LastHealthRecoveryTime = DateForSaveData.FromDateTime(_currentGameTime);
+                    StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
                     SaveEnergyData();
-                    _healthImages[StorageManager.GameDataMain.HealthCount-1].gameObject.SetActive(true);
+                    _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(true);
                 }
 
                 UpdateTimerUI();
             }
-        }
-        else if (_healthTimerText.gameObject.activeSelf)
-        {
+        } else if (_healthTimerText.gameObject.activeSelf) {
             _healthTimerText.gameObject.SetActive(false);
         }
     }
 
-    protected void CalculateFiguresSpawnChances()
-    {
+    protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
         FiguresChanceToSpawn = new float[FigureFormsConfig.Length];
-        for (int i = 0; i < FigureFormsConfig.Length; i++)
-        {
+        for (int i = 0; i < FigureFormsConfig.Length; i++) {
             lastChance += FigureFormsConfig[i].Cost;
             FiguresChanceToSpawn[i] = lastChance;
         }
     }
-    public bool CanPlace(PieceData data)
-    {
-        Vector2Int pos = GetPieceClampedPosOnField();
-        return CanPlace(data, pos);
+
+    public Vector2Int GetPosInCoord() {
+        Vector3 position = ShiftedDragInputPos();
+        position += PieceCenterToCoordShift();
+        Vector2Int coord = ClampToCoord(position);
+        return coord;
     }
 
-    public Vector2Int GetPosOnField()
-    {
-        Vector3 coord = GetCoord() + CusorToCellOffset;
+    public static Vector3 PieceCenterToCoordShift() =>
+        -new Vector3(PieceView.PieceMaxSize.x / 2f, 0, PieceView.PieceMaxSize.y / 2f) + HalfCoord;
 
-        if (PieceView.PieceMaxSize.x % 2 == 0)
-            coord += Vector3.left / 2f;
+    public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
 
-        if (PieceView.PieceMaxSize.y % 2 == 0)
-            coord += Vector3.back / 2f;
+    public Vector3 InputPos() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
 
-        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
-        return pos;
+    public Vector3 ShiftedDragInputPos() => InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
+
+    public Vector2Int GetPieceClampedCoordOnField() {
+        return GetPosInCoord() - new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
     }
 
-    private Vector3 GetCoord()
-    {
-        return Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
-    }
-
-    public Vector2Int GetPieceClampedPosOnField()
-    {
-        Vector3 coord = GetCoord() + CusorToCellOffset;
-        coord += new Vector3(PieceView.DragShift.x, 0, PieceView.DragShift.z) + Vector3.forward;
-
-        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
-        pos -= new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
-        return pos;
-    }
-
-    public bool CanPlace(PieceData data, Vector2Int pos)
-    {
+    public bool CanPlace(PieceData data, Vector2Int pos) {
         if (pos.x < 0 || pos.y < 0)
             return false;
 
@@ -181,10 +175,8 @@ protected virtual void Start()
         if (pos.y + data.Cells.GetLength(1) - 1 >= _field.GetLength(1))
             return false;
 
-        for (int x = 0; x < data.Cells.GetLength(0); x++)
-        {
-            for (int y = 0; y < data.Cells.GetLength(1); y++)
-            {
+        for (int x = 0; x < data.Cells.GetLength(0); x++) {
+            for (int y = 0; y < data.Cells.GetLength(1); y++) {
                 if (data.Cells[x, y] && _field[pos.x + x, pos.y + y] != CellType.Empty)
                     return false;
             }
@@ -194,6 +186,11 @@ protected virtual void Start()
     }
 
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+        float cellsAmount = 0;
+        GameObject tmpContainer = new();
+        tmpContainer.transform.SetParent(_fieldContainer);
+        List<Vector3> poses = new List<Vector3>();
+        List<GameObject> cells = new List<GameObject>();
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -202,52 +199,105 @@ protected virtual void Start()
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
                 CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
+                go.SetSeed(pieceData.CellGuids[x, y]);
+
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
+                poses.Add(new Vector3(place.x, -0.45f, place.y));
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
-                go.GetComponent<CellView>().PlaceCellOnField();
+                cells.Add(go.gameObject);
+
+                //go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
-                SpawnSmokeParticle(go.transform.position).Forget();
+                //SpawnSmokeParticle(go.transform.position).Forget();
+                cellsAmount++;
             }
         }
 
-        ShakeCamera();
-        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
+        tmpContainer.transform.localPosition = GetAveragePosition(poses);
+        foreach (var cell in cells) {
+            cell.transform.SetParent(tmpContainer.transform);
+        }
+
+        ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
     }
 
-    public virtual void PlacePiece(PieceData pieceData) { }
+    protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+        DropPeaceTween(pieceContainer, () => {
+            SpawnSmokeUnderPiece(tmpContainer.transform);
+            float vibrationsAmplitude = cellsAmount / 9;
+            if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
+                pieceData.Type.CellType == CellType.Mine) {
+                vibrationsAmplitude *= 1.5f;
+            }
+
+            ShakeCamera(vibrationsAmplitude);
+            VibrationsManager.Instance.SpawnVibrationEmhpasis(vibrationsAmplitude);
+        });
+    }
+
+    public static Vector3 GetAveragePosition(List<Vector3> positions) {
+        if (positions == null || positions.Count == 0) {
+            return Vector3.zero;
+        }
+
+        Vector3 sum = Vector3.zero;
+        for (int i = 0; i < positions.Count; i++) {
+            sum += positions[i];
+        }
+
+        return sum / positions.Count;
+    }
+
+    private void DropPeaceTween(Transform piece, Action dropCallback) {
+        var pos = piece.localPosition;
+        piece.position += Vector3.up * 1.5f;
+        DOTween.Sequence().Append(piece.DOLocalMoveY(pos.y, 0.15f)).AppendCallback(() => dropCallback?.Invoke())
+            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
+            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f)).OnComplete(() => {
+                while (piece.childCount > 0) {
+                    piece.GetChild(0).SetParent(_fieldContainer);
+                }
+
+                Destroy(piece.gameObject);
+            });
+    }
+
+    private void SpawnSmokeUnderPiece(Transform piece) {
+        SpawnSmokeParticle(piece.transform.position).Forget();
+    }
+
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord) { }
 
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
-    protected void ShakeCamera() {
-        Vector3 camPos = CameraContainer.transform.position;
-        float xOffset = camPos.x * Random.Range(-0.03f, 0.03f);
-        float zOffset = camPos.z * Random.Range(-0.03f, 0.03f);
-        _currentTween.Kill();
-        _currentTween = DOTween.Sequence().Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
-            .Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
-            .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
+    protected void ShakeCamera(float percent) {
+        percent = Mathf.LerpUnclamped(0.3f, 1f, percent);
+        var screenShake = _mmfPlayer.GetFeedbackOfType<MMF_CameraShake>();
+        screenShake.CameraShakeProperties.Amplitude = 1.5f * percent;
+        screenShake.CameraShakeProperties.AmplitudeZ = 0.5f * percent;
+        screenShake.CameraShakeProperties.Duration = 1f * percent;
+
+        var zoom = _mmfPlayer.GetFeedbackOfType<MMF_CameraZoom>();
+        zoom.ZoomFieldOfView = -1 * percent;
+        _mmfPlayer.PlayFeedbacks();
     }
 
-    public TimeSpan GetTimeUntilNextHealth()
-    {
+    public TimeSpan GetTimeUntilNextHealth() {
         if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
-        
+
         TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
         double minutesPassed = timeSinceLastUpdate.TotalMinutes;
         double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
-        
+
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
 
-    private void UpdateTimerUI()
-    {
-        if (_hasInternetConnection)
-        {
-            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT)
-            {
+    private void UpdateTimerUI() {
+        if (_hasInternetConnection) {
+            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
                 if (_healthTimerText != null && _healthTimerText.gameObject.activeSelf)
                     _healthTimerText.gameObject.SetActive(false);
                 return;
@@ -259,102 +309,84 @@ protected virtual void Start()
                 _healthTimerText.gameObject.SetActive(true);
 
             _healthTimerText.text = $"{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2}";
-        }
-        else
-        {
+        } else {
             _healthTimerText.text = "No internet connection";
         }
     }
-    
-    private void OnApplicationQuit()
-    {
+
+    private void OnApplicationQuit() {
         SaveEnergyData();
     }
 
-    protected virtual void SaveEnergyData()
-    {
+    protected virtual void SaveEnergyData() {
         StorageManager.SaveGame();
     }
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        if (pauseStatus)
-        {
+
+    private void OnApplicationPause(bool pauseStatus) {
+        if (pauseStatus) {
             SaveEnergyData();
-        }
-        else
-        {
+        } else {
             StorageManager.LoadGame();
             CalculateOfflineHealth();
         }
     }
 
-    protected void RemoveHealth()
-    {
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
-        {
+    protected void RemoveHealth() {
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
             _lastHealthRecoveryTime = _currentGameTime;
-            StorageManager.GameDataMain.LastHealthRecoveryTime =
-                DateForSaveData.FromDateTime(_lastHealthRecoveryTime);
+            StorageManager.GameDataMain.LastHealthRecoveryTime = _lastHealthRecoveryTime.ToString(CultureInfo.InvariantCulture);
         }
 
-        _healthImages[StorageManager.GameDataMain.HealthCount-1].gameObject.SetActive(false);
+        _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(false);
         StorageManager.GameDataMain.HealthCount--;
         SaveEnergyData();
     }
 
-    private void CalculateOfflineHealth()
-    {
-        if (!_hasInternetConnection)return;
-        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTime.ToDateTime();
+    private void CalculateOfflineHealth() {
+        if (!_hasInternetConnection) return;
+        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
         TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
         int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
 
-
-        if (healthToAdd > 0)
-        {
-            StorageManager.GameDataMain.HealthCount =
-                Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
+        if (healthToAdd > 0) {
+            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
         }
 
         if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
             _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
     }
 
-    private async UniTask SpawnSmokeParticle(Vector3 pos)
-    {
+    private async UniTask SpawnSmokeParticle(Vector3 pos) {
         var particles = _placeCellEffectsPool.Get();
         particles.gameObject.SetActive(true);
-        particles.transform.position = new Vector3(pos.x,pos.y-0.1f,pos.z); 
+        particles.transform.position = new Vector3(pos.x, pos.y - 0.2f, pos.z);
         particles.Play();
         await UniTask.Delay(TimeSpan.FromSeconds(2));
-        ReleaseParticles(particles);
+        if (particles) {
+            ReleaseParticles(particles);
+        }
     }
 
-    private void ReleaseParticles(ParticleSystem particles)
-    {
+    private void ReleaseParticles(ParticleSystem particles) {
         particles.gameObject.SetActive(false);
         _placeCellEffectsPool.Release(particles);
     }
-    protected virtual void SetupGame()
-    {
+
+    protected virtual void SetupGame() {
         if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
-        
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
-        {
+
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
             _healthTimerText.gameObject.SetActive(false);
             Debug.Log("maxHP");
-        }
-        else
-        {
+        } else {
             Debug.Log("NotmaxHP");
             CalculateOfflineHealth();
             if (_hasInternetConnection)
                 _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
             else
                 _healthTimerText.text = "No internet connection";
-            for (int i = 0; i < MAX_HEALTH_COUNT; i++)
-            {
+            for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
                 _healthImages[i].gameObject.SetActive(StorageManager.GameDataMain.HealthCount > i);
             }
         }

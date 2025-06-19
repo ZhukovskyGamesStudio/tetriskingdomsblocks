@@ -1,45 +1,54 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NextPiecesView : MonoBehaviour , IResetable{
+public class NextPiecesView : MonoBehaviour, IResetable {
     public static NextPiecesView Instance;
 
     [SerializeField]
-    private Transform _container0, _container1, _container2;
+    private List<Transform> _piecesContainers;
+
+    [SerializeField]
+    private float _piecesScale = 0.4f;
 
     private void Awake() {
         Instance = this;
     }
 
+    public void SetData(PieceData nextPiece) {
+        DestroyPieces();
+
+        if (_piecesContainers.Count == 0) {
+            Debug.LogWarning("NextPiecesView: No containers available for the pieces.");
+            return;
+        }
+
+        SetData(new List<PieceData>() { nextPiece });
+    }
+    
     public void SetData(List<PieceData> nextPieces) {
-        DestroyChildren();
+        DestroyPieces();
 
-        var go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _container0);
-        go.SetData(nextPieces[0]);
+        for (int i = 0; i < nextPieces.Count; i++) {
+            if (i >= _piecesContainers.Count) {
+                Debug.LogWarning("NextPiecesView: Not enough containers for the pieces.");
+                break;
+            }
 
-        go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _container1);
-        go.SetData(nextPieces[1]);
-
-        go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _container2);
-        go.SetData(nextPieces[2]);
+            Transform container = _piecesContainers[i];
+            PieceView go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, container);
+            go.SetData(nextPieces[i], _piecesScale);
+        }
     }
 
-    private void DestroyChildren() {
-        if (_container0.childCount > 0) {
-            Destroy(_container0.GetChild(0).gameObject);
-        }
-
-        if (_container1.childCount > 0) {
-            Destroy(_container1.GetChild(0).gameObject);
-        }
-
-        if (_container2.childCount > 0) {
-            Destroy(_container2.GetChild(0).gameObject);
+    private void DestroyPieces() {
+        foreach (Transform container in _piecesContainers) {
+            foreach (Transform child in container) {
+                Destroy(child.gameObject);
+            }
         }
     }
 
     public void Reset() {
-        DestroyChildren();
+        DestroyPieces();
     }
 }

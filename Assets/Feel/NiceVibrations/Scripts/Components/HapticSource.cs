@@ -202,6 +202,7 @@ namespace Lofelt.NiceVibrations
                 // Play
                 //
                 HapticController.fallbackPreset = fallbackPreset;
+                Debug.Log($"Playing haptic source {clip.name} with priority {priority} and fallback preset {fallbackPreset}");
                 HapticController.Play();
                 lastPlayedHapticSource = this;
             }

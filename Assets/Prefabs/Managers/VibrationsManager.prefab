@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 1647846336017601596}
   - component: {fileID: 4763189422552592392}
   - component: {fileID: 9044137231442162332}
-  - component: {fileID: 8073598501694399606}
-  - component: {fileID: 2607217613928042192}
   m_Layer: 0
   m_Name: VibrationsManager
   m_TagString: Untagged
@@ -48,9 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5f151acbfb480f93b6e935c5d09864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _heavySource: {fileID: 9044137231442162332}
-  _successSource: {fileID: 8073598501694399606}
-  _defeatSource: {fileID: 2607217613928042192}
+  _diceSource: {fileID: 9044137231442162332}
 --- !u!114 &4763189422552592392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,45 +73,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d20df93fb7de8457baa15a213a53ab19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clip: {fileID: 0}
+  clip: {fileID: -8404250095460277587, guid: 6ba7f34892e4048be87810ea8621b3df, type: 3}
   priority: 128
   _fallbackPreset: 6
-  _loop: 0
-  _level: 1
-  _frequencyShift: 0
---- !u!114 &8073598501694399606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8834826465146923301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d20df93fb7de8457baa15a213a53ab19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clip: {fileID: 0}
-  priority: 128
-  _fallbackPreset: 1
-  _loop: 0
-  _level: 1
-  _frequencyShift: 0
---- !u!114 &2607217613928042192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8834826465146923301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d20df93fb7de8457baa15a213a53ab19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clip: {fileID: 0}
-  priority: 128
-  _fallbackPreset: 3
   _loop: 0
   _level: 1
   _frequencyShift: 0

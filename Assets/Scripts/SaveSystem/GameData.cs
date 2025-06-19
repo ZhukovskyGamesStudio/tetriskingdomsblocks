@@ -1,8 +1,8 @@
 using System;
+using System.Globalization;
 
 [Serializable]
-public class GameDataForSave
-{
+public class GameDataForSave {
     public int CurMaxLevel;
 
     /*public int WoodAmount;
@@ -14,18 +14,21 @@ public class GameDataForSave
     public int CoinsAmount;
     public int GemsAmount;
     public bool FieldSaveIsCreated; //change code with this bool
-    
-    public DateForSaveData LastHealthRecoveryTime;
+
+    public string LastHealthRecoveryTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
+
     public int HealthCount;
 
-    public DateForSaveData LastExitTime;
-    
-    public DateForSaveData LastGetPieceTime;
-    
+    public string LastExitTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public DateTime LastExitTimeDateTime => DateTime.Parse(LastExitTime, CultureInfo.InvariantCulture);
+
+    public string LastGetPieceTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public DateTime LastGetPieceTimeDateTime => DateTime.Parse(LastGetPieceTime, CultureInfo.InvariantCulture);
+
     public MetaFieldData[] FieldRows;
 
-    public GameDataForSave()
-    {
+    public GameDataForSave() {
         HealthCount = 3;
         resourcesCount = new int[4];
         resourcesCount[0] = 3000;
@@ -34,52 +37,18 @@ public class GameDataForSave
     }
 }
 
-
-[System.Serializable]
+[Serializable]
 public struct MetaFieldData {
     public ResourceAndCountData[] RowCells;
 }
 
-[System.Serializable]
-public struct ResourceAndCountData
-{
+[Serializable]
+public struct ResourceAndCountData {
     public CellType CellType;
     public int ResourceCount;
 
-    public ResourceAndCountData(CellType cellType, int resourceCount)
-    {
+    public ResourceAndCountData(CellType cellType, int resourceCount) {
         CellType = cellType;
         ResourceCount = resourceCount;
-    }
-}
-
-[System.Serializable]
-public struct DateForSaveData
-{
-    public int Seconds;
-    public int Minutes;
-    public int Hours;
-    public int Days;
-    public int Years;
-    
-    public DateTime ToDateTime()
-    {
-        return new DateTime(Years, 1, 1)  
-            .AddDays(Days - 1)         
-            .AddHours(Hours)
-            .AddMinutes(Minutes)
-            .AddSeconds(Seconds);
-    }
-
-    public static DateForSaveData FromDateTime(DateTime dateTime)
-    {
-        return new DateForSaveData
-        {
-            Seconds = dateTime.Second,
-            Minutes = dateTime.Minute,
-            Hours = dateTime.Hour,
-            Days = dateTime.DayOfYear,  
-            Years = dateTime.Year      
-        };
     }
 }

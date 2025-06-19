@@ -2,17 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using MoreMountains.Feedbacks;
+using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class GameManager : BaseManager, IResetable
 {
     public static GameManager Instance;
 
     public MainGameConfig MainGameConfig;
+    
+   
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
@@ -57,6 +62,8 @@ public class GameManager : BaseManager, IResetable
 
     public List<CellTypeInfo> CurrentGuaranteedFirstCells;
     public GameData GameData { get; private set; }
+
+   
 
     protected override void Awake()
     {
@@ -103,9 +110,9 @@ public class GameManager : BaseManager, IResetable
     }
 
 
-    public override void PlacePiece(PieceData pieceData)
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord)
     {
-        PlacePiece(pieceData, GetPieceClampedPosOnField(), MainGameConfig.FieldSize);
+        PlacePiece(pieceData, coord, MainGameConfig.FieldSize);
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
 
@@ -246,7 +253,7 @@ public class GameManager : BaseManager, IResetable
                 if (_currentTasks[i].TaskInfo.Count <= count)
                 {
                     _currentTasks[i].TaskUIView.CompleteTask();
-                    VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
+                    VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.2f);
                     _currentTasks.RemoveAt(i);
                 }
             }
@@ -295,6 +302,7 @@ public class GameManager : BaseManager, IResetable
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
         string unlockedCellText = "";
+        bool isDestroying = false;
         // Проверка строк
         for (int y = 0; y < height; y++)
         {
@@ -312,6 +320,7 @@ public class GameManager : BaseManager, IResetable
             if (fullRow)
             {
                 DestroyLine(y, width, true, ref unlockedCellText);
+                isDestroying = true;
             }
         }
 
@@ -331,6 +340,15 @@ public class GameManager : BaseManager, IResetable
             if (fullColumn)
             {
                 DestroyLine(x, height, false, ref unlockedCellText);
+                isDestroying = true;
+            }
+        }
+
+        if (isDestroying) {
+            if (Random.Range(0, 2) == 0)
+                VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
+            else {
+                VibrationsManager.Instance.SpawnVibrationEmhpasis(1, 1);
             }
         }
 
@@ -555,7 +573,7 @@ public class GameManager : BaseManager, IResetable
         }
 
         
-        VibrationsManager.Instance.SpawnVibration(VibrationType.Win);
+        VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetWinState();
     }
 
@@ -567,7 +585,7 @@ public class GameManager : BaseManager, IResetable
         }
         
         
-        VibrationsManager.Instance.SpawnVibration(VibrationType.Lose);
+        VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
     }
 
@@ -709,6 +727,7 @@ public class PieceData
 {
     public bool[,] Cells;
     public CellTypeInfo Type;
+    public Guid[, ] CellGuids;
 }
 
 [SerializeField]

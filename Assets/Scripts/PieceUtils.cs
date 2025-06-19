@@ -25,14 +25,23 @@ public static class PieceUtils {
             cellInfo = GameManager.Instance.CurrentGuaranteedFirstCells[0];
             GameManager.Instance.CurrentGuaranteedFirstCells.RemoveAt(0);
         }
-       var cells = cellInfo.CellForm == null
-           ?  GetRandomFigure()
-           : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
-       
-        var data = new PieceData()
-        {
+
+        bool[,] cells = cellInfo.CellForm == null ? GetRandomFigure() : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
+        Guid[,] cellGuids = new Guid[cells.GetLength(0), cells.GetLength(1)];
+        for (int x = 0; x < cells.GetLength(0); x++) {
+            for (int y = 0; y < cells.GetLength(1); y++) {
+                if (cells[x, y]) {
+                    cellGuids[x, y] = Guid.NewGuid();
+                } else {
+                    cellGuids[x, y] = Guid.Empty;
+                }
+            }
+        }
+
+        var data = new PieceData() {
             Type = cellInfo,
             Cells = cells,
+            CellGuids = cellGuids
         };
         return data;
     }
