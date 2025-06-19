@@ -461,17 +461,17 @@ public class MetaManager : BaseManager {
         }
     }
     
-    public override void PlacePiece(PieceData pieceData, Vector2Int coord)
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer)
     {
-        PlacePiece(pieceData, coord, MainMetaConfig.FieldSize);
+        PlacePiece(pieceData, coord, MainMetaConfig.FieldSize,cells,cellsContainer);
         _nextPiece = null;
 
         StorageManager.SaveGame();
     }
 
-    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize)
+    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells,Transform cellsContainer)
     {
-        base.PlacePiece(pieceData, pos, fieldSize);
+        base.PlacePiece(pieceData, pos, fieldSize,cells,cellsContainer);
         List<(int, int)> placedCells = new();
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {

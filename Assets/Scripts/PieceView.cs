@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class PieceView : MonoBehaviour {
@@ -18,6 +20,8 @@ public class PieceView : MonoBehaviour {
     private bool _isDragging;
 
     private Vector3 _finalPos, _finalScale;
+    private CellView[,] _cells;
+    private bool _isLerpingDisabled = false;
     
     private void Update() {
         if (_isDragging) {
@@ -33,6 +37,7 @@ public class PieceView : MonoBehaviour {
         var width = _data.Cells.GetLength(0);
         var height = _data.Cells.GetLength(1);
         var shift = CalculateShift();
+        _cells = new CellView[width, height];
         bool isMetaGame = GameManager.Instance == null;
         _collider.size = new Vector3(width, 0.3f, height);
         for (int x = 0; x < width; x++) {
@@ -50,6 +55,7 @@ public class PieceView : MonoBehaviour {
                     go.transform.localPosition = (new Vector3(x + 0.5f, 0, y + 0.5f) + shift) * GameManager.CELL_SIZE;
                     markCell.position = new Vector3(go.transform.position.x, _markedCellsContainer.position.y, go.transform.position.z);
                     go.transform.localScale *= Mathf.Clamp(GameManager.CELL_SIZE - 2, 1, 100000);
+                    _cells[x, y] = go;
                 }
             }
         }
@@ -63,6 +69,9 @@ public class PieceView : MonoBehaviour {
     }
 
     private void LerpToFinal() {
+        if (_isLerpingDisabled) {
+            return;
+        }
         _cellsContainer.position =
             Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
         _cellsContainer.localScale =
@@ -113,15 +122,23 @@ public class PieceView : MonoBehaviour {
         _markedCellsContainer.gameObject.SetActive(false);
         _isDragging = false;
         if (cellManager.CanPlace(_data, _currentCoord)) {
-            cellManager.PlacePiece(_data, _currentCoord);
-
-            Destroy(gameObject);
+            _isLerpingDisabled = true;
+            _finalPos = _markedCellsContainer.position + ConfigsManager.Instance.DragConfig.HigherFieldShift * Vector3.up;
+            PlacePieceAsync(cellManager).Forget();
         } else {
             _finalPos = _startingPosition;
             _finalScale = _initialScale;
             _markedCellsContainer.localScale = _initialMarkedScale;
             _markedCellsContainer.gameObject.SetActive(false);
         }
+    }
+
+    private async UniTask PlacePieceAsync( BaseManager cellManager) {
+        bool isTweening = true;
+        DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, 0.2f)).AppendCallback(() => isTweening = false);
+        await UniTask.WaitWhile(() => isTweening);
+        cellManager.PlacePiece(_data, _currentCoord,_cells,_cellsContainer);
+        Destroy(gameObject);
     }
 
     private void OnMouseDown() {

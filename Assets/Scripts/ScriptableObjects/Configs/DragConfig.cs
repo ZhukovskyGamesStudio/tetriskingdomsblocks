@@ -5,6 +5,7 @@ namespace ScriptableObjects.Configs {
     public class DragConfig : ScriptableObject {
         public Vector3 DragMouseShift;
         public float LerpSpeed = 20f;
+        public float HigherFieldShift = 0.5f;
     }
     
 }

@@ -185,12 +185,11 @@ public class BaseManager : MonoBehaviour {
         return true;
     }
 
-    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
-        GameObject tmpContainer = new();
-        tmpContainer.transform.SetParent(_fieldContainer);
-        List<Vector3> poses = new List<Vector3>();
-        List<GameObject> cells = new List<GameObject>();
+        cellsContainer.transform.SetParent(_fieldContainer);
+        //List<Vector3> poses = new List<Vector3>();
+        //List<GameObject> cellsList = new List<GameObject>();
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -198,14 +197,15 @@ public class BaseManager : MonoBehaviour {
                 }
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
-                CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
-                go.SetSeed(pieceData.CellGuids[x, y]);
+                CellView go = cells[x, y];
+                //go.transform.SetParent(_fieldContainer);
+                //go.SetSeed(pieceData.CellGuids[x, y]);
 
-                go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                poses.Add(new Vector3(place.x, -0.45f, place.y));
+                //go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
+                //poses.Add(new Vector3(place.x, -0.45f, place.y));
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
-                cells.Add(go.gameObject);
+                //cellsList.Add(go.gameObject);
 
                 //go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(pieceData, place, go);
@@ -214,12 +214,12 @@ public class BaseManager : MonoBehaviour {
             }
         }
 
-        tmpContainer.transform.localPosition = GetAveragePosition(poses);
-        foreach (var cell in cells) {
-            cell.transform.SetParent(tmpContainer.transform);
-        }
+        //cellsContainer.transform.localPosition = GetAveragePosition(poses);
+        /*foreach (var cell in cellsList) {
+            cell.transform.SetParent(cellsContainer.transform);
+        }*/
 
-        ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
+        ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
     protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
@@ -251,8 +251,9 @@ public class BaseManager : MonoBehaviour {
 
     private void DropPeaceTween(Transform piece, Action dropCallback) {
         var pos = piece.localPosition;
-        piece.position += Vector3.up * 1.5f;
-        DOTween.Sequence().Append(piece.DOLocalMoveY(pos.y, 0.15f)).AppendCallback(() => dropCallback?.Invoke())
+        //piece.position += Vector3.up * 3f;
+        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f))
+            .AppendCallback(() => dropCallback?.Invoke())
             .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
             .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
             .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
@@ -269,7 +270,7 @@ public class BaseManager : MonoBehaviour {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
-    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord) { }
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer) { }
 
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
