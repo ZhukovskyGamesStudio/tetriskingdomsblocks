@@ -1,28 +1,26 @@
 using UnityEngine;
 
 public class PieceView : MonoBehaviour {
-    private PieceData _data;
-    private Vector3 _startingPosition;
-    private bool _isDragging;
-    public static Vector3 DragShift;
-    public static Vector2Int PieceMaxSize;
-
     [SerializeField]
     private BoxCollider _collider;
 
     [field: SerializeField]
-    public Transform _markedCellsContainer { get; private set; }
+    private Transform _markedCellsContainer;
 
     [field: SerializeField]
-    public Transform _cellsContainer { get; private set; }
+    private Transform _cellsContainer;
 
+    public static Vector2Int PieceMaxSize;
     private Vector3 _initialScale, _initialMarkedScale;
-
     private Vector2Int _currentCoord;
-
+    private PieceData _data;
+    private Vector3 _startingPosition;
+    private bool _isDragging;
+    
     private void Update() {
-        if (_isDragging)
+        if (_isDragging) {
             OnDrag();
+        }
     }
 
     public void SetData(PieceData data, float initialScale = 1f) {
@@ -45,7 +43,7 @@ public class PieceView : MonoBehaviour {
                     var markCell = Instantiate(markedCell, _markedCellsContainer);
                     markCell.GetComponent<MeshRenderer>().material.color = new Color(data.Type.MarkCellColor.r, data.Type.MarkCellColor.g,
                         data.Type.MarkCellColor.b, 0.75f);
-                    go.transform.localPosition = (new Vector3(x +0.5f, 0, y+0.5f) + shift) * GameManager.CELL_SIZE;
+                    go.transform.localPosition = (new Vector3(x + 0.5f, 0, y + 0.5f) + shift) * GameManager.CELL_SIZE;
                     markCell.position = new Vector3(go.transform.position.x, _markedCellsContainer.position.y, go.transform.position.z);
                     go.transform.localScale *= Mathf.Clamp(GameManager.CELL_SIZE - 2, 1, 100000);
                 }
@@ -62,45 +60,38 @@ public class PieceView : MonoBehaviour {
         var width = _data.Cells.GetLength(0);
         var height = _data.Cells.GetLength(1);
 
-        return new Vector3(width/2f, 0, height / 2f) * -1;
+        return new Vector3(width / 2f, 0, height / 2f) * -1;
     }
 
     public void OnStartDrag() {
         _isDragging = true;
         _cellsContainer.localScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;
-        
+
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         //cellManager.SetCurPieceOffset(transform.position - cellManager.InputCoord());
-        
-         GameManager.PieceVerticalShift = Mathf.Abs(CalculateShift().z);
+
+        GameManager.PieceVerticalShift = Mathf.Abs(CalculateShift().z);
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
-     
     }
 
     public void OnDrag() {
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
-        int fieldSize = GameManager.Instance == null
-            ? MetaManager.Instance.MainMetaConfig.FieldSize
-            : GameManager.Instance.MainGameConfig.FieldSize;
-        var targetMousePos = cellManager.ShiftedDragInputPos();// + cellManager.TotalDragOffset;
+        var targetMousePos = cellManager.ShiftedDragInputPos();
         targetMousePos.y = _cellsContainer.position.y;
-        
+
         _currentCoord = cellManager.GetPosInCoord();
         Debug.Log(_currentCoord);
-        
-        int maxClampFieldPositionZ = fieldSize - _data.Cells.GetLength(1) + 1;
-        int maxClampFieldPositionX = fieldSize - _data.Cells.GetLength(0) + 1;
-        var currentCoordOnField = cellManager.GetPieceClampedCoordOnField();
-        bool isInsideField = currentCoordOnField.x >= 0 && currentCoordOnField.y >= 0 && currentCoordOnField.x < maxClampFieldPositionX &&
-                             currentCoordOnField.y < maxClampFieldPositionZ;
-        if (isInsideField) {
-            Vector3 targetMarkedPos = new Vector3(_currentCoord.x, FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, _currentCoord.y);
+
+        bool canPlace = cellManager.CanPlace(_data, _currentCoord);
+        if (canPlace) {
+            Vector3 targetMarkedPos =
+                new Vector3(_currentCoord.x, FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, _currentCoord.y);
             targetMarkedPos -= GameManager.PieceCenterToCoordShift();
             _markedCellsContainer.position = targetMarkedPos;
         }
-        
-        _markedCellsContainer.gameObject.SetActive(isInsideField);
+
+        _markedCellsContainer.gameObject.SetActive(canPlace);
         _cellsContainer.position = targetMousePos;
     }
 
@@ -112,7 +103,7 @@ public class PieceView : MonoBehaviour {
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         _markedCellsContainer.gameObject.SetActive(false);
         _isDragging = false;
-        if (cellManager.CanPlace(_data,_currentCoord)) {
+        if (cellManager.CanPlace(_data, _currentCoord)) {
             cellManager.PlacePiece(_data, _currentCoord);
 
             Destroy(gameObject);
