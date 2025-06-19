@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DG.Tweening;
 using TMPro;
@@ -15,7 +16,7 @@ public class MetaManager : BaseManager {
     [SerializeField] private Transform _cellContainer;
     [field:SerializeField]
     public MainMetaConfig MainMetaConfig { get;private set; }
-    private PieceData _nextBlock = null;
+    private PieceData _nextPiece = null;
     [SerializeField]private TMP_Text[] _resourcesCountText;
     [SerializeField]private TMP_Text _getPieceTimerText;
     [SerializeField]private TMP_Text _destroyPieceText;
@@ -60,16 +61,11 @@ public class MetaManager : BaseManager {
             new ObjectPool<ResourceMarkView>(() => Instantiate(resourceMarkViewPrefab,_resourcesMarksContainer));
     }
 
-    protected override void Start()
-    {
-       base.Start();
-    }
-
     protected override void Update()
     {
         base.Update();
         if (_hasInternetConnection &&
-            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime()).TotalHours < 2)
+            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours < 2)
         {
             TimeSpan timeUntilNext = GetTimeUntilNextPiece();
             _getPieceTimerText.text = $"{timeUntilNext.Hours:D1}:{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2} to new piece";
@@ -251,7 +247,7 @@ public class MetaManager : BaseManager {
     {
        // if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
         
-        TimeSpan timeSinceLastUpdate = _currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime();
+        TimeSpan timeSinceLastUpdate = _currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime;
         double minutesPassed = timeSinceLastUpdate.TotalMinutes;
         double minutesUntilNext = _minutesToGetPiece - (minutesPassed % _minutesToGetPiece);
         
@@ -260,7 +256,7 @@ public class MetaManager : BaseManager {
     public void Play() {
         if (StorageManager.GameDataMain.HealthCount != 0)
         {
-            StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+            StorageManager.GameDataMain.LastExitTime =_currentGameTime.ToString(CultureInfo.InvariantCulture);
                 StorageManager.SaveGame();
         SceneManager.LoadScene("GameScene");
         }
@@ -274,7 +270,7 @@ public class MetaManager : BaseManager {
     public void BuyPiece() {
        if (StorageManager.GameDataMain.resourcesCount[0] >= 100 &&
            StorageManager.GameDataMain.resourcesCount[1] >= 100 && StorageManager.GameDataMain.resourcesCount[2] >= 100
-           && _nextBlock == null)
+           && _nextPiece == null)
        {
        // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
        StorageManager.GameDataMain.resourcesCount[0] -= 100;
@@ -341,7 +337,7 @@ public class MetaManager : BaseManager {
         VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
         ShakeCamera();
     }
-    private void UpdateResourcesCountUIText()
+    public void UpdateResourcesCountUIText()
     {
         for (int i = 0; i < _resourcesCountText.Length; i++)
             _resourcesCountText[i].text = StorageManager.GameDataMain.resourcesCount[i].ToString();
@@ -349,10 +345,10 @@ public class MetaManager : BaseManager {
 
     public void GetPiece()
     {
-        if (_hasInternetConnection && _nextBlock == null &&
-            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTime.ToDateTime()).TotalHours >= 2)
+        if (_hasInternetConnection && _nextPiece == null &&
+            (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 2)
         {
-            StorageManager.GameDataMain.LastGetPieceTime = DateForSaveData.FromDateTime(_currentGameTime);
+            StorageManager.GameDataMain.LastGetPieceTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
             GenerateNewPieces(); // for test
         }
     }
@@ -363,14 +359,8 @@ public class MetaManager : BaseManager {
     
     public void GenerateNewPieces()
     {
-        _nextBlock = PieceUtils.GetNewPiece();
-        SetData(_nextBlock);
-    }
-    public void SetData(PieceData nextPiece) {
-        DestroyChildren();
-
-        var go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _cellContainer);
-        go.SetData(nextPiece);
+        _nextPiece = PieceUtils.GetNewPiece();
+        NextPiecesView.Instance.SetData(_nextPiece);
     }
 
     protected override void SetupGame()
@@ -418,10 +408,10 @@ public class MetaManager : BaseManager {
     //    Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
         UpdateResourcesCountUIText();
         
-       if (StorageManager.GameDataMain.LastGetPieceTime.Years == 0)
+       if (StorageManager.GameDataMain.LastGetPieceTimeDateTime.Year == 0)
        {
-            StorageManager.GameDataMain.LastGetPieceTime = DateForSaveData.FromDateTime(_currentGameTime - TimeSpan.FromHours(2)); 
-           StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+            StorageManager.GameDataMain.LastGetPieceTime = (_currentGameTime - TimeSpan.FromHours(2)).ToString(CultureInfo.InvariantCulture); 
+           StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
        }
        
         GetResourceCollectMarks();
@@ -448,17 +438,17 @@ public class MetaManager : BaseManager {
                 StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = 0;
             }
         }
-        StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+        StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
         StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += collectedResouces;
         UpdateResourcesCountUIText();
         StorageManager.SaveGame();
     }
 
-    protected override void SaveEnergyData()
-    {
-        StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
+    protected override void SaveEnergyData() {
+        StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
         base.SaveEnergyData();
     }
+    
 
     private void CalculateCellSpawnChances()
     {
@@ -474,39 +464,31 @@ public class MetaManager : BaseManager {
     public override void PlacePiece(PieceData pieceData, Vector2Int coord)
     {
         PlacePiece(pieceData, coord, MainMetaConfig.FieldSize);
-        _nextBlock = null;
+        _nextPiece = null;
 
         StorageManager.SaveGame();
     }
 
     protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize)
     {
-        List<(int, int)> placedCells = new List<(int, int)>();
-        for (int x = 0; x < pieceData.Cells.GetLength(0); x++)
-        {
-            for (int y = 0; y < pieceData.Cells.GetLength(1); y++)
-            {
-                if (!pieceData.Cells[x, y])
-                {
+        base.PlacePiece(pieceData, pos, fieldSize);
+        List<(int, int)> placedCells = new();
+        for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
+            for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
+                if (!pieceData.Cells[x, y]) {
                     continue;
                 }
 
-                var place = new Vector2Int((int)Mathf.Clamp(pos.x + x, 0, fieldSize),
-                    (int)Mathf.Clamp(pos.y + y, 0, fieldSize));
-                var go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
-                go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                _field[place.x, place.y] = pieceData.Type.CellType;
-                _cells[place.x, place.y] = go;
+                Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
                 placedCells.Add((place.x, place.y));
-                
-                go.GetComponent<CellView>().PlaceCellOnField();
-                SpawnResourceFx(pieceData, place, go);
-                //SpawnSmokeParticle(go.transform.position) ;
             }
         }
 
         UpdateResourceMarksAfterPlacePiece(placedCells);
-        ShakeCamera();
+    }
+
+    private void ShakeCamera() {
+        Debug.Log("Shake camera");
     }
 
     private void UpdateResourceMarksAfterPlacePiece(List<(int, int)> placedCells)
@@ -637,7 +619,7 @@ public class MetaManager : BaseManager {
     {
         List<List<(int row, int col)>> connectedGroupsPieces = null;
        (_groupCellIndex, connectedGroupsPieces) = SameCellsGroupCalculater.FindConnectedCellTypeGroups(_field);
-        var afkTimeInSeconds = (_currentGameTime - StorageManager.GameDataMain.LastExitTime.ToDateTime()).TotalSeconds;
+        var afkTimeInSeconds = (_currentGameTime - StorageManager.GameDataMain.LastExitTimeDateTime).TotalSeconds;
         for (int i = 0; i < connectedGroupsPieces.Count; i++)
         {
             Vector3 collectResourceMarkPosition = Vector3.zero;

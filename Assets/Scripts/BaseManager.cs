@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
+using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -122,7 +124,7 @@ public class BaseManager : MonoBehaviour {
                     StorageManager.GameDataMain.HealthCount =
                         Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
                     _lastHealthRecoveryTime = _currentGameTime;
-                    StorageManager.GameDataMain.LastHealthRecoveryTime = DateForSaveData.FromDateTime(_currentGameTime);
+                    StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
                     SaveEnergyData();
                     _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(true);
                 }
@@ -157,7 +159,7 @@ public class BaseManager : MonoBehaviour {
 
     public Vector3 InputPos() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
 
-    public Vector3 ShiftedDragInputPos() => InputPos() + GameManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
+    public Vector3 ShiftedDragInputPos() => InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
 
     public Vector2Int GetPieceClampedCoordOnField() {
         return GetPosInCoord() - new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
@@ -220,7 +222,7 @@ public class BaseManager : MonoBehaviour {
         ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
     }
 
-    private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+    protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
@@ -281,16 +283,6 @@ public class BaseManager : MonoBehaviour {
         var zoom = _mmfPlayer.GetFeedbackOfType<MMF_CameraZoom>();
         zoom.ZoomFieldOfView = -1 * percent;
         _mmfPlayer.PlayFeedbacks();
-        return;
-        Vector3 camPos = CameraContainer.transform.position;
-        float xOffset = camPos.x * Random.Range(-0.03f, 0.03f);
-        float zOffset = camPos.z * Random.Range(-0.03f, 0.03f);
-        _currentTween.Kill();
-        _currentTween = DOTween.Sequence().Append(CameraContainer.transform.DOMoveX(camPos.x - xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
-            .Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
-            .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
-            .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
     }
 
     public TimeSpan GetTimeUntilNextHealth() {
@@ -326,7 +318,7 @@ public class BaseManager : MonoBehaviour {
         SaveEnergyData();
     }
 
-    private void SaveEnergyData() {
+    protected virtual void SaveEnergyData() {
         StorageManager.SaveGame();
     }
 
@@ -342,7 +334,7 @@ public class BaseManager : MonoBehaviour {
     protected void RemoveHealth() {
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
             _lastHealthRecoveryTime = _currentGameTime;
-            StorageManager.GameDataMain.LastHealthRecoveryTime = DateForSaveData.FromDateTime(_lastHealthRecoveryTime);
+            StorageManager.GameDataMain.LastHealthRecoveryTime = _lastHealthRecoveryTime.ToString(CultureInfo.InvariantCulture);
         }
 
         _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(false);
@@ -352,7 +344,7 @@ public class BaseManager : MonoBehaviour {
 
     private void CalculateOfflineHealth() {
         if (!_hasInternetConnection) return;
-        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTime.ToDateTime();
+        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
         TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
         int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
 

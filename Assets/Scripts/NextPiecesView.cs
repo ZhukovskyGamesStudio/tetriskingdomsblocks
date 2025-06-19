@@ -14,6 +14,17 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         Instance = this;
     }
 
+    public void SetData(PieceData nextPiece) {
+        DestroyPieces();
+
+        if (_piecesContainers.Count == 0) {
+            Debug.LogWarning("NextPiecesView: No containers available for the pieces.");
+            return;
+        }
+
+        SetData(new List<PieceData>() { nextPiece });
+    }
+    
     public void SetData(List<PieceData> nextPieces) {
         DestroyPieces();
 

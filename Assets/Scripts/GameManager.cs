@@ -17,7 +17,7 @@ public class GameManager : BaseManager, IResetable
 
     public MainGameConfig MainGameConfig;
     
-    [field:SerializeField] public DragConfig DragConfig { get; private set; }
+   
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
 

@@ -64,9 +64,9 @@ public class PieceView : MonoBehaviour {
 
     private void LerpToFinal() {
         _cellsContainer.position =
-            Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * GameManager.Instance.DragConfig.LerpSpeed);
+            Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
         _cellsContainer.localScale =
-            Vector3.Lerp(_cellsContainer.localScale, _finalScale, Time.deltaTime * GameManager.Instance.DragConfig.LerpSpeed);
+            Vector3.Lerp(_cellsContainer.localScale, _finalScale, Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
     }
 
     private Vector3 CalculateShift() {
