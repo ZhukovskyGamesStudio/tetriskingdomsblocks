@@ -5,7 +5,8 @@ using UnityEngine;
 public class CellView : MonoBehaviour {
     [SerializeField]
     private GameObject _objectsContainer;
-
+    [SerializeField]
+    private Collider _cellCollider;
     private Tween _currentTween;
     public Guid Seed { get; private set; } = Guid.NewGuid();
 
@@ -31,8 +32,11 @@ public class CellView : MonoBehaviour {
             .Append(transform.DOScaleY(transform.localScale.y * 1.2f, 0.2f)).Join(transform.DOScaleX(transform.localScale.x * 0.8f, 0.2f))
             .Join(transform.DOScaleZ(transform.localScale.z * 0.8f, 0.2f)).Append(transform.DOScale(new Vector3(1, 0.25f, 1), 0.25f));
     }
-
-    public void DestroyCell() {
+    
+    public void OffCollider() => _cellCollider.enabled = false; 
+    
+    public void DestroyCell()
+    {
         Destroy(gameObject, 0.8f);
         _currentTween.Kill();
         _currentTween = DOTween.Sequence().Append(transform.DOScale(transform.localScale * 1.2f, 0.2f))

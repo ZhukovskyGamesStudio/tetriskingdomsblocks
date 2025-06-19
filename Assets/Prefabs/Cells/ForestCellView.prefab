@@ -294,6 +294,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+      propertyPath: _cellCollider
+      value: 
+      objectReference: {fileID: 4813448159886450238}
+    - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: _objectsContainer
       value: 
       objectReference: {fileID: 7116209908211394159}
@@ -357,6 +361,11 @@ PrefabInstance:
       addedObject: {fileID: 7067034327226507563}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+--- !u!65 &4813448159886450238 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 1684071944323455264, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+  m_PrefabInstance: {fileID: 6166495633828202270}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5635264996676828615 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1992755646559075033, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}

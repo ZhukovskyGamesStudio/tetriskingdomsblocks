@@ -13,7 +13,8 @@ public class GameDataForSave
 
     public int CoinsAmount;
     public int GemsAmount;
-
+    public bool FieldSaveIsCreated; //change code with this bool
+    
     public DateForSaveData LastHealthRecoveryTime;
     public int HealthCount;
 
@@ -27,9 +28,9 @@ public class GameDataForSave
     {
         HealthCount = 3;
         resourcesCount = new int[4];
-        resourcesCount[0] = 300;
-        resourcesCount[1] = 300;
-        resourcesCount[2] = 300;
+        resourcesCount[0] = 3000;
+        resourcesCount[1] = 3000;
+        resourcesCount[2] = 3000;
     }
 }
 
