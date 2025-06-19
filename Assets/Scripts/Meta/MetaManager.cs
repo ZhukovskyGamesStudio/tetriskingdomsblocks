@@ -251,9 +251,9 @@ public class MetaManager : BaseManager {
         }
     }
     
-    public override void PlacePiece(PieceData pieceData)
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord)
     {
-        PlacePiece(pieceData, GetPieceClampedPosOnField(), MainMetaConfig.FieldSize);
+        PlacePiece(pieceData, coord, MainMetaConfig.FieldSize);
         _nextBlock = null;
 
         StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];

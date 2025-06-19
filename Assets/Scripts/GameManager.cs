@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
+using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,6 +16,8 @@ public class GameManager : BaseManager, IResetable
     public static GameManager Instance;
 
     public MainGameConfig MainGameConfig;
+    
+    [field:SerializeField] public DragConfig DragConfig { get; private set; }
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
@@ -107,9 +110,9 @@ public class GameManager : BaseManager, IResetable
     }
 
 
-    public override void PlacePiece(PieceData pieceData)
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord)
     {
-        PlacePiece(pieceData, GetPieceClampedPosOnField(), MainGameConfig.FieldSize);
+        PlacePiece(pieceData, coord, MainGameConfig.FieldSize);
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
 

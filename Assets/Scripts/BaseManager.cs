@@ -24,12 +24,10 @@ public class BaseManager : MonoBehaviour {
     private Vector3 _additionalOffset = new Vector3(0f, 0, 1f);
 
     private Vector3 _cusorToCellOffset;
-
-    [field:SerializeField]
-    public Vector3 OnFieldOffset { get; protected set; } = new Vector3(0f, 0, 1f);
+    
     public Vector3 AdditionalOffset => _additionalOffset;
 
-    public Vector3 TotalDragOffset => _cusorToCellOffset + _additionalOffset;
+    public Vector3 TotalDragOffset => _cusorToCellOffset + GameManager.Instance.DragConfig.AdditionalOffset;
 
     [HideInInspector]
     public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
@@ -164,32 +162,35 @@ public class BaseManager : MonoBehaviour {
     }
 
     public bool CanPlace(PieceData data) {
-        Vector2Int pos = GetPieceClampedPosOnField();
+        Vector2Int pos = GetPieceClampedCoordOnField();
         return CanPlace(data, pos);
     }
 
-    public Vector2Int GetPosOnField() {
-        Vector3 coord = InputCoord() + TotalDragOffset + OnFieldOffset;
+    public Vector2Int GetPosInCoord() {
+        Vector3 position = ShiftedDragInputPos() + TotalDragOffset + GameManager.Instance.DragConfig.OnFieldOffset;
 
         if (PieceView.PieceMaxSize.x % 2 == 0)
-            coord += Vector3.left / 2f;
+            position += Vector3.left / 2f;
 
         if (PieceView.PieceMaxSize.y % 2 == 0)
-            coord += Vector3.back / 2f;
+            position += Vector3.back / 2f;
 
-        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
-        return pos;
+        Vector2Int coord = ClampToCoord(position);
+        return coord;
     }
 
-    public Vector3 InputCoord() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
+    public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
 
-    public Vector2Int GetPieceClampedPosOnField() {
-        Vector3 coord = InputCoord() + TotalDragOffset + OnFieldOffset;
-        coord += new Vector3(PieceView.DragShift.x, 0, PieceView.DragShift.z) + Vector3.forward;
+    public Vector3 InputPos() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
+    public static float PieceVerticalShift;
+    public Vector3 ShiftedDragInputPos() => InputPos() + GameManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
 
-        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
-        pos -= new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
-        return pos;
+    public Vector2Int GetPieceClampedCoordOnField() {
+        Vector3 position = ShiftedDragInputPos() + TotalDragOffset + GameManager.Instance.DragConfig.OnFieldOffset;
+
+        Vector2Int coord = ClampToCoord(position);
+        coord -= new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
+        return coord;
     }
 
     public bool CanPlace(PieceData data, Vector2Int pos) {
@@ -304,7 +305,7 @@ public class BaseManager : MonoBehaviour {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
-    public virtual void PlacePiece(PieceData pieceData) { }
+    public virtual void PlacePiece(PieceData pieceData,Vector2Int coord) { }
 
     protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
 
