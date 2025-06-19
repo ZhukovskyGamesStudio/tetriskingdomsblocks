@@ -16,11 +16,15 @@ public class PieceView : MonoBehaviour {
     private PieceData _data;
     private Vector3 _startingPosition;
     private bool _isDragging;
+
+    private Vector3 _finalPos, _finalScale;
     
     private void Update() {
         if (_isDragging) {
             OnDrag();
         }
+
+        LerpToFinal();
     }
 
     public void SetData(PieceData data, float initialScale = 1f) {
@@ -53,7 +57,16 @@ public class PieceView : MonoBehaviour {
         _initialScale = Vector3.one * initialScale;
         _initialMarkedScale = Vector3.one * initialScale;
         _cellsContainer.localScale = _initialScale;
+        _finalScale = _initialScale;
+        _finalPos = _startingPosition;
         _markedCellsContainer.gameObject.SetActive(false);
+    }
+
+    private void LerpToFinal() {
+        _cellsContainer.position =
+            Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * GameManager.Instance.DragConfig.LerpSpeed);
+        _cellsContainer.localScale =
+            Vector3.Lerp(_cellsContainer.localScale, _finalScale, Time.deltaTime * GameManager.Instance.DragConfig.LerpSpeed);
     }
 
     private Vector3 CalculateShift() {
@@ -65,7 +78,7 @@ public class PieceView : MonoBehaviour {
 
     public void OnStartDrag() {
         _isDragging = true;
-        _cellsContainer.localScale = Vector3.one;
+        _finalScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;
         GameManager.PieceVerticalShift = Mathf.Abs(CalculateShift().z);
         PieceMaxSize = new(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
@@ -88,7 +101,7 @@ public class PieceView : MonoBehaviour {
         }
 
         _markedCellsContainer.gameObject.SetActive(canPlace);
-        _cellsContainer.position = targetMousePos;
+        _finalPos = targetMousePos;
     }
 
     public void OnDrop() {
@@ -104,8 +117,8 @@ public class PieceView : MonoBehaviour {
 
             Destroy(gameObject);
         } else {
-            _cellsContainer.position = _startingPosition;
-            _cellsContainer.localScale = _initialScale;
+            _finalPos = _startingPosition;
+            _finalScale = _initialScale;
             _markedCellsContainer.localScale = _initialMarkedScale;
             _markedCellsContainer.gameObject.SetActive(false);
         }
