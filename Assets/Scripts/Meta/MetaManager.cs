@@ -451,7 +451,7 @@ public class MetaManager : BaseManager {
         StorageManager.GameDataMain.LastExitTime = DateForSaveData.FromDateTime(_currentGameTime);
         StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += collectedResouces;
         UpdateResourcesCountUIText();
-        StorageManager.SaveGame();
+      // StorageManager.SaveGame();
     }
 
     protected override void SaveEnergyData()
@@ -527,6 +527,7 @@ public class MetaManager : BaseManager {
                     {
                         connectedCellGroups.Add(_groupCellIndex[newRow, newCol]);
                     }
+                    Debug.Log(_groupCellIndex[newRow, newCol]); 
                 }
             }
         }
@@ -574,6 +575,7 @@ public class MetaManager : BaseManager {
                 cellsInNewGroup.Add((row,col));
         }
         newResourceMarkPosition /= cellsInNewGroup.Count;
+        newResourceMarkPosition += new Vector3(0, 1, 0);
         if (connectedCellGroups.Count == 0)
         {
             var resourceMarkView = SpawnResourceMark(newResourceMarkPosition, 0, 0, ResourceType.None);
@@ -583,9 +585,9 @@ public class MetaManager : BaseManager {
         else
         {
             _connectedGroups[curGroupIndex - 1].ResourceMarkView.gameObject.transform.position =
-                _mainCamera.WorldToScreenPoint(newResourceMarkPosition);
+                newResourceMarkPosition;
             var resourceMarkView = _connectedGroups[curGroupIndex - 1].ResourceMarkView;
-            resourceMarkView.gameObject.SetActive(false);
+          //  resourceMarkView.gameObject.SetActive(false);
             _connectedGroups[curGroupIndex - 1] = new ResourceMarkAndPieces(resourceMarkView, cellsInNewGroup);
         }
 
