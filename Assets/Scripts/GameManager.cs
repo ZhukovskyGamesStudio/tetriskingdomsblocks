@@ -17,8 +17,6 @@ public class GameManager : BaseManager, IResetable
 
     public MainGameConfig MainGameConfig;
     
-   
-
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
     [field: SerializeField] public Transform HolesForBGContainer { get; private set; }
@@ -110,9 +108,9 @@ public class GameManager : BaseManager, IResetable
     }
 
 
-    public override void PlacePiece(PieceData pieceData, Vector2Int coord)
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer)
     {
-        PlacePiece(pieceData, coord, MainGameConfig.FieldSize);
+        PlacePiece(pieceData, coord, MainGameConfig.FieldSize, cells,cellsContainer);
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
 
@@ -131,9 +129,9 @@ public class GameManager : BaseManager, IResetable
             Lose();
     }
 
-    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize)
+    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells,Transform cellsContainer)
     {
-        base.PlacePiece(pieceData, pos, fieldSize);
+        base.PlacePiece(pieceData, pos, fieldSize,cells,cellsContainer);
 
         CheckPlacedCellsForTask();
 
@@ -812,6 +810,7 @@ public class GameManager : BaseManager, IResetable
         }
     }
 
+    
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime,
         Vector2 finalposition)
     {

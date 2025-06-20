@@ -4,7 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LoadingManager : MonoBehaviour {
-    public static bool IsLoaded { get; private set; }
+    public bool IsLoaded { get; private set; }
+    public static LoadingManager Instance;
+
+    private void Awake() {
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start() {
         LoadAndChangeScene();

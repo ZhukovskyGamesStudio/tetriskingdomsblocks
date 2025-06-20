@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
-public class BaseManager : MonoBehaviour {
+public class BaseManager : MonoBehaviour  {
     public const int CELL_SIZE = 1;
     protected CellType[,] _field;
     protected CellView[,] _cells;
@@ -19,6 +19,11 @@ public class BaseManager : MonoBehaviour {
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
 
+    [SerializeField]
+    private AudioQueueMixer _placePieceAudioMixer;
+    [SerializeField]
+    private AudioQueueMixer _collectedResourceAudioMixer;
+    
     [HideInInspector]
     public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
 
@@ -169,10 +174,6 @@ public class BaseManager : MonoBehaviour {
 
     public Vector3 ShiftedDragInputPos() => InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
 
-    public Vector2Int GetPieceClampedCoordOnField() {
-        return GetPosInCoord() - new Vector2Int((int)_fieldStart.position.x, (int)_fieldStart.position.z);
-    }
-
     public bool CanPlace(PieceData data, Vector2Int pos) {
         if (pos.x < 0 || pos.y < 0)
             return false;
@@ -197,11 +198,10 @@ public class BaseManager : MonoBehaviour {
         return (cellType == CellType.Empty || cellType == CellType.Ice);
     }
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+
+    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
-        GameObject tmpContainer = new();
-        tmpContainer.transform.SetParent(_fieldContainer);
-        List<Vector3> poses = new List<Vector3>();
-        List<GameObject> cells = new List<GameObject>();
+        cellsContainer.transform.SetParent(_fieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -215,9 +215,10 @@ public class BaseManager : MonoBehaviour {
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
                 poses.Add(new Vector3(place.x, -0.45f, place.y));
                 CheckCellTypesBeforePlacePiece(place.x, place.y);
+                CellView go = cells[x, y];
+              
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
-                cells.Add(go.gameObject);
 
                 //go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(place, go);
@@ -226,12 +227,7 @@ public class BaseManager : MonoBehaviour {
             }
         }
 
-        tmpContainer.transform.localPosition = GetAveragePosition(poses);
-        foreach (var cell in cells) {
-            cell.transform.SetParent(tmpContainer.transform);
-        }
-
-        ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
+        ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
     protected virtual void CheckCellTypesBeforePlacePiece(int row, int col)
@@ -240,6 +236,7 @@ public class BaseManager : MonoBehaviour {
     }
     protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
+            _placePieceAudioMixer.PlayNext();
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
@@ -252,23 +249,9 @@ public class BaseManager : MonoBehaviour {
         });
     }
 
-    public static Vector3 GetAveragePosition(List<Vector3> positions) {
-        if (positions == null || positions.Count == 0) {
-            return Vector3.zero;
-        }
-
-        Vector3 sum = Vector3.zero;
-        for (int i = 0; i < positions.Count; i++) {
-            sum += positions[i];
-        }
-
-        return sum / positions.Count;
-    }
-
     private void DropPeaceTween(Transform piece, Action dropCallback) {
-        var pos = piece.localPosition;
-        piece.position += Vector3.up * 1.5f;
-        DOTween.Sequence().Append(piece.DOLocalMoveY(pos.y, 0.15f)).AppendCallback(() => dropCallback?.Invoke())
+        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f))
+            .AppendCallback(() => dropCallback?.Invoke())
             .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
             .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
             .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
@@ -285,7 +268,7 @@ public class BaseManager : MonoBehaviour {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
-    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord) { }
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer) { }
 
     protected virtual void SpawnResourceFx(Vector2Int place, CellView go) { }
 
@@ -407,4 +390,9 @@ public class BaseManager : MonoBehaviour {
             }
         }
     }
+    
+    public void PlayCollectedSound() {
+        _collectedResourceAudioMixer.PlayNext();
+    }
+
 }

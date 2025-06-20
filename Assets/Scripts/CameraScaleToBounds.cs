@@ -56,7 +56,9 @@ public class CameraScaleToBounds : MonoBehaviour {
 
     private async UniTask DisableComposer() {
         await UniTask.Delay(TimeSpan.FromSeconds(1));
-        _framingComposer.enabled = false;
+        if (_framingComposer) {
+            _framingComposer.enabled = false;
+        }
     }
 
     private Bounds CalculateBounds(Transform root) {
