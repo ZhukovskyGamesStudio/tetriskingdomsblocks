@@ -83,6 +83,14 @@ public class BaseManager : MonoBehaviour {
 
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
     public static float PieceVerticalShift;
+    
+    protected static readonly (int row, int col)[] directions = 
+    {
+        (-1, 0), // вверх
+        (1, 0),  // вниз
+        (0, -1), // влево
+        (0, 1)   // вправо
+    };
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
@@ -177,14 +185,17 @@ public class BaseManager : MonoBehaviour {
 
         for (int x = 0; x < data.Cells.GetLength(0); x++) {
             for (int y = 0; y < data.Cells.GetLength(1); y++) {
-                if (data.Cells[x, y] && _field[pos.x + x, pos.y + y] != CellType.Empty)
+                if (data.Cells[x, y] && !CellTypeIsTransparent(_field[pos.x + x, pos.y + y]))
                     return false;
             }
         }
 
         return true;
     }
-
+    protected bool CellTypeIsTransparent(CellType cellType)
+    {
+        return (cellType == CellType.Empty || cellType == CellType.Ice);
+    }
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
         float cellsAmount = 0;
         GameObject tmpContainer = new();
@@ -203,12 +214,13 @@ public class BaseManager : MonoBehaviour {
 
                 go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
                 poses.Add(new Vector3(place.x, -0.45f, place.y));
+                CheckCellTypesBeforePlacePiece(place.x, place.y);
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
                 cells.Add(go.gameObject);
 
                 //go.GetComponent<CellView>().PlaceCellOnField();
-                SpawnResourceFx(pieceData, place, go);
+                SpawnResourceFx(place, go);
                 //SpawnSmokeParticle(go.transform.position).Forget();
                 cellsAmount++;
             }
@@ -222,6 +234,10 @@ public class BaseManager : MonoBehaviour {
         ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, cellsAmount);
     }
 
+    protected virtual void CheckCellTypesBeforePlacePiece(int row, int col)
+    {
+        
+    }
     protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
             SpawnSmokeUnderPiece(tmpContainer.transform);
@@ -271,7 +287,7 @@ public class BaseManager : MonoBehaviour {
 
     public virtual void PlacePiece(PieceData pieceData, Vector2Int coord) { }
 
-    protected virtual void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go) { }
+    protected virtual void SpawnResourceFx(Vector2Int place, CellView go) { }
 
     protected void ShakeCamera(float percent) {
         percent = Mathf.LerpUnclamped(0.3f, 1f, percent);

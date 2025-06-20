@@ -47,13 +47,6 @@ public class MetaManager : BaseManager {
         : Vector3.zero;
     
     private ObjectPool<ResourceMarkView> _resourcesMarksPool;
-    private static readonly (int row, int col)[] directions = 
-    {
-        (-1, 0), // вверх
-        (1, 0),  // вниз
-        (0, -1), // влево
-        (0, 1)   // вправо
-    };
     protected override void Awake() {
         base.Awake();    
         Instance = this;

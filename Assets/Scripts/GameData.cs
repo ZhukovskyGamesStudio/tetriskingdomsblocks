@@ -22,5 +22,7 @@ public enum ResourceType {
     Rocks,
     Food,
     Metal,
-    TetrisPieces
+    TetrisPieces,
+    Box,
+    Ice
 }

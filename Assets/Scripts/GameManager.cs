@@ -141,7 +141,29 @@ public class GameManager : BaseManager, IResetable
             OnCellIsPlaced.Invoke();
     }
 
-    protected override void SpawnResourceFx(PieceData pieceData, Vector2Int place, CellView go)
+    protected override void CheckCellTypesBeforePlacePiece(int row, int col)
+    {
+        var cellType = _field[row, col];
+
+        switch (cellType)
+        {
+            case CellType.Ice:
+                var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                for (int j = 0; j < _currentTasks.Count; j++)
+                {
+                    if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource)
+                    {
+                        CheckNeedResourceInTask(j, config, row, col);
+                    }
+                }
+                DestroyCell(row, col);
+                break;
+        }
+
+        CheckClosestCells(row, col);
+    }
+
+    protected override void SpawnResourceFx( Vector2Int place, CellView go)
     {
         var cellType = _field[place.x, place.y];
         var resourcesForPlace =
@@ -173,8 +195,8 @@ public class GameManager : BaseManager, IResetable
                     Vector2.zero);
         }
 
-        if (!_placedCellsCount.TryAdd(pieceData.Type.CellType, 1))
-            _placedCellsCount[pieceData.Type.CellType]++;
+        if (!_placedCellsCount.TryAdd(cellType, 1))
+            _placedCellsCount[cellType]++;
     }
 
     private void CollectResourcesOnPlace(PieceData placedPiece)
@@ -310,7 +332,7 @@ public class GameManager : BaseManager, IResetable
 
             for (int x = 0; x < width; x++)
             {
-                if (_field[x, y] == CellType.Empty)
+                if (CellTypeIsTransparent(_field[x, y]))
                 {
                     fullRow = false;
                     break;
@@ -330,7 +352,7 @@ public class GameManager : BaseManager, IResetable
 
             for (int y = 0; y < height; y++)
             {
-                if (_field[x, y] == CellType.Empty)
+                if (CellTypeIsTransparent(_field[x, y]))
                 {
                     fullColumn = false;
                     break;
@@ -536,7 +558,50 @@ public class GameManager : BaseManager, IResetable
             }
         }
     }
+    
+    private void CheckClosestCells(int row, int col)
+    {
+        foreach (var (addedRow, addedCol) in directions)
+        {
+            var newRow = row + addedRow;
+            var newCol = col + addedCol;
+            if(newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0)continue;
+            var cellType = _field[newRow, newCol];
+            switch (cellType)
+            {
+                case CellType.Box:
+            var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    for (int j = 0; j < _currentTasks.Count; j++)
+                    {
+                        if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource)
+                        {
+                            CheckNeedResourceInTask(j, config, newRow, newCol);
+                        }
+                    }
+                    DestroyCell(newRow, newCol);
 
+                    break;
+            }
+        }
+    }
+
+    private void CheckNeedResourceInTask(int j, CellTypeInfo config, int newRow, int newCol)
+    {
+        var needResource = config.ResourcesForDestroy[0];
+        if (_currentTasks[j].TaskInfo.NeedResource == needResource.ResourceType)
+        {
+            if (!GameData.CollectedResources.TryAdd(needResource.ResourceType,
+                    needResource.ResourceCount))
+                GameData.CollectedResources[needResource.ResourceType] += needResource.ResourceCount;
+            var canvasPosition =
+                _mainCamera.WorldToScreenPoint(_cells[newRow, newCol].transform
+                    .position);
+            ShowFloatingText((" + <sprite name=" + needResource.ResourceType +
+                              ">" + " "), new Vector2(canvasPosition.x, canvasPosition.y + 15), 20,
+                1,
+                _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
+        }
+    }
     private void DestroyCell(int x, int y)
     {
         _field[x, y] = CellType.Empty;
@@ -659,8 +724,52 @@ public class GameManager : BaseManager, IResetable
 
         GameData = new GameData();
 
+        if (_currentLevelConfig.StartFieldConfig != null)
+        {
+            for (int i = 0; i < _field.GetLength(0); i++)
+            {
+                for (int j = 0; j < _field.GetLength(1); j++)
+                {
+                    if (_currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty)
+                    {
+                    var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == _currentLevelConfig.StartFieldConfig.GetCell(i, j));
+                    PlaceOneSizePiece(config, new Vector2Int(i, j));
+                    }
+                }
+            }
+
+        }
+        
         GenerateNewPieces();
         base.SetupGame();
+    }
+
+    private void PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos)
+    {
+        GameObject tmpContainer = new();
+        tmpContainer.transform.SetParent(_fieldContainer);
+        List<Vector3> poses = new List<Vector3>();
+        List<GameObject> cells = new List<GameObject>();
+        
+       CellView go = Instantiate(cellInfo.CellPrefab, _fieldContainer);
+        //go.SetSeed(pieceData.CellGuids[x, y]);
+
+                go.transform.localPosition = new Vector3(pos.x, -0.45f, pos.y);
+                poses.Add(new Vector3(pos.x, -0.45f, pos.y));
+                _field[pos.x, pos.y] = cellInfo.CellType;
+                _cells[pos.x, pos.y] = go;
+                cells.Add(go.gameObject);
+
+                //go.GetComponent<CellView>().PlaceCellOnField();
+                SpawnResourceFx(pos, go);
+                //SpawnSmokeParticle(go.transform.position).Forget();
+
+        tmpContainer.transform.localPosition = GetAveragePosition(poses);
+        foreach (var cell in cells) {
+            cell.transform.SetParent(tmpContainer.transform);
+        }
+
+       // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
     private void SetTaskDescriptions(TaskInfo[] tasksArray)
@@ -743,5 +852,7 @@ public enum CellType
     Mountain,
     Mine,
     FieldOfWheat,
-    Farm
+    Farm,
+    Ice,
+    Box
 }

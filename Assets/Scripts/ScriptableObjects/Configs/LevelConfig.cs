@@ -16,4 +16,7 @@ public class LevelConfig : ScriptableObject {
     
       [field: SerializeField]
         public Transform TutorialObject { get; private set; }
+        
+        [field: SerializeField]
+        public StartFieldConfig StartFieldConfig { get; private set; }
 }
