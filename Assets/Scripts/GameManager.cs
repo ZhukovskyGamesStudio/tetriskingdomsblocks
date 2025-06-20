@@ -17,8 +17,6 @@ public class GameManager : BaseManager, IResetable
 
     public MainGameConfig MainGameConfig;
     
-   
-
     private List<PieceData> _nextBlocks = new List<PieceData>();
 
     [field: SerializeField] public Transform HolesForBGContainer { get; private set; }
@@ -703,6 +701,7 @@ public class GameManager : BaseManager, IResetable
         }
     }
 
+    
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime,
         Vector2 finalposition)
     {

@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
-public class BaseManager : MonoBehaviour {
+public class BaseManager : MonoBehaviour  {
     public const int CELL_SIZE = 1;
     protected CellType[,] _field;
     protected CellView[,] _cells;
@@ -19,6 +19,11 @@ public class BaseManager : MonoBehaviour {
     public float[] FiguresChanceToSpawn { get; protected set; }
     public float _screenRatio { get; protected set; }
 
+    [SerializeField]
+    private AudioQueueMixer _placePieceAudioMixer;
+    [SerializeField]
+    private AudioQueueMixer _collectedResourceAudioMixer;
+    
     [HideInInspector]
     public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
 
@@ -206,6 +211,7 @@ public class BaseManager : MonoBehaviour {
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
+            _placePieceAudioMixer.PlayNext();
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
@@ -359,4 +365,9 @@ public class BaseManager : MonoBehaviour {
             }
         }
     }
+    
+    public void PlayCollectedSound() {
+        _collectedResourceAudioMixer.PlayNext();
+    }
+
 }
