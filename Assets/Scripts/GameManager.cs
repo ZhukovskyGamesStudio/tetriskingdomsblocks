@@ -139,8 +139,8 @@ public class GameManager : BaseManager, IResetable
             OnCellIsPlaced.Invoke();
     }
 
-    protected override void CheckCellTypesBeforePlacePiece(int row, int col)
-    {
+    protected override void CheckCellTypesBeforePlacePiece(int row, int col) {
+        base.CheckCellTypesBeforePlacePiece(row, col);
         var cellType = _field[row, col];
 
         switch (cellType)
@@ -330,7 +330,7 @@ public class GameManager : BaseManager, IResetable
 
             for (int x = 0; x < width; x++)
             {
-                if (CellTypeIsTransparent(_field[x, y]))
+                if (CellTypeIsTransparent(_field[x, y]) || _field[x,y] == CellType.Box)
                 {
                     fullRow = false;
                     break;
@@ -350,7 +350,7 @@ public class GameManager : BaseManager, IResetable
 
             for (int y = 0; y < height; y++)
             {
-                if (CellTypeIsTransparent(_field[x, y]))
+                if (CellTypeIsTransparent(_field[x, y])|| _field[x,y] == CellType.Box)
                 {
                     fullColumn = false;
                     break;
@@ -557,25 +557,23 @@ public class GameManager : BaseManager, IResetable
         }
     }
     
-    private void CheckClosestCells(int row, int col)
-    {
-        foreach (var (addedRow, addedCol) in directions)
-        {
+    private void CheckClosestCells(int row, int col) {
+        foreach (var (addedRow, addedCol) in directions) {
             var newRow = row + addedRow;
             var newCol = col + addedCol;
-            if(newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0)continue;
+            if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0) {
+                continue;
+            }
             var cellType = _field[newRow, newCol];
-            switch (cellType)
-            {
+            switch (cellType) {
                 case CellType.Box:
-            var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
-                    for (int j = 0; j < _currentTasks.Count; j++)
-                    {
-                        if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource)
-                        {
+                    var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    for (int j = 0; j < _currentTasks.Count; j++) {
+                        if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
                             CheckNeedResourceInTask(j, config, newRow, newCol);
                         }
                     }
+
                     DestroyCell(newRow, newCol);
 
                     break;

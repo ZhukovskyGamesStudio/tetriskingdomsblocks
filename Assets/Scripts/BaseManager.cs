@@ -232,7 +232,7 @@ public class BaseManager : MonoBehaviour  {
 
     protected virtual void CheckCellTypesBeforePlacePiece(int row, int col)
     {
-        
+          
     }
     protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {

@@ -87,7 +87,8 @@ public static class PieceUtils {
                     continue;
                 }
 
-                if (field[offsetX + x, offsetY + y] != CellType.Empty) {
+                var curType = field[offsetX + x, offsetY + y];
+                if (curType != CellType.Empty && curType != CellType.Ice) {
                     return false;
                 }
             }
