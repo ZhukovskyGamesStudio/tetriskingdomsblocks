@@ -762,7 +762,7 @@ public class GameManager : BaseManager, IResetable
                 SpawnResourceFx(pos, go);
                 //SpawnSmokeParticle(go.transform.position).Forget();
 
-        tmpContainer.transform.localPosition = GetAveragePosition(poses);
+       // tmpContainer.transform.localPosition = GetAveragePosition(poses);
         foreach (var cell in cells) {
             cell.transform.SetParent(tmpContainer.transform);
         }

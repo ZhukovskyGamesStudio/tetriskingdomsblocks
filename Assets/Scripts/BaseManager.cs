@@ -197,7 +197,7 @@ public class BaseManager : MonoBehaviour  {
     {
         return (cellType == CellType.Empty || cellType == CellType.Ice);
     }
-    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
+   // protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
 
     protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
@@ -209,11 +209,11 @@ public class BaseManager : MonoBehaviour  {
                 }
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
-                CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
-                go.SetSeed(pieceData.CellGuids[x, y]);
+               // CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
+                //go.SetSeed(pieceData.CellGuids[x, y]);
 
-                go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                poses.Add(new Vector3(place.x, -0.45f, place.y));
+               // go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
+                //poses.Add(new Vector3(place.x, -0.45f, place.y));
                 CheckCellTypesBeforePlacePiece(place.x, place.y);
                 CellView go = cells[x, y];
               
