@@ -19,11 +19,6 @@ public class AdminManager : MonoBehaviour
         DontDestroyOnLoad(this);
         SetupLevelButtons();
     }
-
-    public void ShowCollectAllDialog() {
-        DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
-    }
-
     public void ChangeAdminPanelState(bool isOn)
     {
         AdminPanelContainer.gameObject.SetActive(isOn);

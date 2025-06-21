@@ -441,7 +441,9 @@ public class MetaManager : BaseManager {
         StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
         base.SaveEnergyData();
     }
-
+    public void ShowCollectAllDialog() {
+        DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
+    }
     public void CollectResourcesFromAllMarks(float multiplayer)
     {
         foreach (var resourceMarkGroup in _connectedGroups)
