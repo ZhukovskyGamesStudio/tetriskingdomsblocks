@@ -216,7 +216,6 @@ public class MetaManager : BaseManager {
                     _connectedGroups.Add(resourceMarkAndPieces);
                     needIndex = _connectedGroups.Count;
                 }
-Debug.Log(needIndex);
                 foreach (var (row, col) in checkedCell.Value)
                     _groupCellIndex[row, col] = needIndex;
             }

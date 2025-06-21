@@ -103,6 +103,9 @@ public class PieceView : MonoBehaviour {
     }
 
     public void OnStartDrag() {
+        
+        if(AdminManager.Instance.AdminToggle.isOn)return;
+        
         _isDragging = true;
         _finalScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;

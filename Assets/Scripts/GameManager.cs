@@ -770,11 +770,6 @@ public class GameManager : BaseManager, IResetable
        // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
-    public void RestoreAllHPForAdminButton()
-    {
-        StorageManager.GameDataMain.HealthCount = 3;
-    }
-
     private void SetTaskDescriptions(TaskInfo[] tasksArray)
     {
         for (int i = 0; i < _currentLevelConfig.Tasks.Length; i++)
