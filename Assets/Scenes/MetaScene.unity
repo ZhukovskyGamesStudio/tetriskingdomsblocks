@@ -3217,6 +3217,11 @@ MonoBehaviour:
   - {fileID: 67249567}
   - {fileID: 837538274}
   _piecesScale: 0.5
+  _creatingInterval: 0.2
+  _creatingDelay: 0.1
+  _createParticleSystem: {fileID: 0}
+  _appearAudioSource: []
+  _spawnParticles: []
 --- !u!4 &1111628672
 Transform:
   m_ObjectHideFlags: 0
@@ -4641,6 +4646,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee18f1bfc9e14ff42ba8b04ea96e42de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _placePieceAudioMixer: {fileID: 0}
+  _collectedResourceAudioMixer: {fileID: 0}
   <_markedCell>k__BackingField: {fileID: 1310895148093814165, guid: 96e7b21c52f4bbb49a0540fb4b846459, type: 3}
   _mainCamera: {fileID: 740177189}
   _fieldContainer: {fileID: 937525643}

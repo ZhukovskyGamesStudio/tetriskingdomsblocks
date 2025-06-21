@@ -24,6 +24,22 @@ public class StartFieldConfig : ScriptableObject
         }
     }
 
+    public void CreateGrid(CellType[,] inputGrid)
+    {
+        int rows = inputGrid.GetLength(0);
+        int cols = inputGrid.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
+        {
+            CellRow newRow = new CellRow();
+            
+            for (int j = 0; j < cols; j++)
+                newRow.row.Add(inputGrid[i, j]);
+            
+            grid.Add(newRow);
+        }
+    }
+
     // Для отображения в инспекторе
     [System.Serializable]
     public class CellRow

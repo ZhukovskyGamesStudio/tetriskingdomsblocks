@@ -8,7 +8,7 @@ public class ResourceMarkView : MonoBehaviour
 {
     [SerializeField] private TMP_Text _resourceMarkText;
     [SerializeField] private Image _resourceFillImage;
-    [SerializeField] private int markIndex;
+    public int markIndex { get;set; }
     [SerializeField] private Button _buttonMark;
     private Tween _floatTween;
     private bool _isAnimate;
@@ -37,12 +37,13 @@ public class ResourceMarkView : MonoBehaviour
 
     public void CollectResources()
     {
-        MetaManager.Instance.CollectResourcesFromMark(markIndex);
+        MetaManager.Instance.CollectResourcesFromMark(markIndex,1);
         CollectAnimation();
     }
 
     public void CollectAnimation()
     {
+        if(!_resourceFillImage.gameObject.activeInHierarchy)return;
         _buttonMark.enabled = false;
         _isAnimate = false;
         _floatTween.Kill();

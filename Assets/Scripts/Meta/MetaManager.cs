@@ -106,7 +106,7 @@ public class MetaManager : BaseManager {
             
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
             _groupCellIndex[(int)cellPos.x, (int)cellPos.z] = 0;
-                CollectResourcesFromMark(groupIndex-1);
+                CollectResourcesFromMark(groupIndex-1,1);
                _connectedGroups[groupIndex-1].ResourceMarkView.CollectAnimation();
                // _connectedGroups[groupIndex-1].ResourceMarkView.gameObject.SetActive(false);
                 HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
@@ -415,7 +415,7 @@ Debug.Log(needIndex);
         base.SetupGame();
     }
 
-    public void CollectResourcesFromMark(int index)
+    public void CollectResourcesFromMark(int index, float multiplayerResources)
     {
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
@@ -433,7 +433,7 @@ Debug.Log(needIndex);
             }
         }
         StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
-        StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += collectedResouces;
+        StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += (int)(collectedResouces * multiplayerResources);
         UpdateResourcesCountUIText();
       // StorageManager.SaveGame();
     }
@@ -442,8 +442,16 @@ Debug.Log(needIndex);
         StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
         base.SaveEnergyData();
     }
-    
 
+    public void CollectResourcesFromAllMarks(float multiplayer)
+    {
+        foreach (var resourceMarkGroup in _connectedGroups)
+        {
+            resourceMarkGroup.ResourceMarkView.CollectAnimation();
+            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer);
+        }
+    }
+  
     private void CalculateCellSpawnChances()
     {
         float lastChance = 0;
@@ -510,7 +518,7 @@ Debug.Log(needIndex);
 
         foreach (var curIndex in connectedCellGroups)
         {
-            CollectResourcesFromMark(curIndex - 1);
+            CollectResourcesFromMark(curIndex - 1,1);
             _connectedGroups[curIndex - 1].ResourceMarkView.CollectAnimation();
         }
 
