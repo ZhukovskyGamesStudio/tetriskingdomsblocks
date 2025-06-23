@@ -17,6 +17,6 @@ public class CollectAllDialog : DialogBase {
     }
 
     private void CollectResources(float multiplier) {
-        Debug.Log("This is not implemented");
+        MetaManager.Instance.CollectResourcesFromAllMarks(multiplier);
     }
 }

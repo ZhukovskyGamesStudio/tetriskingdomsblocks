@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class NextPiecesView : MonoBehaviour, IResetable {
@@ -84,14 +85,35 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         _cts = null;
     }
 
-    private void DestroyPieces() {
-        foreach (Transform container in _piecesContainers) {
-            foreach (Transform child in container) {
-                Destroy(child.gameObject);
+    public void DestroyPieces() {
+        for (int i = 0; i < _piecesContainers.Count; i++)
+        {
+            DestroyCellsAnimation(_piecesContainers[i]);
+            if (_piecesContainers[i].childCount != 0)
+            {
+                _spawnParticles[i].gameObject.SetActive(true);
+                _spawnParticles[i].Play();
             }
         }
     }
 
+    private void DestroyCellsAnimation(Transform cellsContainer)
+    {
+      //  float animationMultiplayer = ConfigsManager.Instance.DragConfig.DestroyPieceAnimationMultiplayer;
+
+    //    DOTween.Sequence()
+          //  .Append(cellsContainer.DOScale(cellsContainer.localScale * 1.1f, 0.2f * animationMultiplayer))
+         //   .Append(cellsContainer.DOScale(0, 0.2f * animationMultiplayer)).OnComplete(() =>
+         //  {
+                foreach (Transform child in cellsContainer)
+                {
+                    Destroy(child.gameObject);
+                }
+         //  });
+
+        //particles
+    }
+    
     public void Reset() {
         DestroyPieces();
     }

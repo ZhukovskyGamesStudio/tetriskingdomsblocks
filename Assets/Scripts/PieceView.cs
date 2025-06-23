@@ -103,6 +103,9 @@ public class PieceView : MonoBehaviour {
     }
 
     public void OnStartDrag() {
+        
+        if(AdminManager.Instance.AdminToggle.isOn)return;
+        
         _isDragging = true;
         _finalScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;
@@ -113,8 +116,8 @@ public class PieceView : MonoBehaviour {
     public void OnDrag() {
         BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         var targetMousePos = cellManager.ShiftedDragInputPos();
-        targetMousePos.y = _cellsContainer.position.y;
-
+     //   targetMousePos.y = _cellsContainer.position.y;
+     targetMousePos.y = ConfigsManager.Instance.DragConfig.HeightUnderField;
         _currentCoord = cellManager.GetPosInCoord();
         //ebug.Log(_currentCoord);
 
@@ -151,7 +154,7 @@ public class PieceView : MonoBehaviour {
     }
 
     private async UniTask PlacePieceAsync( BaseManager cellManager) {
-        await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, 0.2f)).AsyncWaitForCompletion();
+        await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, ConfigsManager.Instance.DragConfig.DropPieceAnimationDuration)).AsyncWaitForCompletion();
         cellManager.PlacePiece(_data, _currentCoord,_cells,_cellsContainer);
         Destroy(gameObject);
     }
