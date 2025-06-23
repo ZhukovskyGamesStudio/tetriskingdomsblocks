@@ -6,6 +6,11 @@ namespace ScriptableObjects.Configs {
         public Vector3 DragMouseShift;
         public float LerpSpeed = 20f;
         public float HigherFieldShift = 0.5f;
+
+        public float HeightUnderField;
+        public float DropPieceAnimationDuration;
+        public float AfterDropPieceAnimationMultiplayer;
+        public float DestroyPieceAnimationMultiplayer;
     }
     
 }

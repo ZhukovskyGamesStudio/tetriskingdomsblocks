@@ -37,6 +37,7 @@ public class GameManager : BaseManager, IResetable
     [field: SerializeField] public Transform OpenedDoorEndGame;
 
     [field: SerializeField] public TMP_Text _mainTextUp { get; private set; }
+    [SerializeField] private TMP_Text _currentMovesCountText;
 
     private LevelConfig _currentLevelConfig;
 
@@ -52,7 +53,7 @@ public class GameManager : BaseManager, IResetable
 
     public static UnityEvent OnCellIsPlaced = new UnityEvent();
     //  public Vector3 ScreenToWorldPoint => _raycastCamera.ScreenToWorldPoint(Input.mousePosition);
-
+    private int _currentMovesCount;
 
     private int _placedPiecesAmount;
 
@@ -114,6 +115,10 @@ public class GameManager : BaseManager, IResetable
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
 
+        _currentMovesCount--;
+        Debug.Log(_currentMovesCount);
+        _currentMovesCountText.text = _currentMovesCount.ToString();
+        
         if (MainGameConfig.resourceOnPlaceCell)
             CollectResourcesOnPlace(pieceData);
 
@@ -619,12 +624,16 @@ public class GameManager : BaseManager, IResetable
 
     private bool CheckLose()
     {
-        foreach (PieceData t in _nextBlocks)
+        if(_currentMovesCount <= 0)
+            return true;
+        for (int i = 0; i < _nextBlocks.Count; i++)
         {
-            if (PieceUtils.CanPlacePiece(_field, _nextBlocks[0].Cells))
+            if (_nextBlocks[i] != null && PieceUtils.CanPlacePiece(_field, _nextBlocks[i].Cells))
                 return false;
+            
         }
-
+        
+        
         return true;
     }
 
@@ -634,7 +643,7 @@ public class GameManager : BaseManager, IResetable
         foreach (var taskUI in _taskUIViews) {
             taskUI.gameObject.SetActive(false);
         }
-
+        NextPiecesView.Instance.DestroyPieces();
         
         VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetWinState();
@@ -646,7 +655,8 @@ public class GameManager : BaseManager, IResetable
         foreach (var taskUI in _taskUIViews) {
             taskUI.gameObject.SetActive(false);
         }
-        
+
+       NextPiecesView.Instance.DestroyPieces();
         
         VibrationsManager.Instance.SpawnContinuous(0.46f,0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
@@ -737,6 +747,10 @@ public class GameManager : BaseManager, IResetable
             }
 
         }
+
+        _currentMovesCount = _currentLevelConfig.MovesCount;
+        _currentMovesCountText.text = _currentMovesCount.ToString();
+        Debug.Log(_currentMovesCount);
         
         GenerateNewPieces();
         base.SetupGame();

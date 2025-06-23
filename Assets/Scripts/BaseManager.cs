@@ -250,12 +250,13 @@ public class BaseManager : MonoBehaviour  {
     }
 
     private void DropPeaceTween(Transform piece, Action dropCallback) {
-        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f))
+        var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.AfterDropPieceAnimationMultiplayer;
+        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f*animSpeedMultiplayer))
             .AppendCallback(() => dropCallback?.Invoke())
-            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f))
-            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f))
-            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f))
-            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f)).OnComplete(() => {
+            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f*animSpeedMultiplayer))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f*animSpeedMultiplayer))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f*animSpeedMultiplayer))
+            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f*animSpeedMultiplayer)).OnComplete(() => {
                 while (piece.childCount > 0) {
                     piece.GetChild(0).SetParent(_fieldContainer);
                 }
@@ -302,12 +303,10 @@ public class BaseManager : MonoBehaviour  {
                 return;
             }
 
-            TimeSpan timeUntilNext = GetTimeUntilNextHealth();
-
             if (!_healthTimerText.gameObject.activeSelf)
                 _healthTimerText.gameObject.SetActive(true);
 
-            _healthTimerText.text = $"{timeUntilNext.Minutes:D2}:{timeUntilNext.Seconds:D2}";
+            _healthTimerText.text = TimeConverter.ConvertToTimeString(GetTimeUntilNextHealth());
         } else {
             _healthTimerText.text = "No internet connection";
         }

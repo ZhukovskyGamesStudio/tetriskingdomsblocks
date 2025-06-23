@@ -19,4 +19,8 @@ public class LevelConfig : ScriptableObject {
         
         [field: SerializeField]
         public StartFieldConfig StartFieldConfig { get; private set; }
+
+        [field: SerializeField]
+        
+        public int MovesCount{ get; private set; }
 }

@@ -39,8 +39,9 @@ public class CellView : MonoBehaviour {
     {
         Destroy(gameObject, 0.8f);
         _currentTween.Kill();
-        _currentTween = DOTween.Sequence().Append(transform.DOScale(transform.localScale * 1.2f, 0.2f))
-            .Append(transform.DOScale(transform.localScale * 0f, 0.4f));
+        var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.DestroyPieceAnimationMultiplayer;
+        _currentTween = DOTween.Sequence().Append(transform.DOScale(transform.localScale * 1.2f, 0.2f*animSpeedMultiplayer))
+            .Append(transform.DOScale(transform.localScale * 0f, 0.4f*animSpeedMultiplayer));
     }
 
     private void OnDestroy() {

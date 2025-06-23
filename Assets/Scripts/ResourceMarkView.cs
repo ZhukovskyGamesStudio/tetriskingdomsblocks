@@ -13,13 +13,18 @@ public class ResourceMarkView : MonoBehaviour
     private Tween _floatTween;
     private bool _isAnimate;
 
+    private void Start()
+    {
+        _buttonMark.onClick.AddListener(() =>CollectResources());
+    }
+
     public void SetResourceMarkInfo(int maxResource, int currentResource, ResourceType resourceType, int index)
     {
         markIndex = index;
         if ((float)currentResource / maxResource > 0.1f)
         {
             gameObject.SetActive(true);
-        _resourceMarkText.text = currentResource + "/\n"+maxResource + "\n <sprite name=" + resourceType + ">";
+        _resourceMarkText.text = currentResource + "\n <sprite name=" + resourceType + ">";
         _resourceFillImage.fillAmount = (float)currentResource / maxResource;
         }
 
@@ -27,14 +32,18 @@ public class ResourceMarkView : MonoBehaviour
         {
             Sequence sequence = DOTween.Sequence();
             _isAnimate = true;
-            sequence.Append(_resourceFillImage.transform.DOScale(1f, 0.3f));
+            sequence.Append(transform.DOScale(1f, 0.3f));
 
-            _floatTween = _resourceFillImage.transform.DOScale(0.9f, 0.5f)
+            _floatTween = transform.DOScale(0.9f, 0.5f)
                 .SetLoops(1000, LoopType.Yoyo);
             sequence.Append(_floatTween);
         }
     }
 
+    public void SetColor(Color color)
+    {
+        _resourceFillImage.color = color;
+    }
     public void CollectResources()
     {
         MetaManager.Instance.CollectResourcesFromMark(markIndex,1);
@@ -47,8 +56,8 @@ public class ResourceMarkView : MonoBehaviour
         _buttonMark.enabled = false;
         _isAnimate = false;
         _floatTween.Kill();
-        _floatTween = DOTween.Sequence().Append(_resourceFillImage.transform.DOScale(1.1f, 0.3f))
-            .Append(_resourceFillImage.transform.DOScale(0f, 0.7f)).OnComplete(() =>
+        _floatTween = DOTween.Sequence().Append(transform.DOScale(1.1f, 0.3f))
+            .Append(transform.DOScale(0f, 0.7f)).OnComplete(() =>
             {
                 gameObject.SetActive(false);
                 _buttonMark.enabled = true;
