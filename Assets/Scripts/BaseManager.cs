@@ -24,16 +24,10 @@ public class BaseManager : MonoBehaviour {
     [SerializeField]
     protected Camera _mainCamera;
 
-    [SerializeField]
-    protected Transform _fieldContainer;
-
     public Transform CameraContainer;
 
     [SerializeField]
     protected LayerMask _targetMasks;
-
-    [SerializeField]
-    private Transform _fieldStart, _fieldEnd;
 
     [field: SerializeField]
     public FigureFormConfig[] FigureFormsConfig { get; protected set; }
@@ -156,7 +150,7 @@ public class BaseManager : MonoBehaviour {
 
     public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
-        cellsContainer.transform.SetParent(_fieldContainer);
+        cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
@@ -205,7 +199,7 @@ public class BaseManager : MonoBehaviour {
             .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f * animSpeedMultiplayer))
             .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f * animSpeedMultiplayer)).OnComplete(() => {
                 while (piece.childCount > 0) {
-                    piece.GetChild(0).SetParent(_fieldContainer);
+                    piece.GetChild(0).SetParent(FieldContainers.Instance.FieldContainer);
                 }
 
                 Destroy(piece.gameObject);

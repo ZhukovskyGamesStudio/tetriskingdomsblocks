@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 public class GameManager : BaseManager, IResetable {
     public static GameManager Instance;
 
+    [field: Header("Game")]
     public MainGameConfig MainGameConfig;
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
@@ -601,11 +602,11 @@ public class GameManager : BaseManager, IResetable {
 
     private void PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos) {
         GameObject tmpContainer = new();
-        tmpContainer.transform.SetParent(_fieldContainer);
+        tmpContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         List<Vector3> poses = new List<Vector3>();
         List<GameObject> cells = new List<GameObject>();
         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
-        CellView go = Instantiate(prefab, _fieldContainer);
+        CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
         //go.SetSeed(pieceData.CellGuids[x, y]);
 
         go.transform.localPosition = new Vector3(pos.x, -0.45f, pos.y);
