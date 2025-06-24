@@ -55,7 +55,6 @@ public class AdminManager : MonoBehaviour
     }
     public void ChangeLevelToNeeded(int needLevelNumber)
     {
-        Debug.Log(needLevelNumber);
         StorageManager.GameDataMain.CurMaxLevel = needLevelNumber;
         StorageManager.SaveGame();
         SceneManager.LoadScene("GameScene");

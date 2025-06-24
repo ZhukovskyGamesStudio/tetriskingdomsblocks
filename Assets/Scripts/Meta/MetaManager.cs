@@ -405,8 +405,8 @@ public class MetaManager : BaseManager {
                     var cellType = _field[i, j];
                     if (cellType != CellType.Empty)
                     {
-                        var config = Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == cellType);
-                        var go = Instantiate(config.CellPrefab, _fieldContainer);
+                        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
+                        var go = Instantiate(prefab, _fieldContainer);
                         go.transform.localPosition = new Vector3(i, -0.45f, j);
                         _cells[i, j] = go;
 
@@ -642,7 +642,8 @@ public class MetaManager : BaseManager {
         List<List<(int row, int col)>> connectedGroupsPieces = null;
         (_groupCellIndex, connectedGroupsPieces) = SameCellsGroupCalculater.FindConnectedCellTypeGroups(_field);
         int afkTimeInSeconds = (int)(_currentGameTime - StorageManager.GameDataMain.LastExitTimeDateTime).TotalSeconds;
-        Debug.Log(afkTimeInSeconds);
+      
+        
         for (int i = 0; i < connectedGroupsPieces.Count; i++)
         {
             Vector3 collectResourceMarkPosition = Vector3.zero;

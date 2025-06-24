@@ -3,6 +3,9 @@ using DG.Tweening;
 using UnityEngine;
 
 public class CellView : MonoBehaviour {
+    [field: SerializeField]
+    public CellType CellType;
+    
     [SerializeField]
     private GameObject _objectsContainer;
     [SerializeField]

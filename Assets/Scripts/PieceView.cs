@@ -49,7 +49,7 @@ public class PieceView : MonoBehaviour {
             for (int y = 0; y < height; y++) {
                 bool cell = data.Cells[x, y];
                 if (cell) {
-                    var prefab = data.Type.CellPrefab;
+                    var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(data.Type.CellType);
                     CellView go = Instantiate(prefab, _cellsContainer);
                     go.SetSeed(data.CellGuids[x, y]);
                     // int cellSize = isMetaGame ? MetaManager.Instance.Cell:GameManager.Instance._markedCell;

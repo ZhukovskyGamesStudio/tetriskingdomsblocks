@@ -102,19 +102,21 @@ public class BaseManager : MonoBehaviour  {
     }
 
     protected virtual void Start() {
+        _currentGameTime = DateTime.Now;
         networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
             _hasInternetConnection = true;
-            SetupGame();
+            //SetupGame();
         }, error => {
             _currentGameTime = DateTime.Now;
             Debug.Log("not connect");
             _hasInternetConnection = false;
-            SetupGame();
+            //SetupGame();
             // _hasInternetConnection = false;
         });
-
+        
+        SetupGame();
         _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
     }
@@ -251,7 +253,7 @@ public class BaseManager : MonoBehaviour  {
 
     private void DropPeaceTween(Transform piece, Action dropCallback) {
         var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.AfterDropPieceAnimationMultiplayer;
-        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f*animSpeedMultiplayer))
+        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y, 0.3f*animSpeedMultiplayer))
             .AppendCallback(() => dropCallback?.Invoke())
             .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f*animSpeedMultiplayer))
             .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f*animSpeedMultiplayer))
@@ -376,9 +378,9 @@ public class BaseManager : MonoBehaviour  {
 
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
             _healthTimerText.gameObject.SetActive(false);
-            Debug.Log("maxHP");
+         
         } else {
-            Debug.Log("NotmaxHP");
+         
             CalculateOfflineHealth();
             if (_hasInternetConnection)
                 _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();

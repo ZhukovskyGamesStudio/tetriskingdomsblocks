@@ -492,6 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <MarkedCellsVerticalAnchor>k__BackingField: {fileID: 1614933169}
+  <PlacedCellsVerticalAnchor>k__BackingField: {fileID: 0}
 --- !u!1 &102697138
 GameObject:
   m_ObjectHideFlags: 0
@@ -2918,12 +2919,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23af6ffd3ca548c9adb543c8850f60ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cellViews:
-  - {fileID: 4948077585785927334, guid: 458a06d9e3a1673479b79f3bee47ffdd, type: 3}
-  - {fileID: 3199888184775657234, guid: 7013735c8a6ef2446aa9b6b3235ea97e, type: 3}
-  - {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
-  - {fileID: 3199888184775657234, guid: f892ab96dd2655745bbbb2b2e218d637, type: 3}
   PieceViewPrefab: {fileID: 4191085127620229874, guid: 12acc12ef43bbb641bedc9e3f9c93547, type: 3}
+  CellsViewList: {fileID: 11400000, guid: 57b16cfff5bf9a441a97f5632be1af5c, type: 2}
 --- !u!1 &922961884
 GameObject:
   m_ObjectHideFlags: 0

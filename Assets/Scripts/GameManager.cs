@@ -760,8 +760,8 @@ public class GameManager : BaseManager, IResetable
         tmpContainer.transform.SetParent(_fieldContainer);
         List<Vector3> poses = new List<Vector3>();
         List<GameObject> cells = new List<GameObject>();
-        
-       CellView go = Instantiate(cellInfo.CellPrefab, _fieldContainer);
+        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
+       CellView go = Instantiate(prefab, _fieldContainer);
         //go.SetSeed(pieceData.CellGuids[x, y]);
 
                 go.transform.localPosition = new Vector3(pos.x, -0.45f, pos.y);

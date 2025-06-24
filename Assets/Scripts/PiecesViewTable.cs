@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 
 public class PiecesViewTable : MonoBehaviour {
-    [SerializeField]
-    private List<CellView> _cellViews;
-
     [field: SerializeField]
-    public PieceView PieceViewPrefab; 
+    public PieceView PieceViewPrefab;  
+    [field: SerializeField]
+    public CellsViewList CellsViewList;
 
     public static PiecesViewTable Instance;
 
