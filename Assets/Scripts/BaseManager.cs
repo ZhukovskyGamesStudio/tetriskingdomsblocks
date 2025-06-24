@@ -4,59 +4,30 @@ using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using Random = UnityEngine.Random;
 
-public class BaseManager : MonoBehaviour  {
-    public const int CELL_SIZE = 1;
-    protected CellType[,] _field;
-    protected CellView[,] _cells;
-    private Tween _currentTween;
-    private DateTime _lastHealthRecoveryTime;
-    public float[] FiguresChanceToSpawn { get; protected set; }
-    public float _screenRatio { get; protected set; }
-
+public class BaseManager : MonoBehaviour {
     [SerializeField]
     private AudioQueueMixer _placePieceAudioMixer;
+
     [SerializeField]
     private AudioQueueMixer _collectedResourceAudioMixer;
-    
+
     [HideInInspector]
     public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
 
     public float[] CellsChanceToSpawn { get; protected set; }
-
-    [HideInInspector]
-    public Vector3 ScreenToWorldPoint => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition),
-        out RaycastHit hit, Mathf.Infinity, _targetMasks)
-        ? hit.point
-        : Vector3.zero;
-
-    [HideInInspector]
-    public Vector3 TouchToWorldPoint => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.GetTouch(0).position),
-        out RaycastHit hit, Mathf.Infinity, _targetMasks)
-        ? hit.point
-        : Vector3.zero;
-
-    [field: SerializeField]
-    public Transform _markedCell { get; protected set; }
+    public float[] FiguresChanceToSpawn { get; protected set; }
 
     [SerializeField]
     protected Camera _mainCamera;
-
-    [SerializeField]
-    protected Transform _fieldContainer;
 
     public Transform CameraContainer;
 
     [SerializeField]
     protected LayerMask _targetMasks;
-
-    [SerializeField]
-    private Transform _fieldStart, _fieldEnd;
 
     [field: SerializeField]
     public FigureFormConfig[] FigureFormsConfig { get; protected set; }
@@ -76,45 +47,49 @@ public class BaseManager : MonoBehaviour  {
     [SerializeField]
     private NetworkTimeAPI networkTimeAPI;
 
-    protected bool _hasInternetConnection;
-    private float timerNowTimeSecondCounter;
-    protected DateTime _currentGameTime;
-    private ObjectPool<ParticleSystem> _placeCellEffectsPool;
-
     [SerializeField]
     private MMF_Player _mmfPlayer;
 
-    public const int MAX_HEALTH_COUNT = 3;
-
-    private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
     public static float PieceVerticalShift;
-    
-    protected static readonly (int row, int col)[] directions = 
-    {
-        (-1, 0), // вверх
-        (1, 0),  // вниз
-        (0, -1), // влево
-        (0, 1)   // вправо
-    };
+
+    protected bool _hasInternetConnection;
+    protected DateTime _currentGameTime;
+
+    protected CellType[,] _field;
+    protected CellView[,] _cells;
+    private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
+
+    private ObjectPool<ParticleSystem> _placeCellEffectsPool;
+    private float timerNowTimeSecondCounter;
+
+    private InputRaycaster _inputRaycaster;
+
+    private Tween _currentTween;
+    private DateTime _lastHealthRecoveryTime;
+
+    private const int MAX_HEALTH_COUNT = 3;
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
+        _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks);
     }
 
     protected virtual void Start() {
+        _currentGameTime = DateTime.Now;
         networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
             _hasInternetConnection = true;
-            SetupGame();
+            //SetupGame();
         }, error => {
             _currentGameTime = DateTime.Now;
             Debug.Log("not connect");
             _hasInternetConnection = false;
-            SetupGame();
+            //SetupGame();
             // _hasInternetConnection = false;
         });
 
+        SetupGame();
         _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
     }
@@ -161,68 +136,35 @@ public class BaseManager : MonoBehaviour  {
     public Vector2Int GetPosInCoord() {
         Vector3 position = ShiftedDragInputPos();
         position += PieceCenterToCoordShift();
-        Vector2Int coord = ClampToCoord(position);
+        Vector2Int coord = FieldUtils.ClampToCoord(position);
         return coord;
     }
 
     public static Vector3 PieceCenterToCoordShift() =>
-        -new Vector3(PieceView.PieceMaxSize.x / 2f, 0, PieceView.PieceMaxSize.y / 2f) + HalfCoord;
+        -new Vector3(PieceView.CurrentPieceMaxSize.x / 2f, 0, PieceView.CurrentPieceMaxSize.y / 2f) + HalfCoord;
 
-    public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CELL_SIZE, Mathf.RoundToInt(coord.z) / CELL_SIZE);
+    public Vector3 ShiftedDragInputPos() => _inputRaycaster.InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift +
+                                            Vector3.forward * PieceVerticalShift;
 
-    public Vector3 InputPos() => Input.touchCount == 0 ? ScreenToWorldPoint : TouchToWorldPoint;
+    public bool CanPlace(PieceData data, Vector2Int pos) => FieldUtils.CanPlacePiece(_field, data, pos);
 
-    public Vector3 ShiftedDragInputPos() => InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift + Vector3.forward * PieceVerticalShift;
-
-    public bool CanPlace(PieceData data, Vector2Int pos) {
-        if (pos.x < 0 || pos.y < 0)
-            return false;
-
-        if (pos.x + data.Cells.GetLength(0) - 1 >= _field.GetLength(0))
-            return false;
-
-        if (pos.y + data.Cells.GetLength(1) - 1 >= _field.GetLength(1))
-            return false;
-
-        for (int x = 0; x < data.Cells.GetLength(0); x++) {
-            for (int y = 0; y < data.Cells.GetLength(1); y++) {
-                if (data.Cells[x, y] && !CellTypeIsTransparent(_field[pos.x + x, pos.y + y]))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-    protected bool CellTypeIsTransparent(CellType cellType)
-    {
-        return (cellType == CellType.Empty || cellType == CellType.Ice);
-    }
-   // protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
-
-    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
-        cellsContainer.transform.SetParent(_fieldContainer);
+        cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
                     continue;
                 }
 
-                Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
-               // CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
-                //go.SetSeed(pieceData.CellGuids[x, y]);
-
-               // go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                //poses.Add(new Vector3(place.x, -0.45f, place.y));
-                CheckCellTypesBeforePlacePiece(place.x, place.y);
+                Vector2Int place = new(pos.x + x,pos.y + y);
+                CheckCellTypesBeforePlacePiece(place);
                 CellView go = cells[x, y];
-              
+
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
 
-                //go.GetComponent<CellView>().PlaceCellOnField();
                 SpawnResourceFx(place, go);
-                //SpawnSmokeParticle(go.transform.position).Forget();
                 cellsAmount++;
             }
         }
@@ -230,11 +172,9 @@ public class BaseManager : MonoBehaviour  {
         ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
-    protected virtual void CheckCellTypesBeforePlacePiece(int row, int col)
-    {
-        
-    }
-    protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+    protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
+
+    private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
             _placePieceAudioMixer.PlayNext();
             SpawnSmokeUnderPiece(tmpContainer.transform);
@@ -251,14 +191,15 @@ public class BaseManager : MonoBehaviour  {
 
     private void DropPeaceTween(Transform piece, Action dropCallback) {
         var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.AfterDropPieceAnimationMultiplayer;
-        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, 0.3f*animSpeedMultiplayer))
-            .AppendCallback(() => dropCallback?.Invoke())
-            .Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f)).Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f*animSpeedMultiplayer))
-            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f)).Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f*animSpeedMultiplayer))
-            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f*animSpeedMultiplayer))
-            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f*animSpeedMultiplayer)).OnComplete(() => {
+        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y, 0.3f * animSpeedMultiplayer))
+            .AppendCallback(() => dropCallback?.Invoke()).Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
+            .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f * animSpeedMultiplayer))
+            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
+            .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f * animSpeedMultiplayer))
+            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f * animSpeedMultiplayer))
+            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f * animSpeedMultiplayer)).OnComplete(() => {
                 while (piece.childCount > 0) {
-                    piece.GetChild(0).SetParent(_fieldContainer);
+                    piece.GetChild(0).SetParent(FieldContainers.Instance.FieldContainer);
                 }
 
                 Destroy(piece.gameObject);
@@ -268,8 +209,6 @@ public class BaseManager : MonoBehaviour  {
     private void SpawnSmokeUnderPiece(Transform piece) {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
-
-    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer) { }
 
     protected virtual void SpawnResourceFx(Vector2Int place, CellView go) { }
 
@@ -376,9 +315,7 @@ public class BaseManager : MonoBehaviour  {
 
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
             _healthTimerText.gameObject.SetActive(false);
-            Debug.Log("maxHP");
         } else {
-            Debug.Log("NotmaxHP");
             CalculateOfflineHealth();
             if (_hasInternetConnection)
                 _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
@@ -389,9 +326,8 @@ public class BaseManager : MonoBehaviour  {
             }
         }
     }
-    
+
     public void PlayCollectedSound() {
         _collectedResourceAudioMixer.PlayNext();
     }
-
 }

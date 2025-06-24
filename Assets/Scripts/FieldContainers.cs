@@ -9,5 +9,17 @@ public class FieldContainers : MonoBehaviour {
     }
 
     [field: SerializeField]
-    public Transform MarkedCellsVerticalAnchor { get;private set; }
+    public Transform MarkedCellsVerticalAnchor { get; private set; }
+
+    [field: SerializeField]
+    public Transform PlacedCellsVerticalAnchor { get; private set; }
+
+    [field: SerializeField]
+    public Transform FieldStart { get; private set; }
+
+    [field: SerializeField]
+    public Transform FieldEnd { get; private set; }
+
+    [field: SerializeField]
+    public Transform FieldContainer { get; private set; }
 }

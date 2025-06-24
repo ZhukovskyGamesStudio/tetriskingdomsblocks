@@ -1,0 +1,19 @@
+using System;
+
+[Serializable]
+public enum CellType
+{
+    Empty = 0,
+    Forest,
+    Sawmill,
+    Metal,
+    Smithy,
+    Village,
+    MiniCity,
+    Mountain,
+    Mine,
+    FieldOfWheat,
+    Farm,
+    Ice,
+    Box
+}

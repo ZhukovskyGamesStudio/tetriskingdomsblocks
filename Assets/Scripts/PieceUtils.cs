@@ -1,29 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
-    public static PieceData GetNewPiece()
-    {
+    public static PieceData GetNewPiece(List<CellTypeInfo> guaranteedPieces) {
+        if (guaranteedPieces.Count > 0) {
+            var next = guaranteedPieces[0];
+            guaranteedPieces.RemoveAt(0);
+            return GetNewPiece(next);
+        }
+
+        return GetNewPiece(guaranteed: null);
+    }
+
+    public static PieceData GetNewPiece(CellTypeInfo guaranteed) {
         bool isMetaGame = GameManager.Instance == null;
         var cellsToSpawn = !isMetaGame ? GameManager.Instance._currentCellsToSpawn : MetaManager.Instance._currentCellsToSpawn;
-        var chancesToSpawn = !isMetaGame ?GameManager.Instance.CellsChanceToSpawn: MetaManager.Instance.CellsChanceToSpawn;
+        var chancesToSpawn = !isMetaGame ? GameManager.Instance.CellsChanceToSpawn : MetaManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        for (int i = 0; i < chancesToSpawn.Length; i++)
-        {
-            if (chancesToSpawn[i] > chance)
-            {
+        for (int i = 0; i < chancesToSpawn.Length; i++) {
+            if (chancesToSpawn[i] > chance) {
                 cellInfo = cellsToSpawn[i];
                 break;
             }
         }
-        
-        if (!isMetaGame && GameManager.Instance.CurrentGuaranteedFirstCells.Count != 0)
-        {
-            cellInfo = GameManager.Instance.CurrentGuaranteedFirstCells[0];
-            GameManager.Instance.CurrentGuaranteedFirstCells.RemoveAt(0);
+
+        if (guaranteed != null) {
+            cellInfo = guaranteed;
         }
 
         bool[,] cells = cellInfo.CellForm == null ? GetRandomFigure() : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
@@ -46,20 +50,19 @@ public static class PieceUtils {
         return data;
     }
 
-    public static bool[,] GetRandomFigure()
-    {
+    public static bool[,] GetRandomFigure() {
         bool isMetaGame = GameManager.Instance == null;
-        var chancesToSpawn = isMetaGame ? MetaManager.Instance.FiguresChanceToSpawn:GameManager.Instance.FiguresChanceToSpawn;
+        var chancesToSpawn = isMetaGame ? MetaManager.Instance.FiguresChanceToSpawn : GameManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        var figureForms = isMetaGame ? MetaManager.Instance.FigureFormsConfig:GameManager.Instance.FigureFormsConfig;
-        for (int i = 0; i < chancesToSpawn.Length; i++)
-        {
+        var figureForms = isMetaGame ? MetaManager.Instance.FigureFormsConfig : GameManager.Instance.FigureFormsConfig;
+        for (int i = 0; i < chancesToSpawn.Length; i++) {
             if (chancesToSpawn[i] > chance)
                 return TetrisPieces.PieceShapesTable[figureForms[i].FormName];
         }
 
         return null;
     }
+
     public static bool CanPlacePiece(CellType[,] field, bool[,] piece) {
         int fieldWidth = field.GetLength(0);
         int fieldHeight = field.GetLength(1);
@@ -87,7 +90,8 @@ public static class PieceUtils {
                     continue;
                 }
 
-                if (field[offsetX + x, offsetY + y] != CellType.Empty) {
+                var curType = field[offsetX + x, offsetY + y];
+                if (curType != CellType.Empty && curType != CellType.Ice) {
                     return false;
                 }
             }
