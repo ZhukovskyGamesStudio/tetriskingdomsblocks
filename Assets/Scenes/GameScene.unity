@@ -229,7 +229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 23.964, y: 27.953003}
+  m_AnchoredPosition: {x: 33, y: -5}
   m_SizeDelta: {x: 320.8976, y: 111.07}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &39318432
@@ -1901,7 +1901,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1217804898}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3626,11 +3626,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2917423112991681681, guid: da34a35d1de17944fa29f0da9caafc3f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 668
+      value: 721.7
       objectReference: {fileID: 0}
     - target: {fileID: 2917423112991681681, guid: da34a35d1de17944fa29f0da9caafc3f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -75
+      value: -229.4
       objectReference: {fileID: 0}
     - target: {fileID: 2917423112991681681, guid: da34a35d1de17944fa29f0da9caafc3f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -6061,13 +6061,10 @@ MonoBehaviour:
   _placePieceAudioMixer: {fileID: 875297979}
   _collectedResourceAudioMixer: {fileID: 431153081}
   _mainCamera: {fileID: 519420031}
-  _fieldContainer: {fileID: 1506630862}
   CameraContainer: {fileID: 2042811940}
   _targetMasks:
     serializedVersion: 2
     m_Bits: 8
-  _fieldStart: {fileID: 1245969503}
-  _fieldEnd: {fileID: 1200205012}
   <FigureFormsConfig>k__BackingField:
   - {fileID: 11400000, guid: ba4b751a25813374e8d772e617f74ef8, type: 2}
   - {fileID: 11400000, guid: 8edbca55018f1b34fa310ebe5a493066, type: 2}
@@ -7858,8 +7855,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1217804898}
+  m_Children: []
   m_Father: {fileID: 39318430}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -7880,7 +7876,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentTaskInfo: {fileID: 428812744}
-  TaskImage: {fileID: 1217804899}
+  TaskImage: {fileID: 0}
   TaskSubImage: {fileID: 1798074747}
   TaskInfoTextHelper: {fileID: 428812746}
 --- !u!1 &1307878787
@@ -8635,7 +8631,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1834354872}
-  m_Father: {fileID: 497824454}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -9765,7 +9761,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1217804898}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10115,8 +10111,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1834354872}
-  - component: {fileID: 1834354874}
-  - component: {fileID: 1834354873}
   m_Layer: 5
   m_Name: CheckBox
   m_TagString: Untagged
@@ -10136,7 +10130,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2023042317}
+  m_Father: {fileID: 1556073160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10805,7 +10799,6 @@ RectTransform:
   m_Children:
   - {fileID: 1832855696}
   - {fileID: 39318430}
-  - {fileID: 1832855696}
   m_Father: {fileID: 1608275567}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -11904,3 +11897,6 @@ SceneRoots:
   - {fileID: 1575047845}
   - {fileID: 875297967}
   - {fileID: 431153088}
+  - {fileID: 428812743}
+  - {fileID: 1556073160}
+  - {fileID: 1798074746}
