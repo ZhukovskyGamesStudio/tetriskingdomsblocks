@@ -27,7 +27,7 @@ public static class FieldUtils {
     }
 
     public static bool IsInsideField(CellType[,] field, Vector2Int coord) {
-        return coord.y < field.GetLength(0) && coord.x < field.GetLength(1) && coord.x > 0 && coord.y >= 0;
+        return coord.y < field.GetLength(0) && coord.x < field.GetLength(1) && coord.x >= 0 && coord.y >= 0;
     }
     public static bool CanPlacePiece(CellType[,] field, PieceData data, Vector2Int pos) {
         if (pos.x < 0 || pos.y < 0)

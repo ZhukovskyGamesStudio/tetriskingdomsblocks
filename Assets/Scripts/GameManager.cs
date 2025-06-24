@@ -96,7 +96,7 @@ public class GameManager : BaseManager, IResetable {
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
 
-        CheckPlacedCellsForTask();
+      //  CheckPlacedCellsForTask();
 
         OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
@@ -132,7 +132,7 @@ public class GameManager : BaseManager, IResetable {
             case CellType.Ice:
                 var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
                 for (int j = 0; j < _currentTasks.Count; j++) {
-                    if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
+                    if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                         CheckNeedResourceInTask(j, config, coord);
                     }
                 }
@@ -151,7 +151,7 @@ public class GameManager : BaseManager, IResetable {
         for (int i = 0; i < resourcesForPlace.Length; i++) {
             bool isShortAnimation = true;
             for (int j = 0; j < _currentTasks.Count; j++) {
-                if (isShortAnimation && _currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
+                if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == resourcesForPlace[i].ResourceType)) {
                         ShowFloatingText(
@@ -197,7 +197,7 @@ public class GameManager : BaseManager, IResetable {
 
     private void CheckResourceCountForTasks() {
         for (int i = 0; i < _currentTasks.Count; i++) {
-            if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
+            if (_currentTasks[i].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                 if (_currentTasks[i].TaskInfo.NeedResource == ResourceType.None && GameData.CollectedResources.Count != 0) {
                     ResourceType maxResourceType = ResourceType.None;
                     foreach (var resource in GameData.CollectedResources) {
@@ -220,7 +220,7 @@ public class GameManager : BaseManager, IResetable {
         }
     }
 
-    private void CheckPlacedCellsForTask() {
+   /* private void CheckPlacedCellsForTask() {
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.placeNeedCell &&
                 _placedCellsCount.TryGetValue(_currentTasks[i].TaskInfo.NeedCell.CellType, out int count)) {
@@ -231,36 +231,29 @@ public class GameManager : BaseManager, IResetable {
                 }
             }
         }
-    }
+    }*/
 
     private void CheckMonoLinesForTasks() {
         for (int i = 0; i < _currentTasks.Count; i++) {
-            if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.placeMonoLine &&
+            if (_currentTasks[i].TaskInfo.TaskType == TaskInfo.TaskType.placeMonoLine &&
                 _monoLinesCount.TryGetValue(_currentTasks[i].TaskInfo.NeedResource, out int count)) {
-                // if (_currentTasks[i].taskInfo.needResource == count)
-                // {
-                //_currentTasks[i].taskUIView.AddTextAnimation();
-                //_currentTasks[i].taskUIView.currentTaskValue.text = count + " / " + _currentTasks[i].taskInfo.count;
                 if (_currentTasks[i].TaskInfo.Count <= count) {
                     _currentTasks[i].TaskUIView.CompleteTask();
                     _currentTasks.RemoveAt(i);
                     i--;
                 }
-                //}
             }
         }
     }
 
-    private void CheckUnlockedCellForTask(CellTypeInfo needCell) {
+  /*  private void CheckUnlockedCellForTask(CellTypeInfo needCell) {
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.unlockCell && _currentTasks[i].TaskInfo.NeedCell == needCell) {
-                //_currentTasks[i].taskUIView.currentTaskValue.text = "1/1";
-                // _currentTasks[i].taskUIView.AddTextAnimation(1);
                 _currentTasks[i].TaskUIView.CompleteTask();
                 _currentTasks.RemoveAt(i);
             }
         }
-    }
+    }*/
 
     private void ExplodeCellsInRows() {
         int width = _field.GetLength(0);
@@ -392,7 +385,7 @@ public class GameManager : BaseManager, IResetable {
 
             bool isShortAnimation = true;
             for (int j = 0; j < _currentTasks.Count; j++) {
-                if (isShortAnimation && _currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
+                if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == config.ResourcesForDestroy[i].ResourceType)) {
                         ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
@@ -420,7 +413,7 @@ public class GameManager : BaseManager, IResetable {
                     for (int x = 0; x < _currentCraftedCells[i].CellTypeToCraftSecond.Length; x++) {
                         if (cellTypesInLine.ContainsKey(_currentCraftedCells[i].CellTypeToCraftSecond[x])) {
                             _currentCellsToSpawn.Add(_currentCraftedCells[i].CellsToCraft);
-                            CheckUnlockedCellForTask(_currentCraftedCells[i].CellsToCraft);
+                       //     CheckUnlockedCellForTask(_currentCraftedCells[i].CellsToCraft);
                             unlockedCellText += _currentCraftedCells[i].CellsToCraft.CellName + "\n";
 
                             _currentCraftedCells.RemoveAt(i);
@@ -445,7 +438,7 @@ public class GameManager : BaseManager, IResetable {
                 case CellType.Box:
                     CellTypeInfo config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
                     for (int j = 0; j < _currentTasks.Count; j++) {
-                        if (_currentTasks[j].TaskInfo.taskType == TaskInfo.TaskType.getResource) {
+                        if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                             CheckNeedResourceInTask(j, config, coordAround);
                         }
                     }
@@ -569,7 +562,7 @@ public class GameManager : BaseManager, IResetable {
 
         _currentTasks = new List<TaskInfoAndUI>();
 
-        SetTaskDescriptions(_currentLevelConfig.Tasks);
+        SetTaskDescriptions();
 
         _monoLinesCount = new Dictionary<ResourceType, int>();
         StartCoroutine(_characterInfoTextHelper.StartSpawnText(_currentLevelConfig.GuideForLevelText));
@@ -578,17 +571,25 @@ public class GameManager : BaseManager, IResetable {
             _currentGuaranteedFirstCells.Add(cellInfo);
 
         GameData = new GameData();
-
-        if (_currentLevelConfig.StartFieldConfig != null) {
-            for (int i = 0; i < _field.GetLength(0); i++) {
-                for (int j = 0; j < _field.GetLength(1); j++) {
-                    if (_currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty) {
+        if (_currentLevelConfig.StartFieldConfig != null)
+        {
+            Dictionary<ResourceType, int> startCellsResourcesCount = new Dictionary<ResourceType, int>();
+            for (int i = 0; i < _field.GetLength(0); i++)
+            {
+                for (int j = 0; j < _field.GetLength(1); j++)
+                {
+                    if (_currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty)
+                    {
                         var config = Instance.MainGameConfig.CellsConfigs.First(c =>
                             c.CellType == _currentLevelConfig.StartFieldConfig.GetCell(i, j));
                         PlaceOneSizePiece(config, new Vector2Int(i, j));
+                        if (!startCellsResourcesCount.TryAdd(config.ResourcesForDestroy[0].ResourceType, 1))
+                            startCellsResourcesCount[config.ResourcesForDestroy[0].ResourceType]++;
                     }
                 }
             }
+
+            SetTaskDescriptionsFromStartField(startCellsResourcesCount);
         }
 
         _currentMovesCount = _currentLevelConfig.MovesCount;
@@ -597,6 +598,7 @@ public class GameManager : BaseManager, IResetable {
         GenerateNewPieces();
         base.SetupGame();
     }
+
 
     private void PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos) {
         GameObject tmpContainer = new();
@@ -625,41 +627,49 @@ public class GameManager : BaseManager, IResetable {
         // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
-    private void SetTaskDescriptions(TaskInfo[] tasksArray) {
+    private void SetTaskDescriptions() {
         for (int i = 0; i < _currentLevelConfig.Tasks.Length; i++) {
             var task = _currentLevelConfig.Tasks[i];
-            var taskUI = _taskUIViews[i];
-            taskUI.gameObject.SetActive(true);
-            _currentTasks.Add(new TaskInfoAndUI(task, taskUI));
-            string needSpiteName = "";
-           switch (task.taskType)
-            {
-                case TaskInfo.TaskType.getResource:
-
-                    needSpiteName = task.NeedResource.ToString();
-                    break;
-
-                case TaskInfo.TaskType.placeMonoLine:
-
-                    needSpiteName = task.NeedResource.ToString();
-                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
-                    break;
-
-              /*  case TaskInfo.TaskType.placeNeedCell:
-
-                    needSpiteName = task.NeedCell.CellName;
-                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.UnlockCellSprite;
-                    break;*/
-
-            /*    case TaskInfo.TaskType.unlockCell:
-
-                    needSpiteName = task.NeedCell.CellName;
-                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.PlaceCellSprite;
-                    break;*/
-            }
-            taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
-            StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(task.Count.ToString()));
+            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(task.taskType, task.NeedResource, task.Count);
+            SetTaskUI(i, newTaskInfo, newTaskInfo);
         }
+    }
+
+    private void SetTaskDescriptionsFromStartField(Dictionary<ResourceType, int> startTasks)
+    {
+        int i = _currentLevelConfig.Tasks.Length;
+        foreach (var (resourceType, count) in startTasks)
+        {
+            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(TaskInfo.TaskType.getResource, resourceType, count);
+            
+            SetTaskUI(i, newTaskInfo, newTaskInfo);
+            i++;
+        }
+    }
+
+    private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task)
+    {
+        var taskUI = _taskUIViews[i];
+        taskUI.gameObject.SetActive(true);
+        Debug.Log(task.NeedResource.ToString());
+        _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI));
+        string needSpiteName = "";
+        switch (task.TaskType)
+        {
+            case TaskInfo.TaskType.getResource:
+
+                needSpiteName = task.NeedResource.ToString();
+                break;
+
+            case TaskInfo.TaskType.placeMonoLine:
+
+                needSpiteName = task.NeedResource.ToString();
+                taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
+                break;
+
+        }
+        taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
+        StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(task.Count.ToString()));
     }
 
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {

@@ -26,6 +26,7 @@ public class StartFieldConfig : ScriptableObject
 
     public void CreateGrid(CellType[,] inputGrid)
     {
+        grid = new List<CellRow>();
         int rows = inputGrid.GetLength(0);
         int cols = inputGrid.GetLength(1);
 

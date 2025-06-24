@@ -71,11 +71,22 @@ public class StartFieldCustomRedactor : MonoBehaviour
 #if UNITY_EDITOR
     public void SaveToConfig()
     {
-        if(FieldInput.text == "")return;
+        if (FieldInput.text == "") return;
         StartFieldConfig config = ScriptableObject.CreateInstance<StartFieldConfig>();
         config.CreateGrid(_fieldCellTypes);
-        string assetPath = _filePath + "/"+FieldInput.text+".asset";
-        AssetDatabase.CreateAsset(config, assetPath);
+
+        string assetPath = _filePath + "/" + FieldInput.text + ".asset";
+
+        StartFieldConfig existingConfig = AssetDatabase.LoadAssetAtPath<StartFieldConfig>(assetPath);
+
+        if (existingConfig != null)
+        {
+            existingConfig.CreateGrid(_fieldCellTypes);
+            EditorUtility.SetDirty(existingConfig);
+        }
+        else
+            AssetDatabase.CreateAsset(config, assetPath);
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }

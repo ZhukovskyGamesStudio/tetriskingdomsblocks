@@ -50,7 +50,7 @@ public class AdminManager : MonoBehaviour
             int needLevel = i;
         var levelButton = Instantiate(LevelButton, LevelButtonsContainer);
             levelButton.onClick.AddListener(() => ChangeLevelToNeeded(needLevel));
-            levelButton.GetComponentInChildren<TMP_Text>().text = i.ToString();
+            levelButton.GetComponentInChildren<TMP_Text>().text = (i+1).ToString();
         }
     }
     public void ChangeLevelToNeeded(int needLevelNumber)

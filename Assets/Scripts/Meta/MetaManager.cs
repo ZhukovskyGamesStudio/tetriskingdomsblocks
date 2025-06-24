@@ -567,7 +567,7 @@ public class MetaManager : BaseManager {
         List<List<(int row, int col)>> connectedGroupsPieces = null;
         (_groupCellIndex, connectedGroupsPieces) = SameCellsGroupCalculater.FindConnectedCellTypeGroups(_field);
         int afkTimeInSeconds = (int)(_currentGameTime - StorageManager.GameDataMain.LastExitTimeDateTime).TotalSeconds;
-
+//fix afk calculate
         for (int i = 0; i < connectedGroupsPieces.Count; i++) {
             Vector3 collectResourceMarkPosition = Vector3.zero;
             int collectedResouces = 0;
