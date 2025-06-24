@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 public static class FieldUtils {
+    public const int CellSize = 1;
     public static readonly Vector2Int[] Directions = {
         Vector2Int.up,
         Vector2Int.right,
@@ -31,4 +32,6 @@ public static class FieldUtils {
 
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
+    
+    public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CellSize, Mathf.RoundToInt(coord.z) / CellSize);
 }

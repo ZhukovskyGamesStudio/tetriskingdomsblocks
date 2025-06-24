@@ -73,7 +73,6 @@ public class GameManager : BaseManager, IResetable {
         base.Awake();
         Instance = this;
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
-        _screenRatio = (float)Screen.width / Screen.height;
     }
 
     public void Reset() { }

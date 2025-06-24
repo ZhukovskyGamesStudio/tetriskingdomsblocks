@@ -43,7 +43,6 @@ public class PieceView : MonoBehaviour {
         initialScale *= 1f / Mathf.Sqrt(maxSize);
 
         _cells = new CellView[width, height];
-        bool isMetaGame = GameManager.Instance == null;
         _collider.size = new Vector3(width * initialScale, 0.3f, height * initialScale);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -53,13 +52,13 @@ public class PieceView : MonoBehaviour {
                     CellView go = Instantiate(prefab, _cellsContainer);
                     go.SetSeed(data.CellGuids[x, y]);
                     // int cellSize = isMetaGame ? MetaManager.Instance.Cell:GameManager.Instance._markedCell;
-                    var markedCell = isMetaGame ? MetaManager.Instance._markedCell : GameManager.Instance._markedCell;
+                    var markedCell = PiecesViewTable.Instance.MarkedCell;
                     var markCell = Instantiate(markedCell, _markedCellsContainer);
                     markCell.GetComponent<MeshRenderer>().material.color = new Color(data.Type.MarkCellColor.r, data.Type.MarkCellColor.g,
                         data.Type.MarkCellColor.b, 0.75f);
-                    go.transform.localPosition = (new Vector3(x + 0.5f, 0, y + 0.5f) + shift) * GameManager.CELL_SIZE;
+                    go.transform.localPosition = (new Vector3(x + 0.5f, 0, y + 0.5f) + shift) * FieldUtils.CellSize;
                     markCell.position = new Vector3(go.transform.position.x, _markedCellsContainer.position.y, go.transform.position.z);
-                    go.transform.localScale *= Mathf.Clamp(GameManager.CELL_SIZE - 2, 1, 100000);
+                    go.transform.localScale *= Mathf.Clamp(FieldUtils.CellSize - 2, 1, 100000);
                     _cells[x, y] = go;
                 }
             }
