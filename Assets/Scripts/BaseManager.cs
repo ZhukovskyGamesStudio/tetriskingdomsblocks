@@ -147,33 +147,14 @@ public class BaseManager : MonoBehaviour {
     }
 
     public static Vector3 PieceCenterToCoordShift() =>
-        -new Vector3(PieceView.PieceMaxSize.x / 2f, 0, PieceView.PieceMaxSize.y / 2f) + HalfCoord;
+        -new Vector3(PieceView.CurrentPieceMaxSize.x / 2f, 0, PieceView.CurrentPieceMaxSize.y / 2f) + HalfCoord;
 
     public Vector3 ShiftedDragInputPos() => _inputRaycaster.InputPos() + ConfigsManager.Instance.DragConfig.DragMouseShift +
                                             Vector3.forward * PieceVerticalShift;
 
-    public bool CanPlace(PieceData data, Vector2Int pos) {
-        if (pos.x < 0 || pos.y < 0)
-            return false;
+    public bool CanPlace(PieceData data, Vector2Int pos) => FieldUtils.CanPlacePiece(_field, data, pos);
 
-        if (pos.x + data.Cells.GetLength(0) - 1 >= _field.GetLength(0))
-            return false;
-
-        if (pos.y + data.Cells.GetLength(1) - 1 >= _field.GetLength(1))
-            return false;
-
-        for (int x = 0; x < data.Cells.GetLength(0); x++) {
-            for (int y = 0; y < data.Cells.GetLength(1); y++) {
-                if (data.Cells[x, y] && !FieldUtils.CanPlaceOnCell(_field[pos.x + x, pos.y + y]))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-    // protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
-
-    protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
         cellsContainer.transform.SetParent(_fieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
@@ -182,7 +163,7 @@ public class BaseManager : MonoBehaviour {
                     continue;
                 }
 
-                Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
+                Vector2Int place = new(pos.x + x,pos.y + y);
                 CheckCellTypesBeforePlacePiece(place);
                 CellView go = cells[x, y];
 
@@ -199,7 +180,7 @@ public class BaseManager : MonoBehaviour {
 
     protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
-    protected void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+    private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
             _placePieceAudioMixer.PlayNext();
             SpawnSmokeUnderPiece(tmpContainer.transform);
@@ -234,8 +215,6 @@ public class BaseManager : MonoBehaviour {
     private void SpawnSmokeUnderPiece(Transform piece) {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
-
-    public virtual void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) { }
 
     protected virtual void SpawnResourceFx(Vector2Int place, CellView go) { }
 

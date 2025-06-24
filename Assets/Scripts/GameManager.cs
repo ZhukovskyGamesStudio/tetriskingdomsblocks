@@ -93,7 +93,11 @@ public class GameManager : BaseManager, IResetable {
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
-        PlacePiece(pieceData, coord, MainGameConfig.FieldSize, cells, cellsContainer);
+        base.PlacePiece(pieceData, coord, cells, cellsContainer);
+
+        CheckPlacedCellsForTask();
+
+        OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
         _placedPiecesAmount++;
 
@@ -101,27 +105,23 @@ public class GameManager : BaseManager, IResetable {
         Debug.Log(_currentMovesCount);
         _currentMovesCountText.text = _currentMovesCount.ToString();
 
-        if (MainGameConfig.resourceOnPlaceCell)
+        if (MainGameConfig.resourceOnPlaceCell) {
             CollectResourcesOnPlace(pieceData);
+        }
 
         ExplodeCellsInRows();
 
-        if (CheckWin())
+        if (CheckWin()) {
             return;
+        }
 
-        if (_placedPiecesAmount % 3 == 0)
+        if (_placedPiecesAmount % 3 == 0) {
             GenerateNewPieces();
+        }
 
-        if (CheckLose())
+        if (CheckLose()) {
             Lose();
-    }
-
-    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells, Transform cellsContainer) {
-        base.PlacePiece(pieceData, pos, fieldSize, cells, cellsContainer);
-
-        CheckPlacedCellsForTask();
-
-        OnCellPlaced?.Invoke();
+        }
     }
 
     protected override void CheckCellTypesBeforePlacePiece(Vector2Int coord) {

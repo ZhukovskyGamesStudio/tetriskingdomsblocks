@@ -472,18 +472,18 @@ public class MetaManager : BaseManager {
             CellsChanceToSpawn[i] = lastChance;
         }
     }
-    
-    public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells,Transform cellsContainer)
-    {
-        PlacePiece(pieceData, coord, MainMetaConfig.FieldSize,cells,cellsContainer);
+
+    public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
+        base.PlacePiece(pieceData, coord, cells, cellsContainer);
+        List<(int, int)> placedCells = GetPlacedCells(pieceData, coord);
+
+        UpdateResourceMarksAfterPlacePiece(placedCells);
         _nextPiece = null;
 
         StorageManager.SaveGame();
     }
 
-    protected override void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize, CellView[,] cells,Transform cellsContainer)
-    {
-        base.PlacePiece(pieceData, pos, fieldSize,cells,cellsContainer);
+    private static List<(int, int)> GetPlacedCells(PieceData pieceData, Vector2Int pos) {
         List<(int, int)> placedCells = new();
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
@@ -491,41 +491,36 @@ public class MetaManager : BaseManager {
                     continue;
                 }
 
-                Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
+                Vector2Int place = new(pos.x + x, pos.y + y);
                 placedCells.Add((place.x, place.y));
             }
         }
 
-        UpdateResourceMarksAfterPlacePiece(placedCells);
+        return placedCells;
     }
 
     private void ShakeCamera() {
         Debug.Log("Shake camera");
     }
 
-    private void UpdateResourceMarksAfterPlacePiece(List<(int, int)> placedCells)
-    {
+    private void UpdateResourceMarksAfterPlacePiece(List<(int, int)> placedCells) {
         List<int> connectedCellGroups = new List<int>();
-        Color needColor = Color.clear; 
-        foreach (var (row, col) in placedCells)
-        {
-            if (needColor == Color.clear)
-            {
-            needColor = MetaManager.Instance.MainMetaConfig.CellsConfigs.First
-                     (c => c.CellType == _field[row, col]).MarkCellColor;
-            needColor.a = 1;
+        Color needColor = Color.clear;
+        foreach (var (row, col) in placedCells) {
+            if (needColor == Color.clear) {
+                needColor = Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
+                needColor.a = 1;
             }
-            foreach (var pos in FieldUtils.Directions)
-            {
+
+            foreach (var pos in FieldUtils.Directions) {
                 var newRow = row + pos.y;
                 var newCol = col + pos.x;
-                if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0 || _field[newRow,newCol] != _field[row,col]) continue;
+                if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0 ||
+                    _field[newRow, newCol] != _field[row, col]) continue;
 
-                if (_groupCellIndex[newRow, newCol] != 0)
-                {
+                if (_groupCellIndex[newRow, newCol] != 0) {
                     //fix bug if piece has holes 
-                    if (!connectedCellGroups.Contains(_groupCellIndex[newRow, newCol]))
-                    {
+                    if (!connectedCellGroups.Contains(_groupCellIndex[newRow, newCol])) {
                         connectedCellGroups.Add(_groupCellIndex[newRow, newCol]);
                     }
                 }
