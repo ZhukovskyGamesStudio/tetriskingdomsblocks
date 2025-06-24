@@ -628,6 +628,42 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102697138}
   m_CullTransparentMesh: 1
+--- !u!1 &102728153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 102728154}
+  m_Layer: 5
+  m_Name: CellInteractButtonsContainerRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &102728154
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102728153}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 303864911}
+  m_Father: {fileID: 1212849847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -452.5234, y: -336.28583}
+  m_SizeDelta: {x: 905.0469, y: 262.9102}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &148610710
 GameObject:
   m_ObjectHideFlags: 0
@@ -1102,11 +1138,11 @@ RectTransform:
   m_Children:
   - {fileID: 616325949}
   - {fileID: 318395516}
-  m_Father: {fileID: 1900556692}
+  m_Father: {fileID: 102728154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 673, y: -92.55167}
+  m_AnchoredPosition: {x: 807, y: 7}
   m_SizeDelta: {x: 149.9582, y: 53.4266}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &303864912
@@ -3989,6 +4025,7 @@ RectTransform:
   - {fileID: 148610711}
   - {fileID: 14316282}
   - {fileID: 1900556692}
+  - {fileID: 102728154}
   - {fileID: 1116023418}
   - {fileID: 629646926}
   - {fileID: 576607382}
@@ -5175,7 +5212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1900556692}
   m_Layer: 5
-  m_Name: CellInteractButtonsContainer
+  m_Name: CellInteractButtonsContainerLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5196,13 +5233,12 @@ RectTransform:
   - {fileID: 2008138988}
   - {fileID: 240421247}
   - {fileID: 827449935}
-  - {fileID: 303864911}
   m_Father: {fileID: 1212849847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -267.03397, y: -336.28583}
-  m_SizeDelta: {x: -523.9742, y: 262.9102}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 447.4766, y: -336.28583}
+  m_SizeDelta: {x: 905.0468, y: 262.9102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1910540963
 GameObject:

@@ -116,7 +116,6 @@ public class GameManager : BaseManager, IResetable
         _placedPiecesAmount++;
 
         _currentMovesCount--;
-        Debug.Log(_currentMovesCount);
         _currentMovesCountText.text = _currentMovesCount.ToString();
         
         if (MainGameConfig.resourceOnPlaceCell)
@@ -750,7 +749,6 @@ public class GameManager : BaseManager, IResetable
 
         _currentMovesCount = _currentLevelConfig.MovesCount;
         _currentMovesCountText.text = _currentMovesCount.ToString();
-        Debug.Log(_currentMovesCount);
         
         GenerateNewPieces();
         base.SetupGame();
@@ -792,35 +790,34 @@ public class GameManager : BaseManager, IResetable
             var taskUI = _taskUIViews[i];
             taskUI.gameObject.SetActive(true);
             _currentTasks.Add(new TaskInfoAndUI(task, taskUI));
-            string needTasktext = "";
-            switch (task.taskType)
+            string needSpiteName = "";
+           switch (task.taskType)
             {
                 case TaskInfo.TaskType.getResource:
 
-                    if (task.NeedResource == ResourceType.None)
-                        needTasktext = " Get " + task.Count + " of any resource";
-                    else
-                        needTasktext = " Get " + task.Count + " <sprite name=" + task.NeedResource + ">";
+                    needSpiteName = task.NeedResource.ToString();
                     break;
 
                 case TaskInfo.TaskType.placeMonoLine:
 
-                    needTasktext = " Place mono line " + task.Count + " times with " + " <sprite name=" +
-                                   task.NeedResource + ">";
+                    needSpiteName = task.NeedResource.ToString();
+                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
                     break;
 
-                case TaskInfo.TaskType.placeNeedCell:
+              /*  case TaskInfo.TaskType.placeNeedCell:
 
-                    needTasktext = " Place " + task.NeedCell.CellName + " " + task.Count + " times";
-                    break;
+                    needSpiteName = task.NeedCell.CellName;
+                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.UnlockCellSprite;
+                    break;*/
 
-                case TaskInfo.TaskType.unlockCell:
+            /*    case TaskInfo.TaskType.unlockCell:
 
-                    needTasktext = " Unlock " + task.NeedCell.CellName;
-                    break;
+                    needSpiteName = task.NeedCell.CellName;
+                    taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.PlaceCellSprite;
+                    break;*/
             }
-
-            StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(needTasktext));
+            taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
+            StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(task.Count.ToString()));
         }
     }
 

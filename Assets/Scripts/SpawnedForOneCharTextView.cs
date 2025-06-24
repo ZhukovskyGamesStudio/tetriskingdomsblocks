@@ -8,17 +8,19 @@ public class SpawnedForOneCharTextView : MonoBehaviour
     [SerializeField]
     private TMP_Text _needText;
 
-    private void Start()
+    private void Awake()
     {
         _needText.text = "";
     }
 
     public IEnumerator StartSpawnText(string needString)
     {
+      
         string iconText = "";
-        bool isStartingIconText = false;
+       bool isStartingIconText = false;
         for (int i = 0; i < needString.Length; i++)
         {
+             
             if (needString[i] == '<')
             {
                 yield return new WaitForSeconds(0.05f);
@@ -37,9 +39,11 @@ public class SpawnedForOneCharTextView : MonoBehaviour
             }
             else
             {
-                _needText.text += needString[i];
+                _needText.text += needString[i].ToString();
                 yield return new WaitForSeconds(0.05f);
             }
         }
+        
+        
     }
 }
