@@ -136,22 +136,20 @@ public class MetaManager : BaseManager {
 
             int curGroupIndex = 0;
             var checkedCellType = _field[row, col];
-            foreach (var (addedRow, addedCol) in directions)
-            {
-                var newRow = row + addedRow;
-                var newCol = col + addedCol;
-                if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 ||
-                    newCol < 0) continue;
+            foreach (var dir in FieldUtils.Directions) {
+                Vector2Int combined = dir + new Vector2Int(col, row);
+                if (combined.y >= _field.GetLength(0) || combined.x >= _field.GetLength(1) || combined.y < 0 ||
+                    combined.x < 0) continue;
 
-                if (checkedCellType == _field[newRow, newCol])
+                if (checkedCellType == _field[combined.y, combined.x])
                 {
-                    if (checkedCells[newRow, newCol] != 0)
+                    if (checkedCells[combined.y, combined.x] != 0)
                     {
                         if (curGroupIndex == 0)
-                            curGroupIndex = checkedCells[newRow, newCol];
+                            curGroupIndex = checkedCells[combined.y, combined.x];
                         else
                         {
-                            int newIndex = checkedCells[newRow, newCol];
+                            int newIndex = checkedCells[combined.y, combined.x];
                             foreach (var (cellRow, cellCol) in _connectedGroups[groupIndex - 1].Pieces)
                             {
                                 if (checkedCells[cellRow, cellCol] == newIndex)
@@ -160,7 +158,7 @@ public class MetaManager : BaseManager {
                         }
                     }
                     else
-                        checkedCells[newRow, newCol] = curGroupIndex;
+                        checkedCells[combined.y, combined.x] = curGroupIndex;
                 }
             }
 
@@ -365,7 +363,7 @@ public class MetaManager : BaseManager {
     
     public void GenerateNewPieces()
     {
-        _nextPiece = PieceUtils.GetNewPiece();
+        _nextPiece = PieceUtils.GetNewPiece(guaranteed: null);
         NextPiecesView.Instance.SetData(_nextPiece);
     }
 
@@ -517,10 +515,10 @@ public class MetaManager : BaseManager {
                      (c => c.CellType == _field[row, col]).MarkCellColor;
             needColor.a = 1;
             }
-            foreach (var (addedRow, addedCol) in directions)
+            foreach (var pos in FieldUtils.Directions)
             {
-                var newRow = row + addedRow;
-                var newCol = col + addedCol;
+                var newRow = row + pos.y;
+                var newCol = col + pos.x;
                 if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0 || _field[newRow,newCol] != _field[row,col]) continue;
 
                 if (_groupCellIndex[newRow, newCol] != 0)

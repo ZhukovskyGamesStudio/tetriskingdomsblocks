@@ -4,11 +4,9 @@ using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using ScriptableObjects.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using Random = UnityEngine.Random;
 
 public class BaseManager : MonoBehaviour  {
     public const int CELL_SIZE = 1;
@@ -89,14 +87,6 @@ public class BaseManager : MonoBehaviour  {
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
     public static float PieceVerticalShift;
     
-    protected static readonly (int row, int col)[] directions = 
-    {
-        (-1, 0), // вверх
-        (1, 0),  // вниз
-        (0, -1), // влево
-        (0, 1)   // вправо
-    };
-
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
     }
@@ -188,16 +178,12 @@ public class BaseManager : MonoBehaviour  {
 
         for (int x = 0; x < data.Cells.GetLength(0); x++) {
             for (int y = 0; y < data.Cells.GetLength(1); y++) {
-                if (data.Cells[x, y] && !CellTypeIsTransparent(_field[pos.x + x, pos.y + y]))
+                if (data.Cells[x, y] && !FieldUtils.CanPlaceOnCell(_field[pos.x + x, pos.y + y]))
                     return false;
             }
         }
 
         return true;
-    }
-    protected bool CellTypeIsTransparent(CellType cellType)
-    {
-        return (cellType == CellType.Empty || cellType == CellType.Ice);
     }
    // protected virtual void PlacePiece(PieceData pieceData, Vector2Int pos, int fieldSize) {
 
@@ -211,20 +197,13 @@ public class BaseManager : MonoBehaviour  {
                 }
 
                 Vector2Int place = new(Mathf.Clamp(pos.x + x, 0, fieldSize), Mathf.Clamp(pos.y + y, 0, fieldSize));
-               // CellView go = Instantiate(pieceData.Type.CellPrefab, _fieldContainer);
-                //go.SetSeed(pieceData.CellGuids[x, y]);
-
-               // go.transform.localPosition = new Vector3(place.x, -0.45f, place.y);
-                //poses.Add(new Vector3(place.x, -0.45f, place.y));
-                CheckCellTypesBeforePlacePiece(place.x, place.y);
+                CheckCellTypesBeforePlacePiece(place);
                 CellView go = cells[x, y];
               
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
-
-                //go.GetComponent<CellView>().PlaceCellOnField();
+                
                 SpawnResourceFx(place, go);
-                //SpawnSmokeParticle(go.transform.position).Forget();
                 cellsAmount++;
             }
         }
@@ -232,7 +211,7 @@ public class BaseManager : MonoBehaviour  {
         ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
-    protected virtual void CheckCellTypesBeforePlacePiece(int row, int col)
+    protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord)
     {
           
     }
