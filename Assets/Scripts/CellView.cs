@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CellView : MonoBehaviour {
     [field: SerializeField]
@@ -12,6 +14,9 @@ public class CellView : MonoBehaviour {
     [SerializeField]
     private Collider _cellCollider;
 
+    [SerializeField]
+    private List<GameObject> _selectOneList;
+
     private Tween _currentTween;
     public Guid Seed { get; private set; } = Guid.NewGuid();
 
@@ -20,7 +25,20 @@ public class CellView : MonoBehaviour {
         if (_objectsContainer) {
             RandomRotateObjects(Seed);
         }
+
+        if (_selectOneList != null && _selectOneList.Count > 0) {
+            EnableRandomFromList(_selectOneList);
+        }
+    
     }
+
+    private void EnableRandomFromList(List<GameObject> list) {
+        var rnd = Random.Range(0, list.Count);
+        for (int i = 0; i < list.Count; i++) {
+            list[i].SetActive(i == rnd);
+        }
+    }
+    
 
     private void RandomRotateObjects(Guid seed) {
         int hash = seed.GetHashCode();
