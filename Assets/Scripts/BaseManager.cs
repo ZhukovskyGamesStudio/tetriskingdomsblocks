@@ -169,9 +169,20 @@ public class BaseManager : MonoBehaviour {
             }
         }
 
+        for (int x = 0; x < pieceData.Cells.GetLength(0); x++)
+        {
+            for (int y = 0; y < pieceData.Cells.GetLength(1); y++)
+            {
+                Vector2Int place = new(pos.x + x,pos.y + y);
+                if (!pieceData.Cells[x, y]) continue;
+
+                CheckClosestCells(new Vector2Int(place.x, place.y));
+            }
+        }
+
         ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
-
+protected virtual void CheckClosestCells(Vector2Int coord){}
     protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {

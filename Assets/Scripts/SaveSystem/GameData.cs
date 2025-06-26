@@ -11,8 +11,8 @@ public class GameDataForSave {
     public int MetalAmount;*/
     public int[] resourcesCount;
 
-    public int CoinsAmount;
-    public int GemsAmount;
+    public int GoldAmount;
+    public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
 
     public string LastHealthRecoveryTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);

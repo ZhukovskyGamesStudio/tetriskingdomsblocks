@@ -13,15 +13,21 @@ public static class FieldUtils {
 
     private static readonly List<CellType> CanPlaceOnCells = new List<CellType>() {
         CellType.Empty,
+        CellType.Crystal,
         CellType.Ice
     };
 
     private static readonly List<CellType> CantBecomeRowCells = new List<CellType>() {
         CellType.Empty,
         CellType.Ice,
-        CellType.Box
+        CellType.Box,
+        CellType.Crystal,
     };
-
+    
+    private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {
+        CellType.GoldMine,
+        CellType.CrystalMine,
+    };
     public static IEnumerable<Vector2Int> GetCellsAround(CellType[,] field, Vector2Int coord) {
         return Directions.Select(pos => coord + pos).Where(combined => IsInsideField(field, combined));
     }
@@ -50,6 +56,7 @@ public static class FieldUtils {
     }
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
+    public static bool CantDestroyInRow(CellType cellType) => CantDestroyInRowCells.Contains(cellType);
     
     public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CellSize, Mathf.RoundToInt(coord.z) / CellSize);
 }

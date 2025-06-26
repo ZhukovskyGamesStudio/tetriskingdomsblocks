@@ -15,5 +15,8 @@ public enum CellType
     FieldOfWheat,
     Farm,
     Ice,
-    Box
+    Box,
+    GoldMine,
+    CrystalMine,
+    Crystal
 }

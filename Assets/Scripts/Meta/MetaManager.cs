@@ -15,7 +15,10 @@ public class MetaManager : BaseManager {
     [field: Header("Meta")]
     [field: SerializeField]
     public MainMetaConfig MainMetaConfig { get; private set; }
-
+    [SerializeField]
+    private TMP_Text _magicCubeCounterText;
+    [SerializeField]
+    private TMP_Text _goldCounterText;
     [SerializeField]
     private TMP_Text[] _resourcesCountText;
 
@@ -369,6 +372,8 @@ public class MetaManager : BaseManager {
             }
         }
 
+        _magicCubeCounterText.text = StorageManager.GameDataMain.MagicCubesAmount.ToString();
+        _goldCounterText.text = StorageManager.GameDataMain.GoldAmount.ToString();
         //    Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
         UpdateResourcesCountUIText();
 

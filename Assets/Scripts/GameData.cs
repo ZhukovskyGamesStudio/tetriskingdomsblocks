@@ -24,5 +24,7 @@ public enum ResourceType {
     Metal,
     TetrisPieces,
     Box,
-    Ice
+    Ice,
+    Gold,
+    Crystal
 }

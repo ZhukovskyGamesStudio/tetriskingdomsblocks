@@ -130,10 +130,21 @@ public class GameManager : BaseManager, IResetable {
 
         switch (cellType) {
             case CellType.Ice:
-                var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                var configIce = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
                 for (int j = 0; j < _currentTasks.Count; j++) {
                     if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
-                        CheckNeedResourceInTask(j, config, coord);
+                        CheckNeedResourceInTask(j, configIce, coord);
+                    }
+                }
+                
+                DestroyCell(coord);
+                break;
+            case CellType.Crystal:
+                
+                var configCrystal = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                for (int j = 0; j < _currentTasks.Count; j++) {
+                    if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
+                        CheckNeedResourceInTask(j, configCrystal, coord);
                     }
                 }
 
@@ -141,7 +152,7 @@ public class GameManager : BaseManager, IResetable {
                 break;
         }
 
-        CheckClosestCells(coord);
+       // CheckClosestCells(coord);
     }
 
     protected override void SpawnResourceFx(Vector2Int place, CellView go) {
@@ -204,13 +215,14 @@ public class GameManager : BaseManager, IResetable {
                         if (maxResourceType == ResourceType.None || GameData.CollectedResources[maxResourceType] < resource.Value)
                             maxResourceType = resource.Key;
                     }
-
+                    _currentTasks[i].TaskUIView.TaskInfoTextHelper.SetText((_currentTasks[i].TaskInfo.Count - GameData.CollectedResources[maxResourceType]).ToString());
                     if (_currentTasks[i].TaskInfo.Count <= GameData.CollectedResources[maxResourceType]) {
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
                         break;
                     }
                 } else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].TaskInfo.NeedResource, out int resourceCount)) {
+                    _currentTasks[i].TaskUIView.TaskInfoTextHelper.SetText((_currentTasks[i].TaskInfo.Count - resourceCount).ToString());
                     if (resourceCount >= _currentTasks[i].TaskInfo.Count) {
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
@@ -297,7 +309,8 @@ public class GameManager : BaseManager, IResetable {
         for (int i = 0; i < _cellsToDestroy.Count; i++) {
             var cell = _cellsToDestroy[i];
             _cellsToDestroy.RemoveAt(i--);
-            DestroyCell(cell);
+            if (!FieldUtils.CantDestroyInRow(_field[cell.x, cell.y]))
+                DestroyCell(cell);
         }
     }
 
@@ -430,27 +443,67 @@ public class GameManager : BaseManager, IResetable {
         }
     }
 
-    private void CheckClosestCells(Vector2Int coord) {
+    protected override void CheckClosestCells(Vector2Int coord) {
         var cellsAround = FieldUtils.GetCellsAround(_field, coord);
         foreach (var coordAround in cellsAround) {
             var cellType = _field[coordAround.x, coordAround.y];
             switch (cellType) {
                 case CellType.Box:
-                    CellTypeInfo config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    CellTypeInfo configBox = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
                     for (int j = 0; j < _currentTasks.Count; j++) {
                         if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
-                            CheckNeedResourceInTask(j, config, coordAround);
+                            CheckNeedResourceInTask(j, configBox, coordAround);
                         }
                     }
 
                     DestroyCell(coordAround);
 
                     break;
+                case CellType.GoldMine:
+                    CellTypeInfo configGoldMine = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    for (int j = 0; j < _currentTasks.Count; j++) {
+                        if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
+                            CheckNeedResourceInTask(j, configGoldMine, coordAround);
+                        }
+                    }
+
+                    break;
+                
+                case CellType.CrystalMine:
+                    CellTypeInfo configCrystalMine = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    for (int j = 0; j < _currentTasks.Count; j++) {
+                        if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
+                            CheckNeedResourceInTask(j, configCrystalMine, coordAround);
+                        }
+                    }
+
+                    var randomPos = GetRandomEmptyCell();
+                    if(randomPos == new Vector2(-1,-1))return;
+                    //spawn crystal on empty cell
+                    var configCrystal = Instance.MainGameConfig.CellsConfigs.First(c =>
+                        c.CellType == CellType.Crystal);
+                    PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y));
+                    break;
             }
         }
     }
 
+    private Vector2Int GetRandomEmptyCell()
+    {
+        List<Vector2Int> _emptyCells = new List<Vector2Int>();
+        for (int i = 0; i < _field.GetLength(0); i++)
+        {
+            for (int j = 0; j < _field.GetLength(1); j++)
+                if(_field[i,j] == CellType.Empty)
+                _emptyCells.Add(new Vector2Int(i, j));
+        }
+
+        if (_emptyCells.Count == 0) return new Vector2Int(-1,-1);
+        return _emptyCells[Random.Range(0, _emptyCells.Count)];
+            
+    }
     private void CheckNeedResourceInTask(int j, CellTypeInfo config, Vector2Int coord) {
+        if(config.ResourcesForDestroy.Length == 0) return;
         var needResource = config.ResourcesForDestroy[0];
         if (_currentTasks[j].TaskInfo.NeedResource == needResource.ResourceType) {
             if (!GameData.CollectedResources.TryAdd(needResource.ResourceType, needResource.ResourceCount))
@@ -583,14 +636,16 @@ public class GameManager : BaseManager, IResetable {
                         var config = Instance.MainGameConfig.CellsConfigs.First(c =>
                             c.CellType == _currentLevelConfig.StartFieldConfig.GetCell(i, j));
                         PlaceOneSizePiece(config, new Vector2Int(i, j));
-                        if (!startCellsResourcesCount.TryAdd(config.ResourcesForDestroy[0].ResourceType, 1))
+                        if (!FieldUtils.CantDestroyInRow(config.CellType) && !startCellsResourcesCount.TryAdd(config.ResourcesForDestroy[0].ResourceType, 1))
                             startCellsResourcesCount[config.ResourcesForDestroy[0].ResourceType]++;
                     }
                 }
             }
 
+            
             SetTaskDescriptionsFromStartField(startCellsResourcesCount);
         }
+            Debug.Log((100 +StorageManager.GameDataMain.CurMaxLevel*5) + " gold" + (5 + StorageManager.GameDataMain.CurMaxLevel/2) + " magicCubes");
 
         _currentMovesCount = _currentLevelConfig.MovesCount;
         _currentMovesCountText.text = _currentMovesCount.ToString();
