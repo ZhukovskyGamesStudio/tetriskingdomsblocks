@@ -58,7 +58,7 @@ public static class PieceUtils {
         bool isMetaGame = GameManager.Instance == null;
         var chancesToSpawn = isMetaGame ? MetaManager.Instance.FiguresChanceToSpawn : GameManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        var figureForms = isMetaGame ? MetaManager.Instance.FigureFormsConfig : GameManager.Instance.FigureFormsConfig;
+        var figureForms = PiecesViewTable.Instance.FigureForms;
         for (int i = 0; i < chancesToSpawn.Length; i++) {
             if (chancesToSpawn[i] > chance)
                 return TetrisPieces.PieceShapesTable[figureForms[i].FormName];

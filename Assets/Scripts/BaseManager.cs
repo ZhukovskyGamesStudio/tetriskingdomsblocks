@@ -27,9 +27,6 @@ public class BaseManager : MonoBehaviour {
     [SerializeField]
     protected LayerMask _targetMasks;
 
-    [field: SerializeField]
-    public FigureFormConfig[] FigureFormsConfig { get; protected set; }
-
     [SerializeField]
     private ParticleSystem _placeCellEffect;
 
@@ -83,9 +80,9 @@ public class BaseManager : MonoBehaviour {
 
     protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
-        FiguresChanceToSpawn = new float[FigureFormsConfig.Length];
-        for (int i = 0; i < FigureFormsConfig.Length; i++) {
-            lastChance += FigureFormsConfig[i].Cost;
+        FiguresChanceToSpawn = new float[PiecesViewTable.Instance.FigureForms.Length];
+        for (int i = 0; i < PiecesViewTable.Instance.FigureForms.Length; i++) {
+            lastChance += PiecesViewTable.Instance.FigureForms[i].Cost;
             FiguresChanceToSpawn[i] = lastChance;
         }
     }
