@@ -18,5 +18,6 @@ public enum CellType
     Box,
     GoldMine,
     CrystalMine,
-    Crystal
+    Crystal,
+    Slime
 }

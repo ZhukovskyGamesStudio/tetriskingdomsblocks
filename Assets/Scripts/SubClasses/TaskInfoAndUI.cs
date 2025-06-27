@@ -4,11 +4,13 @@ public class TaskInfoAndUI
 {
     public TaskInfoSubClass TaskInfo;
     public TaskUIView TaskUIView;
+    public int needCount;
 
-    public TaskInfoAndUI(TaskInfoSubClass taskInfo, TaskUIView taskUIView)
+    public TaskInfoAndUI(TaskInfoSubClass taskInfo, TaskUIView taskUIView, int needCount)
     {
         this.TaskInfo = taskInfo;
         this.TaskUIView = taskUIView;
+        this.needCount = needCount;
     }
 }
 

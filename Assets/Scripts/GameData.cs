@@ -26,5 +26,6 @@ public enum ResourceType {
     Box,
     Ice,
     Gold,
-    Crystal
+    Crystal,
+    Slime
 }
