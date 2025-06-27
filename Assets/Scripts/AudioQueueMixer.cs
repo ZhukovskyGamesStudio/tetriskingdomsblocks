@@ -14,10 +14,26 @@ public class AudioQueueMixer : MonoBehaviour {
     [SerializeField]
     private float _startPercent = 0.25f;
 
+    [SerializeField]
+    private int _sourcePoolCount = 3;
     private AudioSource _currentPlaying;
 
     private void Awake() {
+        if (_sourcePoolCount > 0) {
+            CreateSources();
+        }
         _audioSourcesQ = new Queue<AudioSource>(_audioSources.OrderBy((_) => Random.Range(0, 1f)));
+    }
+
+    private void CreateSources() {
+        for (int i = 0; i < _sourcePoolCount-1; i++) {
+            var newComp = gameObject.AddComponent<AudioSource>();
+            newComp.clip = _audioSources[0].clip;
+            newComp.priority = _audioSources[0].priority;
+            newComp.playOnAwake = false;
+            newComp.volume = _audioSources[0].volume;
+            _audioSources.Add(newComp);
+        }
     }
 
     public async UniTask PlayNext() {

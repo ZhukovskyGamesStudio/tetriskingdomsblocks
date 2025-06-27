@@ -138,14 +138,15 @@ public class BaseManager : MonoBehaviour {
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
-            _gameAudio.PlacePiece.PlayNext();
+          
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
                 pieceData.Type.CellType == CellType.Mine) {
                 vibrationsAmplitude *= 1.5f;
             }
-
+            
+            _gameAudio.PlacePiece.PlayNext();
             switch (pieceData.Type.CellType) {
                 case CellType.Forest:   _gameAudio.WoodPlaced.PlayNext(); break;
                 case CellType.Mountain:   _gameAudio.RockPlaced.PlayNext(); break;
