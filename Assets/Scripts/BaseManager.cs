@@ -50,6 +50,9 @@ public class BaseManager : MonoBehaviour {
     private InputRaycaster _inputRaycaster;
 
     private Tween _currentTween;
+    [Header("Audio")]
+    [SerializeField]
+    protected GameAudio _gameAudio;
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
@@ -146,6 +149,13 @@ public class BaseManager : MonoBehaviour {
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
                 pieceData.Type.CellType == CellType.Mine) {
                 vibrationsAmplitude *= 1.5f;
+            }
+
+            switch (pieceData.Type.CellType) {
+                case CellType.Forest:   _gameAudio.WoodPlaced.PlayNext(); break;
+                case CellType.Mountain:   _gameAudio.RockPlaced.PlayNext(); break;
+                case CellType.FieldOfWheat:   _gameAudio.WheatPlaced.PlayNext(); break;
+                case CellType.Metal:   _gameAudio.MetalPlaced.PlayNext(); break;
             }
 
             ShakeCamera(vibrationsAmplitude);

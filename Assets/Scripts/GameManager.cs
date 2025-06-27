@@ -29,6 +29,8 @@ public class GameManager : BaseManager, IResetable {
 
     public Action OnCellPlaced;
 
+  
+   
     protected override void Awake() {
         base.Awake();
         Instance = this;
@@ -177,6 +179,7 @@ public class GameManager : BaseManager, IResetable {
         switch (cellType) {
             case CellType.Ice:
                 DestroyCellAfterPlacePiece(coord, cellType);
+                _gameAudio.IceBreaks.PlayNext();
                 break;
             case CellType.Crystal:
 
@@ -186,6 +189,7 @@ public class GameManager : BaseManager, IResetable {
             case CellType.Slime:
 
                 DestroyCellAfterPlacePiece(coord, cellType);
+                _gameAudio.SlimeBreaks.PlayNext();
                 break;
         }
         // CheckClosestCells(coord);
@@ -474,6 +478,7 @@ public class GameManager : BaseManager, IResetable {
                         }
                     }
 
+                    _gameAudio.BoxBreaks.PlayNext();
                     DestroyCell(coordAround);
 
                     break;
@@ -607,6 +612,7 @@ public class GameManager : BaseManager, IResetable {
         NextPiecesView.Instance.DestroyPieces();
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetWinState();
+        _gameAudio.Win.PlayNext();
     }
 
     private void Lose() {
@@ -616,6 +622,7 @@ public class GameManager : BaseManager, IResetable {
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
         RemoveHealthAfterLose();
+        _gameAudio.Lose.PlayNext();
     }
 
     private void RemoveHealthAfterLose() {
