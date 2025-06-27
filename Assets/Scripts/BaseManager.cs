@@ -7,11 +7,6 @@ using UnityEngine;
 using UnityEngine.Pool;
 
 public class BaseManager : MonoBehaviour {
-    [SerializeField]
-    private AudioQueueMixer _placePieceAudioMixer;
-
-    [SerializeField]
-    private AudioQueueMixer _collectedResourceAudioMixer;
 
     [HideInInspector]
     public List<CellType> _currentCellsToSpawn { get; protected set; }
@@ -143,7 +138,7 @@ public class BaseManager : MonoBehaviour {
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
-            _placePieceAudioMixer.PlayNext();
+            _gameAudio.PlacePiece.PlayNext();
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
@@ -225,6 +220,6 @@ public class BaseManager : MonoBehaviour {
     protected virtual void SetupGame() { }
 
     public void PlayCollectedSound() {
-        _collectedResourceAudioMixer.PlayNext();
+        _gameAudio.ResourceCollected.PlayNext();
     }
 }

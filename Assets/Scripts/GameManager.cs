@@ -342,6 +342,7 @@ public class GameManager : BaseManager, IResetable {
 
         if (isDestroying) {
             SpawnDestroyRowVibration();
+            _gameAudio.RowCollected.PlayNext();
         }
 
         if (unlockedCellText != "") {
