@@ -259,15 +259,18 @@ public class GameManager : BaseManager, IResetable {
                             maxResourceType = resource.Key;
                     }
 
+                    var remainingResourceCount = Math.Max(_currentTasks[i].needCount - GameData.CollectedResources[maxResourceType], 0) ;
                     _currentTasks[i].TaskUIView.TaskInfoTextHelper
-                        .SetText((_currentTasks[i].needCount - GameData.CollectedResources[maxResourceType]).ToString());
+                        .SetText(remainingResourceCount.ToString());
                     if (_currentTasks[i].needCount <= GameData.CollectedResources[maxResourceType]) {
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
                         break;
                     }
-                } else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].TaskInfo.NeedResource, out int resourceCount)) {
-                    _currentTasks[i].TaskUIView.TaskInfoTextHelper.SetText((_currentTasks[i].needCount - resourceCount).ToString());
+                } else if (GameData.CollectedResources.TryGetValue(_currentTasks[i].TaskInfo.NeedResource, out int resourceCount))
+                {
+                    var remainingResourceCount = Math.Max(_currentTasks[i].needCount - resourceCount, 0) ;
+                    _currentTasks[i].TaskUIView.TaskInfoTextHelper.SetText(remainingResourceCount.ToString());
                     if (resourceCount >= _currentTasks[i].needCount) {
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
@@ -495,23 +498,56 @@ public class GameManager : BaseManager, IResetable {
                             CheckNeedResourceInTask(j, configCrystalMine, coordAround);
                         }
                     }
-                    MineCellAnmation(_cells[coordAround.x, coordAround.y].transform);
+                    MineCellAnimation(_cells[coordAround.x, coordAround.y].transform);
                     var randomPos = GetRandomEmptyCell();
                     if(randomPos == new Vector2(-1,-1))return;
                     var configCrystal = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                         c.CellType == CellType.Crystal);
                     PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y));
-                    var crystalCellTransform = _cells[randomPos.x, randomPos.y].transform;
-                    crystalCellTransform.localScale = Vector3.zero;
-                    var _currentTween = DOTween.Sequence().Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
-                        .Append(crystalCellTransform.DOScale(Vector3.one, 0.1f));
+                    CrystalCellAnimation(randomPos, coordAround);
+
+                    /*var _currentTween = DOTween.Sequence().Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
+                        .Join(crystalCellTransform.DOMoveX(endCrystalPosition.x,0.6f))
+                        .Join(crystalCellTransform.DOMoveZ(endCrystalPosition.z,0.6f))
+                        .Join(crystalCellTransform.DOMoveY(endCrystalPosition.y + 0.6f,0.4f))
+                        .Append(crystalCellTransform.DOScale(Vector3.one, 0.1f))
+                        .Join(crystalCellTransform.DOMoveY(endCrystalPosition.y,0.2f));*/
                     //crystal anim
                     break;
             }
         }
     }
 
-    private void MineCellAnmation(Transform cell)
+    private void CrystalCellAnimation(Vector2Int randomPos, Vector2Int coordAround)
+    {
+        var crystalCellTransform = _cells[randomPos.x, randomPos.y].transform;
+        Vector3 endCrystalPosition = crystalCellTransform.position;
+        Vector3 startPosition= _cells[coordAround.x, coordAround.y].transform.position;
+        crystalCellTransform.position = _cells[coordAround.x, coordAround.y].transform.position;
+        crystalCellTransform.localScale = Vector3.zero;
+        float offsetMultiplayer = Vector3.Distance(startPosition, endCrystalPosition);
+                    
+        Vector3[] path = new Vector3[3];
+        path[0] = crystalCellTransform.position;  
+        path[1] = (startPosition + endCrystalPosition) * 0.5f
+                  + Vector3.up * 0.3f * offsetMultiplayer 
+                  + Vector3.right * 0.1f * offsetMultiplayer 
+                  + Vector3.forward * 0.1f * offsetMultiplayer;       
+        path[2] = endCrystalPosition;            
+        var _currentTween = DOTween.Sequence()
+            .Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
+            .Join(crystalCellTransform.DOPath(
+                path, 
+                0.6f, 
+                PathType.CatmullRom, 
+                PathMode.Full3D,      
+                10                  
+            ))
+            .Append(crystalCellTransform.DOScale(Vector3.one, 0.1f))
+            .Join(crystalCellTransform.DOMoveY(endCrystalPosition.y, 0.2f));
+    }
+
+    private void MineCellAnimation(Transform cell)
     {
         float startY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y;
         var _currentTween = DOTween.Sequence().Append(cell.DOScale(Vector3.one*0.8f, 0.4f))
@@ -741,7 +777,8 @@ public class GameManager : BaseManager, IResetable {
         }
 
         taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
-        GameUI.Instance.StartCharacterInfoTextCoroutine(task.Count.ToString());
+        taskUI.TaskInfoTextHelper.SetText(task.Count.ToString());
+        //GameUI.Instance.StartCharacterInfoTextCoroutine();
     }
 
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
