@@ -13,10 +13,10 @@ public class TutorialUIElementsView : MonoBehaviour
     {
         GameManager.Instance.OnCellPlaced += DestroyTutorial;
         foreach (var hole in _holeImages) {
-            hole.SetParent( GameManager.Instance.HolesForBGContainer);
+            hole.SetParent( GameUI.Instance.HolesForBgContainer);
         }
-        _blackBGImage.SetParent(GameManager.Instance.BlackBGContainer);
-        _fingerImage.SetParent(GameManager.Instance.BlackBGContainer);
+        _blackBGImage.SetParent(GameUI.Instance.BlackBgContainer);
+        _fingerImage.SetParent(GameUI.Instance.BlackBgContainer);
         StrechImageToFullSreen();
         StartAnimation();
     }

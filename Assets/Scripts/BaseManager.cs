@@ -32,15 +32,6 @@ public class BaseManager : MonoBehaviour {
     [field: SerializeField]
     public FigureFormConfig[] FigureFormsConfig { get; protected set; }
 
-    [field: SerializeField]
-    private Transform[] _healthImages;
-
-    [SerializeField]
-    private TMP_Text _healthTimerText;
-
-    [SerializeField]
-    private int _minutesToHealthRecovery;
-
     [SerializeField]
     private ParticleSystem _placeCellEffect;
 
@@ -60,14 +51,10 @@ public class BaseManager : MonoBehaviour {
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
-    private float timerNowTimeSecondCounter;
 
     private InputRaycaster _inputRaycaster;
 
     private Tween _currentTween;
-    private DateTime _lastHealthRecoveryTime;
-
-    private const int MAX_HEALTH_COUNT = 3;
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
@@ -94,35 +81,7 @@ public class BaseManager : MonoBehaviour {
         Application.targetFrameRate = 144;
     }
 
-    private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
-
-    protected virtual void Update() {
-        if (_hasInternetConnection) {
-            timerNowTimeSecondCounter += Time.unscaledDeltaTime;
-            if (timerNowTimeSecondCounter >= 1) {
-                timerNowTimeSecondCounter--;
-                AddSecondToTimer();
-            }
-
-            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT) {
-                TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
-                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
-
-                if (energyToAdd > 0) {
-                    StorageManager.GameDataMain.HealthCount =
-                        Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
-                    _lastHealthRecoveryTime = _currentGameTime;
-                    StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
-                    SaveEnergyData();
-                    _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(true);
-                }
-
-                UpdateTimerUI();
-            }
-        } else if (_healthTimerText.gameObject.activeSelf) {
-            _healthTimerText.gameObject.SetActive(false);
-        }
-    }
+    protected virtual void Update() { }
 
     protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
@@ -157,7 +116,7 @@ public class BaseManager : MonoBehaviour {
                     continue;
                 }
 
-                Vector2Int place = new(pos.x + x,pos.y + y);
+                Vector2Int place = new(pos.x + x, pos.y + y);
                 CheckCellTypesBeforePlacePiece(place);
                 CellView go = cells[x, y];
 
@@ -169,11 +128,9 @@ public class BaseManager : MonoBehaviour {
             }
         }
 
-        for (int x = 0; x < pieceData.Cells.GetLength(0); x++)
-        {
-            for (int y = 0; y < pieceData.Cells.GetLength(1); y++)
-            {
-                Vector2Int place = new(pos.x + x,pos.y + y);
+        for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
+            for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
+                Vector2Int place = new(pos.x + x, pos.y + y);
                 if (!pieceData.Cells[x, y]) continue;
 
                 CheckClosestCells(new Vector2Int(place.x, place.y));
@@ -182,7 +139,8 @@ public class BaseManager : MonoBehaviour {
 
         ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
-protected virtual void CheckClosestCells(Vector2Int coord){}
+
+    protected virtual void CheckClosestCells(Vector2Int coord) { }
     protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
@@ -235,73 +193,12 @@ protected virtual void CheckClosestCells(Vector2Int coord){}
         _mmfPlayer.PlayFeedbacks();
     }
 
-    public TimeSpan GetTimeUntilNextHealth() {
-        if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
-
-        TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
-        double minutesPassed = timeSinceLastUpdate.TotalMinutes;
-        double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
-
-        return TimeSpan.FromMinutes(minutesUntilNext);
-    }
-
-    private void UpdateTimerUI() {
-        if (_hasInternetConnection) {
-            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
-                if (_healthTimerText != null && _healthTimerText.gameObject.activeSelf)
-                    _healthTimerText.gameObject.SetActive(false);
-                return;
-            }
-
-            if (!_healthTimerText.gameObject.activeSelf)
-                _healthTimerText.gameObject.SetActive(true);
-
-            _healthTimerText.text = TimeConverter.ConvertToTimeString(GetTimeUntilNextHealth());
-        } else {
-            _healthTimerText.text = "No internet connection";
-        }
-    }
-
     private void OnApplicationQuit() {
         SaveEnergyData();
     }
 
     protected virtual void SaveEnergyData() {
         StorageManager.SaveGame();
-    }
-
-    private void OnApplicationPause(bool pauseStatus) {
-        if (pauseStatus) {
-            SaveEnergyData();
-        } else {
-            StorageManager.LoadGame();
-            CalculateOfflineHealth();
-        }
-    }
-
-    protected void RemoveHealth() {
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
-            _lastHealthRecoveryTime = _currentGameTime;
-            StorageManager.GameDataMain.LastHealthRecoveryTime = _lastHealthRecoveryTime.ToString(CultureInfo.InvariantCulture);
-        }
-
-        _healthImages[StorageManager.GameDataMain.HealthCount - 1].gameObject.SetActive(false);
-        StorageManager.GameDataMain.HealthCount--;
-        SaveEnergyData();
-    }
-
-    private void CalculateOfflineHealth() {
-        if (!_hasInternetConnection) return;
-        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
-        TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
-        int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
-
-        if (healthToAdd > 0) {
-            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
-        }
-
-        if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
-            _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
     }
 
     private async UniTask SpawnSmokeParticle(Vector3 pos) {
@@ -320,23 +217,7 @@ protected virtual void CheckClosestCells(Vector2Int coord){}
         _placeCellEffectsPool.Release(particles);
     }
 
-    protected virtual void SetupGame() {
-        if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
-            StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
-
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
-            _healthTimerText.gameObject.SetActive(false);
-        } else {
-            CalculateOfflineHealth();
-            if (_hasInternetConnection)
-                _healthTimerText.text = StorageManager.GameDataMain.LastHealthRecoveryTime.ToString();
-            else
-                _healthTimerText.text = "No internet connection";
-            for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
-                _healthImages[i].gameObject.SetActive(StorageManager.GameDataMain.HealthCount > i);
-            }
-        }
-    }
+    protected virtual void SetupGame() { }
 
     public void PlayCollectedSound() {
         _collectedResourceAudioMixer.PlayNext();

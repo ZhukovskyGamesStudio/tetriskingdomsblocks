@@ -16,4 +16,6 @@ public class MainMetaConfig : ScriptableObject {
     public float resourceMarksUpdateCouldown;
 
     public float CameraDragSpeed;
+
+    public float MinutesToHealtRecovery;
 }

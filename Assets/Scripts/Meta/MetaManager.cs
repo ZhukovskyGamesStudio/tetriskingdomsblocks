@@ -47,7 +47,9 @@ public class MetaManager : BaseManager {
     private ResourceMarkView resourceMarkViewPrefab;
 
     private List<ResourceMarkAndPieces> _connectedGroups = new List<ResourceMarkAndPieces>();
-
+    [field: SerializeField]
+    private int _minutesToHealthRecovery;
+    
     private PieceData _nextPiece = null;
     private int[,] _groupCellIndex;
     private int _minutesToGetPiece = 120;
@@ -55,7 +57,12 @@ public class MetaManager : BaseManager {
     private Tween _hummerTween;
     private Sequence _hummerSequence;
     private ObjectPool<ResourceMarkView> _resourcesMarksPool;
-
+    private float timerNowTimeSecondCounter;
+    private const int MAX_HEALTH_COUNT = 3;
+    private DateTime _lastHealthRecoveryTime;
+   
+    
+    
     protected override void Awake() {
         base.Awake();
         Instance = this;
@@ -64,6 +71,7 @@ public class MetaManager : BaseManager {
 
     protected override void Update() {
         base.Update();
+        UpdateTimerAndHealth();
         if (_hasInternetConnection && (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours < 2) {
             _getPieceTimerText.text = TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece";
         }
@@ -79,6 +87,53 @@ public class MetaManager : BaseManager {
 
         /*   if(_isDraggingCamera && !IsDraggingPiece)
                DragCamera();*/
+    }
+  
+    private void UpdateTimerAndHealth() {
+        if (_hasInternetConnection) {
+            timerNowTimeSecondCounter += Time.unscaledDeltaTime;
+            if (timerNowTimeSecondCounter >= 1) {
+                timerNowTimeSecondCounter--;
+                AddSecondToTimer();
+            }
+
+            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT) {
+                TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
+                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
+
+                if (energyToAdd > 0) {
+                    StorageManager.GameDataMain.HealthCount =
+                        Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
+                    _lastHealthRecoveryTime = _currentGameTime;
+                    StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
+                    SaveEnergyData();
+                    MetaUI.Instance.SetHealthImageActive(StorageManager.GameDataMain.HealthCount - 1, true);
+                }
+
+                UpdateHealthTimerUI();
+            }
+        } else if (MetaUI.Instance.HealthTimerText.gameObject.activeSelf) {
+            MetaUI.Instance.SetHealthTimerActive(false);
+        }
+    }
+    
+    private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
+    
+    private void UpdateHealthTimerUI() {
+        if (_hasInternetConnection) {
+            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
+                if (MetaUI.Instance.HealthTimerText != null && MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
+                    MetaUI.Instance.SetHealthTimerActive(false);
+                return;
+            }
+
+            if (!MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
+                MetaUI.Instance.SetHealthTimerActive(true);
+
+            MetaUI.Instance.SetHealthTimerText(TimeConverter.ConvertToTimeString(GetTimeUntilNextHealth()));
+        } else {
+            MetaUI.Instance.SetHealthTimerText("No internet connection");
+        }
     }
 
     /* private void DragCamera()
@@ -381,7 +436,38 @@ public class MetaManager : BaseManager {
 
         InvokeRepeating(nameof(UpdateResourceMarks), MainMetaConfig.resourceMarksUpdateCouldown, MainMetaConfig.resourceMarksUpdateCouldown);
 
+        SetupHealth();
         base.SetupGame();
+    }
+    private void SetupHealth() {
+        if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
+            StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
+
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
+            MetaUI.Instance.SetHealthTimerActive(false);
+        } else {
+            CalculateOfflineHealth();
+            if (_hasInternetConnection)
+                MetaUI.Instance.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime.ToString());
+            else
+                MetaUI.Instance.SetHealthTimerText("No internet connection");
+            for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
+                MetaUI.Instance.SetHealthImageActive(i, StorageManager.GameDataMain.HealthCount > i);
+            }
+        }
+    }
+    private void CalculateOfflineHealth() {
+        if (!_hasInternetConnection) return;
+        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
+        TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
+        int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
+
+        if (healthToAdd > 0) {
+            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
+        }
+
+        if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
+            _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
     }
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
@@ -608,6 +694,37 @@ public class MetaManager : BaseManager {
             resourceMark.gameObject.SetActive((float)collectedResouces / maxCollectedResouces > 0.1f);
             _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));
         }
+    }
+    
+    private void OnApplicationPause(bool pauseStatus) {
+        if (pauseStatus) {
+            SaveEnergyData();
+        } else {
+            StorageManager.LoadGame();
+            CalculateOfflineHealth();
+        }
+    }
+
+    protected void RemoveHealth() {
+        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
+            _lastHealthRecoveryTime = _currentGameTime;
+            StorageManager.GameDataMain.LastHealthRecoveryTime = _lastHealthRecoveryTime.ToString(CultureInfo.InvariantCulture);
+            StorageManager.GameDataMain.HealthCount--;
+        }
+
+        MetaUI.Instance.SetHealthImageActive(StorageManager.GameDataMain.HealthCount, false);
+      
+        SaveEnergyData();
+    }
+    
+    public TimeSpan GetTimeUntilNextHealth() {
+        if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
+
+        TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
+        double minutesPassed = timeSinceLastUpdate.TotalMinutes;
+        double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
+
+        return TimeSpan.FromMinutes(minutesUntilNext);
     }
 }
 

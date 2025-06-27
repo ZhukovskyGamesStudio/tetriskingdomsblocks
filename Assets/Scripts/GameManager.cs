@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -15,67 +14,23 @@ public class GameManager : BaseManager, IResetable {
     public MainGameConfig MainGameConfig;
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
-
-    [field: SerializeField]
-    public Transform HolesForBGContainer { get; private set; }
-
-    [field: SerializeField]
-    public Transform BlackBGContainer { get; private set; }
-
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
-
-    [SerializeField]
-    private TaskUIView[] _taskUIViews;
-
-    [SerializeField]
-    private Transform _downUITransform;
-
-    [SerializeField]
-    private FloatingTextView _floatingTextPrefab;
-
-    [SerializeField]
-    private Transform _floatingTextContainer;
-
-    [SerializeField]
-    public RectTransform BgTasksImage;
-
-    [field: SerializeField]
-    public Transform OpenedDoorEndGame;
-
-    [field: SerializeField]
-    public TMP_Text _mainTextUp { get; private set; }
-
-    [SerializeField]
-    private TMP_Text _currentMovesCountText;
-
-    [SerializeField]
-    private SpawnedForOneCharTextView _characterInfoTextHelper;
-
-    public Action OnCellPlaced;
-
     private LevelConfig _currentLevelConfig;
     private List<TaskInfoAndUI> _currentTasks;
-
     private Dictionary<ResourceType, int> _monoLinesCount;
-
     private Dictionary<CellType, int> _placedCellsCount;
-
     private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
-
     private int _currentMovesCount;
-
     private int _placedPiecesAmount;
-
-    private ObjectPool<FloatingTextView> _floatingTextsPool;
-
     private List<CellTypeInfo> _currentGuaranteedFirstCells;
     private GameData GameData { get; set; }
     private bool slimeIsExist;
 
+    public Action OnCellPlaced;
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
-        _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
     }
 
     public void Reset() { }
@@ -105,7 +60,7 @@ public class GameManager : BaseManager, IResetable {
         _placedPiecesAmount++;
 
         _currentMovesCount--;
-        _currentMovesCountText.text = _currentMovesCount.ToString();
+        GameUI.Instance.SetMovesCount(_currentMovesCount);
 
         if (MainGameConfig.resourceOnPlaceCell) {
             CollectResourcesOnPlace(pieceData);
@@ -265,7 +220,7 @@ public class GameManager : BaseManager, IResetable {
                 if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == resourcesForPlace[i].ResourceType)) {
-                        ShowFloatingText(
+                        GameUI.Instance.ShowFloatingText(
                             (" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType + ">" + " "),
                             new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)), 20, 1,
                             _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
@@ -275,7 +230,7 @@ public class GameManager : BaseManager, IResetable {
             }
 
             if (isShortAnimation)
-                ShowFloatingText((" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType + ">" + " "),
+                GameUI.Instance.ShowFloatingText((" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType + ">" + " "),
                     new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
         }
 
@@ -391,7 +346,7 @@ public class GameManager : BaseManager, IResetable {
         }
 
         if (unlockedCellText != "") {
-            ShowFloatingText(unlockedCellText + " is unlocked!", _floatingTextContainer.position, 40, 2.5f, Vector2.zero);
+            GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f, Vector2.zero);
         }
 
         DestroyAllMarkedCells();
@@ -458,7 +413,7 @@ public class GameManager : BaseManager, IResetable {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
 
-            ShowFloatingText("<sprite name=" + currentBonusResourceType + "> " + bonusResourcesOnDestroyLine, needPosition, 30, 1.5f,
+            GameUI.Instance.ShowFloatingText("<sprite name=" + currentBonusResourceType + "> " + bonusResourcesOnDestroyLine, needPosition, 30, 1.5f,
                 Vector2.zero);
         } else
             Debug.Log("not full same");
@@ -501,7 +456,7 @@ public class GameManager : BaseManager, IResetable {
                 if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == config.ResourcesForDestroy[i].ResourceType)) {
-                        ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
+                        GameUI.Instance.ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
                             new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)), 20, 1,
                             _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
                         isShortAnimation = false;
@@ -510,7 +465,7 @@ public class GameManager : BaseManager, IResetable {
             }
 
             if (isShortAnimation)
-                ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
+                GameUI.Instance.ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
                     new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
         }
 
@@ -609,7 +564,7 @@ public class GameManager : BaseManager, IResetable {
             if (!GameData.CollectedResources.TryAdd(needResource.ResourceType, needResource.ResourceCount))
                 GameData.CollectedResources[needResource.ResourceType] += needResource.ResourceCount;
             var canvasPosition = _mainCamera.WorldToScreenPoint(_cells[coord.x, coord.y].transform.position);
-            ShowFloatingText((" + <sprite name=" + needResource.ResourceType + ">" + " "), new Vector2(canvasPosition.x, canvasPosition.y + 15),
+            GameUI.Instance.ShowFloatingText((" + <sprite name=" + needResource.ResourceType + ">" + " "), new Vector2(canvasPosition.x, canvasPosition.y + 15),
                 20, 1, _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
         }
     }
@@ -640,31 +595,25 @@ public class GameManager : BaseManager, IResetable {
     }
 
     private void Win() {
-        _mainTextUp.text = "You win!";
-        foreach (var taskUI in _taskUIViews) {
-            taskUI.gameObject.SetActive(false);
-        }
-
+        GameUI.Instance.SetMainText("You win!");
+        GameUI.Instance.SetTasksActive(false);
         NextPiecesView.Instance.DestroyPieces();
-
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetWinState();
     }
 
     private void Lose() {
-        _mainTextUp.text = "You lose:(";
-        foreach (var taskUI in _taskUIViews) {
-            taskUI.gameObject.SetActive(false);
-        }
-
+        GameUI.Instance.SetMainText("You lose:(");
+        GameUI.Instance.SetTasksActive(false);
         NextPiecesView.Instance.DestroyPieces();
-
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
+        RemoveHealthAfterLose();
     }
 
-    public void RemoveHealthAfterLose() {
-        RemoveHealth();
+    private void RemoveHealthAfterLose() {
+        StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
+        StorageManager.GameDataMain.HealthCount--;
     }
 
     public void Restart() {
@@ -718,7 +667,7 @@ public class GameManager : BaseManager, IResetable {
         SetTaskDescriptions();
 
         _monoLinesCount = new Dictionary<ResourceType, int>();
-        StartCoroutine(_characterInfoTextHelper.StartSpawnText(_currentLevelConfig.GuideForLevelText));
+        GameUI.Instance.StartCharacterInfoTextCoroutine(_currentLevelConfig.GuideForLevelText);
         _currentGuaranteedFirstCells = new List<CellTypeInfo>();
         foreach (var cellInfo in _currentLevelConfig.CurrentGuaranteedFirstCells)
             _currentGuaranteedFirstCells.Add(cellInfo);
@@ -750,7 +699,7 @@ public class GameManager : BaseManager, IResetable {
             Debug.Log((100 +StorageManager.GameDataMain.CurMaxLevel*5) + " gold" + (5 + StorageManager.GameDataMain.CurMaxLevel/2) + " magicCubes");
 
         _currentMovesCount = _currentLevelConfig.MovesCount;
-        _currentMovesCountText.text = _currentMovesCount.ToString();
+        GameUI.Instance.SetMovesCount(_currentMovesCount);
         
         GenerateNewPieces();
         base.SetupGame();
@@ -806,7 +755,7 @@ public class GameManager : BaseManager, IResetable {
 
     private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task)
     {
-        var taskUI = _taskUIViews[i];
+        var taskUI = GameUI.Instance.TaskUIViews[i];
         taskUI.gameObject.SetActive(true);
         Debug.Log(task.NeedResource.ToString());
         _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
@@ -826,17 +775,15 @@ public class GameManager : BaseManager, IResetable {
 
         }
         taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
-        StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(task.Count.ToString()));
+        GameUI.Instance.StartCharacterInfoTextCoroutine(task.Count.ToString());
     }
 
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
-        var floatingText = _floatingTextsPool.Get();
-        floatingText.SetText(newPosition, needText, textSize, showTime, finalposition);
+        GameUI.Instance.ShowFloatingText(needText, newPosition, textSize, showTime, finalposition);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
-        needTextObject.gameObject.SetActive(false);
-        _floatingTextsPool.Release(needTextObject);
+        GameUI.Instance.ReleaseFloatingText(needTextObject);
     }
 
     public void GoToMeta() {
