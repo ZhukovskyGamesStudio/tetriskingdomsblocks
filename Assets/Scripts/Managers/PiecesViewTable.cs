@@ -15,6 +15,9 @@ public class PiecesViewTable : MonoBehaviour {
 
     [field: SerializeField]
     public CellsList CellsList { get; private set; }
+    
+    [field: SerializeField]
+    public FigureFormConfig[] FigureForms { get; protected set; }
 
     private void Awake() {
         Instance = this;
