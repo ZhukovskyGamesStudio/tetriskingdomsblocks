@@ -37,7 +37,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
         var xOffset = FieldRect.rect.width / FieldSize;
         for (int i = 0; i < FieldSize; i++) {
             for (int j = 0; j < FieldSize; j++) {
-                Vector2 butPos = new Vector2(xOffset * (i + 0.5f), yOffset * (j + 0.5f));
+                Vector2 butPos = new Vector2(yOffset * (j + 0.5f),xOffset * (i + 0.5f));
                 var button = Instantiate(FieldButtonPrefab, FieldRect);
                 button.transform.localPosition = butPos;
                 button.SetData(new Vector2Int(i, j), ChangeCellCellType);
@@ -61,6 +61,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     public void ClearField() {
         for (int i = 0; i < FieldSize; i++) {
             for (int j = 0; j < FieldSize; j++) {
+                _fieldCellTypes[i, j] = CellType.Empty;
                 _fieldButtons[i, j].SetType(CellType.Empty);
             }
         }

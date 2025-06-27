@@ -36,7 +36,7 @@ public class RedactorFieldButton : MonoBehaviour {
         OnChange();
     }
 
-    private Dictionary<CellType, Color> Colors = new Dictionary<CellType, Color>() {
+    public static readonly Dictionary<CellType, Color> Colors = new Dictionary<CellType, Color>() {
         { CellType.Empty, Color.white },
         { CellType.Box, Color.red },
         { CellType.Ice, Color.blue },

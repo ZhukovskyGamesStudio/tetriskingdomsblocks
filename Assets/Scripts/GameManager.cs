@@ -613,11 +613,13 @@ public class GameManager : BaseManager, IResetable {
         GenerateField();
         GenerateTask();
         StartGame();
-        if (StorageManager.GameDataMain.CurMaxLevel < 20)
-            _currentLevelConfig = MainGameConfig.Levels[StorageManager.GameDataMain.CurMaxLevel];
-        else
-            Debug.Log("meta");
 
+        if (StorageManager.GameDataMain.CurMaxLevel >= MainGameConfig.Levels.Length) {
+            StorageManager.GameDataMain.CurMaxLevel = 0;
+        }
+
+        _currentLevelConfig = MainGameConfig.Levels[StorageManager.GameDataMain.CurMaxLevel];
+        
         _placedPiecesAmount = 0;
         _field = new CellType[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
         _cells = new CellView[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
