@@ -12,6 +12,8 @@ public class SpawnedForOneCharTextView : MonoBehaviour
     {
         _needText.text = "";
     }
+    
+    public void SetText(string needText) => _needText.text = needText;
 
     public IEnumerator StartSpawnText(string needString)
     {
