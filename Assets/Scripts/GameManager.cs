@@ -619,8 +619,10 @@ public class GameManager : BaseManager, IResetable {
     }
 
     private void RemoveHealthAfterLose() {
-        StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
-        StorageManager.GameDataMain.HealthCount--;
+        if (!AdminManager.IsInfiniteHealth) {
+            StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
+            StorageManager.GameDataMain.HealthCount--;
+        }
     }
 
     public void Restart() {
