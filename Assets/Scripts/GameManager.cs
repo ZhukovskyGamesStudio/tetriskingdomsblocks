@@ -567,6 +567,7 @@ public class GameManager : BaseManager, IResetable {
                         }
                     }
 
+                    MineCellAnmation(_cells[coordAround.x, coordAround.y].transform);
                     break;
                 
                 case CellType.CrystalMine:
@@ -576,16 +577,29 @@ public class GameManager : BaseManager, IResetable {
                             CheckNeedResourceInTask(j, configCrystalMine, coordAround);
                         }
                     }
-
+                    MineCellAnmation(_cells[coordAround.x, coordAround.y].transform);
                     var randomPos = GetRandomEmptyCell();
                     if(randomPos == new Vector2(-1,-1))return;
-                    //spawn crystal on empty cell
                     var configCrystal = Instance.MainGameConfig.CellsConfigs.First(c =>
                         c.CellType == CellType.Crystal);
                     PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y));
+                    var crystalCellTransform = _cells[randomPos.x, randomPos.y].transform;
+                    crystalCellTransform.localScale = Vector3.zero;
+                    var _currentTween = DOTween.Sequence().Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
+                        .Append(crystalCellTransform.DOScale(Vector3.one, 0.1f));
+                    //crystal anim
                     break;
             }
         }
+    }
+
+    private void MineCellAnmation(Transform cell)
+    {
+        float startY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y;
+        var _currentTween = DOTween.Sequence().Append(cell.DOScale(Vector3.one*0.8f, 0.4f))
+            .Join(cell.DOMoveY(startY-0.2f, 0.4f))
+            .Append(cell.DOScale(Vector3.one, 0.15f))
+                .Join(cell.DOMoveY(startY, 0.15f));
     }
 
     private Vector2Int GetRandomEmptyCell()
