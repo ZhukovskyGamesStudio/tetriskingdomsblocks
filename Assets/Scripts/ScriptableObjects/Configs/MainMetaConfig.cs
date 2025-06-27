@@ -17,5 +17,5 @@ public class MainMetaConfig : ScriptableObject {
 
     public float CameraDragSpeed;
 
-    public float MinutesToHealtRecovery;
+    public float MinutesToHealthRecovery;
 }

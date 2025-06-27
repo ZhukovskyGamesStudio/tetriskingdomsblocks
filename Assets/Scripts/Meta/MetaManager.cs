@@ -15,41 +15,12 @@ public class MetaManager : BaseManager {
     [field: Header("Meta")]
     [field: SerializeField]
     public MainMetaConfig MainMetaConfig { get; private set; }
-    [SerializeField]
-    private TMP_Text _magicCubeCounterText;
-    [SerializeField]
-    private TMP_Text _goldCounterText;
-    [SerializeField]
-    private TMP_Text[] _resourcesCountText;
-
-    [SerializeField]
-    private TMP_Text _getPieceTimerText;
-
-    [SerializeField]
-    private TMP_Text _destroyPieceText;
-
-    [SerializeField]
-    private Transform _hummerContainer;
-
-    [SerializeField]
-    private Transform _hummerContainerStart;
-
-    [SerializeField]
-    private Transform _hummerContainerEnd;
-
-    [SerializeField]
-    private Transform _resourcesMarksContainer;
 
     [SerializeField]
     private LayerMask _pieceMask;
 
-    [SerializeField]
-    private ResourceMarkView resourceMarkViewPrefab;
-
     private List<ResourceMarkAndPieces> _connectedGroups = new List<ResourceMarkAndPieces>();
-    [field: SerializeField]
-    private int _minutesToHealthRecovery;
-    
+
     private PieceData _nextPiece = null;
     private int[,] _groupCellIndex;
     private int _minutesToGetPiece = 120;
@@ -60,20 +31,18 @@ public class MetaManager : BaseManager {
     private float timerNowTimeSecondCounter;
     private const int MAX_HEALTH_COUNT = 3;
     private DateTime _lastHealthRecoveryTime;
-   
-    
-    
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
-        _resourcesMarksPool = new ObjectPool<ResourceMarkView>(() => Instantiate(resourceMarkViewPrefab, _resourcesMarksContainer));
+        _resourcesMarksPool = new ObjectPool<ResourceMarkView>(() => Instantiate(MetaUI.Instance.ResourceMarkViewPrefab, MetaUI.Instance.ResourcesMarksContainer));
     }
 
     protected override void Update() {
         base.Update();
         UpdateTimerAndHealth();
         if (_hasInternetConnection && (_currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours < 2) {
-            _getPieceTimerText.text = TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece";
+            MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece");
         }
 
         if (Input.GetMouseButtonDown(0)) {
@@ -88,7 +57,7 @@ public class MetaManager : BaseManager {
         /*   if(_isDraggingCamera && !IsDraggingPiece)
                DragCamera();*/
     }
-  
+
     private void UpdateTimerAndHealth() {
         if (_hasInternetConnection) {
             timerNowTimeSecondCounter += Time.unscaledDeltaTime;
@@ -99,7 +68,7 @@ public class MetaManager : BaseManager {
 
             if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT) {
                 TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
-                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / _minutesToHealthRecovery);
+                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / MainMetaConfig.MinutesToHealthRecovery);
 
                 if (energyToAdd > 0) {
                     StorageManager.GameDataMain.HealthCount =
@@ -116,9 +85,9 @@ public class MetaManager : BaseManager {
             MetaUI.Instance.SetHealthTimerActive(false);
         }
     }
-    
+
     private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
-    
+
     private void UpdateHealthTimerUI() {
         if (_hasInternetConnection) {
             if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
@@ -325,20 +294,20 @@ public class MetaManager : BaseManager {
         // .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
         // .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
         if (_isDestroyPieceMode) {
-            _destroyPieceText.text = "Cancel";
+            MetaUI.Instance.SetDestroyPieceText("Cancel");
 
             _hummerSequence.Kill();
             _hummerSequence = DOTween.Sequence();
 
-            _hummerSequence.Append(_hummerContainer.transform.DOMove(_hummerContainerStart.position, 0.8f));
+            _hummerSequence.Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerStart.position, 0.8f));
 
-            Tween floatTween = _hummerContainer.DOMoveY(_hummerContainer.position.y + 1, 0.5f).SetLoops(1000, LoopType.Yoyo);
+            Tween floatTween = MetaUI.Instance.HummerContainer.DOMoveY(MetaUI.Instance.HummerContainer.position.y + 1, 0.5f).SetLoops(1000, LoopType.Yoyo);
 
             _hummerSequence.Append(floatTween);
         } else {
             _hummerSequence.Kill();
-            _destroyPieceText.text = "Destroy pieces mode";
-            _hummerSequence.Append(_hummerContainer.transform.DOMove(_hummerContainerEnd.position, 0.8f));
+            MetaUI.Instance.SetDestroyPieceText("Destroy pieces mode");
+            _hummerSequence.Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerEnd.position, 0.8f));
         }
     }
 
@@ -349,13 +318,13 @@ public class MetaManager : BaseManager {
         _hummerSequence = DOTween.Sequence();
 
         _hummerSequence
-            .Append(_hummerContainer.transform.DOMove(
+            .Append(MetaUI.Instance.HummerContainer.transform.DOMove(
                 new Vector3(cell.transform.position.x + 1, cell.transform.position.y, cell.transform.position.z), 0.8f))
-            .Append(_hummerContainer.transform.DORotate(new Vector3(0, 0, 90f), 0.2f))
-            .Append(_hummerContainer.transform.DORotate(new Vector3(0, 0, 0f), 0.2f))
-            .Append(_hummerContainer.transform.DOMove(_hummerContainerStart.position, 0.8f));
+            .Append(MetaUI.Instance.HummerContainer.transform.DORotate(new Vector3(0, 0, 90f), 0.2f))
+            .Append(MetaUI.Instance.HummerContainer.transform.DORotate(new Vector3(0, 0, 0f), 0.2f))
+            .Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerStart.position, 0.8f));
 
-        Tween floatTween = _hummerContainer.DOMoveY(_hummerContainer.position.y + 1, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        Tween floatTween = MetaUI.Instance.HummerContainer.DOMoveY(MetaUI.Instance.HummerContainer.position.y + 1, 0.5f).SetLoops(-1, LoopType.Yoyo);
         _hummerSequence.Append(floatTween);
     }
 
@@ -367,8 +336,7 @@ public class MetaManager : BaseManager {
     }
 
     public void UpdateResourcesCountUIText() {
-        for (int i = 0; i < _resourcesCountText.Length; i++)
-            _resourcesCountText[i].text = StorageManager.GameDataMain.resourcesCount[i].ToString();
+        for (int i = 0; i < StorageManager.GameDataMain.resourcesCount.Length; i++) MetaUI.Instance.SetResourceCount(i, StorageManager.GameDataMain.resourcesCount[i]);
     }
 
     public void GetPiece() {
@@ -427,8 +395,8 @@ public class MetaManager : BaseManager {
             }
         }
 
-        _magicCubeCounterText.text = StorageManager.GameDataMain.MagicCubesAmount.ToString();
-        _goldCounterText.text = StorageManager.GameDataMain.GoldAmount.ToString();
+        MetaUI.Instance.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
+        MetaUI.Instance.SetGold(StorageManager.GameDataMain.GoldAmount);
         //    Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
         UpdateResourcesCountUIText();
 
@@ -439,6 +407,7 @@ public class MetaManager : BaseManager {
         SetupHealth();
         base.SetupGame();
     }
+
     private void SetupHealth() {
         if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
@@ -456,18 +425,19 @@ public class MetaManager : BaseManager {
             }
         }
     }
+
     private void CalculateOfflineHealth() {
         if (!_hasInternetConnection) return;
         _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
         TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
-        int healthToAdd = (int)(offlineTime.TotalMinutes / _minutesToHealthRecovery);
+        int healthToAdd = (int)(offlineTime.TotalMinutes / MainMetaConfig.MinutesToHealthRecovery);
 
         if (healthToAdd > 0) {
             StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
         }
 
         if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
-            _lastHealthRecoveryTime.AddMinutes(healthToAdd * _minutesToHealthRecovery);
+            _lastHealthRecoveryTime.AddMinutes(healthToAdd * MainMetaConfig.MinutesToHealthRecovery);
     }
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
@@ -695,7 +665,7 @@ public class MetaManager : BaseManager {
             _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));
         }
     }
-    
+
     private void OnApplicationPause(bool pauseStatus) {
         if (pauseStatus) {
             SaveEnergyData();
@@ -705,24 +675,12 @@ public class MetaManager : BaseManager {
         }
     }
 
-    protected void RemoveHealth() {
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
-            _lastHealthRecoveryTime = _currentGameTime;
-            StorageManager.GameDataMain.LastHealthRecoveryTime = _lastHealthRecoveryTime.ToString(CultureInfo.InvariantCulture);
-            StorageManager.GameDataMain.HealthCount--;
-        }
-
-        MetaUI.Instance.SetHealthImageActive(StorageManager.GameDataMain.HealthCount, false);
-      
-        SaveEnergyData();
-    }
-    
-    public TimeSpan GetTimeUntilNextHealth() {
+    private TimeSpan GetTimeUntilNextHealth() {
         if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) return TimeSpan.Zero;
 
         TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
         double minutesPassed = timeSinceLastUpdate.TotalMinutes;
-        double minutesUntilNext = _minutesToHealthRecovery - (minutesPassed % _minutesToHealthRecovery);
+        double minutesUntilNext = MainMetaConfig.MinutesToHealthRecovery - (minutesPassed % MainMetaConfig.MinutesToHealthRecovery);
 
         return TimeSpan.FromMinutes(minutesUntilNext);
     }

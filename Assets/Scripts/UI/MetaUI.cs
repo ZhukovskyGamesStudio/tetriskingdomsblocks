@@ -10,6 +10,27 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private TMP_Text _healthTimerText;
 
+    [SerializeField]
+    private TMP_Text _magicCubeCounterText;
+    [SerializeField]
+    private TMP_Text _goldCounterText;
+    [SerializeField]
+    private TMP_Text[] _resourcesCountText;
+    [SerializeField]
+    private TMP_Text _getPieceTimerText;
+    [SerializeField]
+    private TMP_Text _destroyPieceText;
+    [SerializeField]
+    private Transform _hummerContainer;
+    [SerializeField]
+    private Transform _hummerContainerStart;
+    [SerializeField]
+    private Transform _hummerContainerEnd;
+    [SerializeField]
+    private Transform _resourcesMarksContainer;
+    [SerializeField]
+    private ResourceMarkView resourceMarkViewPrefab;
+
     private void Awake() {
         Instance = this;
     }
@@ -30,4 +51,35 @@ public class MetaUI : MonoBehaviour {
         if (_healthTimerText != null)
             _healthTimerText.gameObject.SetActive(active);
     }
+
+    public void SetMagicCubes(int value) {
+        if (_magicCubeCounterText != null)
+            _magicCubeCounterText.text = value.ToString();
+    }
+
+    public void SetGold(int value) {
+        if (_goldCounterText != null)
+            _goldCounterText.text = value.ToString();
+    }
+
+    public void SetResourceCount(int index, int value) {
+        if (_resourcesCountText != null && index >= 0 && index < _resourcesCountText.Length && _resourcesCountText[index] != null)
+            _resourcesCountText[index].text = value.ToString();
+    }
+
+    public void SetGetPieceTimer(string text) {
+        if (_getPieceTimerText != null)
+            _getPieceTimerText.text = text;
+    }
+
+    public void SetDestroyPieceText(string text) {
+        if (_destroyPieceText != null)
+            _destroyPieceText.text = text;
+    }
+
+    public Transform HummerContainer => _hummerContainer;
+    public Transform HummerContainerStart => _hummerContainerStart;
+    public Transform HummerContainerEnd => _hummerContainerEnd;
+    public Transform ResourcesMarksContainer => _resourcesMarksContainer;
+    public ResourceMarkView ResourceMarkViewPrefab => resourceMarkViewPrefab;
 }

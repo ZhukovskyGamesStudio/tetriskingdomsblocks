@@ -4463,6 +4463,19 @@ MonoBehaviour:
   - {fileID: 981081147443418688}
   - {fileID: 981081147443418687}
   _healthTimerText: {fileID: 1019071390}
+  _magicCubeCounterText: {fileID: 1490043921}
+  _goldCounterText: {fileID: 112108982}
+  _resourcesCountText:
+  - {fileID: 897756711}
+  - {fileID: 851150028}
+  - {fileID: 166677948}
+  _getPieceTimerText: {fileID: 305358913}
+  _destroyPieceText: {fileID: 318395517}
+  _hummerContainer: {fileID: 1161516303}
+  _hummerContainerStart: {fileID: 19773807}
+  _hummerContainerEnd: {fileID: 1801287232}
+  _resourcesMarksContainer: {fileID: 858362968}
+  resourceMarkViewPrefab: {fileID: 8757916192524139695, guid: 61bbdfbd9e1c08743a8eca4a42db9d36, type: 3}
 --- !u!1 &1229173762
 GameObject:
   m_ObjectHideFlags: 0
@@ -6114,7 +6127,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   resourceMarkViewPrefab: {fileID: 8757916192524139695, guid: 61bbdfbd9e1c08743a8eca4a42db9d36, type: 3}
-  _minutesToHealthRecovery: 5
 --- !u!4 &1910540965
 Transform:
   m_ObjectHideFlags: 0
