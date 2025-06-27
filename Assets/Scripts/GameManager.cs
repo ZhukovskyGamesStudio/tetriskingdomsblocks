@@ -20,7 +20,6 @@ public class GameManager : BaseManager, IResetable {
     private List<TaskInfoAndUI> _currentTasks;
     private Dictionary<ResourceType, int> _monoLinesCount;
     private Dictionary<CellType, int> _placedCellsCount;
-    private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
     private int _currentMovesCount;
     private int _placedPiecesAmount;
     private List<CellTypeInfo> _currentGuaranteedFirstCells;
@@ -105,7 +104,7 @@ public class GameManager : BaseManager, IResetable {
                  if (emptyCellsAround.Count > 0)
                  {
                      var randomEmptyCell = emptyCellsAround[Random.Range(0, emptyCellsAround.Count)];
-                     var config = Instance.MainGameConfig.CellsConfigs.First(c =>
+                     var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                          c.CellType ==CellType.Slime);
                      PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y));
                      //add in task
@@ -144,7 +143,7 @@ public class GameManager : BaseManager, IResetable {
         }
 
         foreach (var (randomEmptyCell, startPosition) in newSlimeCells) {
-            var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == CellType.Slime);
+            var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == CellType.Slime);
             PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y));
             SpawnNewSlimeAnimation(_cells[randomEmptyCell.x, randomEmptyCell.y].transform, startPosition,
                 _cells[randomEmptyCell.x, randomEmptyCell.y].transform.position);
@@ -188,7 +187,7 @@ public class GameManager : BaseManager, IResetable {
     }
 
     private void DestroyCellAfterPlacePiece(Vector2Int coord, CellType cellType) {
-        var configSlime = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+        var configSlime = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
         for (int j = 0; j < _currentTasks.Count; j++) {
             if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                 CheckNeedResourceInTask(j, configSlime, coord);
@@ -200,7 +199,7 @@ public class GameManager : BaseManager, IResetable {
 
     protected override void SpawnResourceFx(Vector2Int place, CellView go) {
         var cellType = _field[place.x, place.y];
-        var resourcesForPlace = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
+        var resourcesForPlace = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
         var onCanvasPosition = _mainCamera.WorldToScreenPoint(go.transform.position);
         for (int i = 0; i < resourcesForPlace.Length; i++) {
             bool isShortAnimation = true;
@@ -373,7 +372,7 @@ public class GameManager : BaseManager, IResetable {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
 
             var cellType = _field[(int)curPosition.x, (int)curPosition.y];
-            var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+            var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
             if (fullSameResourcesColumn) {
                 if (currentResourceType == ResourceType.None) {
                     if (config.ResourcesForDestroy.Length == 0)
@@ -409,8 +408,6 @@ public class GameManager : BaseManager, IResetable {
         } else
             Debug.Log("not full same");
 
-        TryCraftNewCells(ref unlockedCellText, cellTypesInLine);
-
         CheckResourceCountForTasks();
     }
 
@@ -419,7 +416,7 @@ public class GameManager : BaseManager, IResetable {
         ref ResourceType currentBonusResourceType) {
         Vector2Int curPosition = !isRow ? new Vector2Int(mainAxisCurrentValue, secondAxis) : new Vector2Int(secondAxis, mainAxisCurrentValue);
         var cellType = _field[(int)curPosition.x, (int)curPosition.y];
-        var config = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
         //string floatingText = "+ ";
 
         if (!cellTypesInLine.TryAdd(cellType, 1))
@@ -465,38 +462,13 @@ public class GameManager : BaseManager, IResetable {
         return bonusResourcesOnDestroyLine;
     }
 
-    private void TryCraftNewCells(ref string unlockedCellText, Dictionary<CellType, int> cellTypesInLine) {
-        for (int i = 0; i < _currentCraftedCells.Count; i++) {
-            bool addNewCell = false;
-            for (int j = 0; j < _currentCraftedCells[i].CellTypeToCraft.Length; j++) {
-                if (cellTypesInLine.ContainsKey(_currentCraftedCells[i].CellTypeToCraft[j])) {
-                    for (int x = 0; x < _currentCraftedCells[i].CellTypeToCraftSecond.Length; x++) {
-                        if (cellTypesInLine.ContainsKey(_currentCraftedCells[i].CellTypeToCraftSecond[x])) {
-                            _currentCellsToSpawn.Add(_currentCraftedCells[i].CellsToCraft);
-                            //     CheckUnlockedCellForTask(_currentCraftedCells[i].CellsToCraft);
-                            unlockedCellText += _currentCraftedCells[i].CellsToCraft.CellName + "\n";
-
-                            _currentCraftedCells.RemoveAt(i);
-                            i--;
-                            addNewCell = true;
-                            CalculateCellSpawnChances();
-                            break;
-                        }
-                    }
-
-                    if (addNewCell) break;
-                }
-            }
-        }
-    }
-
     protected override void CheckClosestCells(Vector2Int coord) {
         var cellsAround = FieldUtils.GetCellsAround(_field, coord);
         foreach (var coordAround in cellsAround) {
             var cellType = _field[coordAround.x, coordAround.y];
             switch (cellType) {
                 case CellType.Box:
-                    CellTypeInfo configBox = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    CellTypeInfo configBox = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
                     for (int j = 0; j < _currentTasks.Count; j++) {
                         if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                             CheckNeedResourceInTask(j, configBox, coordAround);
@@ -507,7 +479,7 @@ public class GameManager : BaseManager, IResetable {
 
                     break;
                 case CellType.GoldMine:
-                    CellTypeInfo configGoldMine = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    CellTypeInfo configGoldMine = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
                     for (int j = 0; j < _currentTasks.Count; j++) {
                         if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                             CheckNeedResourceInTask(j, configGoldMine, coordAround);
@@ -517,7 +489,7 @@ public class GameManager : BaseManager, IResetable {
                     break;
 
                 case CellType.CrystalMine:
-                    CellTypeInfo configCrystalMine = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType);
+                    CellTypeInfo configCrystalMine = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
                     for (int j = 0; j < _currentTasks.Count; j++) {
                         if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                             CheckNeedResourceInTask(j, configCrystalMine, coordAround);
@@ -526,7 +498,7 @@ public class GameManager : BaseManager, IResetable {
                     MineCellAnmation(_cells[coordAround.x, coordAround.y].transform);
                     var randomPos = GetRandomEmptyCell();
                     if(randomPos == new Vector2(-1,-1))return;
-                    var configCrystal = Instance.MainGameConfig.CellsConfigs.First(c =>
+                    var configCrystal = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                         c.CellType == CellType.Crystal);
                     PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y));
                     var crystalCellTransform = _cells[randomPos.x, randomPos.y].transform;
@@ -631,7 +603,7 @@ public class GameManager : BaseManager, IResetable {
         float lastChance = 0;
         CellsChanceToSpawn = new float[_currentCellsToSpawn.Count];
         for (int i = 0; i < _currentCellsToSpawn.Count; i++) {
-            lastChance += _currentCellsToSpawn[i].ChanceToSpawn;
+            lastChance += PiecesViewTable.Instance.CellsList.CellsConfigs.First(c=>c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
             CellsChanceToSpawn[i] = lastChance;
         }
     }
@@ -650,15 +622,11 @@ public class GameManager : BaseManager, IResetable {
         _field = new CellType[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
         _cells = new CellView[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
 
-        _currentCraftedCells = new List<CraftingCellInfo>();
-        foreach (var craftedCell in MainGameConfig.CellsToCraft)
-            _currentCraftedCells.Add(craftedCell);
-
         if (_currentLevelConfig.TutorialObject != null)
             Instantiate(_currentLevelConfig.TutorialObject);
 
         var startCells = _currentLevelConfig.CellTypesTableConfig;
-        _currentCellsToSpawn = new List<CellTypeInfo>();
+        _currentCellsToSpawn = new List<CellType>();
         for (int i = 0; i < startCells.CellsToSpawn.Length; i++)
             _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
         CalculateCellSpawnChances();
@@ -681,7 +649,7 @@ public class GameManager : BaseManager, IResetable {
             for (int i = 0; i < _field.GetLength(0); i++) {
                 for (int j = 0; j < _field.GetLength(1); j++) {
                     if (_currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty) {
-                        var config = Instance.MainGameConfig.CellsConfigs.First(c =>
+                        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                             c.CellType == _currentLevelConfig.StartFieldConfig.GetCell(i, j));
                         if (!_isSlimeExist && config.CellType == CellType.Slime)
                             _isSlimeExist = true;

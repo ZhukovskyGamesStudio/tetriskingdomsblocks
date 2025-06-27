@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -16,7 +14,7 @@ public class BaseManager : MonoBehaviour {
     private AudioQueueMixer _collectedResourceAudioMixer;
 
     [HideInInspector]
-    public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
+    public List<CellType> _currentCellsToSpawn { get; protected set; }
 
     public float[] CellsChanceToSpawn { get; protected set; }
     public float[] FiguresChanceToSpawn { get; protected set; }

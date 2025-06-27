@@ -7,7 +7,7 @@ public class MainMetaConfig : ScriptableObject {
     [Min(1)]
     public float CollectWithAdsMultiplier { get; private set; } = 2f;
 
-    public List<CellTypeInfo> CellsConfigs;
+    public List<CellType> CellsConfigs;
         
     public int FieldSize;
     
