@@ -41,6 +41,34 @@ public class SameCellsGroupCalculater
 
         return (cellsIndex,result);
     }
+    
+    public static List<List<(int row, int col)>> FindConnectedCellTypeGroupsWithoutCellIndexes(CellType[,] grid, CellType needCellTypeGroups)
+    {
+        var result = new List<List<(int, int)>>();
+        if (grid == null || grid.Length == 0) return result;
+
+        int rows = grid.GetLength(0);
+        int cols = grid.GetLength(1);
+        bool[,] visited = new bool[rows, cols];
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                if (!visited[i, j] && grid[i, j] == needCellTypeGroups) 
+                {
+                    CellType cellType = grid[i, j];
+                    var resourceType = GameManager.Instance.MainGameConfig.CellsConfigs.First
+                        (c => c.CellType == cellType).ResourcesForDestroy[0].ResourceType;
+                    var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
+
+                    result.Add(group);
+                }
+            }
+        }
+
+        return result;
+    }
 
     private static List<(int row, int col)> BFSWithCoordinates(CellType[,] grid, bool[,] visited, int startRow, int startCol, ResourceType targetType)
     {
@@ -62,7 +90,8 @@ public class SameCellsGroupCalculater
                     newCol >= 0 && newCol < grid.GetLength(1) && 
                     !visited[newRow, newCol] && grid[newRow, newCol] != CellType.Empty)
                 {
-                    var resourceType =MetaManager.Instance.MainMetaConfig.CellsConfigs.First
+                    var needCellConfig = MetaManager.Instance != null ? MetaManager.Instance.MainMetaConfig.CellsConfigs : GameManager.Instance.MainGameConfig.CellsConfigs;
+                    var resourceType =needCellConfig.First
                         (c => c.CellType == grid[newRow, newCol]).ResourcesForDestroy;//make afk collect info in config
                     if(resourceType.Length == 0 || resourceType[0].ResourceType != targetType)continue;
                     visited[newRow, newCol] = true;

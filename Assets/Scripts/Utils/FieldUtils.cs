@@ -14,7 +14,8 @@ public static class FieldUtils {
     private static readonly List<CellType> CanPlaceOnCells = new List<CellType>() {
         CellType.Empty,
         CellType.Crystal,
-        CellType.Ice
+        CellType.Ice,
+        CellType.Slime
     };
 
     private static readonly List<CellType> CantBecomeRowCells = new List<CellType>() {
@@ -22,6 +23,7 @@ public static class FieldUtils {
         CellType.Ice,
         CellType.Box,
         CellType.Crystal,
+        CellType.Slime
     };
     
     private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {

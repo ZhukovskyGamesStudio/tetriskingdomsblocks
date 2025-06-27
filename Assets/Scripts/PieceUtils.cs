@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
@@ -63,15 +64,15 @@ public static class PieceUtils {
         return null;
     }
 
-    public static bool CanPlacePiece(CellType[,] field, bool[,] piece) {
+    public static bool CanPlacePiece(CellType[,] field, PieceData piece) {
         int fieldWidth = field.GetLength(0);
         int fieldHeight = field.GetLength(1);
-        int pieceWidth = piece.GetLength(0);
-        int pieceHeight = piece.GetLength(1);
+        int pieceWidth = piece.Cells.GetLength(0);
+        int pieceHeight = piece.Cells.GetLength(1);
 
         for (int x = 0; x <= fieldWidth - pieceWidth; x++) {
             for (int y = 0; y <= fieldHeight - pieceHeight; y++) {
-                if (CanPlaceAt(field, piece, x, y)) {
+                if (FieldUtils.CanPlacePiece(field, piece,new Vector2Int(x,y) )) {
                     return true;
                 }
             }
