@@ -18,6 +18,7 @@ public class GameManager : BaseManager, IResetable {
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
     private LevelConfig _currentLevelConfig;
     private List<TaskInfoAndUI> _currentTasks;
+    private List <ResourceType> _resourceTypesForTasks = new List<ResourceType>();
     private Dictionary<ResourceType, int> _monoLinesCount;
     private Dictionary<CellType, int> _placedCellsCount;
     private List<CraftingCellInfo> _currentCraftedCells = new List<CraftingCellInfo>();
@@ -166,6 +167,10 @@ public class GameManager : BaseManager, IResetable {
         var _currentTween = DOTween.Sequence().Append(cellContainer.DOScale(Vector3.one, 0.5f)).Join(cellContainer.DOMove(endPosition, 0.5f));
     }
 
+    private bool TaskHasThisResource(ResourceType resourceType)
+    {
+        return _resourceTypesForTasks.Contains(resourceType);
+    }
     protected override void CheckCellTypesBeforePlacePiece(Vector2Int coord) {
         base.CheckCellTypesBeforePlacePiece(coord);
         var cellType = _field[coord.x, coord.y];
@@ -203,24 +208,19 @@ public class GameManager : BaseManager, IResetable {
         var resourcesForPlace = Instance.MainGameConfig.CellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
         var onCanvasPosition = _mainCamera.WorldToScreenPoint(go.transform.position);
         for (int i = 0; i < resourcesForPlace.Length; i++) {
-            bool isShortAnimation = true;
             for (int j = 0; j < _currentTasks.Count; j++) {
-                if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
+                if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == resourcesForPlace[i].ResourceType)) {
                         GameUI.Instance.ShowFloatingText(
                             (" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType + ">" + " "),
                             new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)), 20, 1,
                             _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
-                        isShortAnimation = false;
+                        return;
                     }
                 }
             }
 
-            if (isShortAnimation)
-                GameUI.Instance.ShowFloatingText(
-                    (" +" + resourcesForPlace[i].ResourceCount + " <sprite name=" + resourcesForPlace[i].ResourceType + ">" + " "),
-                    new Vector2(onCanvasPosition.x, onCanvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
         }
 
         if (!_placedCellsCount.TryAdd(cellType, 1))
@@ -264,6 +264,7 @@ public class GameManager : BaseManager, IResetable {
                     _currentTasks[i].TaskUIView.TaskInfoTextHelper
                         .SetText(remainingResourceCount.ToString());
                     if (_currentTasks[i].needCount <= GameData.CollectedResources[maxResourceType]) {
+                        _resourceTypesForTasks.Remove(_currentTasks[i].TaskInfo.NeedResource);
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
                         break;
@@ -273,6 +274,7 @@ public class GameManager : BaseManager, IResetable {
                     var remainingResourceCount = Math.Max(_currentTasks[i].needCount - resourceCount, 0) ;
                     _currentTasks[i].TaskUIView.TaskInfoTextHelper.SetText(remainingResourceCount.ToString());
                     if (resourceCount >= _currentTasks[i].needCount) {
+                        _resourceTypesForTasks.Remove(_currentTasks[i].TaskInfo.NeedResource);
                         _currentTasks[i].TaskUIView.CompleteTask();
                         _currentTasks.RemoveAt(i);
                     }
@@ -445,23 +447,17 @@ public class GameManager : BaseManager, IResetable {
                 currentBonusResourceType = config.ResourcesForDestroy[i].ResourceType;
             }
 
-            bool isShortAnimation = true;
             for (int j = 0; j < _currentTasks.Count; j++) {
-                if (isShortAnimation && _currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
+                if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     if (_currentTasks[j].TaskInfo.NeedResource == ResourceType.None ||
                         (_currentTasks[j].TaskInfo.NeedResource == config.ResourcesForDestroy[i].ResourceType)) {
                         GameUI.Instance.ShowFloatingText(
                             (" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
                             new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)), 20, 1,
                             _currentTasks[j].TaskUIView.CurrentTaskInfo.transform.position);
-                        isShortAnimation = false;
                     }
                 }
             }
-
-            if (isShortAnimation)
-                GameUI.Instance.ShowFloatingText((" +" + count + " <sprite name=" + config.ResourcesForDestroy[i].ResourceType + ">" + " "),
-                    new Vector2(canvasPosition.x, canvasPosition.y + (i * 15)), 20, 1, Vector2.zero);
         }
 
         _cellsToDestroy.Add(curPosition);
@@ -792,6 +788,7 @@ public class GameManager : BaseManager, IResetable {
         taskUI.gameObject.SetActive(true);
         Debug.Log(task.NeedResource.ToString());
         _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
+        _resourceTypesForTasks.Add(task.NeedResource);
         string needSpiteName = "";
         switch (task.TaskType) {
             case TaskInfo.TaskType.getResource:
@@ -809,10 +806,6 @@ public class GameManager : BaseManager, IResetable {
         taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
         taskUI.TaskInfoTextHelper.SetText(task.Count.ToString());
         //GameUI.Instance.StartCharacterInfoTextCoroutine();
-    }
-
-    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
-        GameUI.Instance.ShowFloatingText(needText, newPosition, textSize, showTime, finalposition);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
