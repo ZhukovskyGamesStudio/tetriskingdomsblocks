@@ -50,7 +50,7 @@ public class GoalView : MonoBehaviour {
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2f, 0.07f))
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.25f, 0.1f))
             .Join(_winState.DOAnchorPosY(_winState.anchoredPosition.y - 500, 0.6f))
-            .Append(GameManager.Instance.CameraContainer.DOMoveZ(GameManager.Instance.CameraContainer.position.z + 5, 3f));
+            .Append(GameFieldManager.Instance.CameraContainer.DOMoveZ(GameFieldManager.Instance.CameraContainer.position.z + 5, 3f));
     }
 
     private void LoseAnimation() {
@@ -60,11 +60,11 @@ public class GoalView : MonoBehaviour {
     }
 
     public void StartAgain() {
-        GameManager.Instance.Restart();
+        MainManager.Instance.Restart();
     }
 
     public void ExitGame() {
-        GameManager.Instance.GoToMeta();
+        GameFieldManager.Instance.GoToMeta();
     }
 
     private void OnDestroy() {

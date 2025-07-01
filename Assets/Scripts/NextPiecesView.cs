@@ -95,6 +95,21 @@ public class NextPiecesView : MonoBehaviour, IResetable {
                 _spawnParticles[i].Play();
             }
         }
+
+        
+    }
+
+    public void DestroyAdditionalPiece()
+    {
+        if (GameFieldManager.Instance._additionalPiecePrefab != null)
+                {
+                    DestroyCellsAnimation(GameFieldManager.Instance._additionalPieceContainer);
+                    if (GameFieldManager.Instance._additionalPieceContainer.childCount != 0)
+                    {
+                        _spawnParticles[_piecesContainers.Count].gameObject.SetActive(true);
+                        _spawnParticles[_piecesContainers.Count].Play();
+                    }
+                }
     }
 
     private void DestroyCellsAnimation(Transform cellsContainer)

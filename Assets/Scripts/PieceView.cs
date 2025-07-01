@@ -10,14 +10,13 @@ public class PieceView : MonoBehaviour {
     [field: SerializeField]
     private Transform _markedCellsContainer;
 
-    [field: SerializeField]
-    private Transform _cellsContainer;
+    public Transform _cellsContainer;
 
     public static Vector2Int CurrentPieceMaxSize;
     
     private Vector3 _initialScale, _initialMarkedScale;
     private Vector2Int _currentCoord;
-    private PieceData _data;
+    public PieceData _data { get; private set; }
     private Vector3 _startingPosition;
     private bool _isDragging;
 
@@ -30,7 +29,7 @@ public class PieceView : MonoBehaviour {
         _startingPosition = _cellsContainer.position;
         var width = _data.Cells.GetLength(0);
         var height = _data.Cells.GetLength(1);
-        var shift = CalculateShift();
+        var shift = DragManager.CalculateShift(_data);
         int maxSize = Mathf.Max(width, height);
         initialScale *= 1f / Mathf.Sqrt(maxSize);
 
@@ -81,13 +80,14 @@ public class PieceView : MonoBehaviour {
 
     private void Update() {
         if (_isDragging) {
-            OnDrag();
+            DragManager.OnDragPiece(ref _currentCoord, ref _finalPos, _data, _markedCellsContainer);
         }
 
-        LerpToFinal();
+        if (!_isLerpingDisabled)
+            DragManager.LerpToFinal(_cellsContainer, _finalPos, _finalScale);
     }
 
-    private void LerpToFinal() {
+   /* private void LerpToFinal() {
         if (_isLerpingDisabled) {
             return;
         }
@@ -96,29 +96,30 @@ public class PieceView : MonoBehaviour {
             Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
         _cellsContainer.localScale = Vector3.Lerp(_cellsContainer.localScale, _finalScale,
             Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
-    }
+    }*/
 
-    private Vector3 CalculateShift() {
+  /*  private Vector3 CalculateShift() {
         var width = _data.Cells.GetLength(0);
         var height = _data.Cells.GetLength(1);
 
         return new Vector3(width / 2f, 0, height / 2f) * -1;
-    }
+    }*/
 
     private void OnStartDrag() {
-        if (AdminManager.Instance.AdminToggle.isOn) {
+        DragManager.OnStartDrag(ref _isDragging,_data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer);
+       /* if (AdminManager.Instance.AdminToggle.isOn) {
             return;
         }
 
         _isDragging = true;
         _finalScale = Vector3.one;
         _markedCellsContainer.localScale = Vector3.one;
-        BaseManager.PieceVerticalShift = Mathf.Abs(CalculateShift().z);
-        CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
+        BaseManager.PieceVerticalShift = Mathf.Abs(DragManager.CalculateShift(_data).z);
+        CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));*/
     }
 
     private void OnDrag() {
-        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
+        /*BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
         var targetMousePos = cellManager.ShiftedDragInputPos();
 
         targetMousePos.y = ConfigsManager.Instance.DragConfig.HeightUnderField;
@@ -132,11 +133,16 @@ public class PieceView : MonoBehaviour {
         }
 
         _markedCellsContainer.gameObject.SetActive(canPlace);
-        _finalPos = targetMousePos;
+        _finalPos = targetMousePos;*/
+        
+        DragManager.OnDragPiece(ref _currentCoord, ref _finalPos, _data, _markedCellsContainer);
     }
 
     private void OnDrop() {
-        if (!_isDragging) {
+        DragManager.OnDrop(ref _isDragging, ref _isLerpingDisabled, _data, ref _markedCellsContainer,ref _finalScale, ref _finalPos,
+            _currentCoord,_initialScale, _initialMarkedScale, _startingPosition, this);
+       
+       /* if (!_isDragging) {
             return;
         }
 
@@ -152,10 +158,10 @@ public class PieceView : MonoBehaviour {
             _finalScale = _initialScale;
             _markedCellsContainer.localScale = _initialMarkedScale;
             _markedCellsContainer.gameObject.SetActive(false);
-        }
+        } */
     }
 
-    private async UniTask PlacePieceAsync(BaseManager cellManager) {
+    public async UniTask PlacePieceAsync(FieldManager cellManager) {
         await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, ConfigsManager.Instance.DragConfig.DropPieceAnimationDuration))
             .AsyncWaitForCompletion();
         cellManager.PlacePiece(_data, _currentCoord, _cells, _cellsContainer);
@@ -163,7 +169,7 @@ public class PieceView : MonoBehaviour {
     }
 
     private void OnMouseDown() {
-        OnStartDrag();
+        DragManager.OnStartDrag(ref _isDragging,_data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer);
     }
 
     private void OnMouseUp() {

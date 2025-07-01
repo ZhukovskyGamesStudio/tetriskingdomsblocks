@@ -6111,22 +6111,9 @@ MonoBehaviour:
   networkTimeAPI: {fileID: 1910540967}
   _mmfPlayer: {fileID: 1984839918}
   <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
-  _magicCubeCounterText: {fileID: 1490043921}
-  _goldCounterText: {fileID: 112108982}
-  _resourcesCountText:
-  - {fileID: 897756711}
-  - {fileID: 851150028}
-  - {fileID: 166677948}
-  _getPieceTimerText: {fileID: 305358913}
-  _destroyPieceText: {fileID: 318395517}
-  _hummerContainer: {fileID: 1161516303}
-  _hummerContainerStart: {fileID: 19773807}
-  _hummerContainerEnd: {fileID: 1801287232}
-  _resourcesMarksContainer: {fileID: 858362968}
   _pieceMask:
     serializedVersion: 2
     m_Bits: 64
-  resourceMarkViewPrefab: {fileID: 8757916192524139695, guid: 61bbdfbd9e1c08743a8eca4a42db9d36, type: 3}
 --- !u!4 &1910540965
 Transform:
   m_ObjectHideFlags: 0
@@ -6519,6 +6506,52 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.68976295, y: 2.0196059, z: 0.77144015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1992675287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992675289}
+  - component: {fileID: 1992675288}
+  m_Layer: 0
+  m_Name: MainManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1992675288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992675287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a392311d36a13542972078528554ef4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <_mainConfig>k__BackingField: {fileID: 11400000, guid: 6fa2064b201c7e54bb0749d709541683, type: 2}
+  networkTimeAPI: {fileID: 1910540967}
+--- !u!4 &1992675289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992675287}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.104247324, y: -12.952025, z: 24.954586}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8044,3 +8077,4 @@ SceneRoots:
   - {fileID: 1829324579}
   - {fileID: 1984839919}
   - {fileID: 1111628672}
+  - {fileID: 1992675289}

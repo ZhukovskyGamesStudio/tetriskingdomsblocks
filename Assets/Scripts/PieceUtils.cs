@@ -15,9 +15,9 @@ public static class PieceUtils {
     }
 
     public static PieceData GetNewPiece(CellTypeInfo guaranteed) {
-        bool isMetaGame = GameManager.Instance == null;
-        var cellsToSpawn = !isMetaGame ? GameManager.Instance._currentCellsToSpawn : MetaManager.Instance._currentCellsToSpawn;
-        var chancesToSpawn = !isMetaGame ? GameManager.Instance.CellsChanceToSpawn : MetaManager.Instance.CellsChanceToSpawn;
+        bool isMetaGame = GameFieldManager.Instance == null;
+        var cellsToSpawn = !isMetaGame ? GameFieldManager.Instance._currentCellsToSpawn : MetaFieldManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn = !isMetaGame ? GameFieldManager.Instance.CellsChanceToSpawn : MetaFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         for (int i = 0; i < chancesToSpawn.Length; i++) {
@@ -52,10 +52,10 @@ public static class PieceUtils {
     }
 
     public static bool[,] GetRandomFigure() {
-        bool isMetaGame = GameManager.Instance == null;
-        var chancesToSpawn = isMetaGame ? MetaManager.Instance.FiguresChanceToSpawn : GameManager.Instance.FiguresChanceToSpawn;
+        bool isMetaGame = GameFieldManager.Instance == null;
+        var chancesToSpawn = isMetaGame ? MetaFieldManager.Instance.FiguresChanceToSpawn : GameFieldManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        var figureForms = isMetaGame ? MetaManager.Instance.FigureFormsConfig : GameManager.Instance.FigureFormsConfig;
+        var figureForms = isMetaGame ? MetaFieldManager.Instance.FigureFormsConfig : GameFieldManager.Instance.FigureFormsConfig;
         for (int i = 0; i < chancesToSpawn.Length; i++) {
             if (chancesToSpawn[i] > chance)
                 return TetrisPieces.PieceShapesTable[figureForms[i].FormName];

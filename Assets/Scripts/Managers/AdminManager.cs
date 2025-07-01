@@ -27,20 +27,20 @@ public class AdminManager : MonoBehaviour
         for (int i = 0; i < 3; i++) {
             StorageManager.GameDataMain.resourcesCount[i] += 1000;
         }
-        MetaManager.Instance.UpdateResourcesCountUIText();
+        MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }
     
     public void RestoreAllHPForAdminButton() => StorageManager.GameDataMain.HealthCount = 3;
     public void GenerateNewPiecesForButton()
     {
-        if(GameManager.Instance != null)
-        GameManager.Instance.GenerateNewPieces();
+        if(GameFieldManager.Instance != null)
+        GameFieldManager.Instance.GenerateNewPieces();
     } 
     
     public void RestartGame()
     {
-        if(GameManager.Instance != null)
-            GameManager.Instance.Restart();
+        if(GameFieldManager.Instance != null)
+            MainManager.Instance.Restart();
     } 
 
     private void SetupLevelButtons()

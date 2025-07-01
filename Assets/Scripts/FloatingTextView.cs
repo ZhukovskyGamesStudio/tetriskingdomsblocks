@@ -27,7 +27,7 @@ public class FloatingTextView : MonoBehaviour
             Invoke("HideText", showTime);
     }
 
-    public void HideText() => GameManager.Instance.ReleaseFloatingText(this);
+    public void HideText() => GameFieldManager.Instance.ReleaseFloatingText(this);
 
 
     public void MoveUpText(float showTime, Vector2 finalPosition)
@@ -38,7 +38,7 @@ public class FloatingTextView : MonoBehaviour
             _currentTween = DOTween.Sequence().Append(transform.DOMoveY(transform.position.y + 150, showTime))
                 .Join(transform.DOScale(transform.localScale * 1.5f, showTime - 0.2f)).Append(transform.DOMove(finalPosition, rnd))
                 .Join(transform.DOScale(Vector3.zero, rnd))
-                .OnComplete(() => { GameManager.Instance.PlayCollectedSound(); });
+                .OnComplete(() => { GameFieldManager.Instance.PlayCollectedSound(); });
 
         }     else
             _currentTween = DOTween.Sequence()

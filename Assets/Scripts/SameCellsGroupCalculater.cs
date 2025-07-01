@@ -28,7 +28,7 @@ public class SameCellsGroupCalculater
                 if (!visited[i, j] && grid[i, j] != CellType.Empty) 
                 {
                     CellType cellType = grid[i, j];
-                    var resourceType = MetaManager.Instance.MainMetaConfig.CellsConfigs.First
+                    var resourceType = MetaFieldManager.Instance.MainMetaConfig.CellsConfigs.First
                         (c => c.CellType == cellType).ResourcesForDestroy[0].ResourceType;//make afk collect info in config
                     var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
 
@@ -58,7 +58,7 @@ public class SameCellsGroupCalculater
                 if (!visited[i, j] && grid[i, j] == needCellTypeGroups) 
                 {
                     CellType cellType = grid[i, j];
-                    var resourceType = GameManager.Instance.MainGameConfig.CellsConfigs.First
+                    var resourceType = GameFieldManager.Instance.MainGameConfig.CellsConfigs.First
                         (c => c.CellType == cellType).ResourcesForDestroy[0].ResourceType;
                     var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
 
@@ -90,7 +90,7 @@ public class SameCellsGroupCalculater
                     newCol >= 0 && newCol < grid.GetLength(1) && 
                     !visited[newRow, newCol] && grid[newRow, newCol] != CellType.Empty)
                 {
-                    var needCellConfig = MetaManager.Instance != null ? MetaManager.Instance.MainMetaConfig.CellsConfigs : GameManager.Instance.MainGameConfig.CellsConfigs;
+                    var needCellConfig = MetaFieldManager.Instance != null ? MetaFieldManager.Instance.MainMetaConfig.CellsConfigs : GameFieldManager.Instance.MainGameConfig.CellsConfigs;
                     var resourceType =needCellConfig.First
                         (c => c.CellType == grid[newRow, newCol]).ResourcesForDestroy;//make afk collect info in config
                     if(resourceType.Length == 0 || resourceType[0].ResourceType != targetType)continue;

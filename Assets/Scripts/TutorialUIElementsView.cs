@@ -11,7 +11,7 @@ public class TutorialUIElementsView : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameManager.Instance.OnCellPlaced += DestroyTutorial;
+        GameFieldManager.Instance.OnCellPlaced += DestroyTutorial;
         foreach (var hole in _holeImages) {
             hole.SetParent( GameUI.Instance.HolesForBgContainer);
         }
@@ -70,6 +70,6 @@ public class TutorialUIElementsView : MonoBehaviour
         Destroy(_fingerImage.gameObject);
         
         Destroy(gameObject);
-        GameManager.Instance.OnCellPlaced -= DestroyTutorial;
+        GameFieldManager.Instance.OnCellPlaced -= DestroyTutorial;
     }
 }
