@@ -707,16 +707,16 @@ public class GameFieldManager : FieldManager, IResetable {
             StorageManager.GameDataMain.CurMaxLevel = 0;
         }
 
-        _currentLevelConfig = MainGameConfig.Levels[StorageManager.GameDataMain.CurMaxLevel];
+       // MainManager.Instance._currentLevelConfig = MainGameConfig.Levels[StorageManager.GameDataMain.CurMaxLevel];
         
         _placedPiecesAmount = 0;
         _field = new CellType[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
         _cells = new CellView[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
 
-        if (_currentLevelConfig.TutorialObject != null)
-            Instantiate(_currentLevelConfig.TutorialObject);
+        if (MainManager.Instance._currentLevelConfig.TutorialObject != null)
+            Instantiate(MainManager.Instance._currentLevelConfig.TutorialObject);
 
-        var startCells = _currentLevelConfig.CellTypesTableConfig;
+        var startCells = MainManager.Instance._currentLevelConfig.CellTypesTableConfig;
         _currentCellsToSpawn = new List<CellType>();
         for (int i = 0; i < startCells.CellsToSpawn.Length; i++)
             _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
@@ -739,9 +739,9 @@ public class GameFieldManager : FieldManager, IResetable {
             Dictionary<ResourceType, int> startCellsResourcesCount = new Dictionary<ResourceType, int>();
             for (int i = 0; i < _field.GetLength(0); i++) {
                 for (int j = 0; j < _field.GetLength(1); j++) {
-                    if (_currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty) {
+                    if (MainManager.Instance._currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty) {
                         var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
-                            c.CellType == _currentLevelConfig.StartFieldConfig.GetCell(i, j));
+                            c.CellType == MainManager.Instance._currentLevelConfig.StartFieldConfig.GetCell(i, j));
                         if (!_isSlimeExist && config.CellType == CellType.Slime)
                             _isSlimeExist = true;
                         PlaceOneSizePiece(config, new Vector2Int(i, j));

@@ -6,7 +6,7 @@ using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class BaseManager : MonoBehaviour {
+public class FieldManager : MonoBehaviour {
 
     [HideInInspector]
     public List<CellType> _currentCellsToSpawn { get; protected set; }
