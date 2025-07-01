@@ -6,7 +6,7 @@ using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class BaseManager : MonoBehaviour {
+public class FieldManager : MonoBehaviour {
 
     [HideInInspector]
     public List<CellType> _currentCellsToSpawn { get; protected set; }
@@ -21,6 +21,9 @@ public class BaseManager : MonoBehaviour {
 
     [SerializeField]
     protected LayerMask _targetMasks;
+    
+    [SerializeField]
+    private LayerMask _additionalContainerMask;
 
     [SerializeField]
     private ParticleSystem _placeCellEffect;
@@ -34,7 +37,7 @@ public class BaseManager : MonoBehaviour {
     public static float PieceVerticalShift;
 
     protected bool _hasInternetConnection;
-    protected DateTime _currentGameTime;
+  //  protected DateTime _currentGameTime;
 
     protected CellType[,] _field;
     protected CellView[,] _cells;
@@ -42,7 +45,8 @@ public class BaseManager : MonoBehaviour {
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
 
-    private InputRaycaster _inputRaycaster;
+    protected InputRaycaster _inputRaycaster;
+   // protected LevelConfig _currentLevelConfig;
 
     private Tween _currentTween;
     [Header("Audio")]
@@ -51,11 +55,11 @@ public class BaseManager : MonoBehaviour {
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
-        _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks);
+       _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
     }
 
     protected virtual void Start() {
-        _currentGameTime = DateTime.Now;
+     /*   _currentGameTime = DateTime.Now;
         networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
@@ -69,14 +73,14 @@ public class BaseManager : MonoBehaviour {
             // _hasInternetConnection = false;
         });
 
-        SetupGame();
-        _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
-        Application.targetFrameRate = 144;
+        SetupGame();*/
+       _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
+       // Application.targetFrameRate = 144;
     }
 
     protected virtual void Update() { }
 
-    protected void CalculateFiguresSpawnChances() {
+   protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
         FiguresChanceToSpawn = new float[PiecesViewTable.Instance.FigureForms.Length];
         for (int i = 0; i < PiecesViewTable.Instance.FigureForms.Length; i++) {
@@ -198,7 +202,7 @@ public class BaseManager : MonoBehaviour {
         SaveEnergyData();
     }
 
-    protected virtual void SaveEnergyData() {
+    public virtual void SaveEnergyData() {
         StorageManager.SaveGame();
     }
 
@@ -218,7 +222,7 @@ public class BaseManager : MonoBehaviour {
         _placeCellEffectsPool.Release(particles);
     }
 
-    protected virtual void SetupGame() { }
+    public virtual void SetupGame() { }
 
     public void PlayCollectedSound() {
         _gameAudio.ResourceCollected.PlayNext();

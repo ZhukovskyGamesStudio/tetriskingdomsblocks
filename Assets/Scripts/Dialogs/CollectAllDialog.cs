@@ -13,10 +13,10 @@ public class CollectAllDialog : DialogBase {
     }
 
     private void CollectAllWithMultiplier() {
-        CollectResources(MetaManager.Instance.MainMetaConfig.CollectWithAdsMultiplier);
+        CollectResources(MetaFieldManager.Instance.MainMetaConfig.CollectWithAdsMultiplier);
     }
 
     private void CollectResources(float multiplier) {
-        MetaManager.Instance.CollectResourcesFromAllMarks(multiplier);
+        MetaFieldManager.Instance.CollectResourcesFromAllMarks(multiplier);
     }
 }
