@@ -164,6 +164,32 @@ public static class TetrisPieces
                 { false, true, false }
             }
         },
+        // T small
+        {
+            "TSmall_1", new bool[,]
+            {
+                { true, false },
+                { true, true, },
+                { true, false, },
+            }
+        },
+        // T small
+        {
+            "TSmall_2", new bool[,]
+            {
+                { false, true, false },
+                { true, true, true }
+            }
+        },
+        // T small
+        {
+            "TSmall_3", new bool[,]
+            {
+                { false, true},
+                { true, true, },
+                { false, true, },
+            }
+        },
 
         // , .
         {
@@ -276,6 +302,24 @@ public static class TetrisPieces
                 { true, true, true },
                 { true, false, true }
             }
-        }
+        },
+        //Г Upside 
+        {
+            "LUpside", new bool[,]
+            {
+                { true, true, },
+                { true, false,  },
+                { true, false,  }
+            }
+        },
+        //Г Invert 
+        {
+            "LUpsideInvert", new bool[,]
+            {
+                { true, true, },
+                { false, true,  },
+                { false, true,  }
+            }
+        },
     };
 }
