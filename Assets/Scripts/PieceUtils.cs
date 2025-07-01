@@ -20,7 +20,6 @@ public static class PieceUtils {
         var cellsToSpawn = !isMetaGame ? GameFieldManager.Instance._currentCellsToSpawn : MetaFieldManager.Instance._currentCellsToSpawn;
         var chancesToSpawn = !isMetaGame ? GameFieldManager.Instance.CellsChanceToSpawn : MetaFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
-        
 
         if (guaranteed != null) {
             cellInfo = guaranteed;
