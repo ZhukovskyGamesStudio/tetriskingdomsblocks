@@ -213,7 +213,7 @@ public class MetaFieldManager : FieldManager {
                 collectResourceMarkPosition += _cells[row, col].transform.position;
 
                 if (needColor == Color.clear) {
-                    needColor = MetaFieldManager.Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
+                    needColor = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
                     needColor.a = 1;
                 }
             }
@@ -360,10 +360,8 @@ public class MetaFieldManager : FieldManager {
         _field = new CellType[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         _cells = new CellView[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         CalculateFiguresSpawnChances();
-        var startCells = MainMetaConfig.CellsConfigs;
-        _currentCellsToSpawn = new List<CellTypeInfo>();
-        for (int i = 0; i < startCells.Count; i++)
-            _currentCellsToSpawn.Add(startCells[i]);
+        _currentCellsToSpawn = new List<CellType>();
+      
         CalculateCellSpawnChances();
         //  Debug.Log(StorageManager.GameDataMain.FieldRows +" "+  (StorageManager.GameDataMain.FieldRows.Length > 1));
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
@@ -444,7 +442,7 @@ public class MetaFieldManager : FieldManager {
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
         foreach (var (row, col) in _connectedGroups[index].Pieces) {
-            var cellConfig = MetaFieldManager.Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]);
+            var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
             if (curResource == ResourceType.None)
                 curResource = cellConfig.AfkResourceType;
             if (cellConfig.AfkResourceType != ResourceType.None) {
@@ -478,7 +476,7 @@ public class MetaFieldManager : FieldManager {
         float lastChance = 0;
         CellsChanceToSpawn = new float[_currentCellsToSpawn.Count];
         for (int i = 0; i < _currentCellsToSpawn.Count; i++) {
-            lastChance += _currentCellsToSpawn[i].ChanceToSpawn;
+            lastChance += PiecesViewTable.Instance.CellsList.CellsConfigs.First(c=>c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
             CellsChanceToSpawn[i] = lastChance;
         }
     }
@@ -518,7 +516,7 @@ public class MetaFieldManager : FieldManager {
         Color needColor = Color.clear;
         foreach (var (row, col) in placedCells) {
             if (needColor == Color.clear) {
-                needColor = Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
+                needColor = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
                 needColor.a = 1;
             }
 
@@ -601,7 +599,7 @@ public class MetaFieldManager : FieldManager {
             ResourceType curResource = ResourceType.None;
             foreach (var (row, col) in _connectedGroups[i].Pieces) {
                 if (_field[row, col] == CellType.Empty) continue;
-                var cellConfig = MetaFieldManager.Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]);
+                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
                 if (curResource == ResourceType.None)
                     curResource = cellConfig.AfkResourceType;
                 if (cellConfig.AfkResourceType != ResourceType.None) {
@@ -635,7 +633,7 @@ public class MetaFieldManager : FieldManager {
             ResourceType curResource = ResourceType.None;
             Color resourceColor = Color.clear;
             foreach (var (row, col) in connectedGroupsPieces[i]) {
-                var cellConfig = MetaFieldManager.Instance.MainMetaConfig.CellsConfigs.First(c => c.CellType == _field[row, col]);
+                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
 
                 if (curResource == ResourceType.None) {
                     curResource = cellConfig.AfkResourceType;

@@ -1,22 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class FieldManager : MonoBehaviour {
-    [SerializeField]
-    private AudioQueueMixer _placePieceAudioMixer;
-
-    [SerializeField]
-    private AudioQueueMixer _collectedResourceAudioMixer;
+public class BaseManager : MonoBehaviour {
 
     [HideInInspector]
-    public List<CellTypeInfo> _currentCellsToSpawn { get; protected set; }
+    public List<CellType> _currentCellsToSpawn { get; protected set; }
 
     public float[] CellsChanceToSpawn { get; protected set; }
     public float[] FiguresChanceToSpawn { get; protected set; }
@@ -31,9 +24,6 @@ public class FieldManager : MonoBehaviour {
     
     [SerializeField]
     private LayerMask _additionalContainerMask;
-
-    [field: SerializeField]
-    public FigureFormConfig[] FigureFormsConfig { get; protected set; }
 
     [SerializeField]
     private ParticleSystem _placeCellEffect;
@@ -59,6 +49,9 @@ public class FieldManager : MonoBehaviour {
    // protected LevelConfig _currentLevelConfig;
 
     private Tween _currentTween;
+    [Header("Audio")]
+    [SerializeField]
+    protected GameAudio _gameAudio;
 
     protected virtual void Awake() {
         ChangeToLoading.TryChange();
@@ -89,9 +82,9 @@ public class FieldManager : MonoBehaviour {
 
    protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
-        FiguresChanceToSpawn = new float[FigureFormsConfig.Length];
-        for (int i = 0; i < FigureFormsConfig.Length; i++) {
-            lastChance += FigureFormsConfig[i].Cost;
+        FiguresChanceToSpawn = new float[PiecesViewTable.Instance.FigureForms.Length];
+        for (int i = 0; i < PiecesViewTable.Instance.FigureForms.Length; i++) {
+            lastChance += PiecesViewTable.Instance.FigureForms[i].Cost;
             FiguresChanceToSpawn[i] = lastChance;
         }
     }
@@ -149,12 +142,20 @@ public class FieldManager : MonoBehaviour {
 
     private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
-            _placePieceAudioMixer.PlayNext();
+          
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
                 pieceData.Type.CellType == CellType.Mine) {
                 vibrationsAmplitude *= 1.5f;
+            }
+            
+            _gameAudio.PlacePiece.PlayNext();
+            switch (pieceData.Type.CellType) {
+                case CellType.Forest:   _gameAudio.WoodPlaced.PlayNext(); break;
+                case CellType.Mountain:   _gameAudio.RockPlaced.PlayNext(); break;
+                case CellType.FieldOfWheat:   _gameAudio.WheatPlaced.PlayNext(); break;
+                case CellType.Metal:   _gameAudio.MetalPlaced.PlayNext(); break;
             }
 
             ShakeCamera(vibrationsAmplitude);
@@ -224,6 +225,6 @@ public class FieldManager : MonoBehaviour {
     public virtual void SetupGame() { }
 
     public void PlayCollectedSound() {
-        _collectedResourceAudioMixer.PlayNext();
+        _gameAudio.ResourceCollected.PlayNext();
     }
 }

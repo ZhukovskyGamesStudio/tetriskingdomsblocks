@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,16 +20,18 @@ public static class PieceUtils {
         var cellsToSpawn = !isMetaGame ? GameFieldManager.Instance._currentCellsToSpawn : MetaFieldManager.Instance._currentCellsToSpawn;
         var chancesToSpawn = !isMetaGame ? GameFieldManager.Instance.CellsChanceToSpawn : MetaFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
-        float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        for (int i = 0; i < chancesToSpawn.Length; i++) {
-            if (chancesToSpawn[i] > chance) {
-                cellInfo = cellsToSpawn[i];
-                break;
-            }
-        }
+        
 
         if (guaranteed != null) {
             cellInfo = guaranteed;
+        } else {
+            float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
+            for (int i = 0; i < chancesToSpawn.Length; i++) {
+                if (chancesToSpawn[i] > chance) {
+                    cellInfo = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c=> c.CellType == cellsToSpawn[i]);
+                    break;
+                }
+            }
         }
 
         bool[,] cells = cellInfo.CellForm == null ? GetRandomFigure() : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
@@ -55,7 +58,7 @@ public static class PieceUtils {
         bool isMetaGame = GameFieldManager.Instance == null;
         var chancesToSpawn = isMetaGame ? MetaFieldManager.Instance.FiguresChanceToSpawn : GameFieldManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
-        var figureForms = isMetaGame ? MetaFieldManager.Instance.FigureFormsConfig : GameFieldManager.Instance.FigureFormsConfig;
+        var figureForms = PiecesViewTable.Instance.FigureForms;
         for (int i = 0; i < chancesToSpawn.Length; i++) {
             if (chancesToSpawn[i] > chance)
                 return TetrisPieces.PieceShapesTable[figureForms[i].FormName];

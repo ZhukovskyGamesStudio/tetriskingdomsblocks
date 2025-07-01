@@ -19,12 +19,13 @@ public class NextPiecesView : MonoBehaviour, IResetable {
 
     [SerializeField]
     private ParticleSystem _createParticleSystem;
-    [SerializeField]
-    private List<AudioSource> _appearAudioSource;
 
     [SerializeField]
     private List<ParticleSystem> _spawnParticles;
-    
+
+
+    [SerializeField]
+    private GameAudio _gameAudio;
     private CancellationTokenSource _cts;
 
     private void Awake() {
@@ -71,7 +72,7 @@ public class NextPiecesView : MonoBehaviour, IResetable {
             //await UniTask.WaitWhile(()=>    _appearAudioSource[i].isPlaying, cancellationToken: token);
         }
         _createParticleSystem.Play();
-        _appearAudioSource[0].Play();
+        _gameAudio.PiecesAppear.PlayNext();
         await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
     }
 
