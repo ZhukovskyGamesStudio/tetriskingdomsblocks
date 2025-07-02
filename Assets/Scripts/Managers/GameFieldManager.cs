@@ -63,9 +63,11 @@ public class GameFieldManager : FieldManager, IResetable {
         _inputRaycaster.InputPosAdditionalContainer() != Vector3.zero &&
         _additionalPiecePrefab == null;
 
-    public void SetNeededCellTypeOnField(CellType cellType, Vector2Int cellPosition)
+    public void SetNeededCellTypeOnField(CellType cellType,CellView go, Vector2Int cellPosition)
     {
         _field[cellPosition.x, cellPosition.y] = cellType;
+        _cells[cellPosition.x, cellPosition.y] = go;
+        SpawnResourceFx(cellPosition, go);
     }
     public void SetPieceInAdditionalContainer(ref Vector3 finalPosition, PieceView piece)
     {
@@ -184,7 +186,7 @@ public class GameFieldManager : FieldManager, IResetable {
         
         foreach (var (randomEmptyCell, startPosition) in newSlimeCells) {
             var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == CellType.Slime);
-            PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y));
+            PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y), true);
             SpawnNewSlimeAnimation(_cells[randomEmptyCell.x, randomEmptyCell.y].transform, startPosition,
                 _cells[randomEmptyCell.x, randomEmptyCell.y].transform.position);
             foreach (var task in _currentTasks) {
@@ -556,7 +558,7 @@ public class GameFieldManager : FieldManager, IResetable {
                     if(randomPos == new Vector2(-1,-1))return;
                     var configCrystal = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                         c.CellType == CellType.Crystal);
-                    PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y));
+                    PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y), true);
                     CrystalCellAnimation(randomPos, coordAround);
 
                     /*var _currentTween = DOTween.Sequence().Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
@@ -750,7 +752,7 @@ public class GameFieldManager : FieldManager, IResetable {
                             c.CellType == MainManager.Instance._currentLevelConfig.StartFieldConfig.GetCell(i, j));
                         if (!_isSlimeExist && config.CellType == CellType.Slime)
                             _isSlimeExist = true;
-                        PlaceOneSizePiece(config, new Vector2Int(i, j));
+                        PlaceOneSizePiece(config, new Vector2Int(i, j), true);
                         if (!FieldUtils.CantDestroyInRow(config.CellType) &&
                             !startCellsResourcesCount.TryAdd(config.ResourcesForDestroy[0].ResourceType, 1))
                             startCellsResourcesCount[config.ResourcesForDestroy[0].ResourceType]++;
@@ -771,7 +773,7 @@ public class GameFieldManager : FieldManager, IResetable {
         base.SetupGame();
     }
 
-    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos) {
+    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo) {
         GameObject tmpContainer = new();
         tmpContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         List<Vector3> poses = new List<Vector3>();
@@ -780,18 +782,24 @@ public class GameFieldManager : FieldManager, IResetable {
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
         //go.SetSeed(pieceData.CellGuids[x, y]);
 
-        go.transform.localPosition = new Vector3(pos.x, -0.2f , pos.y);
+        go.transform.localPosition = new Vector3(pos.x, -0.2f, pos.y);
         poses.Add(new Vector3(pos.x, -0.2f, pos.y));
-        _field[pos.x, pos.y] = cellInfo.CellType;
-        _cells[pos.x, pos.y] = go;
+        if (setNewInfo)
+        {
+            _field[pos.x, pos.y] = cellInfo.CellType;
+            _cells[pos.x, pos.y] = go;
+            SpawnResourceFx(pos, go);
+        }
+
         cells.Add(go.gameObject);
 
         //go.GetComponent<CellView>().PlaceCellOnField();
-        SpawnResourceFx(pos, go);
+        
         //SpawnSmokeParticle(go.transform.position).Forget();
 
         // tmpContainer.transform.localPosition = GetAveragePosition(poses);
-        foreach (var cell in cells) {
+        foreach (var cell in cells)
+        {
             cell.transform.SetParent(tmpContainer.transform);
         }
 

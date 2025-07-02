@@ -12,6 +12,7 @@ public class UltaManager : MonoBehaviour
     public static UltaManager Instance;
     [SerializeField] private Slider _ultimateProgressBar;
     [SerializeField] private Button _ultimateButton;
+    [SerializeField] private Transform _starPrefab;
     private int _currentPoints;
     public bool _ultimateIsActive { get; private set; }
 
@@ -32,13 +33,11 @@ public class UltaManager : MonoBehaviour
         _currentPoints += points;
         //_ultimateProgressBar.value += points;
         
-        _ultimateProgressBar.DOValue(_currentPoints, 1f).SetEase(Ease.Linear).OnComplete((() =>
+        _ultimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() =>
         {
         if (_currentPoints >= _ultimateProgressBar.maxValue)
             ActivateButton();
-        }));
-        
-        
+        });
         
     }
 
@@ -67,33 +66,48 @@ public class UltaManager : MonoBehaviour
 
         for (int i = 0; i < GameFieldManager.Instance.MainGameConfig.MaxUltimateCells; i++)
         {
-            var placedCellPosition = FieldUtils.GetRandomEmptyCell(GameFieldManager.Instance._field);
-            CellType oldCellType = GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y];
-            var pieceData = GetRandomCellType();
-            
-            var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
-           var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y));
-           
-           GameFieldManager.Instance.SetNeededCellTypeOnField(oldCellType,placedCellPosition);
-           
-           cellView.transform.position = new Vector3(cellView.transform.position.x, 30, cellView.transform.position.z);
-
-           DOTween.Sequence().Append(cellView.gameObject.transform.DOMoveY(0.75f, 0.5f)
-                   .SetEase(Ease.OutQuad)).OnComplete(()=>
-               {
-                   GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
-                   GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType,placedCellPosition);
-                   GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
-                 //  GameFieldManager.Instance.ShowDropImpact(cellView.transform, pieceData, cellView.gameObject, 1);
-                   GameFieldManager.Instance.CollectResourcesOnPlace(pieceData); 
-                   GameFieldManager.Instance.ExplodeCellsInRows();
-               }); 
-           await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
+            Debug.Log("start" + i);
+           await SpawnNewCellFromUltimate();
+           Debug.Log("end" + i);
         }
+
         await UniTask.Delay(TimeSpan.FromSeconds(1.5f));
-        if(!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose())
-            GameFieldManager.Instance.Lose(); 
+        if (!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose())
+            GameFieldManager.Instance.Lose();
         HideButton();
+    }
+
+    private async UniTask SpawnNewCellFromUltimate()
+    {
+        var placedCellPosition = FieldUtils.GetRandomEmptyCell(GameFieldManager.Instance._field);
+        var pieceData = GetRandomCellType();
+
+        var config =
+            PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
+        var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config,
+            new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
+
+        cellView.transform.position = new Vector3(cellView.transform.position.x, 30, cellView.transform.position.z);
+        cellView.transform.localScale = Vector3.zero;
+        cellView.gameObject.SetActive(false);
+        var star = Instantiate(_starPrefab);
+        star.position = cellView.transform.position;
+        DOTween.Sequence().Append(star.gameObject.transform.DOMoveY(0.75f, 0.5f)
+            .SetEase(Ease.OutQuad));
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            cellView.transform.position = star.position;
+            cellView.gameObject.SetActive(true);
+            Destroy(star.gameObject);
+
+            cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
+            GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
+            //  GameFieldManager.Instance.ShowDropImpact(cellView.transform, pieceData, cellView.gameObject, 1);
+            GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType,cellView, placedCellPosition);
+            GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
+            GameFieldManager.Instance.CollectResourcesOnPlace(pieceData);
+            GameFieldManager.Instance.ExplodeCellsInRows();
+                
+        
     }
 
     private PieceData GetRandomCellType()
