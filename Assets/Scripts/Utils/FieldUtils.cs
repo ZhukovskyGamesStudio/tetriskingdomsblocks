@@ -44,6 +44,23 @@ public static class FieldUtils {
         }
         return emptyCells[Random.Range(0, emptyCells.Count)];
     }
+    
+    public static List<Vector2Int> GetRandomEmptyCells(CellType[,] field, int amount)
+    {
+        List<Vector2Int> emptyCells = new List<Vector2Int>();
+        for (int i = 0; i < field.GetLength(0); i++)
+        {
+            for (int j = 0; j < field.GetLength(1); j++)
+            {
+                if(CanPlaceOnCell(field[i,j])) {
+                    emptyCells.Add(new Vector2Int(i, j));
+                }
+            }
+        }
+        emptyCells = emptyCells.OrderBy(_ => Random.Range(0, 1f)).ToList();
+        return emptyCells.Take(Mathf.Min(amount, emptyCells.Count)).ToList();
+    }
+    
     public static IEnumerable<Vector2Int> GetCellsAround(CellType[,] field, Vector2Int coord) {
         return Directions.Select(pos => coord + pos).Where(combined => IsInsideField(field, combined));
     }
