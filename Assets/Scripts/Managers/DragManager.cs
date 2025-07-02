@@ -54,7 +54,7 @@ public class DragManager : MonoBehaviour
     public static void OnStartDrag(ref bool isDragging, PieceData _data,
         ref Vector2Int CurrentPieceMaxSize, ref Vector3 finalScale, Transform markedCellsContainer)
     {
-        if (AdminManager.Instance.AdminToggle.isOn)
+        if (AdminManager.Instance.AdminToggle.isOn || (UltaManager.Instance != null && UltaManager.Instance._ultimateIsActive))
             return;
 
         isDragging = true;

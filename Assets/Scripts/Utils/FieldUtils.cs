@@ -30,6 +30,20 @@ public static class FieldUtils {
         CellType.GoldMine,
         CellType.CrystalMine,
     };
+
+    public static Vector2Int GetRandomEmptyCell(CellType[,] field)
+    {
+        List<Vector2Int> emptyCells = new List<Vector2Int>();
+        for (int i = 0; i < field.GetLength(0); i++)
+        {
+            for (int j = 0; j < field.GetLength(1); j++)
+            {
+                if(CanPlaceOnCell(field[i,j]))
+                    emptyCells.Add(new Vector2Int(i,j));
+            }
+        }
+        return emptyCells[Random.Range(0, emptyCells.Count)];
+    }
     public static IEnumerable<Vector2Int> GetCellsAround(CellType[,] field, Vector2Int coord) {
         return Directions.Select(pos => coord + pos).Where(combined => IsInsideField(field, combined));
     }
