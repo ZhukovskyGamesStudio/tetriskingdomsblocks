@@ -63,6 +63,10 @@ public class GameFieldManager : FieldManager, IResetable {
         _inputRaycaster.InputPosAdditionalContainer() != Vector3.zero &&
         _additionalPiecePrefab == null;
 
+    public void SetNeededCellTypeOnField(CellType cellType, Vector2Int cellPosition)
+    {
+        _field[cellPosition.x, cellPosition.y] = cellType;
+    }
     public void SetPieceInAdditionalContainer(ref Vector3 finalPosition, PieceView piece)
     {
         piece.transform.SetParent(_additionalPieceContainer);
@@ -200,12 +204,7 @@ public class GameFieldManager : FieldManager, IResetable {
         cellContainer.position = startPosition;
         var _currentTween = DOTween.Sequence().Append(cellContainer.DOScale(Vector3.one, 0.5f)).Join(cellContainer.DOMove(endPosition, 0.5f));
     }
-
-    private bool TaskHasThisResource(ResourceType resourceType)
-    {
-        return _resourceTypesForTasks.Contains(resourceType);
-    }
-    protected override void CheckCellTypesBeforePlacePiece(Vector2Int coord) {
+    public override void CheckCellTypesBeforePlacePiece(Vector2Int coord) {
         base.CheckCellTypesBeforePlacePiece(coord);
         var cellType = _field[coord.x, coord.y];
 
@@ -263,7 +262,7 @@ public class GameFieldManager : FieldManager, IResetable {
             _placedCellsCount[cellType]++;
     }
 
-    private void CollectResourcesOnPlace(PieceData placedPiece) {
+    public void CollectResourcesOnPlace(PieceData placedPiece) {
         for (int x = 0; x < placedPiece.Cells.GetLength(0); x++) {
             for (int y = 0; y < placedPiece.Cells.GetLength(1); y++) {
                 if (!placedPiece.Cells[x, y]) {
@@ -354,36 +353,40 @@ public class GameFieldManager : FieldManager, IResetable {
           }
       }*/
 
-   private void ExplodeCellsInRows() {
+   public void ExplodeCellsInRows() {
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
         string unlockedCellText = "";
-        bool isDestroying = false;
+        int isDestroyingLinesCount = 0;
         for (int y = 0; y < height; y++) {
             if (Enumerable.Range(0, width).All(x => !FieldUtils.CantBecomeRow(_field[x, y]))) {
                 DestroyLine(y, width, true, ref unlockedCellText);
-                isDestroying = true;
+                isDestroyingLinesCount++;
             }
         }
 
         for (int x = 0; x < width; x++) {
             if (Enumerable.Range(0, height).All(y => !FieldUtils.CantBecomeRow(_field[x, y]))) {
                 DestroyLine(x, height, false, ref unlockedCellText);
-                isDestroying = true;
+                isDestroyingLinesCount++;
             }
         }
 
-        if (isDestroying) {
+        if (isDestroyingLinesCount != 0)
+        {
             SpawnDestroyRowVibration();
             _gameAudio.RowCollected.PlayNext();
-        }
 
-        if (unlockedCellText != "") {
-            GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f, Vector2.zero);
-        }
 
-        DestroyAllMarkedCells();
-    }
+            if (unlockedCellText != "")
+            {
+                GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position,
+                    40, 2.5f, Vector2.zero);
+            }
+
+            DestroyAllMarkedCells(isDestroyingLinesCount);
+        }
+   }
 
     private static void SpawnDestroyRowVibration() {
         if (Random.Range(0, 2) == 0) {
@@ -393,12 +396,15 @@ public class GameFieldManager : FieldManager, IResetable {
         }
     }
 
-    private void DestroyAllMarkedCells() {
+    private void DestroyAllMarkedCells(int linesCount) {
         for (int i = 0; i < _cellsToDestroy.Count; i++) {
             var cell = _cellsToDestroy[i];
             _cellsToDestroy.RemoveAt(i--);
             if (!FieldUtils.CantDestroyInRow(_field[cell.x, cell.y]))
+            {
                 DestroyCell(cell);
+                UltaManager.Instance.AddUltimatePoints(MainGameConfig.LinesCountMultiplayers[linesCount-1]);
+            }
         }
     }
 
@@ -477,7 +483,7 @@ public class GameFieldManager : FieldManager, IResetable {
         if (!cellTypesInLine.TryAdd(cellType, 1))
             cellTypesInLine[cellType]++;
 
-        var canvasPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
+        var canvasPosition = _mainCamera.WorldToScreenPoint(_cells[curPosition.x, curPosition.y].transform.position);
 
         for (int i = 0; i < config.ResourcesForDestroy.Length; i++) {
             resourcesMultiplayers.TryGetValue(config.ResourcesForDestroy[i].ResourceType, out int resourceMultiplayer);
@@ -511,7 +517,7 @@ public class GameFieldManager : FieldManager, IResetable {
         return bonusResourcesOnDestroyLine;
     }
 
-    protected override void CheckClosestCells(Vector2Int coord) {
+    public override void CheckClosestCells(Vector2Int coord) {
         var cellsAround = FieldUtils.GetCellsAround(_field, coord);
         foreach (var coordAround in cellsAround) {
             var cellType = _field[coordAround.x, coordAround.y];
@@ -632,7 +638,7 @@ public class GameFieldManager : FieldManager, IResetable {
         _cells[coord.x, coord.y].DestroyCell();
     }
 
-    private bool CheckWin() {
+    public bool CheckWin() {
         if (_currentTasks.Count == 0) {
             Win();
             return true;
@@ -641,7 +647,7 @@ public class GameFieldManager : FieldManager, IResetable {
         return false;
     }
 
-    private bool CheckLose() {
+    public bool CheckLose() {
         if (_currentMovesCount <= 0)
             return true;
         for (int i = 0; i < _nextBlocks.Count; i++) {
@@ -765,7 +771,7 @@ public class GameFieldManager : FieldManager, IResetable {
         base.SetupGame();
     }
 
-    private void PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos) {
+    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos) {
         GameObject tmpContainer = new();
         tmpContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         List<Vector3> poses = new List<Vector3>();
@@ -774,8 +780,8 @@ public class GameFieldManager : FieldManager, IResetable {
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
         //go.SetSeed(pieceData.CellGuids[x, y]);
 
-        go.transform.localPosition = new Vector3(pos.x, -0.45f, pos.y);
-        poses.Add(new Vector3(pos.x, -0.45f, pos.y));
+        go.transform.localPosition = new Vector3(pos.x, -0.2f , pos.y);
+        poses.Add(new Vector3(pos.x, -0.2f, pos.y));
         _field[pos.x, pos.y] = cellInfo.CellType;
         _cells[pos.x, pos.y] = go;
         cells.Add(go.gameObject);
@@ -789,6 +795,7 @@ public class GameFieldManager : FieldManager, IResetable {
             cell.transform.SetParent(tmpContainer.transform);
         }
 
+        return go;
         // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 

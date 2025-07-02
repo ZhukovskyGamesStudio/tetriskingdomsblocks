@@ -39,8 +39,8 @@ public class FieldManager : MonoBehaviour {
     protected bool _hasInternetConnection;
   //  protected DateTime _currentGameTime;
 
-    protected CellType[,] _field;
-    protected CellView[,] _cells;
+    public  CellType[,] _field{ get; protected set; }
+    protected CellView[,] _cells ;
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
@@ -122,6 +122,9 @@ public class FieldManager : MonoBehaviour {
 
                 SpawnResourceFx(place, go);
                 cellsAmount++;
+                
+                if(UltaManager.Instance != null)
+                    UltaManager.Instance.AddUltimatePoints(1);
             }
         }
 
@@ -137,10 +140,10 @@ public class FieldManager : MonoBehaviour {
         ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
-    protected virtual void CheckClosestCells(Vector2Int coord) { }
-    protected virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
+    public virtual void CheckClosestCells(Vector2Int coord) { }
+    public virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
-    private void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+    public void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
           
             SpawnSmokeUnderPiece(tmpContainer.transform);
