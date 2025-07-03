@@ -15,23 +15,23 @@ public class MainManager : MonoBehaviour {
     private const int MAX_HEALTH_COUNT = 3;
     private const float MINUTES_TO_HEALTH_RECOVERY = 5;
     private DateTime _lastHealthRecoveryTime;
-
+ 
     private float timerNowTimeSecondCounter;
 
     public LevelConfig _currentLevelConfig =>
         _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
 
-    [SerializeField]
-    private NetworkTimeAPI networkTimeAPI;
+    private NetworkTimeAPI _networkTimeAPI;
 
     private void Awake() {
         Instance = this;
-        ChangeToLoading.TryChange();
+        DontDestroyOnLoad(gameObject);
     }
 
     protected virtual void Start() {
         _currentGameTime = DateTime.Now;
-        networkTimeAPI.GetNetworkTime(dateTime => {
+        _networkTimeAPI = new NetworkTimeAPI();
+        _networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
             _hasInternetConnection = true;
@@ -43,8 +43,7 @@ public class MainManager : MonoBehaviour {
             //SetupGame();
             // _hasInternetConnection = false;
         });
-
-        SetupGame();
+        
         //  _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         Application.targetFrameRate = 144;
     }
@@ -85,10 +84,7 @@ public class MainManager : MonoBehaviour {
             _lastHealthRecoveryTime.AddMinutes(healthToAdd * MINUTES_TO_HEALTH_RECOVERY);
     }
 
-    public void SetupGame() {
-        FieldManager fieldManager = GameFieldManager.Instance == null ? MetaFieldManager.Instance : GameFieldManager.Instance;
-        fieldManager.SetupGame();
-    }
+   
 
     private void UpdateTimerAndHealth() {
         if (MetaUI.Instance == null) return;

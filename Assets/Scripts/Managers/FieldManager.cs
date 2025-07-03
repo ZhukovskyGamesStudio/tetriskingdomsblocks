@@ -54,26 +54,11 @@ public class FieldManager : MonoBehaviour {
     protected GameAudio _gameAudio;
 
     protected virtual void Awake() {
-        ChangeToLoading.TryChange();
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
     }
 
     protected virtual void Start() {
-        /*   _currentGameTime = DateTime.Now;
-           networkTimeAPI.GetNetworkTime(dateTime => {
-               _currentGameTime = dateTime;
-               Debug.Log("has connect" + dateTime);
-               _hasInternetConnection = true;
-               //SetupGame();
-           }, error => {
-               _currentGameTime = DateTime.Now;
-               Debug.Log("not connect");
-               _hasInternetConnection = false;
-               //SetupGame();
-               // _hasInternetConnection = false;
-           });
-
-           SetupGame();*/
+        SetupGame();
         _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
         // Application.targetFrameRate = 144;
     }

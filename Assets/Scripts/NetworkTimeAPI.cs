@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-public class NetworkTimeAPI : MonoBehaviour
+public class NetworkTimeAPI
 {
     private const string NtpServer = "pool.ntp.org";
     private const int NtpPort = 123;
