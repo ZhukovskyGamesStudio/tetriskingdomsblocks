@@ -7,6 +7,9 @@ public class LoadingManager : MonoBehaviour {
     public bool IsLoaded { get; private set; }
     public static LoadingManager Instance;
 
+    [SerializeField]
+    private float _fakeWaitSeconds = 0.1f;
+
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
@@ -19,7 +22,7 @@ public class LoadingManager : MonoBehaviour {
     private async void LoadAndChangeScene() {
         IsLoaded = true;
 
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
         if (StorageManager.IsNewPlayer()) {
             StorageManager.CreateNewSaveData();
             await SceneManager.LoadSceneAsync("GameScene");

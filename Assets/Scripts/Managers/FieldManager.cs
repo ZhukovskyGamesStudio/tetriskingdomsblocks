@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.Pool;
 
 public class FieldManager : MonoBehaviour {
-
     [HideInInspector]
     public List<CellType> _currentCellsToSpawn { get; protected set; }
 
@@ -21,7 +20,7 @@ public class FieldManager : MonoBehaviour {
 
     [SerializeField]
     protected LayerMask _targetMasks;
-    
+
     [SerializeField]
     private LayerMask _additionalContainerMask;
 
@@ -37,50 +36,36 @@ public class FieldManager : MonoBehaviour {
     public static float PieceVerticalShift;
 
     protected bool _hasInternetConnection;
-  //  protected DateTime _currentGameTime;
+    //  protected DateTime _currentGameTime;
 
-    public  CellType[,] _field{ get; protected set; }
-    protected CellView[,] _cells ;
+    public CellType[,] _field { get; protected set; }
+    protected CellView[,] _cells;
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
 
     protected InputRaycaster _inputRaycaster;
-   // protected LevelConfig _currentLevelConfig;
+    // protected LevelConfig _currentLevelConfig;
 
     private Tween _currentTween;
+
     [Header("Audio")]
     [SerializeField]
     protected GameAudio _gameAudio;
 
     protected virtual void Awake() {
-        ChangeToLoading.TryChange();
-       _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
+        _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
     }
 
     protected virtual void Start() {
-     /*   _currentGameTime = DateTime.Now;
-        networkTimeAPI.GetNetworkTime(dateTime => {
-            _currentGameTime = dateTime;
-            Debug.Log("has connect" + dateTime);
-            _hasInternetConnection = true;
-            //SetupGame();
-        }, error => {
-            _currentGameTime = DateTime.Now;
-            Debug.Log("not connect");
-            _hasInternetConnection = false;
-            //SetupGame();
-            // _hasInternetConnection = false;
-        });
-
-        SetupGame();*/
-       _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
-       // Application.targetFrameRate = 144;
+        SetupGame();
+        _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
+        // Application.targetFrameRate = 144;
     }
 
     protected virtual void Update() { }
 
-   protected void CalculateFiguresSpawnChances() {
+    protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
         FiguresChanceToSpawn = new float[PiecesViewTable.Instance.FigureForms.Length];
         for (int i = 0; i < PiecesViewTable.Instance.FigureForms.Length; i++) {
@@ -122,8 +107,8 @@ public class FieldManager : MonoBehaviour {
 
                 SpawnResourceFx(place, go);
                 cellsAmount++;
-                
-                if(UltaManager.Instance != null)
+
+                if (UltaManager.Instance != null)
                     UltaManager.Instance.AddUltimatePoints(1);
             }
         }
@@ -145,20 +130,27 @@ public class FieldManager : MonoBehaviour {
 
     public void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
         DropPeaceTween(pieceContainer, () => {
-          
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
                 pieceData.Type.CellType == CellType.Mine) {
                 vibrationsAmplitude *= 1.5f;
             }
-            
+
             _gameAudio.PlacePiece.PlayNext();
             switch (pieceData.Type.CellType) {
-                case CellType.Forest:   _gameAudio.WoodPlaced.PlayNext(); break;
-                case CellType.Mountain:   _gameAudio.RockPlaced.PlayNext(); break;
-                case CellType.FieldOfWheat:   _gameAudio.WheatPlaced.PlayNext(); break;
-                case CellType.Metal:   _gameAudio.MetalPlaced.PlayNext(); break;
+                case CellType.Forest:
+                    _gameAudio.WoodPlaced.PlayNext();
+                    break;
+                case CellType.Mountain:
+                    _gameAudio.RockPlaced.PlayNext();
+                    break;
+                case CellType.FieldOfWheat:
+                    _gameAudio.WheatPlaced.PlayNext();
+                    break;
+                case CellType.Metal:
+                    _gameAudio.MetalPlaced.PlayNext();
+                    break;
             }
 
             ShakeCamera(vibrationsAmplitude);
