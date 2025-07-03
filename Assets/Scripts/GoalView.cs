@@ -26,10 +26,7 @@ public class GoalView : MonoBehaviour {
     public void SetWinState() {
         if (_isGameEnded) return;
         WinAnimation();
-        StorageManager.GameDataMain.GoldAmount += 100 + StorageManager.GameDataMain.CurMaxLevel * 5;
-        StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.CurMaxLevel++;
-        StorageManager.SaveGame();
+       
         _isGameEnded = true;
         _winState.gameObject.SetActive(true);
         _loseState.gameObject.SetActive(false);
@@ -64,7 +61,7 @@ public class GoalView : MonoBehaviour {
     }
 
     public void ExitGame() {
-        GameFieldManager.Instance.GoToMeta();
+        MainManager.Instance.GoToMeta();
     }
 
     private void OnDestroy() {

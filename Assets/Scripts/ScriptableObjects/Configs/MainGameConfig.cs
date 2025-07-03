@@ -5,11 +5,10 @@ public class MainGameConfig : ScriptableObject {
     public bool resourceOnPlaceCell;
     public bool resourceOnDestroyCell;
     public bool bonusResourcesOnDestroyLine;
-    
+
     public int NeededUltimatePoints;
     public int MaxUltimateCells;
     public int[] LinesCountMultiplayers;
 
-    public LevelConfig[] Levels;
     public int FieldSize;
 }

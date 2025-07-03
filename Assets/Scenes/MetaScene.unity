@@ -478,7 +478,7 @@ Transform:
   m_GameObject: {fileID: 91059899}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -0.28999996, z: 0.01999998}
+  m_LocalPosition: {x: -0.83, y: -0.28999996, z: 0.01999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2559,7 +2559,7 @@ Transform:
   m_GameObject: {fileID: 740177184}
   serializedVersion: 2
   m_LocalRotation: {x: 0.62932044, y: 0, z: 0, w: 0.777146}
-  m_LocalPosition: {x: 6.6600094, y: 27.6684, z: -14.741391}
+  m_LocalPosition: {x: 5.820009, y: 27.668404, z: -14.741392}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4729,7 +4729,7 @@ Transform:
   m_GameObject: {fileID: 1285394020}
   serializedVersion: 2
   m_LocalRotation: {x: 0.62932044, y: -0, z: -0, w: 0.777146}
-  m_LocalPosition: {x: 6.6600094, y: 25.498404, z: -10.041392}
+  m_LocalPosition: {x: 5.820009, y: 25.498404, z: -10.041392}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6158,6 +6158,9 @@ MonoBehaviour:
   _targetMasks:
     serializedVersion: 2
     m_Bits: 8
+  _additionalContainerMask:
+    serializedVersion: 2
+    m_Bits: 0
   _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
   networkTimeAPI: {fileID: 1910540967}
   _mmfPlayer: {fileID: 1984839918}
@@ -8130,3 +8133,4 @@ SceneRoots:
   - {fileID: 1984839919}
   - {fileID: 1111628672}
   - {fileID: 1992675289}
+  - {fileID: 1005776667}
