@@ -103,7 +103,7 @@ public class UltaManager : MonoBehaviour
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
         GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
         //  GameFieldManager.Instance.ShowDropImpact(cellView.transform, pieceData, cellView.gameObject, 1);
-        GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType, cellView, placedCellPosition);
+        GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType, cellView, placedCellPosition, true);
         GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
         GameFieldManager.Instance.CollectResourcesOnPlace(pieceData);
         GameFieldManager.Instance.ExplodeCellsInRows();

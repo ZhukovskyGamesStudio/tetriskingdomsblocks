@@ -43,6 +43,16 @@ public class AdminManager : MonoBehaviour {
             GameFieldManager.Instance.GenerateNewPieces();
     }
 
+    public void AddBoosters()
+    {
+        StorageManager.GameDataMain.RandomFieldCount+=5;
+        StorageManager.GameDataMain.HummerCount+=5;
+        StorageManager.GameDataMain.RotatePieceCount+=5;
+        StorageManager.GameDataMain.DynamyteCount+=5;
+        if(BoostersManager.Instance != null)
+        BoostersManager.Instance.SetAllText();
+    }
+
     public void RestartGame() {
         if (GameFieldManager.Instance != null)
             MainManager.Instance.Restart();

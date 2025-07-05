@@ -28,6 +28,11 @@ public class GameDataForSave {
 
     public MetaFieldData[] FieldRows;
 
+    public int DynamyteCount;
+    public int RandomFieldCount;
+    public int RotatePieceCount;
+    public int HummerCount;
+    
     public GameDataForSave() {
         HealthCount = 3;
         resourcesCount = new int[4];

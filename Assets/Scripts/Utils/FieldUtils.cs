@@ -26,9 +26,18 @@ public static class FieldUtils {
         CellType.Slime
     };
     
+    private static readonly List<CellType> ResourcesCells = new List<CellType>() {
+        CellType.Forest,
+        CellType.FieldOfWheat,
+        CellType.Mountain,
+        CellType.Metal,
+        CellType.Village
+    };
+    
     private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {
         CellType.GoldMine,
         CellType.CrystalMine,
+        CellType.Empty,
     };
 
     public static Vector2Int GetRandomEmptyCell(CellType[,] field)
@@ -90,6 +99,7 @@ public static class FieldUtils {
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
     public static bool CantDestroyInRow(CellType cellType) => CantDestroyInRowCells.Contains(cellType);
+    public static bool IsResourceCell(CellType cellType) => ResourcesCells.Contains(cellType);
     
     public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CellSize, Mathf.RoundToInt(coord.z) / CellSize);
 }

@@ -47,13 +47,19 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         TryCancelCreatingTask();
         _cts = new CancellationTokenSource();
       
-        CreatePiecesAsync(nextPieces, _cts.Token).Forget();
+        CreatePiecesAsync(nextPieces, _cts.Token, _piecesContainers).Forget();
+    }
+    
+    public async UniTask CreateDynamitePieceView(PieceData nextPiece) {
+        TryCancelCreatingTask();
+        _cts = new CancellationTokenSource();
+        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { nextPiece }, _cts.Token,
+            new List<Transform>() { BoostersManager.Instance._dynamiteContainer });
+        BoostersManager.Instance.SetCurrentDynamite(pieceView.transform.GetChild(0));
     }
 
-    private async UniTask CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token) {
-      
-        
-        
+    private async UniTask<PieceView> CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token, List<Transform> containers) {
+      PieceView pieceView =null;
         for (int i = 0; i < nextPieces.Count; i++) {
             token.ThrowIfCancellationRequested();
 
@@ -62,8 +68,8 @@ public class NextPiecesView : MonoBehaviour, IResetable {
                 break;
             }
 
-            Transform container = _piecesContainers[i];
-            PieceView go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, container);
+            PieceView go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, containers[i]);
+            pieceView = go;
             go.SetData(nextPieces[i], _piecesScale);
             go.AppearAsync().Forget();
             _spawnParticles[i].gameObject.SetActive(true);
@@ -74,6 +80,7 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         _createParticleSystem.Play();
         _gameAudio.PiecesAppear.PlayNext();
         await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
+        return pieceView;
     }
 
     private void TryCancelCreatingTask() {

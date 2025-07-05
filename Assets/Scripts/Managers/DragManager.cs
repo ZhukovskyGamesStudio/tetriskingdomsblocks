@@ -85,7 +85,7 @@ public class DragManager : MonoBehaviour
           //  Debug.Log("to place " + finalPos);
             _pieceGameObject.PlacePieceAsync(cellManager).Forget();
         }
-        else if (GameFieldManager.Instance != null && GameFieldManager.Instance.AdditionalPieceContainerUnderPiece())
+        else if (GameFieldManager.Instance != null && GameFieldManager.Instance.AdditionalPieceContainerUnderPiece()&& data.Type.CellType != CellType.Dinamyte)
         {
             finalScale = initialScale;
             markedCellsContainer.localScale = initialMarkedScale;
@@ -93,7 +93,7 @@ public class DragManager : MonoBehaviour
             GameFieldManager.Instance.SetPieceInAdditionalContainer(ref finalPos, _pieceGameObject);
         }
         else if (GameFieldManager.Instance != null && GameFieldManager.Instance._additionalPiecePrefab != null &&
-                 GameFieldManager.Instance._additionalPiecePrefab == _pieceGameObject)
+                 GameFieldManager.Instance._additionalPiecePrefab == _pieceGameObject && data.Type.CellType != CellType.Dinamyte)
         {
             finalPos = GameFieldManager.Instance._additionalPieceContainer.position;
             finalScale = initialScale;

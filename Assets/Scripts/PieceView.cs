@@ -105,7 +105,7 @@ public class PieceView : MonoBehaviour {
         return new Vector3(width / 2f, 0, height / 2f) * -1;
     }*/
 
-    private void OnStartDrag() {
+    public void OnStartDrag() {
         DragManager.OnStartDrag(ref _isDragging,_data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer);
        /* if (AdminManager.Instance.AdminToggle.isOn) {
             return;
@@ -169,7 +169,7 @@ public class PieceView : MonoBehaviour {
     }
 
     private void OnMouseDown() {
-        DragManager.OnStartDrag(ref _isDragging,_data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer);
+        OnStartDrag();
     }
 
     private void OnMouseUp() {

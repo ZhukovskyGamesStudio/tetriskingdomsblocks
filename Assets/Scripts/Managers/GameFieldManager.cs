@@ -14,7 +14,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
-    private List<TaskInfoAndUI> _currentTasks;
+    public List<TaskInfoAndUI> _currentTasks{ get; private set; }
     private List<ResourceType> _resourceTypesForTasks = new List<ResourceType>();
     private Dictionary<ResourceType, int> _monoLinesCount;
     private Dictionary<CellType, int> _placedCellsCount;
@@ -56,10 +56,12 @@ public class GameFieldManager : FieldManager, IResetable {
     public bool AdditionalPieceContainerUnderPiece() =>
         _inputRaycaster.InputPosAdditionalContainer() != Vector3.zero && _additionalPiecePrefab == null;
 
-    public void SetNeededCellTypeOnField(CellType cellType, CellView go, Vector2Int cellPosition) {
+    public void SetNeededCellTypeOnField(CellType cellType, CellView go, Vector2Int cellPosition, bool needFX)
+    {
         _field[cellPosition.x, cellPosition.y] = cellType;
         _cells[cellPosition.x, cellPosition.y] = go;
-        SpawnResourceFx(cellPosition, go);
+        if (needFX)
+            SpawnResourceFx(cellPosition, go);
     }
 
     public void SetPieceInAdditionalContainer(ref Vector3 finalPosition, PieceView piece) {
@@ -78,10 +80,15 @@ public class GameFieldManager : FieldManager, IResetable {
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
+      
+        
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
 
         //  CheckPlacedCellsForTask();
-
+        if (pieceData.Type.CellType == CellType.Dinamyte)
+        {
+            return;
+        }
         OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
         if (_additionalPiecePrefab != null && _additionalPiecePrefab._data == pieceData)
@@ -217,7 +224,6 @@ public class GameFieldManager : FieldManager, IResetable {
                 break;
 
             case CellType.Slime:
-Debug.Log("DestroySlime"+coord);
                 DestroyCellAfterPlacePiece(coord, cellType);
                 _gameAudio.SlimeBreaks.PlayNext();
                 break;
@@ -282,7 +288,7 @@ Debug.Log("DestroySlime"+coord);
         CheckResourceCountForTasks();
     }
 
-    private void CheckResourceCountForTasks() {
+    public void CheckResourceCountForTasks() {
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                 if (_currentTasks[i].TaskInfo.NeedResource == ResourceType.None && GameData.CollectedResources.Count != 0) {
@@ -593,7 +599,7 @@ Debug.Log("DestroySlime"+coord);
         return _emptyCells[Random.Range(0, _emptyCells.Count)];
     }
 
-    private void CheckNeedResourceInTask(int j, CellTypeInfo config, Vector2Int coord) {
+    public void CheckNeedResourceInTask(int j, CellTypeInfo config, Vector2Int coord) {
         if (config.ResourcesForDestroy.Length == 0) return;
         var needResource = config.ResourcesForDestroy[0];
         if (_currentTasks[j].TaskInfo.NeedResource == needResource.ResourceType) {
@@ -605,7 +611,7 @@ Debug.Log("DestroySlime"+coord);
         }
     }
 
-    private void DestroyCell(Vector2Int coord) {
+    public void DestroyCell(Vector2Int coord) {
         _field[coord.x, coord.y] = CellType.Empty;
         _cells[coord.x, coord.y].DestroyCell();
     }
@@ -737,6 +743,7 @@ Debug.Log("DestroySlime"+coord);
         GameUI.Instance.SetMovesCount(_currentMovesCount);
 
         GenerateNewPieces();
+        BoostersManager.Instance.SetAllText();
         base.SetupGame();
     }
 

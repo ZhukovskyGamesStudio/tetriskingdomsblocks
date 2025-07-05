@@ -98,8 +98,16 @@ public class FieldManager : MonoBehaviour {
                     continue;
                 }
 
+                if (pieceData.Type.CellType == CellType.Dinamyte)
+                {
+                    BoostersManager.Instance.AnimateDynamite(pos);
+                    //destroy dinamyte
+                    return;
+                }
+                
                 Vector2Int place = new(pos.x + x, pos.y + y);
                 CheckCellTypesBeforePlacePiece(place);
+                
                 CellView go = cells[x, y];
 
                 _field[place.x, place.y] = pieceData.Type.CellType;
