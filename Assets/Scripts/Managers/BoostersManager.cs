@@ -52,6 +52,68 @@ public class BoostersManager : MonoBehaviour
         }
     }
 
+    public void UnlockRotation()
+    {
+        initialRotationY = transform.rotation.eulerAngles.y; // Запоминаем начальный угол Y
+        rotationChanged = false;
+    }
+    
+    public void ApplyRotation()
+    {
+        if (!rotationChanged) 
+            return;
+
+        float currentRotationY = transform.rotation.eulerAngles.y % 360f;
+        if (currentRotationY < 0) currentRotationY += 360f;
+
+        float closestAngle = Mathf.Round(currentRotationY / 90f) * 90f;
+        closestAngle = closestAngle % 360f; 
+
+        transform.rotation = Quaternion.Euler(0, closestAngle, 0);
+
+        if (Mathf.Abs(closestAngle - initialRotationY) > 0.1f)
+        {
+            int degrees = Mathf.RoundToInt(closestAngle - initialRotationY);
+            if (degrees < 0) degrees += 360;
+          //  Cells = RotateFigure(Cells, degrees);
+        }
+
+        rotationState = RotateBoosterStates.LockRotate;
+    }
+    
+    private bool[,] RotateFigure(bool[,] cells, int degrees)
+    {
+        if (degrees != 90 && degrees != 180 && degrees != 270)
+            return cells;
+
+        int rotations = degrees / 90;
+        bool[,] result = cells;
+
+        for (int r = 0; r < rotations; r++)
+        {
+            result = Rotate90Clockwise(result);
+        }
+
+        return result;
+    }
+
+    private bool[,] Rotate90Clockwise(bool[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        bool[,] rotated = new bool[cols, rows];
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                rotated[j, rows - 1 - i] = matrix[i, j];
+            }
+        }
+
+        return rotated;
+    }
+    
     public void UseRandomField()
     {
         if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GoalView.Instance._isGameEnded) return;
