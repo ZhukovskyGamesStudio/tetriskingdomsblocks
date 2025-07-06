@@ -31,6 +31,10 @@ public class GameFieldManager : FieldManager, IResetable {
 
     public PieceView _additionalPiecePrefab { get; private set; }
 
+
+    public Material _normal, _priorityMaterial;
+    
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
@@ -183,7 +187,6 @@ public class GameFieldManager : FieldManager, IResetable {
         for (int i = 0; i < halfSlimeCount; i++)
             newSlimeCells.RemoveAt(Random.Range(0, newSlimeCells.Count));
 
-       
         foreach (var (randomEmptyCell, startPosition) in newSlimeCells) {
             if(_field[randomEmptyCell.x, randomEmptyCell.y] != CellType.Empty)continue;
             var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == CellType.Slime);

@@ -11,6 +11,8 @@ public class DragManager : MonoBehaviour
     {
         Instance = this;
     }*/
+    
+  
 
     public static void LerpToFinal(Transform _cellsContainer, Vector3 _finalPos, Vector3 _finalScale)
     {
@@ -50,9 +52,20 @@ public class DragManager : MonoBehaviour
         markedCellsContainer.gameObject.SetActive(canPlace);
         finalPos = targetMousePos;
     }
+    
+    public static void ReplaceMaterialInChildren(Transform parent, Material newMaterial)
+    {
+        foreach (var meshRenderer in parent.GetComponentsInChildren<MeshRenderer>())
+        {
+            if (meshRenderer.CompareTag("Marked")) {
+                continue;
+            }
+            meshRenderer.material = newMaterial;
+        }
+    }
 
     public static void OnStartDrag(ref bool isDragging, PieceData _data,
-        ref Vector2Int CurrentPieceMaxSize, ref Vector3 finalScale, Transform markedCellsContainer)
+        ref Vector2Int CurrentPieceMaxSize, ref Vector3 finalScale, Transform markedCellsContainer,PieceView _pieceGameObject)
     {
         if (AdminManager.Instance.AdminToggle.isOn || (UltaManager.Instance != null && UltaManager.Instance._ultimateIsActive))
             return;
@@ -60,6 +73,9 @@ public class DragManager : MonoBehaviour
         isDragging = true;
         finalScale = Vector3.one;
         markedCellsContainer.localScale = Vector3.one;
+        
+        ReplaceMaterialInChildren(_pieceGameObject.transform,GameFieldManager.Instance._priorityMaterial );
+        
         FieldManager.PieceVerticalShift = Mathf.Abs(DragManager.CalculateShift(_data).z);
         CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
     }
@@ -108,5 +124,7 @@ public class DragManager : MonoBehaviour
             markedCellsContainer.localScale = initialMarkedScale;
             markedCellsContainer.gameObject.SetActive(false);
         }
+        ReplaceMaterialInChildren(_pieceGameObject.transform,GameFieldManager.Instance._normal );
+
     }
 }
