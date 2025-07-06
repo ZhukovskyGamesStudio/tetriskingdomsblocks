@@ -5,4 +5,6 @@ public class BoostersConfig : ScriptableObject
 {
     public int DynamiteRadius;
     public CellTypeInfo DinamyteCellInfo;
+
+    public float PieceRotationSpeed;
 }

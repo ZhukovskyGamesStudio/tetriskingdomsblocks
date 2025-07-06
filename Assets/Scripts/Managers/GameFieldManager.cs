@@ -74,7 +74,7 @@ public class GameFieldManager : FieldManager, IResetable {
         Vector3 startPos = piece._cellsContainer.position;
         piece.transform.position = finalPosition;
         piece._cellsContainer.position = startPos;
-        _nextBlocks.Remove(piece._data);
+        _nextBlocks.Remove(piece.Data);
         _additionalPiecePrefab = piece;
         _placedPiecesAmount++;
 
@@ -95,7 +95,7 @@ public class GameFieldManager : FieldManager, IResetable {
         }
         OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
-        if (_additionalPiecePrefab != null && _additionalPiecePrefab._data == pieceData)
+        if (_additionalPiecePrefab != null && _additionalPiecePrefab.Data == pieceData)
             _additionalPiecePrefab = null;
         else {
             _placedPiecesAmount++;
@@ -636,7 +636,7 @@ public class GameFieldManager : FieldManager, IResetable {
                 return false;
         }
 
-        if (_additionalPiecePrefab != null && PieceUtils.CanPlacePiece(_field, _additionalPiecePrefab._data))
+        if (_additionalPiecePrefab != null && PieceUtils.CanPlacePiece(_field, _additionalPiecePrefab.Data))
             return false;
 
         return true;

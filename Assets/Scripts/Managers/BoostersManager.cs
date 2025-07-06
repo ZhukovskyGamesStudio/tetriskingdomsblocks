@@ -23,78 +23,124 @@ public class BoostersManager : MonoBehaviour
     public Transform _dynamiteContainer { get; private set; }
     private Transform _currentDynamite;
     
-    public RotateBoosterStates rotationState ; 
-    private float initialRotationY; 
-    private bool rotationChanged = false; 
-    private PieceView pieceView;
+    public RotateBoosterStates RotationState ; 
+    private float _initialRotationY; 
+    private bool _rotationChanged; 
+    private PieceView _currentPieceView;
+    
+    [SerializeField] private Button _rotatePieceCancelButton;
+    [SerializeField] private Button _rotatePieceAcceptButton;
+    [SerializeField] private Transform _rotatePieceSelectContainer;
+    [SerializeField] private Transform _rotatePieceButtonsContainer;
+    private Vector2 _lastInputPosition;
     
     public static BoostersManager Instance;
 
     public enum RotateBoosterStates
     {
+        LockRotate,
         SelectPiece,
-        RotatePiece,
-        LockRotate
+        RotatePiece
     }
     private void Awake()
     {
         Instance = this;
+        
+        _rotatePieceAcceptButton.onClick.AddListener(()=> ApplyRotation());
+        _rotatePieceButton.onClick.AddListener(()=> UseRotatePiece());
+        _rotatePieceCancelButton.onClick.AddListener(()=> UseRotatePiece());
     }
     
     void Update()
     {
-        if (rotationState == RotateBoosterStates.RotatePiece && Input.touchCount > 0)
+        if (RotationState != RotateBoosterStates.RotatePiece)
+            return;
+
+        bool isInputActive = false;
+        float rotationDelta = 0f;
+
+        if (Input.touchCount > 0)
         {
-            float rotationSpeed = 2f;//move to config
-            float rotationDelta = Input.GetTouch(0).deltaPosition.x * rotationSpeed;
-            pieceView.transform.Rotate(0, rotationDelta, 0); 
-            rotationChanged = true;
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Moved)
+            {
+                rotationDelta = touch.deltaPosition.x * 0.5f; // Чувствительность
+                isInputActive = true;
+            }
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            Vector2 currentMousePos = Input.mousePosition;
+            if (_lastInputPosition != Vector2.zero)
+            {
+                rotationDelta = (currentMousePos.x - _lastInputPosition.x) * 0.3f; // Чувствительность
+                isInputActive = true;
+            }
+
+            _lastInputPosition = currentMousePos;
+        }
+        else
+        {
+            _lastInputPosition = Vector2.zero;
+        }
+
+        if (isInputActive)
+        {
+            _currentPieceView.transform.Rotate(0, -rotationDelta, 0); // Вращаем по оси Y
+            _rotationChanged = true;
         }
     }
 
-    public void UnlockRotation()
-    {
-        initialRotationY = transform.rotation.eulerAngles.y; // Запоминаем начальный угол Y
-        rotationChanged = false;
-    }
     
     public void ApplyRotation()
     {
-        if (!rotationChanged) 
+        if (!_rotationChanged) 
             return;
 
-        float currentRotationY = transform.rotation.eulerAngles.y % 360f;
+        float currentRotationY = _currentPieceView.transform.rotation.eulerAngles.y % 360f;
         if (currentRotationY < 0) currentRotationY += 360f;
 
         float closestAngle = Mathf.Round(currentRotationY / 90f) * 90f;
         closestAngle = closestAngle % 360f; 
 
-        transform.rotation = Quaternion.Euler(0, closestAngle, 0);
+        _currentPieceView.transform.rotation = Quaternion.Euler(0, closestAngle, 0);
 
-        if (Mathf.Abs(closestAngle - initialRotationY) > 0.1f)
+        if (Mathf.Abs(closestAngle - _initialRotationY) > 89f)
         {
-            int degrees = Mathf.RoundToInt(closestAngle - initialRotationY);
+            int degrees = Mathf.RoundToInt(closestAngle - _initialRotationY);
             if (degrees < 0) degrees += 360;
-          //  Cells = RotateFigure(Cells, degrees);
+            RotateFigure(degrees);
+        }
+        else
+        {
+            UseRotatePiece();
+            return;
         }
 
-        rotationState = RotateBoosterStates.LockRotate;
+        RotationState = RotateBoosterStates.LockRotate;
+        _rotatePieceButtonsContainer.gameObject.SetActive(false);
+        _currentPieceView = null;
+
+        StorageManager.GameDataMain.RotatePieceCount--;
+        _rotatePieceCountText.text =  StorageManager.GameDataMain.RotatePieceCount.ToString();
     }
     
-    private bool[,] RotateFigure(bool[,] cells, int degrees)
+    private void RotateFigure(int degrees)
     {
+        Debug.Log("RotateFigure" + degrees);
         if (degrees != 90 && degrees != 180 && degrees != 270)
-            return cells;
+            return;
 
         int rotations = degrees / 90;
-        bool[,] result = cells;
+        bool[,] result = _currentPieceView.Data.Cells;
 
         for (int r = 0; r < rotations; r++)
         {
             result = Rotate90Clockwise(result);
         }
 
-        return result;
+        _currentPieceView.Data.Cells = result;
+       
     }
 
     private bool[,] Rotate90Clockwise(bool[,] matrix)
@@ -102,16 +148,52 @@ public class BoostersManager : MonoBehaviour
         int rows = matrix.GetLength(0);
         int cols = matrix.GetLength(1);
         bool[,] rotated = new bool[cols, rows];
+        CellView[,] oldCells = _currentPieceView._cells;
+        CellView[,] newCells  = new CellView[ cols,rows];
+        Guid[,] oldGuids =  _currentPieceView.Data.CellGuids;
+        Guid[,] newGuids = new Guid[ cols,rows];
 
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < cols; j++)
             {
                 rotated[j, rows - 1 - i] = matrix[i, j];
+                newGuids[j, rows - 1 - i] = oldGuids[i, j];
+                newCells[j, rows - 1 - i] = oldCells[i, j];
             }
         }
-
+        _currentPieceView._cells = newCells;
+        _currentPieceView.Data.CellGuids = newGuids;
         return rotated;
+    }
+
+    public void SelectPieceToRotate(PieceView pieceView)
+    {
+        _rotatePieceSelectContainer.gameObject.SetActive(false);
+        _rotatePieceButtonsContainer.gameObject.SetActive(true);
+        RotationState = RotateBoosterStates.RotatePiece;
+        _initialRotationY = pieceView.transform.rotation.eulerAngles.y; 
+        _currentPieceView = pieceView;
+        _rotatePieceButtonsContainer.transform.position = pieceView.transform.position + new Vector3(1.5f,1,0);
+        _rotationChanged = false;
+        _lastInputPosition = Vector2.zero;
+    }
+    public void UseRotatePiece()
+    {
+        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GoalView.Instance._isGameEnded) return;
+        if (RotationState == RotateBoosterStates.LockRotate)
+        {
+            RotationState = RotateBoosterStates.SelectPiece;
+            _rotatePieceSelectContainer.gameObject.SetActive(true);
+        }
+        else
+        {
+            if (RotationState == RotateBoosterStates.RotatePiece)
+                _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
+            RotationState = RotateBoosterStates.LockRotate;
+            _rotatePieceSelectContainer.gameObject.SetActive(false);
+            _rotatePieceButtonsContainer.gameObject.SetActive(false);
+        }
     }
     
     public void UseRandomField()

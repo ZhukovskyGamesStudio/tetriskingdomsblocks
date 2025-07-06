@@ -70,6 +70,18 @@ public class DragManager : MonoBehaviour
         if (AdminManager.Instance.AdminToggle.isOn || (UltaManager.Instance != null && UltaManager.Instance._ultimateIsActive))
             return;
 
+        if (BoostersManager.Instance != null)
+        {
+            if (BoostersManager.Instance.RotationState == BoostersManager.RotateBoosterStates.RotatePiece || 
+                (BoostersManager.Instance.RotationState == BoostersManager.RotateBoosterStates.SelectPiece && GameFieldManager.Instance._additionalPiecePrefab == _pieceGameObject))
+                return;
+            else if (BoostersManager.Instance.RotationState == BoostersManager.RotateBoosterStates.SelectPiece)
+            {
+                BoostersManager.Instance.SelectPieceToRotate(_pieceGameObject);
+                return;
+            }
+           
+        }
         isDragging = true;
         finalScale = Vector3.one;
         markedCellsContainer.localScale = Vector3.one;
