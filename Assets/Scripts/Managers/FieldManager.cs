@@ -52,6 +52,9 @@ public class FieldManager : MonoBehaviour {
     [Header("Audio")]
     [SerializeField]
     protected GameAudio _gameAudio;
+    
+  
+   
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);

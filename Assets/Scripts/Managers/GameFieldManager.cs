@@ -31,6 +31,10 @@ public class GameFieldManager : FieldManager, IResetable {
 
     public PieceView _additionalPiecePrefab { get; private set; }
 
+
+    public Material _normal, _priorityMaterial;
+    
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
