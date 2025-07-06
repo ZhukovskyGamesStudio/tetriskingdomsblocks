@@ -23,19 +23,39 @@ public class BoostersManager : MonoBehaviour
     public Transform _dynamiteContainer { get; private set; }
     private Transform _currentDynamite;
     
+    public RotateBoosterStates rotationState ; 
+    private float initialRotationY; 
+    private bool rotationChanged = false; 
+    private PieceView pieceView;
+    
     public static BoostersManager Instance;
 
+    public enum RotateBoosterStates
+    {
+        SelectPiece,
+        RotatePiece,
+        LockRotate
+    }
     private void Awake()
     {
         Instance = this;
+    }
+    
+    void Update()
+    {
+        if (rotationState == RotateBoosterStates.RotatePiece && Input.touchCount > 0)
+        {
+            float rotationSpeed = 2f;//move to config
+            float rotationDelta = Input.GetTouch(0).deltaPosition.x * rotationSpeed;
+            pieceView.transform.Rotate(0, rotationDelta, 0); 
+            rotationChanged = true;
+        }
     }
 
     public void UseRandomField()
     {
         if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GoalView.Instance._isGameEnded) return;
 
-        
-        
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
         int cellsCount = 0;
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++)
@@ -174,5 +194,10 @@ public class BoostersManager : MonoBehaviour
         _dinamyteCountText.text =  StorageManager.GameDataMain.DynamyteCount.ToString();
         _hummerCountText.text =  StorageManager.GameDataMain.HummerCount.ToString();
         _rotatePieceCountText.text =  StorageManager.GameDataMain.RotatePieceCount.ToString();
+    }
+
+    private void SnapRotatedPieceToClosestStraightAngle()
+    {
+        
     }
 }
