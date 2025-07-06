@@ -7,6 +7,7 @@ Shader "Custom/StandartPriority"
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
         _EmissionColor ("Emission Color", Color) = (0,0,0,1)
+        _EmissionMap ("Emission Map", 2D) = "black" {}
     }
     SubShader
     {
@@ -41,6 +42,7 @@ Shader "Custom/StandartPriority"
             sampler2D _MainTex;
             float4 _Color;
             float4 _EmissionColor;
+            sampler2D _EmissionMap;
 
             v2f vert(appdata v)
             {
@@ -54,8 +56,9 @@ Shader "Custom/StandartPriority"
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 albedo = tex2D(_MainTex, i.uv) * _Color;
-                fixed4 emission = _EmissionColor;
-                return albedo + emission; // Добавляем эмиссию
+                fixed4 emissionTex = tex2D(_EmissionMap, i.uv);
+                fixed4 emission = emissionTex * _EmissionColor;
+                return albedo + emission;
             }
             ENDCG
         }
@@ -65,10 +68,12 @@ Shader "Custom/StandartPriority"
         #pragma target 3.0
 
         sampler2D _MainTex;
+        sampler2D _EmissionMap;
 
         struct Input
         {
             float2 uv_MainTex;
+            float2 uv_EmissionMap;
         };
 
         half _Glossiness;
@@ -81,9 +86,10 @@ Shader "Custom/StandartPriority"
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 emissionTex = tex2D(_EmissionMap, IN.uv_EmissionMap);
             o.Albedo = c.rgb;
-            o.Emission = _EmissionColor.rgb; // Устанавливаем эмиссию
+            o.Emission = emissionTex.rgb * _EmissionColor.rgb;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
