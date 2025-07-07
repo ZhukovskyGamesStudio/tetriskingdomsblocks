@@ -16,17 +16,11 @@ public class MetaFieldManager : FieldManager {
     [field: SerializeField]
     public MainMetaConfig MainMetaConfig { get; private set; }
 
-    [SerializeField]
-    private LayerMask _pieceMask;
-
     private List<ResourceMarkAndPieces> _connectedGroups = new List<ResourceMarkAndPieces>();
 
     private PieceData _nextPiece = null;
     private int[,] _groupCellIndex;
     private int _minutesToGetPiece = 120;
-    private bool _isDestroyPieceMode;
-    private Tween _hummerTween;
-    private Sequence _hummerSequence;
     private ObjectPool<ResourceMarkView> _resourcesMarksPool;
   //  private float timerNowTimeSecondCounter;
    // private const int MAX_HEALTH_COUNT = 3;
@@ -40,25 +34,12 @@ public class MetaFieldManager : FieldManager {
 
     protected override void Update() {
         base.Update();
-       // UpdateTimerAndHealth();
         if (_hasInternetConnection && (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours < 2) {
             MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece");
         }
-
-        if (Input.GetMouseButtonDown(0)) {
-            if (_isDestroyPieceMode)
-                TryDestroyPiece();
-            // _isDraggingCamera = true;
-            // _dragStartPosition = Input.mousePosition;
-        }
-        /*   else if(Input.GetMouseButtonUp(0))
-               _isDraggingCamera = false;*/
-
-        /*   if(_isDraggingCamera && !IsDraggingPiece)
-               DragCamera();*/
     }
 
-   /* private void UpdateTimerAndHealth() {
+    /* private void UpdateTimerAndHealth() {
         if (_hasInternetConnection) {
             timerNowTimeSecondCounter += Time.unscaledDeltaTime;
             if (timerNowTimeSecondCounter >= 1) {
@@ -117,14 +98,13 @@ public class MetaFieldManager : FieldManager {
              Mathf.Clamp(needPosition.z,_fieldStart.position.z,_fieldEnd.position.z));
         _dragStartPosition = Input.mousePosition;
      }*/
-    private void TryDestroyPiece() {
+    protected override void TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null && (StorageManager.GameDataMain.resourcesCount[0] >= 500 &&
                                      StorageManager.GameDataMain.resourcesCount[1] >= 500 &&
                                      StorageManager.GameDataMain.resourcesCount[2] >= 500)) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            // if(_groupCellIndex[Mathf.RoundToInt(cellPos.x), Mathf.RoundToInt(cellPos.z)] == 0)return;
             StorageManager.GameDataMain.resourcesCount[0] -= 500;
             StorageManager.GameDataMain.resourcesCount[1] -= 500;
             StorageManager.GameDataMain.resourcesCount[2] -= 500;
@@ -133,18 +113,16 @@ public class MetaFieldManager : FieldManager {
             _groupCellIndex[(int)cellPos.x, (int)cellPos.z] = 0;
             CollectResourcesFromMark(groupIndex - 1, 1);
             _connectedGroups[groupIndex - 1].ResourceMarkView.CollectAnimation();
-            // _connectedGroups[groupIndex-1].ResourceMarkView.gameObject.SetActive(false);
             HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
-            //_cells[(int)cellPos.x, (int)cellPos.z].DestroyCell();
             _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
             StorageManager.GameDataMain.FieldRows[(int)cellPos.x].RowCells[(int)cellPos.z] =
                 new ResourceAndCountData(_field[(int)cellPos.x, (int)cellPos.z], 0);
 
             RecalculateCellGroupAfterDeletePiece(groupIndex);
-
-            //reset resource marks
         }
     }
+    
+    
 
     public void RecalculateCellGroupAfterDeletePiece(int groupIndex) {
         if (_connectedGroups[groupIndex - 1].Pieces.Count == 1) {
@@ -284,57 +262,6 @@ public class MetaFieldManager : FieldManager {
             GenerateNewPieces(); // for test
         }
     }
-
-    public void ToggleDestroyPieceMode() {
-        _isDestroyPieceMode = !_isDestroyPieceMode;
-        _hummerTween.Kill();
-
-        //  .Join(CameraContainer.transform.DOMoveY(camPos.y * Random.Range(1.01f, 1.03f), 0.2f))
-        //.Join(CameraContainer.transform.DOMoveZ(camPos.z - zOffset, 0.1f))
-        // .Append(CameraContainer.transform.DOMoveX(camPos.x + xOffset, 0.1f))
-        // .Join(CameraContainer.transform.DOMoveZ(camPos.z + zOffset, 0.1f)).Append(CameraContainer.transform.DOMove(camPos, 0.1f));
-        if (_isDestroyPieceMode) {
-            MetaUI.Instance.SetDestroyPieceText("Cancel");
-
-            _hummerSequence.Kill();
-            _hummerSequence = DOTween.Sequence();
-
-            _hummerSequence.Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerStart.position, 0.8f));
-
-            Tween floatTween = MetaUI.Instance.HummerContainer.DOMoveY(MetaUI.Instance.HummerContainer.position.y + 1, 0.5f).SetLoops(1000, LoopType.Yoyo);
-
-            _hummerSequence.Append(floatTween);
-        } else {
-            _hummerSequence.Kill();
-            MetaUI.Instance.SetDestroyPieceText("Destroy pieces mode");
-            _hummerSequence.Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerEnd.position, 0.8f));
-        }
-    }
-
-    private void HummerDestoyPieceAnimation(CellView cell) {
-        DestroyPieceWithHummer(cell).Forget();
-        cell.OffCollider();
-        _hummerSequence.Kill();
-        _hummerSequence = DOTween.Sequence();
-
-        _hummerSequence
-            .Append(MetaUI.Instance.HummerContainer.transform.DOMove(
-                new Vector3(cell.transform.position.x + 1, cell.transform.position.y, cell.transform.position.z), 0.8f))
-            .Append(MetaUI.Instance.HummerContainer.transform.DORotate(new Vector3(0, 0, 90f), 0.2f))
-            .Append(MetaUI.Instance.HummerContainer.transform.DORotate(new Vector3(0, 0, 0f), 0.2f))
-            .Append(MetaUI.Instance.HummerContainer.transform.DOMove(MetaUI.Instance.HummerContainerStart.position, 0.8f));
-
-        Tween floatTween = MetaUI.Instance.HummerContainer.DOMoveY(MetaUI.Instance.HummerContainer.position.y + 1, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        _hummerSequence.Append(floatTween);
-    }
-
-    private async UniTask DestroyPieceWithHummer(CellView cell) {
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
-        cell.DestroyCell();
-        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
-        ShakeCamera();
-    }
-
     public void UpdateResourcesCountUIText() {
         for (int i = 0; i < StorageManager.GameDataMain.resourcesCount.Length; i++) MetaUI.Instance.SetResourceCount(i, StorageManager.GameDataMain.resourcesCount[i]);
     }

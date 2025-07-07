@@ -56,6 +56,31 @@ public class GameFieldManager : FieldManager, IResetable {
         };
         NextPiecesView.Instance.SetData(_nextBlocks);
     }
+    
+    protected override void TryDestroyPiece() {
+        Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
+        if (hit.collider != null && StorageManager.GameDataMain.HummerCount > 0)
+        {
+            Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
+                Mathf.RoundToInt(hit.collider.transform.localPosition.y),
+                Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+            if (FieldUtils.CantDestroyInRow(_field[(int)cellPos.x, (int)cellPos.z])) return;
+            BoostersManager.Instance.BreackCellWithHummer();
+
+            if (StorageManager.GameDataMain.HummerCount <= 0)
+                _isDestroyPieceMode = false;
+            HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
+            _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
+
+            CheckResourceCountForTasks();
+            CheckGameGoal();
+        }
+    }
+    private void CheckGameGoal()
+    {
+        if (!CheckWin() && CheckLose())
+            Lose();
+    }
 
     public bool AdditionalPieceContainerUnderPiece() =>
         _inputRaycaster.InputPosAdditionalContainer() != Vector3.zero && _additionalPiecePrefab == null;

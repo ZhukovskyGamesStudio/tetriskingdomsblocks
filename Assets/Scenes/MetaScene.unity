@@ -2688,6 +2688,7 @@ Transform:
   - {fileID: 1984839919}
   - {fileID: 1610804696}
   - {fileID: 1069109898}
+  - {fileID: 844603829}
   - {fileID: 1099442103}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2931,6 +2932,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1111628672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &844603828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 844603829}
+  - component: {fileID: 844603830}
+  m_Layer: 0
+  m_Name: HummerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &844603829
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844603828}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 793964004}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &844603830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844603828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe0048ebe6f7fb4f8d6d1809e02fe36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hummerContainer: {fileID: 1161516303}
+  _hummerContainerStart: {fileID: 19773807}
+  _hummerContainerEnd: {fileID: 1801287232}
+  _hummerText: {fileID: 318395517}
 --- !u!1 &851150026
 GameObject:
   m_ObjectHideFlags: 0
@@ -6152,14 +6201,14 @@ MonoBehaviour:
     m_Bits: 8
   _additionalContainerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
   _mmfPlayer: {fileID: 1984839918}
   _gameAudio: {fileID: 1005776668}
-  <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
   _pieceMask:
     serializedVersion: 2
     m_Bits: 64
+  <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
 --- !u!4 &1910540965
 Transform:
   m_ObjectHideFlags: 0

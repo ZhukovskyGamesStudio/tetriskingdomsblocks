@@ -53,8 +53,10 @@ public class FieldManager : MonoBehaviour {
     [SerializeField]
     protected GameAudio _gameAudio;
     
-  
-   
+    protected bool _isDestroyPieceMode;
+    
+    [SerializeField]
+    protected LayerMask _pieceMask;
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
@@ -66,7 +68,42 @@ public class FieldManager : MonoBehaviour {
         // Application.targetFrameRate = 144;
     }
 
-    protected virtual void Update() { }
+    protected virtual void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) {
+            if (_isDestroyPieceMode)
+                TryDestroyPiece();
+        }
+    }
+
+    protected virtual void TryDestroyPiece()
+    {
+        
+    }
+    
+     public void ToggleDestroyPieceMode() {
+        _isDestroyPieceMode = !_isDestroyPieceMode;
+        Debug.Log(_isDestroyPieceMode);
+        
+        if (_isDestroyPieceMode) 
+            HummerManager.Instance.ShowHummerAnimation();
+        else 
+            HummerManager.Instance.HideHummerAnimation();
+    }
+
+    protected void HummerDestoyPieceAnimation(CellView cell) {
+        DestroyPieceWithHummer(cell).Forget();
+        cell.OffCollider();
+      HummerManager.Instance.HummerDestroyPieceAnimation(cell.transform.position);
+    }
+
+    private async UniTask DestroyPieceWithHummer(CellView cell) {
+        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        cell.DestroyCell();
+        VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
+        ShakeCamera(0.6f);
+    }
+
 
     protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;

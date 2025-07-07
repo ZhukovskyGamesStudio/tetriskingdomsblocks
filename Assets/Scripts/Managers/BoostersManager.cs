@@ -127,7 +127,6 @@ public class BoostersManager : MonoBehaviour
     
     private void RotateFigure(int degrees)
     {
-        Debug.Log("RotateFigure" + degrees);
         if (degrees != 90 && degrees != 180 && degrees != 270)
             return;
 
@@ -195,7 +194,18 @@ public class BoostersManager : MonoBehaviour
             _rotatePieceButtonsContainer.gameObject.SetActive(false);
         }
     }
-    
+
+    public void UseHummer()
+    {
+        if (StorageManager.GameDataMain.HummerCount <= 0)return;
+        GameFieldManager.Instance.ToggleDestroyPieceMode();
+    }
+
+    public void BreackCellWithHummer()
+    {
+        StorageManager.GameDataMain.HummerCount --;
+        _hummerCountText.text =  StorageManager.GameDataMain.HummerCount.ToString();
+    }
     public void UseRandomField()
     {
         if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GoalView.Instance._isGameEnded) return;
@@ -267,7 +277,6 @@ public class BoostersManager : MonoBehaviour
     public void SetCurrentDynamite(Transform pieceView)
     {
         _currentDynamite = pieceView;
-      //  _currentDynamite.OnStartDrag();
     }
 
     private void ExplodeDynamite(Vector2Int position)
