@@ -646,7 +646,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
     public bool CheckWin() {
         if (_currentTasks.Count == 0) {
-            Win();
+            UltaManager.Instance.UltimateActionEndRound();
             return true;
         }
 

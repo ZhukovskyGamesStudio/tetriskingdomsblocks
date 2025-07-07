@@ -66,6 +66,9 @@ public static class FieldUtils {
                 }
             }
         }
+
+        if (amount == 0)
+            return emptyCells;
         emptyCells = emptyCells.OrderBy(_ => Random.Range(0, 1f)).ToList();
         return emptyCells.Take(Mathf.Min(amount, emptyCells.Count)).ToList();
     }

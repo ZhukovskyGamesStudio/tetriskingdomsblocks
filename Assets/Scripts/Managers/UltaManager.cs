@@ -80,8 +80,26 @@ public class UltaManager : MonoBehaviour
       
         _ultimateIsActive = false;
     }
+    
+    public async void UltimateActionEndRound()
+    {
+        _ultimateIsActive = true;
+        
+        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field,0);
+        foreach (var pos in coordsToSpawn) {
+            SpawnNewCellFromUltimate(pos, true).Forget();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.05f));
+        }
 
-    private async UniTask SpawnNewCellFromUltimate(Vector2Int placedCellPosition)
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));
+        
+        GameFieldManager.Instance.ExplodeCellsInRows();
+        
+        GameFieldManager.Instance.Win();
+        _ultimateIsActive = false;
+    }
+
+    private async UniTask SpawnNewCellFromUltimate(Vector2Int placedCellPosition, bool isEndRoundUltimate = false)
     {
         var pieceData = GetRandomCellType();
 
@@ -95,20 +113,23 @@ public class UltaManager : MonoBehaviour
         cellView.gameObject.SetActive(false);
         var star = Instantiate(_starPrefab);
         star.position = cellView.transform.position;
-        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveY(0.75f, 0.5f).SetEase(Ease.OutQuad)).AsyncWaitForCompletion();
+        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveY(0.75f, 0.5f).SetEase(Ease.OutQuad))
+            .AsyncWaitForCompletion();
         cellView.transform.position = star.position;
         cellView.gameObject.SetActive(true);
         Destroy(star.gameObject);
 
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
-        GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
-        //  GameFieldManager.Instance.ShowDropImpact(cellView.transform, pieceData, cellView.gameObject, 1);
-        GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType, cellView, placedCellPosition, true);
-        GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
-        GameFieldManager.Instance.CollectResourcesOnPlace(pieceData);
-        GameFieldManager.Instance.ExplodeCellsInRows();
-                
+        if (!isEndRoundUltimate)
+            GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
         
+        GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType, cellView, placedCellPosition, true);
+        if (!isEndRoundUltimate)
+        {
+            GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
+            GameFieldManager.Instance.CollectResourcesOnPlace(pieceData);
+            GameFieldManager.Instance.ExplodeCellsInRows();
+        }
     }
 
     private PieceData GetRandomCellType()
