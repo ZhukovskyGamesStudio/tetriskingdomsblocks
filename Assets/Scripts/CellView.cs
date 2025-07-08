@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
+using JetBrains.Annotations;
+using ScriptableObjects.Configs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,6 +13,7 @@ public class CellView : MonoBehaviour {
 
     [SerializeField]
     private GameObject _objectsContainer;
+    
 
     [SerializeField]
     private Collider _cellCollider;
@@ -35,7 +39,15 @@ public class CellView : MonoBehaviour {
     private void EnableRandomFromList(List<GameObject> list) {
         var rnd = Random.Range(0, list.Count);
         for (int i = 0; i < list.Count; i++) {
-            list[i].SetActive(i == rnd);
+            if (i == rnd) {
+                list[i].SetActive(true);
+                while (list[i].transform.childCount>0) {
+                    list[i].transform.GetChild(0).SetParent(transform, true);
+                }
+                list[i].transform.SetSiblingIndex(0);
+            } else {
+                Destroy(list[i]);
+            }
         }
     }
     
@@ -58,6 +70,40 @@ public class CellView : MonoBehaviour {
             .Append(transform.DOScale(transform.localScale * 0f, 0.4f * animSpeedMultiplayer));
     }
 
+
+    [ItemCanBeNull]
+    public List<Transform> Children => GetComponentsInChildren<Transform>( false).OrderBy(c=>c.GetSiblingIndex()).ToList();
+
+    public Sequence DropWithDecorSequence(DragConfig cnfg,  float finY) {
+        var animSpeedMultiplayer = cnfg.AfterDropPieceAnimationMultiplayer;
+        var seq = DOTween.Sequence();
+
+        var children = Children;
+        children.Remove(transform);
+        var invertedCurve = InvertCurve(cnfg.DropPieceAnimationCurve);
+        for (int index = 0; index < children.Count; index++) {
+            Transform tr = children[index];
+            var cellSeq = DOTween.Sequence();
+            cellSeq.AppendInterval(cnfg._delayBetweenDecorDrop * animSpeedMultiplayer * index);
+            cellSeq.Append(tr.transform.DOMoveY(endValue: finY, cnfg._dropLength * animSpeedMultiplayer).SetEase(invertedCurve));
+            seq.Join(cellSeq);
+        }
+
+        return seq;
+    }
+    
+    public static AnimationCurve InvertCurve(AnimationCurve original)
+    {
+        var keys = original.keys;
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keys[i].value = 1f - keys[i].value; // инверсия относительно 1
+            keys[i].inTangent = -keys[i].inTangent;
+            keys[i].outTangent = -keys[i].outTangent;
+        }
+        return new AnimationCurve(keys);
+    }
+    
     private void OnDestroy() {
         _currentTween.Kill();
     }

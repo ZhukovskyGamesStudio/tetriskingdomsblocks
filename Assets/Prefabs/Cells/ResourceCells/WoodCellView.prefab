@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5676457900381342222
 Transform:
   m_ObjectHideFlags: 0
@@ -95,6 +95,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: block_wood_2_2
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6211c4af09fec8e4d8e71e66c788616a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -168,6 +172,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8a9303b5cb0e85d4ba0a3f4dc250d26d, type: 3}
       propertyPath: m_Name
       value: block_wood_2_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8a9303b5cb0e85d4ba0a3f4dc250d26d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -275,7 +283,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1691349259426728308, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+    - {fileID: 8325579802438069636, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1992755646559075033, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
@@ -363,6 +373,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: block_wood_1_2
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0380ce2544f50724da85f6251d2ce404, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -437,6 +451,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: block_wood_1_3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1dbcd295b3cf5934f838cd19ea43d788, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -510,6 +528,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8bb59c705bdb2cb4ab0f40401d1f591f, type: 3}
       propertyPath: m_Name
       value: block_wood_2_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8bb59c705bdb2cb4ab0f40401d1f591f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -595,6 +617,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7bb346e76eceaa64a9516f86e19fea85, type: 3}
       propertyPath: m_Name
       value: block_wood_1_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7bb346e76eceaa64a9516f86e19fea85, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

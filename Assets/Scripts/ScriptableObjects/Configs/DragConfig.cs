@@ -8,8 +8,17 @@ namespace ScriptableObjects.Configs {
         public float HigherFieldShift = 0.5f;
 
         public float HeightUnderField;
+        
+        [Header("Drop animation")]
         public float DropPieceAnimationDuration;
         public float AfterDropPieceAnimationMultiplayer;
+        public float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop=0.1f;
+        public float _dropLength = 0.3f;
+        public AnimationCurve DropPieceAnimationCurve;
+        public float _callbackPercent = 0.75f;
+        public float smokeVerticalShift = -0.5f;
+        
+        [Header("Destroy animation")]
         public float DestroyPieceAnimationMultiplayer;
     }
     

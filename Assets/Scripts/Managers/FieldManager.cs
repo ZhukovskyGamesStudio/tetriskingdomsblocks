@@ -58,6 +58,14 @@ public class FieldManager : MonoBehaviour {
     [SerializeField]
     protected LayerMask _pieceMask;
 
+    [Header("Drop Animation Settings")]
+    [SerializeField]
+    private bool _isSquishingOnDrop = false;
+    [SerializeField]
+    private float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop=0.1f, _jumpPercent = 0.125f;
+    [SerializeField]
+    private float _dropLength = 0.3f, _jumpLength = 0.1f;
+
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
     }
@@ -170,14 +178,14 @@ public class FieldManager : MonoBehaviour {
             }
         }
 
-        ShowDropImpact(cellsContainer.transform, pieceData, cellsContainer.gameObject, cellsAmount);
+        ShowDropImpact(cellsContainer.transform,cells, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
     public virtual void CheckClosestCells(Vector2Int coord) { }
     public virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
-    public void ShowDropImpact(Transform pieceContainer, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
-        DropPeaceTween(pieceContainer, () => {
+    public void ShowDropImpact(Transform pieceContainer,CellView[,] cells, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+        DropPeaceTween(pieceContainer,cells, () => {
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
@@ -206,21 +214,51 @@ public class FieldManager : MonoBehaviour {
         });
     }
 
-    private void DropPeaceTween(Transform piece, Action dropCallback) {
-        var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.AfterDropPieceAnimationMultiplayer;
-        DOTween.Sequence().Append(piece.DOMoveY(FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y, 0.3f * animSpeedMultiplayer))
-            .AppendCallback(() => dropCallback?.Invoke()).Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
-            .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f * animSpeedMultiplayer))
-            .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
-            .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f * animSpeedMultiplayer))
-            .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f)).Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f * animSpeedMultiplayer))
-            .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f * animSpeedMultiplayer)).OnComplete(() => {
-                while (piece.childCount > 0) {
-                    piece.GetChild(0).SetParent(FieldContainers.Instance.FieldContainer);
-                }
+    private void DropPeaceTween(Transform piece,CellView[,] cells,  Action dropCallback) {
+        var cnfg = ConfigsManager.Instance.DragConfig;
+        var animSpeedMultiplayer = cnfg.AfterDropPieceAnimationMultiplayer;
+        var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y-0.3f;
+        var seq = DOTween.Sequence();
+        int cellsCount = 0;
+        foreach (var VARIABLE in cells) {
+            if (VARIABLE == null) {
+                continue;
+            }
 
-                Destroy(piece.gameObject);
-            });
+            var cellSeq = DOTween.Sequence();
+            cellSeq.AppendInterval(cnfg._delayBetweenTileDrop * animSpeedMultiplayer * cellsCount);
+            cellSeq.Append(VARIABLE.DropWithDecorSequence(cnfg, finY));
+           /* cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _dropLength * animSpeedMultiplayer));
+            cellSeq.Append(VARIABLE.transform.DOMoveY(finY + jumpHeight, _jumpLength / 2 * animSpeedMultiplayer));
+            cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _jumpLength / 2 * animSpeedMultiplayer));*/
+            seq.Join(cellSeq);
+            cellsCount++;
+        }
+
+        var callbackSeq = DOTween.Sequence();
+        callbackSeq.AppendInterval(cnfg._delayBetweenTileDrop * animSpeedMultiplayer * (cellsCount - 1) / 2f +
+                                   cnfg._dropLength * animSpeedMultiplayer * cnfg._callbackPercent);
+        callbackSeq.AppendCallback(() => dropCallback?.Invoke());
+        seq.Join(callbackSeq);
+
+        if (_isSquishingOnDrop) {
+            seq.Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
+                .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f * animSpeedMultiplayer))
+                .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
+                .Append(piece.DOScaleY(piece.localScale.y * 1.2f, 0.2f * animSpeedMultiplayer))
+                .Join(piece.DOScaleX(piece.localScale.x * 0.8f, 0.2f))
+                .Join(piece.DOScaleZ(piece.localScale.z * 0.8f, 0.2f * animSpeedMultiplayer))
+                .Append(piece.DOScale(new Vector3(1, 1, 1), 0.25f * animSpeedMultiplayer));
+        }
+
+        seq.OnComplete(() => {
+            while (piece.childCount > 0) {
+                piece.GetChild(0).SetParent(FieldContainers.Instance.FieldContainer);
+            }
+
+            Destroy(piece.gameObject);
+        });
+        seq.Play();
     }
 
     private void SpawnSmokeUnderPiece(Transform piece) {
@@ -252,7 +290,7 @@ public class FieldManager : MonoBehaviour {
     private async UniTask SpawnSmokeParticle(Vector3 pos) {
         var particles = _placeCellEffectsPool.Get();
         particles.gameObject.SetActive(true);
-        particles.transform.position = new Vector3(pos.x, pos.y - 0.2f, pos.z);
+        particles.transform.position = new Vector3(pos.x, pos.y + ConfigsManager.Instance.DragConfig.smokeVerticalShift, pos.z);
         particles.Play();
         await UniTask.Delay(TimeSpan.FromSeconds(2));
         if (particles) {

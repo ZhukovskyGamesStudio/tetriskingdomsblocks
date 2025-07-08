@@ -17,5 +17,52 @@ MonoBehaviour:
   HigherFieldShift: 1
   HeightUnderField: 3
   DropPieceAnimationDuration: 0.2
-  AfterDropPieceAnimationMultiplayer: 0.5
+  AfterDropPieceAnimationMultiplayer: 0.6
+  _delayBetweenTileDrop: 0.075
+  _delayBetweenDecorDrop: 0.075
+  _dropLength: 0.3
+  DropPieceAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.6338837
+    - serializedVersion: 3
+      time: 0.4389032
+      value: 0.5831082
+      inSlope: -2.3144178
+      outSlope: -2.3144178
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.22835973
+    - serializedVersion: 3
+      time: 0.5965201
+      value: 0.0029474609
+      inSlope: -6.474733
+      outSlope: 1.2810302
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.08078334
+      outWeight: 0.103150845
+    - serializedVersion: 3
+      time: 0.9996098
+      value: 0.0009422302
+      inSlope: -1.6182665
+      outSlope: -1.6182665
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.10102854
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _callbackPercent: 0.75
+  smokeVerticalShift: -1
   DestroyPieceAnimationMultiplayer: 0.5

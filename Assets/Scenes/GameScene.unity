@@ -3714,7 +3714,7 @@ MonoBehaviour:
   _rotatePieceButton: {fileID: 955152528}
   <_dynamiteContainer>k__BackingField: {fileID: 1009792517}
   RotationState: 0
-  _rotatePieceCancelButton: {fileID: 1472261489}
+  _rotatePieceCancelButton: {fileID: 955152528}
   _rotatePieceAcceptButton: {fileID: 1751951772}
   _rotatePieceSelectContainer: {fileID: 1506419578}
   _rotatePieceButtonsContainer: {fileID: 745798266}
@@ -4606,7 +4606,13 @@ MonoBehaviour:
   _gameAudio: {fileID: 2120509509}
   _pieceMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
+  _isSquishingOnDrop: 0
+  _delayBetweenTileDrop: 0.075
+  _delayBetweenDecorDrop: 0.075
+  _jumpPercent: 0.2
+  _dropLength: 0.6
+  _jumpLength: 0.5
   <MainGameConfig>k__BackingField: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
   <_additionalPieceContainer>k__BackingField: {fileID: 1427227600}
   _normal: {fileID: 2100000, guid: 76c95ddac2e11714eab30a017e11182a, type: 2}
