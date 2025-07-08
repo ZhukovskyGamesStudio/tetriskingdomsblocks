@@ -24,6 +24,8 @@ public class PieceView : MonoBehaviour {
     public CellView[,] _cells;
     private bool _isLerpingDisabled = false;
 
+    private float _colliderSize = 1.65f;
+
     public void SetData(PieceData data, float initialScale = 1f) {
         Data = data;
         _startingPosition = _cellsContainer.position;
@@ -34,7 +36,7 @@ public class PieceView : MonoBehaviour {
         initialScale *= 1f / Mathf.Sqrt(maxSize);
 
         _cells = new CellView[width, height];
-        _collider.size = new Vector3(width * initialScale, 0.3f, height * initialScale);
+        _collider.size = new Vector3(_colliderSize, 0.2f, _colliderSize);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 bool cell = data.Cells[x, y];
