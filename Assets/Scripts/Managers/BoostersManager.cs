@@ -53,6 +53,7 @@ public class BoostersManager : MonoBehaviour
     
     void Update()
     {
+        Debug.Log(RotationState);
         if (RotationState != RotateBoosterStates.RotatePiece)
             return;
 
@@ -179,14 +180,17 @@ public class BoostersManager : MonoBehaviour
     }
     public void UseRotatePiece()
     {
+       // Debug.Log((StorageManager.GameDataMain.RotatePieceCount <= 0) + " "+GoalView.Instance._isGameEnded);
         if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GoalView.Instance._isGameEnded) return;
         if (RotationState == RotateBoosterStates.LockRotate)
         {
+            Debug.Log("select");
             RotationState = RotateBoosterStates.SelectPiece;
             _rotatePieceSelectContainer.gameObject.SetActive(true);
         }
         else
         {
+            Debug.Log("lock");
             if (RotationState == RotateBoosterStates.RotatePiece)
                 _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
             RotationState = RotateBoosterStates.LockRotate;
@@ -309,12 +313,12 @@ public class BoostersManager : MonoBehaviour
 
         Destroy(_currentDynamite.gameObject);
         _currentDynamite = null;
-        CheckGameGoal();
         GameFieldManager.Instance.CheckResourceCountForTasks();
         StorageManager.GameDataMain.DynamyteCount--;
         _dinamyteCountText.text =  StorageManager.GameDataMain.DynamyteCount.ToString();
         _dinamyteButton.enabled = true;
         _dinamyteButton.gameObject.SetActive(true);
+        CheckGameGoal();
     }
 
     public void AnimateDynamite(Vector2Int position)
