@@ -703,12 +703,16 @@ public class GameFieldManager : FieldManager, IResetable {
 
         GameUI.Instance.SetMainText("You lose:(");
         GameUI.Instance.SetTasksActive(false);
-        NextPiecesView.Instance.DestroyPieces();
-        NextPiecesView.Instance.DestroyAdditionalPiece();
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
+      Invoke("DestroyCurrentPieces", 2f);
     }
 
+    private void DestroyCurrentPieces()
+    {
+        NextPiecesView.Instance.DestroyPieces();
+        NextPiecesView.Instance.DestroyAdditionalPiece();
+    }
     /*  private void RemoveHealthAfterLose() {
           StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
           StorageManager.GameDataMain.HealthCount--;
