@@ -109,15 +109,13 @@ public class GameFieldManager : FieldManager, IResetable {
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
-      
-        
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
 
         //  CheckPlacedCellsForTask();
-        if (pieceData.Type.CellType == CellType.Dinamyte)
-        {
+        if (pieceData.Type.CellType == CellType.Dinamyte) {
             return;
         }
+
         OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
         if (_additionalPiecePrefab != null && _additionalPiecePrefab.Data == pieceData)
@@ -190,43 +188,52 @@ public class GameFieldManager : FieldManager, IResetable {
              }
          }*/
         List<(Vector2Int, Vector3)> newSlimeCells = new List<(Vector2Int, Vector3)>();
-        for (int i = 0; i < _field.GetLength(0); i++) {
-            for (int j = 0; j < _field.GetLength(1); j++) {
-                if (_field[i, j] == CellType.Slime) {
-                    List<Vector2Int> emptyCellsAround = new List<Vector2Int>();
-                    foreach (var cell in FieldUtils.GetCellsAround(_field, new Vector2Int(i, j))) {
-                        if (_field[cell.x, cell.y] == CellType.Empty && !emptyCellsAround.Contains(cell))
-                            emptyCellsAround.Add(cell);
-                    }
+        int width = _field.GetLength(0);
+        int height = _field.GetLength(1);
 
-                    if (emptyCellsAround.Count > 0) {
-                    //    emptyCellsAround = new HashSet<Vector2Int>(emptyCellsAround).ToList(); doesnt working 
-                        var randomEmptyCell = emptyCellsAround[Random.Range(0, emptyCellsAround.Count)];
-                        newSlimeCells.Add((randomEmptyCell, _cells[i, j].transform.position));
-                    }
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (_field[i, j] != CellType.Slime) continue;
+
+                var slimePos = new Vector2Int(i, j);
+                var emptyCellsAround = new HashSet<Vector2Int>();
+                foreach (var cell in FieldUtils.GetCellsAround(_field, slimePos)) {
+                    if (_field[cell.x, cell.y] == CellType.Empty)
+                        emptyCellsAround.Add(cell);
+                }
+
+                foreach (var emptyCell in emptyCellsAround) {
+                    newSlimeCells.Add((emptyCell, _cells[i, j].transform.position));
                 }
             }
         }
 
-        int halfSlimeCount = Mathf.FloorToInt((float)newSlimeCells.Count / 2);
-        for (int i = 0; i < halfSlimeCount; i++)
-            newSlimeCells.RemoveAt(Random.Range(0, newSlimeCells.Count));
+// Перемешиваем список
+        for (int i = newSlimeCells.Count - 1; i > 0; i--) {
+            int swapIndex = Random.Range(0, i + 1);
+            (newSlimeCells[i], newSlimeCells[swapIndex]) = (newSlimeCells[swapIndex], newSlimeCells[i]);
+        }
 
-        foreach (var (randomEmptyCell, startPosition) in newSlimeCells) {
-            if(_field[randomEmptyCell.x, randomEmptyCell.y] != CellType.Empty)continue;
-            var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == CellType.Slime);
-            PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y), true);
-            SpawnNewSlimeAnimation(_cells[randomEmptyCell.x, randomEmptyCell.y].transform, startPosition,
-                _cells[randomEmptyCell.x, randomEmptyCell.y].transform.position);
-            foreach (var task in _currentTasks) {
-                if (task.TaskInfo.NeedResource == ResourceType.Slime) {
-                    task.needCount++;
-                    if (GameData.CollectedResources.TryGetValue(task.TaskInfo.NeedResource, out int resourceCount))
-                        task.TaskUIView.TaskInfoTextHelper.SetText((task.needCount - resourceCount).ToString());
-                    else
-                        task.TaskUIView.TaskInfoTextHelper.SetText(task.needCount.ToString());
-                    Debug.Log("CreateSlime"+randomEmptyCell);
-                }
+        int halfSlimeCount = Mathf.FloorToInt(newSlimeCells.Count / 2f);
+        for (int i = 0; i < halfSlimeCount; i++) {
+            var (randomEmptyCell, startPosition) = newSlimeCells[i];
+            if (_field[randomEmptyCell.x, randomEmptyCell.y] != CellType.Empty) continue;
+            AddSlimeAroundSlime(randomEmptyCell, startPosition);
+        }
+    }
+
+    private void AddSlimeAroundSlime(Vector2Int randomEmptyCell, Vector3 startPosition) {
+        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == CellType.Slime);
+        PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y), true);
+        SpawnNewSlimeAnimation(_cells[randomEmptyCell.x, randomEmptyCell.y].transform, startPosition,
+            _cells[randomEmptyCell.x, randomEmptyCell.y].transform.position);
+        foreach (var task in _currentTasks) {
+            if (task.TaskInfo.NeedResource == ResourceType.Slime) {
+                task.needCount++;
+                if (GameData.CollectedResources.TryGetValue(task.TaskInfo.NeedResource, out int resourceCount))
+                    task.TaskUIView.TaskInfoTextHelper.SetText((task.needCount - resourceCount).ToString());
+                else
+                    task.TaskUIView.TaskInfoTextHelper.SetText(task.needCount.ToString());
             }
         }
     }
@@ -828,7 +835,6 @@ public class GameFieldManager : FieldManager, IResetable {
     private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task) {
         var taskUI = GameUI.Instance.TaskUIViews[i];
         taskUI.gameObject.SetActive(true);
-        Debug.Log(task.NeedResource.ToString());
         _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
         _resourceTypesForTasks.Add(task.NeedResource);
         string needSpiteName = "";

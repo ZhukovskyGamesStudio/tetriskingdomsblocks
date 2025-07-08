@@ -164,8 +164,9 @@ public class FieldManager : MonoBehaviour {
                 SpawnResourceFx(place, go);
                 cellsAmount++;
 
-                if (UltaManager.Instance != null)
+                if (UltaManager.Instance != null) {
                     UltaManager.Instance.AddUltimatePoints(1);
+                }
             }
         }
 
