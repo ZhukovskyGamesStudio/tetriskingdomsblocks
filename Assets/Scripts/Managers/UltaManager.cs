@@ -12,7 +12,7 @@ public class UltaManager : MonoBehaviour
     public static UltaManager Instance;
     [SerializeField] private Slider _ultimateProgressBar;
     [SerializeField] private Button _ultimateButton;
-    [SerializeField] private Transform _starPrefab;
+    [SerializeField] private FallingStarFx _starPrefab;
 
     [SerializeField]
     private ParticleSystem _starsParticles;
@@ -143,13 +143,14 @@ public class UltaManager : MonoBehaviour
         float multi = (_isRandomPos ? (Random.Range(0, 2) == 0 ? 1 : 0) : 1);
         var pos = cellView.transform.position;
         pos.x = _startSpawnXPos * multi;
-        star.position = pos;
+        star.transform.position = pos;
        
         await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
             .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
             .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
-        cellView.transform.position = star.position;
+        cellView.transform.position = star.transform.position;
         cellView.gameObject.SetActive(true);
+        star.ShowBoom(_starsParticles.transform.parent);
         Destroy(star.gameObject);
 
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);

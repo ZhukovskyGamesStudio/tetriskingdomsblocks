@@ -182,8 +182,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4463649562921649525}
   - component: {fileID: 7927132284532421595}
+  - component: {fileID: 6258113957319147294}
   m_Layer: 0
-  m_Name: starPrefab
+  m_Name: FallingStarFx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,6 +236,19 @@ LODGroup:
     renderers:
     - renderer: {fileID: 7601177923528794289}
   m_Enabled: 1
+--- !u!114 &6258113957319147294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3482188209161222187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3317673cfbd44a718a7843ea7607b979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _boomFx: {fileID: 4919970847936921571, guid: bc422b3cab60b7440bc5b1f08eeee17e, type: 3}
 --- !u!1 &7116526076065248745
 GameObject:
   m_ObjectHideFlags: 0
