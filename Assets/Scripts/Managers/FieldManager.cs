@@ -194,19 +194,19 @@ public class FieldManager : MonoBehaviour {
                 vibrationsAmplitude *= 1.5f;
             }
 
-            _gameAudio.PlacePiece.PlayNext();
+            _gameAudio.PlayNextSound(_gameAudio.PlacePiece);
             switch (pieceData.Type.CellType) {
                 case CellType.Forest:
-                    _gameAudio.WoodPlaced.PlayNext();
+                    _gameAudio.PlayNextSound(_gameAudio.WoodPlaced);
                     break;
                 case CellType.Mountain:
-                    _gameAudio.RockPlaced.PlayNext();
+                    _gameAudio.PlayNextSound(_gameAudio.RockPlaced);
                     break;
                 case CellType.FieldOfWheat:
-                    _gameAudio.WheatPlaced.PlayNext();
+                    _gameAudio.PlayNextSound(_gameAudio.WheatPlaced);
                     break;
                 case CellType.Metal:
-                    _gameAudio.MetalPlaced.PlayNext();
+                    _gameAudio.PlayNextSound(_gameAudio.MetalPlaced);
                     break;
             }
 
@@ -304,9 +304,12 @@ public class FieldManager : MonoBehaviour {
         _placeCellEffectsPool.Release(particles);
     }
 
-    public virtual void SetupGame() { }
+    public virtual void SetupGame()
+    {
+        SettingsManager.Instance.SetSettings();
+    }
 
     public void PlayCollectedSound() {
-        _gameAudio.ResourceCollected.PlayNext();
+        _gameAudio.PlayNextSound(_gameAudio.ResourceCollected);
     }
 }

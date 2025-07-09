@@ -33,12 +33,18 @@ public class GameDataForSave {
     public int RotatePieceCount;
     public int HummerCount;
     
+    public bool IsSoundOn;
+    public bool IsMusicOn;
+    public bool IsVibrationOn;
     public GameDataForSave() {
         HealthCount = 3;
         resourcesCount = new int[4];
         resourcesCount[0] = 3000;
         resourcesCount[1] = 3000;
         resourcesCount[2] = 3000;
+        IsSoundOn = true;
+        IsMusicOn = true;
+        IsVibrationOn = true;
     }
 }
 

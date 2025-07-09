@@ -78,7 +78,7 @@ public class NextPiecesView : MonoBehaviour, IResetable {
             //await UniTask.WaitWhile(()=>    _appearAudioSource[i].isPlaying, cancellationToken: token);
         }
         _createParticleSystem.Play();
-        _gameAudio.PiecesAppear.PlayNext();
+        _gameAudio.PlayNextSound(_gameAudio.PiecesAppear);
         await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
         return pieceView;
     }

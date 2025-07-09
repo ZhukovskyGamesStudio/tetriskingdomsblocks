@@ -262,7 +262,7 @@ public class GameFieldManager : FieldManager, IResetable {
         switch (cellType) {
             case CellType.Ice:
                 DestroyCellAfterPlacePiece(coord, cellType);
-                _gameAudio.IceBreaks.PlayNext();
+                _gameAudio.PlayNextSound(_gameAudio.IceBreaks);
                 break;
             case CellType.Crystal:
 
@@ -271,7 +271,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
             case CellType.Slime:
                 DestroyCellAfterPlacePiece(coord, cellType);
-                _gameAudio.SlimeBreaks.PlayNext();
+                _gameAudio.PlayNextSound(_gameAudio.SlimeBreaks);
                 break;
         }
         // CheckClosestCells(coord);
@@ -421,7 +421,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
         if (isDestroyingLinesCount != 0) {
             SpawnDestroyRowVibration();
-            _gameAudio.RowCollected.PlayNext();
+            _gameAudio.PlayNextSound(_gameAudio.RowCollected); 
 
             if (unlockedCellText != "") {
                 GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f,
@@ -568,7 +568,7 @@ public class GameFieldManager : FieldManager, IResetable {
                         }
                     }
 
-                    _gameAudio.BoxBreaks.PlayNext();
+                    _gameAudio.PlayNextSound(_gameAudio.BoxBreaks);
                     DestroyCell(coordAround);
 
                     break;
@@ -695,7 +695,7 @@ public class GameFieldManager : FieldManager, IResetable {
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetWinState();
 
-        _gameAudio.Win.PlayNext();
+        _gameAudio.PlayNextSound(_gameAudio.Win);
     }
 
     public void Lose() {

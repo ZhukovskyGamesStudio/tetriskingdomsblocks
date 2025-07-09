@@ -35,6 +35,7 @@ public class MainManager : MonoBehaviour {
             _currentGameTime = dateTime;
             Debug.Log("has connect" + dateTime);
             _hasInternetConnection = true;
+            
             //SetupGame();
         }, error => {
             _currentGameTime = DateTime.Now;

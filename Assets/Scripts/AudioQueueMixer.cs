@@ -17,6 +17,7 @@ public class AudioQueueMixer : MonoBehaviour {
     [SerializeField]
     private int _sourcePoolCount = 3;
     private AudioSource _currentPlaying;
+    private int _needVolume;
 
     private void Awake() {
         if (_sourcePoolCount > 0) {
@@ -25,6 +26,15 @@ public class AudioQueueMixer : MonoBehaviour {
         _audioSourcesQ = new Queue<AudioSource>(_audioSources.OrderBy((_) => Random.Range(0, 1f)));
     }
 
+    public void StopCurrentAudioSource(bool isPlay)
+    {
+        if (isPlay)
+            _needVolume = 1;
+        else
+            _needVolume = 0;
+        
+        _currentPlaying.volume = _needVolume;
+    }
     private void CreateSources() {
         for (int i = 0; i < _sourcePoolCount-1; i++) {
             var newComp = gameObject.AddComponent<AudioSource>();
@@ -76,10 +86,10 @@ public class AudioQueueMixer : MonoBehaviour {
         while (tIn < 0.5f)
         {
             tIn += Time.unscaledDeltaTime;
-            next.volume = Mathf.Lerp(0f, 1f, tIn / 0.5f);
+            next.volume = Mathf.Lerp(0f, _needVolume, tIn / 0.5f);
             await UniTask.Yield(PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
         }
-        next.volume = 1f;
+        next.volume = _needVolume;
 
         await UniTask.WaitWhile(() => next.isPlaying, cancellationToken: this.GetCancellationTokenOnDestroy());
         next.Stop();

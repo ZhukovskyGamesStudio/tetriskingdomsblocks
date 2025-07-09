@@ -5,8 +5,11 @@ using UnityEngine;
 public class BackgroundMusicManager : MonoBehaviour {
     [SerializeField]
     private AudioQueueMixer _audioQueueMixer;
+    
+    public static BackgroundMusicManager Instance;
 
     private void Awake() {
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -18,5 +21,10 @@ public class BackgroundMusicManager : MonoBehaviour {
         while (true) {
             await _audioQueueMixer.PlayNextBlended();
         }
+    }
+
+    public void ChangeIsPlayingMusic(bool isOn)
+    {
+        _audioQueueMixer.StopCurrentAudioSource(isOn);
     }
 }
