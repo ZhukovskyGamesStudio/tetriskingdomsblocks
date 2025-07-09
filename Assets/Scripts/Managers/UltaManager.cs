@@ -13,6 +13,11 @@ public class UltaManager : MonoBehaviour
     [SerializeField] private Slider _ultimateProgressBar;
     [SerializeField] private Button _ultimateButton;
     [SerializeField] private Transform _starPrefab;
+
+    [SerializeField]
+    private ParticleSystem _starsParticles;
+    
+    
     private int _currentPoints;
 
     [SerializeField]
@@ -71,22 +76,32 @@ public class UltaManager : MonoBehaviour
 
     private async void UltimateAction()
     {
-        if(GoalView.Instance._isGameEnded)return;
+        if(GoalView.Instance._isGameEnded) {
+            return;
+        }
+        
+        
         _ultimateButton.enabled = false;
         _ultimateProgressBar.value = 0;
         _currentPoints = 0;
         _ultimateIsActive = true;
         HideButton();
-        
+        _starsParticles.gameObject.SetActive(true);
+        _starsParticles.Play();
         
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field,
             GameFieldManager.Instance.MainGameConfig.MaxUltimateCells);
+        var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
-            SpawnNewCellFromUltimate(pos).Forget();
+            list.Add(SpawnNewCellFromUltimate(pos));
             await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(1.5f));
+        await UniTask.WhenAll(list);
+        _starsParticles.Stop();
+        _starsParticles.gameObject.SetActive(false);
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+       
         if (!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose()) {
             GameFieldManager.Instance.Lose();
         }
