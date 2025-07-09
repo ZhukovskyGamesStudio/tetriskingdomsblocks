@@ -14,8 +14,21 @@ public class UltaManager : MonoBehaviour
     [SerializeField] private Button _ultimateButton;
     [SerializeField] private Transform _starPrefab;
     private int _currentPoints;
+
+    [SerializeField]
+    private float _starDropDuration = 0.25f, _startSpawnXPos = 15;
+
+    [SerializeField]
+    private Vector3 _startDropStartPos;
+    
     public bool _ultimateIsActive { get; private set; }
 
+    [SerializeField]
+    private AnimationCurve _animationCurveX,_animationCurveY,_animationCurveZ;
+
+    [SerializeField]
+    private bool _isRandomPos;
+    
     private void Awake()
     {
         Instance = this;
@@ -107,14 +120,19 @@ public class UltaManager : MonoBehaviour
             PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
         var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config,
             new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
-
-        cellView.transform.position = new Vector3(cellView.transform.position.x, 30, cellView.transform.position.z);
+        var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
+        cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
         cellView.gameObject.SetActive(false);
         var star = Instantiate(_starPrefab);
-        star.position = cellView.transform.position;
-        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveY(0.75f, 0.5f).SetEase(Ease.OutQuad))
-            .AsyncWaitForCompletion();
+        float multi = (_isRandomPos ? (Random.Range(0, 2) == 0 ? 1 : 0) : 1);
+        var pos = cellView.transform.position;
+        pos.x = _startSpawnXPos * multi;
+        star.position = pos;
+       
+        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
+            .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
+            .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
         cellView.transform.position = star.position;
         cellView.gameObject.SetActive(true);
         Destroy(star.gameObject);
