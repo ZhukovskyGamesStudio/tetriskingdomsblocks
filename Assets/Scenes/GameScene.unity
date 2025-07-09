@@ -1268,9 +1268,9 @@ Transform:
   m_GameObject: {fileID: 291214068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: -0.6, z: 0.01}
-  m_LocalScale: {x: 5, y: 5, z: 5}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -0, y: -0.1196, z: 0.01}
+  m_LocalScale: {x: 4, y: 3, z: 4}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 111992780}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -9316,7 +9316,7 @@ GameObject:
   - component: {fileID: 1681828170}
   - component: {fileID: 1681828171}
   m_Layer: 0
-  m_Name: HummerManager
+  m_Name: HammerManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9353,6 +9353,12 @@ MonoBehaviour:
   _hummerContainerStart: {fileID: 456814327}
   _hummerContainerEnd: {fileID: 1188894858}
   _hummerText: {fileID: 0}
+  _appearDuration: 0.2
+  _hitDuration: 0.4
+  _hideDuration: 0.2
+  _hammerZInitAngle: 30
+  _hammerYRotateAngle: 45
+  _hammerCellShift: {x: 0.75, y: -0.25, z: -0.75}
 --- !u!1 &1714926363
 GameObject:
   m_ObjectHideFlags: 0
@@ -12253,7 +12259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5935520912810422151, guid: 7af282bb09df0634d8e440d25ff1e708, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8086085415879502436, guid: 7af282bb09df0634d8e440d25ff1e708, type: 3}
       propertyPath: m_LocalPosition.x

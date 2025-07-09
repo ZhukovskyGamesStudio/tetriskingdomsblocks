@@ -201,7 +201,9 @@ public class BoostersManager : MonoBehaviour
 
     public void UseHummer()
     {
-        if (StorageManager.GameDataMain.HummerCount <= 0)return;
+        if (StorageManager.GameDataMain.HummerCount <= 0) {
+            return;
+        }
         GameFieldManager.Instance.ToggleDestroyPieceMode();
     }
 
