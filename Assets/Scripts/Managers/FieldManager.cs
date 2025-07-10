@@ -88,25 +88,23 @@ public class FieldManager : MonoBehaviour {
     {
         
     }
-    
-     public void ToggleDestroyPieceMode() {
+
+    public void ToggleDestroyPieceMode() {
         _isDestroyPieceMode = !_isDestroyPieceMode;
-        Debug.Log(_isDestroyPieceMode);
-        
-        if (_isDestroyPieceMode) 
+
+       /* if (_isDestroyPieceMode)
             HummerManager.Instance.ShowHummerAnimation();
-        else 
-            HummerManager.Instance.HideHummerAnimation();
+        else
+            HummerManager.Instance.HideHummerAnimation();*/
     }
 
-    protected void HummerDestoyPieceAnimation(CellView cell) {
-        DestroyPieceWithHummer(cell).Forget();
+    protected async void HummerDestoyPieceAnimation(CellView cell) {
         cell.OffCollider();
-      HummerManager.Instance.HummerDestroyPieceAnimation(cell.transform.position);
+        await HummerManager.Instance.HummerDestroyPieceAnimation(cell.transform.position);
+        DestroyPieceWithHummer(cell);
     }
 
-    private async UniTask DestroyPieceWithHummer(CellView cell) {
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
+    private void DestroyPieceWithHummer(CellView cell) {
         cell.DestroyCell();
         VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
         ShakeCamera(0.6f);

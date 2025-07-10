@@ -9,12 +9,15 @@ public class GameFieldManager : FieldManager, IResetable {
     public static GameFieldManager Instance;
 
     [field: Header("Game")]
+    [SerializeField]
+    private SpawnRandomNature _spawnRandomNature;
+
     [field: SerializeField]
     public MainGameConfig MainGameConfig { get; private set; }
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
-    public List<TaskInfoAndUI> _currentTasks{ get; private set; }
+    public List<TaskInfoAndUI> _currentTasks { get; private set; }
     private List<ResourceType> _resourceTypesForTasks = new List<ResourceType>();
     private Dictionary<ResourceType, int> _monoLinesCount;
     private Dictionary<CellType, int> _placedCellsCount;
@@ -31,13 +34,12 @@ public class GameFieldManager : FieldManager, IResetable {
 
     public PieceView _additionalPiecePrefab { get; private set; }
 
-
     public Material _normal, _priorityMaterial;
-    
 
     protected override void Awake() {
         base.Awake();
         Instance = this;
+        _spawnRandomNature.Generate();
     }
 
     public void Reset() { }
@@ -56,39 +58,34 @@ public class GameFieldManager : FieldManager, IResetable {
         };
         NextPiecesView.Instance.SetData(_nextBlocks);
     }
-    
+
     protected override void TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null && StorageManager.GameDataMain.HummerCount > 0)
-        {
+        if (hit.collider != null && StorageManager.GameDataMain.HummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.y),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+                Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             if (FieldUtils.CantDestroyInRow(_field[(int)cellPos.x, (int)cellPos.z])) return;
             BoostersManager.Instance.BreackCellWithHummer();
 
             if (StorageManager.GameDataMain.HummerCount <= 0)
                 _isDestroyPieceMode = false;
             HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
-            
-            var configSlime = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType 
-                == _field[(int)cellPos.x, (int)cellPos.z]);
+
+            var configSlime = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
             for (int j = 0; j < _currentTasks.Count; j++) {
                 if (_currentTasks[j].TaskInfo.TaskType == TaskInfo.TaskType.getResource) {
                     CheckNeedResourceInTask(j, configSlime, new Vector2Int((int)cellPos.x, (int)cellPos.z));
                 }
             }
-            
-            
+
             _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
-            
 
             CheckResourceCountForTasks();
             CheckGameGoal();
         }
     }
-    private void CheckGameGoal()
-    {
+
+    private void CheckGameGoal() {
         if (!CheckWin() && CheckLose())
             Lose();
     }
@@ -96,8 +93,7 @@ public class GameFieldManager : FieldManager, IResetable {
     public bool AdditionalPieceContainerUnderPiece() =>
         _inputRaycaster.InputPosAdditionalContainer() != Vector3.zero && _additionalPiecePrefab == null;
 
-    public void SetNeededCellTypeOnField(CellType cellType, CellView go, Vector2Int cellPosition, bool needFX)
-    {
+    public void SetNeededCellTypeOnField(CellType cellType, CellView go, Vector2Int cellPosition, bool needFX) {
         _field[cellPosition.x, cellPosition.y] = cellType;
         _cells[cellPosition.x, cellPosition.y] = go;
         if (needFX)
@@ -709,8 +705,7 @@ public class GameFieldManager : FieldManager, IResetable {
       Invoke("DestroyCurrentPieces", 2f);
     }
 
-    private void DestroyCurrentPieces()
-    {
+    private void DestroyCurrentPieces() {
         NextPiecesView.Instance.DestroyPieces();
         NextPiecesView.Instance.DestroyAdditionalPiece();
     }

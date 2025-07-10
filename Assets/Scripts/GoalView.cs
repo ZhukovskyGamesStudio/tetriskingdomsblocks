@@ -35,14 +35,20 @@ public class GoalView : MonoBehaviour {
     }
 
     public void SetLoseState() {
-        if (_isGameEnded) return;
-        if (StorageManager.GameDataMain.HealthCount <= 0)
-            _loseRestartText.text = "Watch add and recovery 1 energy";
-        else
-            _loseRestartText.text = "Restart";
+        if (_isGameEnded) {
+            return;
+        }
+
+        if (_loseRestartText) {
+            if (StorageManager.GameDataMain.HealthCount <= 0)
+                _loseRestartText.text = "Watch add and recovery 1 energy";
+            else
+                _loseRestartText.text = "Restart";
+        }
+
         LoseAnimation();
         _isGameEnded = true;
-       // _winState.gameObject.SetActive(false);
+        // _winState.gameObject.SetActive(false);
         _loseState.gameObject.SetActive(true);
     }
 

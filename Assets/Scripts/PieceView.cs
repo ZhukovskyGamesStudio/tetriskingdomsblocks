@@ -164,7 +164,10 @@ public class PieceView : MonoBehaviour {
     }
 
     public async UniTask PlacePieceAsync(FieldManager cellManager) {
-        await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, ConfigsManager.Instance.DragConfig.DropPieceAnimationDuration))
+        var cnfg = ConfigsManager.Instance.DragConfig;
+        var distance = (_finalPos - _cellsContainer.position).magnitude;
+        var duration = distance / cnfg.MoveBeforeDropAnimationSpeed;
+        await DOTween.Sequence().Append(_cellsContainer.DOMove(_finalPos, duration)).SetEase(cnfg.MoveBeforeDropAnimationCurve)
             .AsyncWaitForCompletion();
         cellManager.PlacePiece(Data, _currentCoord, _cells, _cellsContainer);
         Destroy(gameObject);

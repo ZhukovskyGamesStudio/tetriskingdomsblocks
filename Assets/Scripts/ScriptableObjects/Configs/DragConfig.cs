@@ -10,7 +10,8 @@ namespace ScriptableObjects.Configs {
         public float HeightUnderField;
         
         [Header("Drop animation")]
-        public float DropPieceAnimationDuration;
+        public float MoveBeforeDropAnimationSpeed;
+        public AnimationCurve MoveBeforeDropAnimationCurve;
         public float AfterDropPieceAnimationMultiplayer;
         public float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop=0.1f;
         public float _dropLength = 0.3f;

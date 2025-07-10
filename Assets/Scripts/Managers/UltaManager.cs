@@ -12,10 +12,28 @@ public class UltaManager : MonoBehaviour
     public static UltaManager Instance;
     [SerializeField] private Slider _ultimateProgressBar;
     [SerializeField] private Button _ultimateButton;
-    [SerializeField] private Transform _starPrefab;
+    [SerializeField] private FallingStarFx _starPrefab;
+
+    [SerializeField]
+    private ParticleSystem _starsParticles;
+    
+    
     private int _currentPoints;
+
+    [SerializeField]
+    private float _starDropDuration = 0.25f, _startSpawnXPos = 15;
+
+    [SerializeField]
+    private Vector3 _startDropStartPos;
+    
     public bool _ultimateIsActive { get; private set; }
 
+    [SerializeField]
+    private AnimationCurve _animationCurveX,_animationCurveY,_animationCurveZ;
+
+    [SerializeField]
+    private bool _isRandomPos;
+    
     private void Awake()
     {
         Instance = this;
@@ -68,22 +86,32 @@ public class UltaManager : MonoBehaviour
 
     private async void UltimateAction()
     {
-        if(GoalView.Instance._isGameEnded)return;
+        if(GoalView.Instance._isGameEnded) {
+            return;
+        }
+        
+        
         _ultimateButton.enabled = false;
         _ultimateProgressBar.value = 0;
         _currentPoints = 0;
         _ultimateIsActive = true;
         HideButton();
-        
+        _starsParticles.gameObject.SetActive(true);
+        _starsParticles.Play();
         
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field,
             GameFieldManager.Instance.MainGameConfig.MaxUltimateCells);
+        var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
-            SpawnNewCellFromUltimate(pos).Forget();
+            list.Add(SpawnNewCellFromUltimate(pos));
             await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(1.5f));
+        await UniTask.WhenAll(list);
+        _starsParticles.Stop();
+        _starsParticles.gameObject.SetActive(false);
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+       
         if (!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose()) {
             GameFieldManager.Instance.Lose();
         }
@@ -118,16 +146,23 @@ public class UltaManager : MonoBehaviour
             PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
         var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config,
             new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
-
-        cellView.transform.position = new Vector3(cellView.transform.position.x, 30, cellView.transform.position.z);
+        var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
+        cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
         cellView.gameObject.SetActive(false);
         var star = Instantiate(_starPrefab);
-        star.position = cellView.transform.position;
-        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveY(0.75f, 0.5f).SetEase(Ease.OutQuad))
-            .AsyncWaitForCompletion();
-        cellView.transform.position = star.position;
+        float multi = (_isRandomPos ? (Random.Range(0, 2) == 0 ? 1 : 0) : 1);
+        var pos = cellView.transform.position;
+        pos.x = _startSpawnXPos * multi;
+        star.transform.position = pos;
+       
+        await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
+            .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
+            .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
+        cellView.transform.position = star.transform.position;
         cellView.gameObject.SetActive(true);
+        VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
+        star.ShowBoom(_starsParticles.transform.parent);
         Destroy(star.gameObject);
 
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
