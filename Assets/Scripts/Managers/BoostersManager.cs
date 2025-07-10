@@ -32,6 +32,9 @@ public class BoostersManager : MonoBehaviour
     [SerializeField] private Button _rotatePieceAcceptButton;
     [SerializeField] private Transform _rotatePieceSelectContainer;
     [SerializeField] private Transform _rotatePieceButtonsContainer;
+
+    [SerializeField]
+    private ParticleSystem _dynamiteBoomFx;
     private Vector2 _lastInputPosition;
     
     public static BoostersManager Instance;
@@ -312,7 +315,8 @@ public class BoostersManager : MonoBehaviour
                 }
             }
         }
-
+        VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
+        Instantiate(_dynamiteBoomFx, _currentDynamite.transform.position, Quaternion.identity);
         Destroy(_currentDynamite.gameObject);
         _currentDynamite = null;
         GameFieldManager.Instance.CheckResourceCountForTasks();
