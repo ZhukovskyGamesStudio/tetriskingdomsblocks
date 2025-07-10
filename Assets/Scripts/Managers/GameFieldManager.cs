@@ -705,6 +705,7 @@ public class GameFieldManager : FieldManager, IResetable {
         GameUI.Instance.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
+        UltaManager.Instance.HideUltimateUI();
       Invoke("DestroyCurrentPieces", 2f);
     }
 

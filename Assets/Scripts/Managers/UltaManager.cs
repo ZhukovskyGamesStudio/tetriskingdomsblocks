@@ -27,6 +27,16 @@ public class UltaManager : MonoBehaviour
         _ultimateButton.onClick.AddListener(() => UltimateAction());
     }
 
+    public void HideUltimateUI()
+    {
+        var animationObject = _ultimateButton.gameObject.activeInHierarchy
+            ? _ultimateButton.transform
+            : _ultimateProgressBar.transform;
+        DOTween.Sequence().Append(animationObject.DOScale(1.1f, 0.2f)
+            .SetEase(Ease.OutBack)).Append(animationObject.DOScale(Vector3.zero, 0.7f)
+            .SetEase(Ease.InBack));
+    }
+
     public void AddUltimatePoints(int points)
     {
         if(_ultimateIsActive )return;   
@@ -83,6 +93,7 @@ public class UltaManager : MonoBehaviour
     
     public async void UltimateActionEndRound()
     {
+        HideUltimateUI();
         _ultimateIsActive = true;
         
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field,0);
