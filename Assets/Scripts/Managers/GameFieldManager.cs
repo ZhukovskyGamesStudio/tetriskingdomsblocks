@@ -215,14 +215,12 @@ public class GameFieldManager : FieldManager, IResetable {
             }
         }
 
-// Перемешиваем список
         for (int i = newSlimeCells.Count - 1; i > 0; i--) {
             int swapIndex = Random.Range(0, i + 1);
             (newSlimeCells[i], newSlimeCells[swapIndex]) = (newSlimeCells[swapIndex], newSlimeCells[i]);
         }
 
         int halfSlimeCount = Mathf.CeilToInt((float)newSlimeCells.Count / 2f);
-        //Debug.Log(newSlimeCells.Count + " slimes can placed" + halfSlimeCount); 
         for (int i = 0; i < halfSlimeCount; i++) {
             var (randomEmptyCell, startPosition) = newSlimeCells[i];
             if (_field[randomEmptyCell.x, randomEmptyCell.y] != CellType.Empty) continue;
@@ -873,8 +871,9 @@ public class GameFieldManager : FieldManager, IResetable {
     }
 
     private void SaveWinGame() {
-        StorageManager.GameDataMain.GoldAmount += 100 + StorageManager.GameDataMain.CurMaxLevel * 5;
-        StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+        StorageManager.GameDataMain.GoldAmount += 100/* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+       // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+       StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance._currentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }
