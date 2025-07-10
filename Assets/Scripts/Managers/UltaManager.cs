@@ -150,6 +150,7 @@ public class UltaManager : MonoBehaviour
             .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
         cellView.transform.position = star.transform.position;
         cellView.gameObject.SetActive(true);
+        VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
         star.ShowBoom(_starsParticles.transform.parent);
         Destroy(star.gameObject);
 
