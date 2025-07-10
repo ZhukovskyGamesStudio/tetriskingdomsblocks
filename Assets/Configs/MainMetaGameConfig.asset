@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: MainMetaGameConfig
   m_EditorClassIdentifier: 
   <CollectWithAdsMultiplier>k__BackingField: 2
-  CellsConfigs: 01000000070000000900000003000000
-  FieldSize: 20
+  FieldSize: 12
   ResourceMultipliers:
   - 1
   - 1
@@ -39,4 +38,5 @@ MonoBehaviour:
   - 40
   resourceMarksUpdateCouldown: 5
   CameraDragSpeed: 5
-  MinutesToHealthRecovery: 0
+  CellsToSpawn: 010000000700000009000000
+  MinutesToHealthRecovery: 2

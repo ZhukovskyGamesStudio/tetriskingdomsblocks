@@ -151,6 +151,7 @@ public class UltaManager : MonoBehaviour
         cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
         cellView.gameObject.SetActive(false);
+       // cellView.SetSeed(pieceData.CellGuids[0,0]); //doesnt work for something reason
         var star = Instantiate(_starPrefab);
         float multi = (_isRandomPos ? (Random.Range(0, 2) == 0 ? 1 : 0) : 1);
         var pos = cellView.transform.position;

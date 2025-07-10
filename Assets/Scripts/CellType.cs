@@ -20,5 +20,6 @@ public enum CellType
     CrystalMine,
     Crystal,
     Slime, 
-    Dinamyte
+    Dinamyte,
+    LockedMetaCell
 }

@@ -20,7 +20,7 @@ public class SameCellsGroupCalculater {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (!visited[i, j] && grid[i, j] != CellType.Empty) {
+                if (!visited[i, j] && grid[i, j] != CellType.Empty && grid[i, j] != CellType.LockedMetaCell) {
                     CellType cellType = grid[i, j];
                     var resourceType = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType).ResourcesForDestroy[0]
                         .ResourceType; //make afk collect info in config
@@ -75,7 +75,7 @@ public class SameCellsGroupCalculater {
                 int newCol = col + dir.col;
 
                 if (newRow >= 0 && newRow < grid.GetLength(0) && newCol >= 0 && newCol < grid.GetLength(1) && !visited[newRow, newCol] &&
-                    grid[newRow, newCol] != CellType.Empty) {
+                    grid[newRow, newCol] != CellType.Empty && grid[newRow, newCol] != CellType.LockedMetaCell) {
                     var resourceType = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == grid[newRow, newCol])
                         .ResourcesForDestroy; //make afk collect info in config
                     if (resourceType.Length == 0 || resourceType[0].ResourceType != targetType) continue;

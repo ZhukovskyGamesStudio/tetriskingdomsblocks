@@ -4,4 +4,6 @@ using UnityEngine;
 public class MainManagerConfig : ScriptableObject
 {
     public LevelConfig[] Levels;
+
+    public Material _normal, _priorityMaterial;
 }

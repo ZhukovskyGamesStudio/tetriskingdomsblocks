@@ -38,54 +38,6 @@ public class MetaFieldManager : FieldManager {
             MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece");
         }
     }
-
-    /* private void UpdateTimerAndHealth() {
-        if (_hasInternetConnection) {
-            timerNowTimeSecondCounter += Time.unscaledDeltaTime;
-            if (timerNowTimeSecondCounter >= 1) {
-                timerNowTimeSecondCounter--;
-                AddSecondToTimer();
-            }
-
-            if (StorageManager.GameDataMain.HealthCount < MAX_HEALTH_COUNT) {
-                TimeSpan timeSinceLastUpdate = _currentGameTime - _lastHealthRecoveryTime;
-                int energyToAdd = (int)(timeSinceLastUpdate.TotalMinutes / MainMetaConfig.MinutesToHealthRecovery);
-
-                if (energyToAdd > 0) {
-                    StorageManager.GameDataMain.HealthCount =
-                        Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
-                    _lastHealthRecoveryTime = _currentGameTime;
-                    StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
-                    SaveEnergyData();
-                    MetaUI.Instance.SetHealthImageActive(StorageManager.GameDataMain.HealthCount - 1, true);
-                }
-
-                UpdateHealthTimerUI();
-            }
-        } else if (MetaUI.Instance.HealthTimerText.gameObject.activeSelf) {
-            MetaUI.Instance.SetHealthTimerActive(false);
-        }
-    }
-
-    private void AddSecondToTimer() => _currentGameTime = _currentGameTime.AddSeconds(1);
-
-    private void UpdateHealthTimerUI() {
-        if (_hasInternetConnection) {
-            if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
-                if (MetaUI.Instance.HealthTimerText != null && MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
-                    MetaUI.Instance.SetHealthTimerActive(false);
-                return;
-            }
-
-            if (!MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
-                MetaUI.Instance.SetHealthTimerActive(true);
-
-            MetaUI.Instance.SetHealthTimerText(TimeConverter.ConvertToTimeString(GetTimeUntilNextHealth()));
-        } else {
-            MetaUI.Instance.SetHealthTimerText("No internet connection");
-        }
-    }*/
-
     /* private void DragCamera()
      {
             Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
@@ -288,7 +240,10 @@ public class MetaFieldManager : FieldManager {
         _cells = new CellView[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         CalculateFiguresSpawnChances();
         _currentCellsToSpawn = new List<CellType>();
-      
+        foreach (var cellType in MainMetaConfig.CellsToSpawn)
+        {
+            _currentCellsToSpawn.Add(cellType);
+        }
         CalculateCellSpawnChances();
         //  Debug.Log(StorageManager.GameDataMain.FieldRows +" "+  (StorageManager.GameDataMain.FieldRows.Length > 1));
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
@@ -300,7 +255,20 @@ public class MetaFieldManager : FieldManager {
             for (int i = 0; i < _field.GetLength(0); i++) {
                 StorageManager.GameDataMain.FieldRows[i].RowCells = new ResourceAndCountData[_field.GetLength(1)];
                 for (int j = 0; j < _field.GetLength(1); j++)
+                {
+                    if (i > 5 || j > 5)
+                    {
+                        _field[i, j] = CellType.LockedMetaCell;
+                        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(CellType.LockedMetaCell);
+                        var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
+                        go.transform.localPosition = new Vector3(i, 0, j);
+                        _cells[i, j] = go;
+
+                       // go.SetSeed(Guid.NewGuid());
+                    }
                     StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new ResourceAndCountData(_field[i, j], 0);
+                    
+                }
             }
         } else if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1) {
             _field = new CellType[StorageManager.GameDataMain.FieldRows.Length, StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
@@ -311,10 +279,12 @@ public class MetaFieldManager : FieldManager {
                     if (cellType != CellType.Empty) {
                         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
                         var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-                        go.transform.localPosition = new Vector3(i, -0.45f, j);
+                        go.transform.localPosition = new Vector3(i, 0, j);
                         _cells[i, j] = go;
 
                         go.SetSeed(Guid.NewGuid());
+                        
+                        Debug.Log("cell"+cellType);
                     }
                 }
             }
@@ -331,38 +301,6 @@ public class MetaFieldManager : FieldManager {
      //   SetupHealth();
         base.SetupGame();
     }
-
-    /*private void SetupHealth() {
-        if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
-            StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
-
-        if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
-            MetaUI.Instance.SetHealthTimerActive(false);
-        } else {
-            CalculateOfflineHealth();
-            if (_hasInternetConnection)
-                MetaUI.Instance.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime.ToString());
-            else
-                MetaUI.Instance.SetHealthTimerText("No internet connection");
-            for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
-                MetaUI.Instance.SetHealthImageActive(i, StorageManager.GameDataMain.HealthCount > i);
-            }
-        }
-    }*/
-
-  /*  private void CalculateOfflineHealth() {
-        if (!_hasInternetConnection) return;
-        _lastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime;
-        TimeSpan offlineTime = _currentGameTime - _lastHealthRecoveryTime;
-        int healthToAdd = (int)(offlineTime.TotalMinutes / MainMetaConfig.MinutesToHealthRecovery);
-
-        if (healthToAdd > 0) {
-            StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
-        }
-
-        if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
-            _lastHealthRecoveryTime.AddMinutes(healthToAdd * MainMetaConfig.MinutesToHealthRecovery);
-    }*/
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
         Debug.Log("collect resource from" + index);

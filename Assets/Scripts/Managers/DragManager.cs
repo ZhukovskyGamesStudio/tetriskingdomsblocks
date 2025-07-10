@@ -86,7 +86,7 @@ public class DragManager : MonoBehaviour
         finalScale = Vector3.one;
         markedCellsContainer.localScale = Vector3.one;
         
-        ReplaceMaterialInChildren(_pieceGameObject.transform,GameFieldManager.Instance._priorityMaterial );
+        ReplaceMaterialInChildren(_pieceGameObject.transform,MainManager.Instance._mainConfig._priorityMaterial );
         
         FieldManager.PieceVerticalShift = Mathf.Abs(DragManager.CalculateShift(_data).z);
         CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
@@ -136,7 +136,7 @@ public class DragManager : MonoBehaviour
             markedCellsContainer.localScale = initialMarkedScale;
             markedCellsContainer.gameObject.SetActive(false);
         }
-        ReplaceMaterialInChildren(_pieceGameObject.transform,GameFieldManager.Instance._normal );
+        ReplaceMaterialInChildren(_pieceGameObject.transform,MainManager.Instance._mainConfig._normal );
 
     }
 }

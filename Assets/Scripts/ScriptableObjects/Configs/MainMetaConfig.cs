@@ -13,6 +13,6 @@ public class MainMetaConfig : ScriptableObject {
     public float resourceMarksUpdateCouldown;
 
     public float CameraDragSpeed;
-
+    public CellType[] CellsToSpawn;
     public float MinutesToHealthRecovery;
 }
