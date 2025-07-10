@@ -203,15 +203,15 @@ public class GameFieldManager : FieldManager, IResetable {
                 if (_field[i, j] != CellType.Slime) continue;
 
                 var slimePos = new Vector2Int(i, j);
-                var emptyCellsAround = new HashSet<Vector2Int>();
+                var emptyCellsAround = new List<Vector2Int>();
                 foreach (var cell in FieldUtils.GetCellsAround(_field, slimePos)) {
                     if (_field[cell.x, cell.y] == CellType.Empty)
                         emptyCellsAround.Add(cell);
                 }
 
-                foreach (var emptyCell in emptyCellsAround) {
-                    newSlimeCells.Add((emptyCell, _cells[i, j].transform.position));
-                }
+                if (emptyCellsAround.Count > 0)
+                    newSlimeCells.Add((emptyCellsAround[Random.Range(0, emptyCellsAround.Count)],
+                        _cells[i, j].transform.position));
             }
         }
 
@@ -221,7 +221,8 @@ public class GameFieldManager : FieldManager, IResetable {
             (newSlimeCells[i], newSlimeCells[swapIndex]) = (newSlimeCells[swapIndex], newSlimeCells[i]);
         }
 
-        int halfSlimeCount = Mathf.FloorToInt(newSlimeCells.Count / 2f);
+        int halfSlimeCount = Mathf.CeilToInt((float)newSlimeCells.Count / 2f);
+        //Debug.Log(newSlimeCells.Count + " slimes can placed" + halfSlimeCount); 
         for (int i = 0; i < halfSlimeCount; i++) {
             var (randomEmptyCell, startPosition) = newSlimeCells[i];
             if (_field[randomEmptyCell.x, randomEmptyCell.y] != CellType.Empty) continue;

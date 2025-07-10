@@ -57,7 +57,7 @@ public class UltaManager : MonoBehaviour
 
     public void AddUltimatePoints(int points)
     {
-        if(_ultimateIsActive )return;   
+        if(_ultimateIsActive || GoalView.Instance._isGameEnded)return;   
         _currentPoints += points;
         //_ultimateProgressBar.value += points;
         
@@ -71,6 +71,7 @@ public class UltaManager : MonoBehaviour
 
     private void ActivateButton()
     {
+        if(GoalView.Instance._isGameEnded)return;   
         _ultimateButton.enabled = true;
         _ultimateButton.gameObject.SetActive(true);
         _ultimateProgressBar.gameObject.SetActive(false);
