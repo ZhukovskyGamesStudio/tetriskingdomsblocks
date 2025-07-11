@@ -30,6 +30,8 @@ public class MetaUI : MonoBehaviour {
     private Transform _resourcesMarksContainer;
     [SerializeField]
     private ResourceMarkView resourceMarkViewPrefab;
+    [SerializeField]
+    private Transform _unlockCellUIContainer;
 
     private void Awake() {
         Instance = this;
@@ -40,6 +42,16 @@ public class MetaUI : MonoBehaviour {
     public void SetHealthImageActive(int index, bool active) {
         if (_healthImages != null && index >= 0 && index < _healthImages.Length && _healthImages[index] != null)
             _healthImages[index].gameObject.SetActive(active);
+    }
+
+    public void SetActiveUnlockUI(bool active)
+    {
+        _unlockCellUIContainer.gameObject.SetActive(active);
+    }
+
+    public void SetPositionUnlockUI(Vector3 pos)
+    {
+        _unlockCellUIContainer.transform.position = pos;
     }
 
     public void SetHealthTimerText(string text) {
