@@ -29,8 +29,8 @@ public class MetaFieldManager : FieldManager {
     private Vector3 _dragStartPosition;
     private Vector3 _dragStartPositionForUICheck;
     private bool _nowCellUnlockUIWasClose;
-
-    private Vector2Int _currentMarkedLockedCell;
+    public Dictionary<int, List<Vector2Int>> LockedCellGroups { get;private set;}
+    private int _currentMarkedLockedCellGroup;
   //  private float timerNowTimeSecondCounter;
    // private const int MAX_HEALTH_COUNT = 3;
   //  private DateTime _lastHealthRecoveryTime;
@@ -58,7 +58,7 @@ public class MetaFieldManager : FieldManager {
             if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode &&
                 _dragStartPosition == _dragStartPositionForUICheck)
                 TryCastLockCell();
-            else if(Vector3.Distance(_dragStartPosition,_dragStartPositionForUICheck) > 0.1f  && _currentMarkedLockedCell != Vector2Int.zero)
+            else if(Vector3.Distance(_dragStartPosition,_dragStartPositionForUICheck) > 0.1f  && _currentMarkedLockedCellGroup != 0)
             CloseUnlockCellUI();
 
             _nowCellUnlockUIWasClose = false;
@@ -108,37 +108,85 @@ public class MetaFieldManager : FieldManager {
     private void TryCastLockCell() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null) {
+            
+            
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             if(_field[(int)cellPos.x, (int)cellPos.z] != CellType.LockedMetaCell)return;
 
-            _currentMarkedLockedCell = new Vector2Int((int)cellPos.x, (int)cellPos.z);
+            int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z] - 1000;
+
+            if (groupIndex != 1)
+            {
+                var lockedCells = LockedCellGroups[groupIndex];
+                bool hasEmptyCellAround = false;
+                foreach (var lockedCell in lockedCells)
+                {
+                    var cellsAround = FieldUtils.GetCellsAround(_field, lockedCell);
+                    foreach (var checkedCell in cellsAround)
+                    {
+                        if (_field[checkedCell.x, checkedCell.y] == CellType.Empty)
+                        {
+                            hasEmptyCellAround = true;
+                            break;
+                        }
+                    }
+                    if(hasEmptyCellAround)break;
+                }
+                if(!hasEmptyCellAround)
+                    return;
+                //check for empty cells
+            }
             
-            MetaUI.Instance.SetPositionUnlockUI(_cells[(int)cellPos.x, (int)cellPos.z].transform.position);
+            var lockedCellGroup = LockedCellGroups[groupIndex];
+            Vector3 uiPos = Vector3.zero;
+            
+            foreach (var lockCellPos in lockedCellGroup)
+            {
+                uiPos += _cells[lockCellPos.x, lockCellPos.y].transform.position;
+            }
+
+            uiPos /= lockedCellGroup.Count;
+            _currentMarkedLockedCellGroup = groupIndex;
+            
+            MetaUI.Instance.UnlockCellText("Unlock for"+LockedCellGroups[groupIndex].Count+" cubes");
+            MetaUI.Instance.SetPositionUnlockUI(uiPos);
             MetaUI.Instance.SetActiveUnlockUI(true);
+            
+            //check neighbour closed cell
+            
         }
     }
 
     public void UnlockCell()
     {
-       if(StorageManager.GameDataMain.MagicCubesAmount <= 0) return;
-        StorageManager.GameDataMain.MagicCubesAmount--;
-        MetaUI.Instance.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
-        _cells[_currentMarkedLockedCell.x, _currentMarkedLockedCell.y].DestroyCell();
-        _cells[_currentMarkedLockedCell.x, _currentMarkedLockedCell.y] = null;
-        _field[_currentMarkedLockedCell.x, _currentMarkedLockedCell.y] = CellType.Empty;
-        StorageManager.GameDataMain.FieldRows[_currentMarkedLockedCell.x].RowCells[_currentMarkedLockedCell.y] =
-            new ResourceAndCountData(_field[_currentMarkedLockedCell.x, _currentMarkedLockedCell.y], 0);
+        var lockedCellGroup = LockedCellGroups[_currentMarkedLockedCellGroup];
+        Vector3 uiPos = Vector3.zero;
+            
+       if(StorageManager.GameDataMain.MagicCubesAmount <= lockedCellGroup.Count - 1) return;
+
+           StorageManager.GameDataMain.MagicCubesAmount-=lockedCellGroup.Count;
+           MetaUI.Instance.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
+       foreach (var lockCellPos in lockedCellGroup)
+       {
+           _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
+           _cells[lockCellPos.x, lockCellPos.y] = null;
+           _field[lockCellPos.x, lockCellPos.y] = CellType.Empty;
+           StorageManager.GameDataMain.FieldRows[lockCellPos.x]
+                   .RowCells[lockCellPos.y] =
+               new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
+       }
+       StorageManager.GameDataMain.RemainedLockedZones.Remove(_currentMarkedLockedCellGroup);
         MetaUI.Instance.SetActiveUnlockUI(false);
-        _currentMarkedLockedCell = Vector2Int.zero;
+        _currentMarkedLockedCellGroup = 0;
         _nowCellUnlockUIWasClose = true;
     }
 
     public void CloseUnlockCellUI()
     {
-        if( _currentMarkedLockedCell == Vector2Int.zero)return;
+        if( _currentMarkedLockedCellGroup == 0)return;
         MetaUI.Instance.SetActiveUnlockUI(false);
-        _currentMarkedLockedCell = Vector2Int.zero;
+        _currentMarkedLockedCellGroup = 0;
         _nowCellUnlockUIWasClose= true;
     }
 
@@ -322,16 +370,13 @@ public class MetaFieldManager : FieldManager {
                 StorageManager.GameDataMain.FieldRows[i].RowCells = new ResourceAndCountData[_field.GetLength(1)];
                 for (int j = 0; j < _field.GetLength(1); j++)
                 {
-                    if (i > 4 || j > 4)
-                    {
                         _field[i, j] = CellType.LockedMetaCell;
                         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(CellType.LockedMetaCell);
                         var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
                         go.transform.localPosition = new Vector3(i, -0.25f, j);
                         _cells[i, j] = go;
-
                        // go.SetSeed(Guid.NewGuid());
-                    }
+                    
                     StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new ResourceAndCountData(_field[i, j], 0);
                     
                 }
@@ -350,7 +395,6 @@ public class MetaFieldManager : FieldManager {
 
                         go.SetSeed(Guid.NewGuid());
                         
-                        Debug.Log("cell"+cellType);
                     }
                 }
             }
@@ -559,28 +603,35 @@ public class MetaFieldManager : FieldManager {
         (_groupCellIndex, connectedGroupsPieces) = SameCellsGroupCalculater.FindConnectedCellTypeGroups(_field);
         int afkTimeInSeconds = (int)(MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastExitTimeDateTime).TotalSeconds;
 //fix afk calculate
-        for (int i = 0; i < connectedGroupsPieces.Count; i++) {
+        for (int i = 0; i < connectedGroupsPieces.Count; i++)
+        {
             Vector3 collectResourceMarkPosition = Vector3.zero;
             int collectedResouces = 0;
             int maxCollectedResouces = 0;
             ResourceType curResource = ResourceType.None;
             Color resourceColor = Color.clear;
-            foreach (var (row, col) in connectedGroupsPieces[i]) {
-                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
+            foreach (var (row, col) in connectedGroupsPieces[i])
+            {
+                var cellConfig =
+                    PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
 
-                if (curResource == ResourceType.None) {
+                if (curResource == ResourceType.None)
+                {
                     curResource = cellConfig.AfkResourceType;
                     resourceColor = cellConfig.MarkCellColor;
                     resourceColor.a = 1;
                 }
 
-                if (cellConfig.AfkResourceType != ResourceType.None) {
+                if (cellConfig.AfkResourceType != ResourceType.None)
+                {
                     float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[connectedGroupsPieces[i].Count];
 
                     maxCollectedResouces += (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer);
                     int afkCollectedResources = StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount +
-                                                (int)(afkTimeInSeconds * cellConfig.AfkProduceCountPerSecond * resourceMultiplayer);
-                    afkCollectedResources = Mathf.Min(afkCollectedResources, (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer));
+                                                (int)(afkTimeInSeconds * cellConfig.AfkProduceCountPerSecond *
+                                                      resourceMultiplayer);
+                    afkCollectedResources = Mathf.Min(afkCollectedResources,
+                        (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer));
                     StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = afkCollectedResources;
                     collectedResouces += afkCollectedResources;
                     collectResourceMarkPosition += _cells[row, col].transform.position;
@@ -589,10 +640,37 @@ public class MetaFieldManager : FieldManager {
 
             collectedResouces = Mathf.Min(collectedResouces, maxCollectedResouces);
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
-            var resourceMark = SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces, curResource,
+            var resourceMark = SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces,
+                curResource,
                 resourceColor);
             resourceMark.gameObject.SetActive((float)collectedResouces / maxCollectedResouces > 0.1f);
             _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));
+        }
+
+        LockedCellGroups = new Dictionary<int, List<Vector2Int>>();
+        foreach (var needCell in  MainMetaConfig.LockedCellsFieldConfig.LockedCellsGroups)
+        {
+            LockedCellGroups.TryAdd(needCell.index, new List<Vector2Int>()); 
+            LockedCellGroups[needCell.index].Add(needCell.position);
+        }
+
+       
+        
+        
+        Debug.Log(MainMetaConfig.LockedCellsFieldConfig);
+        foreach (var VARIABLE in LockedCellGroups)
+        {
+            Debug.Log(VARIABLE.Key + "LockedCellGroups");
+        }
+        
+        foreach (var zoneIndex in StorageManager.GameDataMain.RemainedLockedZones)
+        {
+            var lockedCells = LockedCellGroups[zoneIndex];
+            foreach (var cellPos in lockedCells)
+            {
+                _groupCellIndex[cellPos.x, cellPos.y] = zoneIndex + 1000;
+              //  Debug.Log(cellPos);
+            }
         }
     }
 

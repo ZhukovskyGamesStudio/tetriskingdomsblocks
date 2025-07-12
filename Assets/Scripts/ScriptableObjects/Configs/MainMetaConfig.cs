@@ -15,4 +15,6 @@ public class MainMetaConfig : ScriptableObject {
     public float CameraDragSpeed;
     public CellType[] CellsToSpawn;
     public float MinutesToHealthRecovery;
+
+    public MetaStartLockedCellsFieldConfig LockedCellsFieldConfig;
 }

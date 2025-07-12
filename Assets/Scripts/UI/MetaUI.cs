@@ -32,6 +32,8 @@ public class MetaUI : MonoBehaviour {
     private ResourceMarkView resourceMarkViewPrefab;
     [SerializeField]
     private Transform _unlockCellUIContainer;
+    [SerializeField]
+    private TMP_Text _unlockCellText;
 
     private void Awake() {
         Instance = this;
@@ -54,6 +56,10 @@ public class MetaUI : MonoBehaviour {
         _unlockCellUIContainer.transform.position = pos;
     }
 
+    public void UnlockCellText(string text) {
+        if (_unlockCellText != null)
+            _unlockCellText.text = text;
+    }
     public void SetHealthTimerText(string text) {
         if (_healthTimerText != null)
             _healthTimerText.text = text;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 [Serializable]
@@ -10,7 +11,7 @@ public class GameDataForSave {
     public int FoodAmount;
     public int MetalAmount;*/
     public int[] resourcesCount;
-
+    public List<int> RemainedLockedZones;
     public int GoldAmount;
     public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
@@ -45,6 +46,10 @@ public class GameDataForSave {
         IsSoundOn = true;
         IsMusicOn = true;
         IsVibrationOn = true;
+        RemainedLockedZones = new List<int>()
+        {
+            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+        };
     }
 }
 
