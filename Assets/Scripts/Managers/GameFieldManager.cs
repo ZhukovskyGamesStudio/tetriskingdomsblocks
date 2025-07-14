@@ -871,9 +871,9 @@ public class GameFieldManager : FieldManager, IResetable {
     }
 
     private void SaveWinGame() {
-        StorageManager.GameDataMain.GoldAmount += 100/* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
-       // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-       StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance._currentLevelConfig.MagicCubesCount;
+        StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+        // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance._currentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

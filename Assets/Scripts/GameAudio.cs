@@ -1,15 +1,13 @@
 using UnityEngine;
 
-public class GameAudio: MonoBehaviour {
-  
+public class GameAudio : MonoBehaviour {
     public AudioQueueMixer PlacePiece, PiecesAppear;
     public AudioQueueMixer BoxBreaks, IceBreaks, SlimeBreaks;
     public AudioQueueMixer WoodPlaced, RockPlaced, WheatPlaced, MetalPlaced;
     public AudioQueueMixer Win, Lose, ResourceCollected, RowCollected;
 
-    public void PlayNextSound(AudioQueueMixer mixer)
-    {
-       if(!StorageManager.GameDataMain.IsSoundOn) return;
+    public void PlayNextSound(AudioQueueMixer mixer) {
+        if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) return;
         mixer.PlayNext();
     }
 }

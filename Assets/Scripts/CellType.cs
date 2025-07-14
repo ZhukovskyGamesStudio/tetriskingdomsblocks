@@ -21,5 +21,6 @@ public enum CellType
     Crystal,
     Slime, 
     Dinamyte,
-    LockedMetaCell
+    LockedMetaCell,
+    VillagePart
 }

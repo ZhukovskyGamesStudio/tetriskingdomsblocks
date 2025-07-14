@@ -1,46 +1,42 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class SettingsManager : MonoBehaviour
-{
-
-    [SerializeField] private Toggle _musicToggle;
-    [SerializeField] private Toggle _soundToggle;
-    [SerializeField] private Toggle _vibrationToggle;
+public class SettingsManager : MonoBehaviour {
     [SerializeField]
     private Transform _settingsContainer;
-        
+
+    [SerializeField]
+    private SettingsDialog _settingsDialog;
+
     public static SettingsManager Instance;
 
-    public void SetSettings()
-    {
-        _musicToggle.isOn = StorageManager.GameDataMain.IsMusicOn;
-        _soundToggle.isOn = StorageManager.GameDataMain.IsSoundOn;
-        _vibrationToggle.isOn = StorageManager.GameDataMain.IsVibrationOn;
-        BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.IsMusicOn);
+    public void SetSettings() {
+        _settingsDialog.SetData(StorageManager.GameDataMain.SettingsData, ChangeToggleMusic, ChangeToggleSound, ChangeToggleVibration,
+            GoToMeta);
+
+        BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
-    private void Awake()
-    {
+
+    private void Awake() {
         Instance = this;
-        _musicToggle.onValueChanged.AddListener(ChangeToggleMusic);
-        _soundToggle.onValueChanged.AddListener(ChangeToggleSound);
-        _vibrationToggle.onValueChanged.AddListener(ChangeToggleVibration);
+        SetSettings();
     }
-    
-    public void ChangeToggleVibration( bool isOn)=> StorageManager.GameDataMain.IsVibrationOn = isOn;
-    public void ChangeToggleMusic( bool isOn)
-    {
-        StorageManager.GameDataMain.IsMusicOn = isOn;
+
+    public void ChangeToggleVibration(bool isOn) => StorageManager.GameDataMain.SettingsData.IsVibrationOn = isOn;
+
+    public void ChangeToggleMusic(bool isOn) {
+        StorageManager.GameDataMain.SettingsData.IsMusicOn = isOn;
         BackgroundMusicManager.Instance.ChangeIsPlayingMusic(isOn);
     }
 
-    public void ChangeToggleSound( bool isOn)
-    {
-        StorageManager.GameDataMain.IsSoundOn = isOn;
-        Debug.Log(StorageManager.GameDataMain.IsSoundOn);
+    public void ChangeToggleSound(bool isOn) {
+        StorageManager.GameDataMain.SettingsData.IsSoundOn = isOn;
+        Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
 
-    public void CloseSettings()=>_settingsContainer.gameObject.SetActive(false);
-    public void OpenSettings()=>_settingsContainer.gameObject.SetActive(true);
+    public void CloseSettings() => _settingsContainer.gameObject.SetActive(false);
+    public void OpenSettings() => _settingsContainer.gameObject.SetActive(true);
+
+    private void GoToMeta() {
+        MainManager.Instance.GoToMeta();
+    }
 }

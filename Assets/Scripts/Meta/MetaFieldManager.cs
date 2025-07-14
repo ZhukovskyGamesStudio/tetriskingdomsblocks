@@ -47,28 +47,30 @@ public class MetaFieldManager : FieldManager {
             MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece");
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
+        CheckDragCamera();
+    }
+
+    private void CheckDragCamera() {
+        if (Input.GetMouseButtonDown(0)) {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
         }
-        
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode &&
-                _dragStartPosition == _dragStartPositionForUICheck)
+
+        if (Input.GetMouseButtonUp(0)) {
+            if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode && _dragStartPosition == _dragStartPositionForUICheck)
                 TryCastLockCell();
-            else if(Vector3.Distance(_dragStartPosition,_dragStartPositionForUICheck) > 5f  && _currentMarkedFieldCell != -Vector2Int.one)
-            CloseCellUI();
+            else if (Vector3.Distance(_dragStartPosition, _dragStartPositionForUICheck) > 5f && _currentMarkedFieldCell != -Vector2Int.one)
+                CloseCellUI();
 
             _nowCellUnlockUIWasClose = false;
         }
-        if (Input.GetMouseButton(0))
-        {
+
+        if (Input.GetMouseButton(0)) {
             DragCamera();
         }
     }
-     private void DragCamera()
+
+    /*private void DragCamera()
      {
             Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
         Vector3 move = new Vector3(pos.x * MainMetaConfig.CameraDragSpeed, 0, pos.y * MainMetaConfig.CameraDragSpeed);
@@ -79,7 +81,33 @@ public class MetaFieldManager : FieldManager {
              needPosition.y,
              Mathf.Clamp(needPosition.z,FieldContainers.Instance.FieldStart .position.z,FieldContainers.Instance.FieldEnd.position.z));
         _dragStartPosition = Input.mousePosition;
-     }
+     }*/
+    
+    // Предполагается, что у тебя есть LayerMask groundMask для слоя Ground
+
+    [SerializeField]
+    private LayerMask _groundMask;
+    private void DragCamera()
+    {
+        Ray prevRay = _mainCamera.ScreenPointToRay(_dragStartPosition);
+        Ray currRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(prevRay, out RaycastHit prevHit, Mathf.Infinity, _groundMask) &&
+            Physics.Raycast(currRay, out RaycastHit currHit, Mathf.Infinity, _groundMask)) {
+            Vector3 delta = prevHit.point - currHit.point;
+            Vector3 needPosition = CameraContainer.position + delta * 1;// MainMetaConfig.CameraDragSpeed;
+            needPosition.x = Mathf.Clamp(needPosition.x, FieldContainers.Instance.FieldStart.position.x,
+                FieldContainers.Instance.FieldEnd.position.x);
+            needPosition.z = Mathf.Clamp(needPosition.z, FieldContainers.Instance.FieldStart.position.z,
+                FieldContainers.Instance.FieldEnd.position.z);
+
+            CameraContainer.position = new Vector3(needPosition.x, needPosition.y, needPosition.z);
+
+            // После перемещения обновляем стартовую позицию на текущую мышь
+            _dragStartPosition = Input.mousePosition;
+        }
+    }
+    
     protected override void TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null && (StorageManager.GameDataMain.resourcesCount[0] >= 500 &&
