@@ -210,8 +210,7 @@ public class GameFieldManager : FieldManager, IResetable {
                 }
 
                 if (emptyCellsAround.Count > 0)
-                    newSlimeCells.Add((emptyCellsAround[Random.Range(0, emptyCellsAround.Count)],
-                        _cells[i, j].transform.position));
+                    newSlimeCells.Add((emptyCellsAround[Random.Range(0, emptyCellsAround.Count)], _cells[i, j].transform.position));
             }
         }
 
@@ -416,7 +415,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
         if (isDestroyingLinesCount != 0) {
             SpawnDestroyRowVibration();
-            _gameAudio.PlayNextSound(_gameAudio.RowCollected); 
+            _gameAudio.PlayNextSound(_gameAudio.RowCollected);
 
             if (unlockedCellText != "") {
                 GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f,
@@ -701,7 +700,7 @@ public class GameFieldManager : FieldManager, IResetable {
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
         UltaManager.Instance.HideUltimateUI();
-      Invoke("DestroyCurrentPieces", 2f);
+        Invoke("DestroyCurrentPieces", 2f);
     }
 
     private void DestroyCurrentPieces() {
