@@ -34,7 +34,9 @@ public class AudioQueueMixer : MonoBehaviour {
         else
             _needVolume = 0;
 
-        _currentPlaying.volume = _needVolume;
+        if (_currentPlaying) {
+            _currentPlaying.volume = _needVolume;
+        }
     }
 
     private void CreateSources() {

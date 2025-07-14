@@ -9,15 +9,12 @@ public class SettingsManager : MonoBehaviour {
 
     public static SettingsManager Instance;
 
-    public void SetSettings() {
-      
-
-        BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
-    }
-
     private void Awake() {
         Instance = this;
-        SetSettings();
+    }
+
+    public void SetSettings() {
+        BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
 
     public void ShowSettingsDialog() {
@@ -31,8 +28,7 @@ public class SettingsManager : MonoBehaviour {
                 goToMeta = GoToMeta
             }
         };
-        
-        
+
         DialogsManager.Instance.ShowDialogWithData(passingData);
     }
 
@@ -47,7 +43,7 @@ public class SettingsManager : MonoBehaviour {
         StorageManager.GameDataMain.SettingsData.IsSoundOn = isOn;
         Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
-    
+
     public void OpenSettings() => ShowSettingsDialog();
 
     private void GoToMeta() {

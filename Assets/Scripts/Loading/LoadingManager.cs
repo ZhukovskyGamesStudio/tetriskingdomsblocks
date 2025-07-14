@@ -16,7 +16,13 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void Start() {
+        InitManagers();
         LoadAndChangeScene();
+    }
+
+    private void InitManagers() {
+        BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
+        SettingsManager.Instance.SetSettings();
     }
 
     private async void LoadAndChangeScene() {
