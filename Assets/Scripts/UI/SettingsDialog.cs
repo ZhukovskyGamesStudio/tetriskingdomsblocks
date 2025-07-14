@@ -2,22 +2,23 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsDialog : MonoBehaviour {
+public class SettingsDialog : DialogBase {
     [SerializeField]
     private Toggle _musicToggle, _soundToggle, _vibrationToggle;
 
     private Action<bool> _changeMusic, _changeSound, _changeVibration;
     private Action _goToMeta;
 
-    public void SetData(SettingsData data, Action<bool> changeMusic, Action<bool> changeSound, Action<bool> changeVibration, Action goToMeta) {
-        _musicToggle.SetIsOnWithoutNotify(data.IsMusicOn);
-        _soundToggle.SetIsOnWithoutNotify(data.IsSoundOn);
-        _vibrationToggle.SetIsOnWithoutNotify(data.IsVibrationOn);
+    public override void SetData(object data) {
+        var settingsData = data as Data;
+        _musicToggle.SetIsOnWithoutNotify(settingsData.data.IsMusicOn);
+        _soundToggle.SetIsOnWithoutNotify(settingsData.data.IsSoundOn);
+        _vibrationToggle.SetIsOnWithoutNotify(settingsData.data.IsVibrationOn);
 
-        _changeMusic = changeMusic;
-        _changeSound = changeSound;
-        _changeVibration = changeVibration;
-        _goToMeta = goToMeta;
+        _changeMusic = settingsData.changeMusic;
+        _changeSound = settingsData.changeSound;
+        _changeVibration = settingsData.changeVibration;
+        _goToMeta = settingsData.goToMeta;
     }
 
     public void ToggleVibrations(bool isOn) {
@@ -36,7 +37,12 @@ public class SettingsDialog : MonoBehaviour {
         _goToMeta?.Invoke();
     }
 
-    public void Close() {
-        gameObject.SetActive(false);
+    [Serializable]
+    public class Data {
+        public SettingsData data;
+        public Action<bool> changeMusic;
+        public Action<bool> changeSound;
+        public Action<bool> changeVibration;
+        public Action goToMeta;
     }
 }

@@ -14,6 +14,8 @@ public class DialogBase : MonoBehaviour {
         await _showHideAnimation.Show();
     }
 
+    public virtual void SetData(object data) { }
+
     public async UniTask Hide() {
         if (_isHiding) {
             return;

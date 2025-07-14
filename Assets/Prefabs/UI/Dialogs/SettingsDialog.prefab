@@ -824,8 +824,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4176470536401721755}
-        m_TargetAssemblyTypeName: SettingsDialog, Assembly-CSharp
-        m_MethodName: Close
+        m_TargetAssemblyTypeName: DialogBase, Assembly-CSharp
+        m_MethodName: HideByButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -919,7 +919,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4176470536401721755}
+        m_TargetAssemblyTypeName: SettingsDialog, Assembly-CSharp
+        m_MethodName: ToggleMusic
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &5033801222332529673
 GameObject:
@@ -1141,7 +1153,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4176470536401721755}
+        m_TargetAssemblyTypeName: SettingsDialog, Assembly-CSharp
+        m_MethodName: ToggleVibrations
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1 &5099444679882531764
 GameObject:
@@ -1554,8 +1578,11 @@ GameObject:
   - component: {fileID: 7034099865073866156}
   - component: {fileID: 2041559254088659654}
   - component: {fileID: 4176470536401721755}
+  - component: {fileID: 4720520123065055250}
+  - component: {fileID: 3233901789400431737}
+  - component: {fileID: 8583934547721405603}
   m_Layer: 5
-  m_Name: SettingsBackground
+  m_Name: SettingsDialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1635,6 +1662,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9edf41f6b9604ebfa394df938d2f599f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _showHideAnimation: {fileID: 4720520123065055250}
+  _musicToggle: {fileID: 137348687472846167}
+  _soundToggle: {fileID: 6796104777594468575}
+  _vibrationToggle: {fileID: 7210588921628420047}
+--- !u!114 &4720520123065055250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904053025826733911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d9a542cafed4cbab3d36092e98296dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _showClip: {fileID: 7400000, guid: 019b8eb9f12177541becde7d6b8d5bc4, type: 2}
+  _hideClip: {fileID: 7400000, guid: f05442d027603ee4d86e6800c1f487cb, type: 2}
+--- !u!111 &3233901789400431737
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904053025826733911}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: 019b8eb9f12177541becde7d6b8d5bc4, type: 2}
+  - {fileID: 7400000, guid: f05442d027603ee4d86e6800c1f487cb, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
+--- !u!225 &8583934547721405603
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904053025826733911}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8272900034766442050
 GameObject:
   m_ObjectHideFlags: 0
@@ -1719,5 +1794,17 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4176470536401721755}
+        m_TargetAssemblyTypeName: SettingsDialog, Assembly-CSharp
+        m_MethodName: ToggleSfx
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1

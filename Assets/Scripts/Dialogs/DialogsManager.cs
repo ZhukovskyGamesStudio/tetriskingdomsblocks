@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class DialogsManager : MonoBehaviour {
-    private Queue<Type> _dialogsQ = new Queue<Type>();
+    private Queue<DialogWithData> _dialogsQ = new Queue<DialogWithData>();
 
     [SerializeField]
     private List<DialogBase> _dialogsPrefabs = new List<DialogBase>();
@@ -18,18 +19,26 @@ public class DialogsManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void ShowDialog(Type dialogType) {
-        AddToQueue(dialogType);
+        AddToQueue(new DialogWithData() {
+            DialogType = dialogType,
+            Data = null
+        });
     }
 
-    private void AddToQueue(Type dialog) {
-        if (_dialogsQ.Contains(dialog)) {
+    public void ShowDialogWithData(DialogWithData dialogWithData) {
+        AddToQueue(dialogWithData);
+    }
+
+    private void AddToQueue(DialogWithData dialogWithData) {
+        if (_dialogsQ.Any(d => d.DialogType == dialogWithData.DialogType)) {
             return;
         }
 
-        _dialogsQ.Enqueue(dialog);
+        _dialogsQ.Enqueue(dialogWithData);
         TryShowFromQueue();
     }
 
@@ -42,14 +51,21 @@ public class DialogsManager : MonoBehaviour {
             return;
         }
 
-        Type dialog = _dialogsQ.Dequeue();
-        var prefab = _dialogsPrefabs.Find(d => d.GetComponent(dialog) != null);
+        DialogWithData dialog = _dialogsQ.Dequeue();
+        DialogBase prefab = _dialogsPrefabs.Find(d => d.GetComponent(dialog.DialogType) != null);
         var dialogObj = Instantiate(prefab, _dialogsContainer);
         _currentDialog = dialogObj;
+        dialogObj.SetData(dialog.Data);
         dialogObj.Show(() => {
             Destroy(_currentDialog.gameObject);
             _currentDialog = null;
             TryShowFromQueue();
         }).Forget();
     }
+}
+
+[Serializable]
+public class DialogWithData {
+    public Type DialogType;
+    public object Data;
 }
