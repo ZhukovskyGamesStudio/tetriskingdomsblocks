@@ -34,6 +34,9 @@ public class MetaUI : MonoBehaviour {
     private Transform _unlockCellUIContainer;
     [SerializeField]
     private TMP_Text _unlockCellText;
+    [SerializeField] private Transform _upgradeCellUIContainer;
+    [SerializeField] private TMP_Text _upgradeCellText;
+    [SerializeField] private TMP_Text _cellInfoText;
 
     private void Awake() {
         Instance = this;
@@ -46,19 +49,23 @@ public class MetaUI : MonoBehaviour {
             _healthImages[index].gameObject.SetActive(active);
     }
 
-    public void SetActiveUnlockUI(bool active)
-    {
-        _unlockCellUIContainer.gameObject.SetActive(active);
-    }
+    public void SetActiveUnlockUI(bool active) => _unlockCellUIContainer.gameObject.SetActive(active);
 
-    public void SetPositionUnlockUI(Vector3 pos)
-    {
-        _unlockCellUIContainer.transform.position = pos;
-    }
+    public void SetPositionUnlockUI(Vector3 pos) =>_unlockCellUIContainer.transform.position = pos;
 
+    public void SetActiveUpgradeUI(bool active) =>_upgradeCellUIContainer.gameObject.SetActive(active);
+
+    public void SetPositionUpgradeUI(Vector3 pos) => _upgradeCellUIContainer.transform.position = pos;
+    
     public void UnlockCellText(string text) {
         if (_unlockCellText != null)
             _unlockCellText.text = text;
+    }
+    
+    public void SetUpgradeCellText(string textInfo, string textButton)
+    {
+        _upgradeCellText.text = textButton;
+        _cellInfoText.text = textInfo;
     }
     public void SetHealthTimerText(string text) {
         if (_healthTimerText != null)

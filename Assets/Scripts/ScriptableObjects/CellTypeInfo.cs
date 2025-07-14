@@ -15,6 +15,7 @@ public class CellTypeInfo : ScriptableObject
     public ResourceType AfkResourceType;
     public int MaxAfkCapacity;
     public float AfkProduceCountPerSecond;
-    
+    public int UpgradeCost;
+    public CellType UpgradeCellType;
     public float ChanceToSpawn;
 }

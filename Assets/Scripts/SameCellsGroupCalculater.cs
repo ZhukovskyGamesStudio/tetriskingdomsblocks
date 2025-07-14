@@ -20,10 +20,9 @@ public class SameCellsGroupCalculater {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (!visited[i, j] && grid[i, j] != CellType.Empty && grid[i, j] != CellType.LockedMetaCell) {
+                if (!visited[i, j] && grid[i, j]!= CellType.Empty &&PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == grid[i, j]).AfkResourceType != ResourceType.None) {
                     CellType cellType = grid[i, j];
-                    var resourceType = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType).ResourcesForDestroy[0]
-                        .ResourceType; //make afk collect info in config
+                    var resourceType = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType).AfkResourceType; 
                     var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
 
                     result.Add(group);
@@ -77,8 +76,8 @@ public class SameCellsGroupCalculater {
                 if (newRow >= 0 && newRow < grid.GetLength(0) && newCol >= 0 && newCol < grid.GetLength(1) && !visited[newRow, newCol] &&
                     grid[newRow, newCol] != CellType.Empty && grid[newRow, newCol] != CellType.LockedMetaCell) {
                     var resourceType = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == grid[newRow, newCol])
-                        .ResourcesForDestroy; //make afk collect info in config
-                    if (resourceType.Length == 0 || resourceType[0].ResourceType != targetType) continue;
+                        .AfkResourceType; //make afk collect info in config
+                    if (resourceType ==  ResourceType.None || resourceType != targetType) continue;
                     visited[newRow, newCol] = true;
                     queue.Enqueue((newRow, newCol));
                     group.Add((newRow, newCol));
