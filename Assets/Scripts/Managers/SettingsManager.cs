@@ -21,7 +21,7 @@ public class SettingsManager : MonoBehaviour {
     }
 
     public void ShowSettingsDialog() {
-        DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {
+        var passingData = new DialogWithData() {
             DialogType = typeof(SettingsDialog),
             Data = new SettingsDialog.Data() {
                 data = StorageManager.GameDataMain.SettingsData,
@@ -30,7 +30,10 @@ public class SettingsManager : MonoBehaviour {
                 changeVibration = ChangeToggleVibration,
                 goToMeta = GoToMeta
             }
-        });
+        };
+        
+        
+        DialogsManager.Instance.ShowDialogWithData(passingData);
     }
 
     public void ChangeToggleVibration(bool isOn) => StorageManager.GameDataMain.SettingsData.IsVibrationOn = isOn;

@@ -10,7 +10,7 @@ public class SettingsDialog : DialogBase {
     private Action _goToMeta;
 
     public override void SetData(object data) {
-        var settingsData = data as Data;
+        Data settingsData = data as Data;
         _musicToggle.SetIsOnWithoutNotify(settingsData.data.IsMusicOn);
         _soundToggle.SetIsOnWithoutNotify(settingsData.data.IsSoundOn);
         _vibrationToggle.SetIsOnWithoutNotify(settingsData.data.IsVibrationOn);
