@@ -1,12 +1,6 @@
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour {
-    [SerializeField]
-    private Transform _settingsContainer;
-
-    [SerializeField]
-    private SettingsDialog _settingsDialog;
-
     public static SettingsManager Instance;
 
     private void Awake() {
