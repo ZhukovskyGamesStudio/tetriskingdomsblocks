@@ -627,9 +627,18 @@ public class GameFieldManager : FieldManager {
         GameUI.Instance.SetMainText("You lose:(");
         GameUI.Instance.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
-        GoalView.Instance.SetLoseState();
+        GoalView.Instance.SetLoseState(_currentMovesCount <= 0);
         UltaManager.Instance.HideUltimateUI();
         Invoke(nameof(DestroyCurrentPieces), 2f);
+    }
+
+    public void AddMoves() {
+        if (StorageManager.GameDataMain.GoldAmount < 900) {
+            return;
+        }
+
+        StorageManager.GameDataMain.GoldAmount -= 900;
+        _currentMovesCount += 5;
     }
 
     private void DestroyCurrentPieces() {

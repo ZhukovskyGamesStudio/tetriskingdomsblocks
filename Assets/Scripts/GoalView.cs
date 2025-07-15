@@ -34,20 +34,35 @@ public class GoalView : MonoBehaviour {
         _isGameEnded = true;
     }
 
-    public void SetLoseState() {
+    public void SetLoseState(bool outOfMoves) {
         if (_isGameEnded) {
             return;
         }
 
         StorageManager.GameDataMain.HealthCount--;
-        var passingData = new DialogWithData() {
+        var loseData = new DialogWithData {
             DialogType = typeof(LoseDialog),
-            Data = new LoseDialog.Data() {
+            Data = new LoseDialog.Data {
                 ClickContinue = ExitGame,
                 Hp = StorageManager.GameDataMain.HealthCount
             }
         };
-        DialogsManager.Instance.ShowDialogWithData(passingData);
+        var outOfMovesData = new DialogWithData {
+            DialogType = typeof(OutOfMovesDialog),
+            Data = new OutOfMovesDialog.Data {
+                ClickAdd = GameFieldManager.Instance.AddMoves,
+                ClickClose = () => DialogsManager.Instance.ShowDialogWithData(loseData),
+                ClickBalance = () => print("balance opened"),
+                Balance = StorageManager.GameDataMain.GoldAmount,
+                Cost = 900
+            }
+        };
+        
+        if (outOfMoves) {
+            DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
+        } else {
+            DialogsManager.Instance.ShowDialogWithData(loseData);
+        }
         
         _isGameEnded = true;
     }
