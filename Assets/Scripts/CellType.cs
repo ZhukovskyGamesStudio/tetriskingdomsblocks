@@ -22,5 +22,8 @@ public enum CellType
     Slime, 
     Dinamyte,
     LockedMetaCell,
-    VillagePart
+    VillagePart,
+    FieldOfWheatLevel2,
+    MountainLevel2,
+    ForestLevel2
 }

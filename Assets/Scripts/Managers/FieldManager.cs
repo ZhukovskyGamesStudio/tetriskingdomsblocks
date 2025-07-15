@@ -98,14 +98,21 @@ public class FieldManager : MonoBehaviour {
             HummerManager.Instance.HideHummerAnimation();*/
     }
 
-    protected async void HummerDestoyPieceAnimation(CellView cell) {
-        cell.OffCollider();
-        await HummerManager.Instance.HummerDestroyPieceAnimation(cell.transform.position);
-        DestroyPieceWithHummer(cell);
+    protected async void HummerDestoyPieceAnimation(CellView[] cells) {
+        Vector3 hummerNeedPos =Vector3.zero;
+        foreach (var cell in cells) {
+            cell.OffCollider();
+            hummerNeedPos += cell.transform.position;
+        }
+        hummerNeedPos /= cells.Length;
+        await HummerManager.Instance.HummerDestroyPieceAnimation(hummerNeedPos);
+        DestroyPieceWithHummer(cells);
     }
 
-    private void DestroyPieceWithHummer(CellView cell) {
-        cell.DestroyCell();
+    private void DestroyPieceWithHummer(CellView[] cells) {
+        foreach (var cell in cells) 
+            cell.DestroyCell();
+        
         VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
         ShakeCamera(0.6f);
     }

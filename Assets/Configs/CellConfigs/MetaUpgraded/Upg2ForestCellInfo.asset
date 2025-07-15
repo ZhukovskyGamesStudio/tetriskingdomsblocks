@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: ForestCellInfo
+  m_Name: Upg2ForestCellInfo
   m_EditorClassIdentifier: 
-  CellType: 1
+  CellType: 22
   CellForm: {fileID: 0}
   MarkCellColor: {r: 0.26735216, g: 0.5, b: 0.12028301, a: 0}
   ResourcesForPlace:
@@ -24,8 +24,8 @@ MonoBehaviour:
   CellName: Forest
   MultiplayerForSameResourceType: 0
   AfkResourceType: 1
-  MaxAfkCapacity: 100
-  AfkProduceCountPerSecond: 1
+  MaxAfkCapacity: 250
+  AfkProduceCountPerSecond: 2
   UpgradeCost: 0
-  UpgradeCellType: 22
+  UpgradeCellType: 0
   ChanceToSpawn: 1

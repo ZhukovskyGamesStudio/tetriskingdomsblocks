@@ -69,7 +69,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
             if (StorageManager.GameDataMain.HummerCount <= 0)
                 _isDestroyPieceMode = false;
-            HummerDestoyPieceAnimation(_cells[(int)cellPos.x, (int)cellPos.z]);
+            HummerDestoyPieceAnimation(new CellView[] {_cells[(int)cellPos.x, (int)cellPos.z]});
 
             var configSlime = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
             for (int j = 0; j < _currentTasks.Count; j++) {

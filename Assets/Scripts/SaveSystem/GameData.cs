@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using UnityEngine;
 
 [Serializable]
 public class GameDataForSave {
@@ -15,7 +16,7 @@ public class GameDataForSave {
     public int GoldAmount;
     public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
-
+    public FormPositionsData[] FigureFormsData;
     public string LastHealthRecoveryTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
     public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
 
@@ -66,5 +67,14 @@ public struct ResourceAndCountData {
     public ResourceAndCountData(CellType cellType, int resourceCount) {
         CellType = cellType;
         ResourceCount = resourceCount;
+    }
+}
+
+[Serializable]
+public struct FormPositionsData {
+    public Vector2Int[] FormCoordinates;
+
+    public FormPositionsData(Vector2Int[] formCoordinates) {
+        FormCoordinates = formCoordinates;
     }
 }

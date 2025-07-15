@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
   m_Name: FieldOfWheatCellInfo
   m_EditorClassIdentifier: 
-  CellPrefab: {fileID: 3199888184775657234, guid: 7e29ca70f4539f24285f071cb09210cb, type: 3}
   CellType: 9
   CellForm: {fileID: 0}
   MarkCellColor: {r: 0.9529412, g: 0.77254903, b: 0.2, a: 0}
@@ -27,4 +26,6 @@ MonoBehaviour:
   AfkResourceType: 3
   MaxAfkCapacity: 100
   AfkProduceCountPerSecond: 1
+  UpgradeCost: 0
+  UpgradeCellType: 20
   ChanceToSpawn: 1
