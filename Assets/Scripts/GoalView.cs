@@ -50,7 +50,7 @@ public class GoalView : MonoBehaviour {
         var outOfMovesData = new DialogWithData() {
             DialogType = typeof(OutOfMovesDialog),
             Data = new OutOfMovesDialog.Data() {
-                ClickAdd = () => print("add clicked"),
+                ClickAdd = GameFieldManager.Instance.AddMoves,
                 ClickClose = () => DialogsManager.Instance.ShowDialogWithData(loseData),
                 Balance = StorageManager.GameDataMain.GoldAmount,
                 Cost = 900

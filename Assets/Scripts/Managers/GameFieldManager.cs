@@ -632,6 +632,15 @@ public class GameFieldManager : FieldManager {
         Invoke(nameof(DestroyCurrentPieces), 2f);
     }
 
+    public void AddMoves() {
+        if (StorageManager.GameDataMain.GoldAmount < 900) {
+            return;
+        }
+
+        StorageManager.GameDataMain.GoldAmount -= 900;
+        _currentMovesCount += 5;
+    }
+
     private void DestroyCurrentPieces() {
         NextPiecesView.Instance.DestroyPieces();
         NextPiecesView.Instance.DestroyAdditionalPiece();
