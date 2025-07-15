@@ -50,7 +50,7 @@ public class UltaManager : MonoBehaviour {
 
     private void Start() {
         _ultimateProgressBar.maxValue = GameFieldManager.Instance.MainGameConfig.NeededUltimatePoints;
-        _ultimateButton.onClick.AddListener(() => UltimateAction());
+        _ultimateButton.onClick.AddListener(UltimateAction);
     }
 
     public void HideUltimateUI() {

@@ -17,9 +17,11 @@ public class GoalView : MonoBehaviour {
     private RectTransform _taskState, _winState, _loseState;
 
     public static GoalView Instance;
-    public bool _isGameEnded { get;private set;}
+    public bool _isGameEnded { get; private set; }
     private Tween _currentTween;
-    [SerializeField] private TMP_Text _loseRestartText;
+
+    [SerializeField]
+    private TMP_Text _loseRestartText;
 
     private void Awake() {
         Instance = this;
@@ -28,9 +30,9 @@ public class GoalView : MonoBehaviour {
     public void SetWinState() {
         if (_isGameEnded) return;
         WinAnimation();
-       
+
         _isGameEnded = true;
-       // _winState.gameObject.SetActive(true);
+        // _winState.gameObject.SetActive(true);
         _loseState.gameObject.SetActive(false);
     }
 
@@ -52,18 +54,13 @@ public class GoalView : MonoBehaviour {
         _loseState.gameObject.SetActive(true);
     }
 
-    private void WinAnimation()
-    {
+    private void WinAnimation() {
         _currentTween = DOTween.Sequence()
-            .Append(
-                GameUI.Instance.BgTasksImage.DOAnchorPosY(GameUI.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
-            .Append(
-                GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.3f, 0.7f))
+            .Append(GameUI.Instance.BgTasksImage.DOAnchorPosY(GameUI.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
+            .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.3f, 0.7f))
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.2f, 0.07f))
-            .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.45f,
-                0.1f))
-            .Append(GameFieldManager.Instance.CameraContainer.DOMoveZ(
-                GameFieldManager.Instance.CameraContainer.position.z + 5, 3f))
+            .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.45f, 0.1f))
+            .Append(GameFieldManager.Instance.CameraContainer.DOMoveZ(GameFieldManager.Instance.CameraContainer.position.z + 5, 3f))
             .OnComplete(() => SceneManager.LoadScene("MetaScene"));
     }
 

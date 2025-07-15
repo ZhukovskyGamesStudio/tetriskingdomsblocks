@@ -52,17 +52,19 @@ public class FieldManager : MonoBehaviour {
     [Header("Audio")]
     [SerializeField]
     protected GameAudio _gameAudio;
-    
+
     protected bool _isDestroyPieceMode;
-    
+
     [SerializeField]
     protected LayerMask _pieceMask;
 
     [Header("Drop Animation Settings")]
     [SerializeField]
     private bool _isSquishingOnDrop = false;
+
     [SerializeField]
-    private float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop=0.1f, _jumpPercent = 0.125f;
+    private float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop = 0.1f, _jumpPercent = 0.125f;
+
     [SerializeField]
     private float _dropLength = 0.3f, _jumpLength = 0.1f;
 
@@ -72,30 +74,24 @@ public class FieldManager : MonoBehaviour {
 
     protected virtual void Start() {
         SetupGame();
-        _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
-        // Application.targetFrameRate = 144;
     }
 
-    protected virtual void Update()
-    {
+    protected virtual void Update() {
         if (Input.GetMouseButtonDown(0)) {
             if (_isDestroyPieceMode)
                 TryDestroyPiece();
         }
     }
 
-    protected virtual void TryDestroyPiece()
-    {
-        
-    }
+    protected virtual void TryDestroyPiece() { }
 
     public void ToggleDestroyPieceMode() {
         _isDestroyPieceMode = !_isDestroyPieceMode;
 
-       /* if (_isDestroyPieceMode)
-            HummerManager.Instance.ShowHummerAnimation();
-        else
-            HummerManager.Instance.HideHummerAnimation();*/
+        /* if (_isDestroyPieceMode)
+             HummerManager.Instance.ShowHummerAnimation();
+         else
+             HummerManager.Instance.HideHummerAnimation();*/
     }
 
     protected async void HummerDestoyPieceAnimation(CellView cell) {
@@ -109,7 +105,6 @@ public class FieldManager : MonoBehaviour {
         VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
         ShakeCamera(0.6f);
     }
-
 
     protected void CalculateFiguresSpawnChances() {
         float lastChance = 0;
@@ -144,16 +139,15 @@ public class FieldManager : MonoBehaviour {
                     continue;
                 }
 
-                if (pieceData.Type.CellType == CellType.Dinamyte)
-                {
+                if (pieceData.Type.CellType == CellType.Dinamyte) {
                     BoostersManager.Instance.AnimateDynamite(pos);
                     //destroy dinamyte
                     return;
                 }
-                
+
                 Vector2Int place = new(pos.x + x, pos.y + y);
                 CheckCellTypesBeforePlacePiece(place);
-                
+
                 CellView go = cells[x, y];
 
                 _field[place.x, place.y] = pieceData.Type.CellType;
@@ -177,14 +171,14 @@ public class FieldManager : MonoBehaviour {
             }
         }
 
-        ShowDropImpact(cellsContainer.transform,cells, pieceData, cellsContainer.gameObject, cellsAmount);
+        ShowDropImpact(cellsContainer.transform, cells, pieceData, cellsContainer.gameObject, cellsAmount);
     }
 
     public virtual void CheckClosestCells(Vector2Int coord) { }
     public virtual void CheckCellTypesBeforePlacePiece(Vector2Int coord) { }
 
-    public void ShowDropImpact(Transform pieceContainer,CellView[,] cells, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
-        DropPeaceTween(pieceContainer,cells, () => {
+    public void ShowDropImpact(Transform pieceContainer, CellView[,] cells, PieceData pieceData, GameObject tmpContainer, float cellsAmount) {
+        DropPeaceTween(pieceContainer, cells, () => {
             SpawnSmokeUnderPiece(tmpContainer.transform);
             float vibrationsAmplitude = cellsAmount / 9;
             if (pieceData.Type.CellType == CellType.Metal || pieceData.Type.CellType == CellType.Mountain ||
@@ -213,10 +207,10 @@ public class FieldManager : MonoBehaviour {
         });
     }
 
-    private void DropPeaceTween(Transform piece,CellView[,] cells,  Action dropCallback) {
+    private void DropPeaceTween(Transform piece, CellView[,] cells, Action dropCallback) {
         var cnfg = ConfigsManager.Instance.DragConfig;
         var animSpeedMultiplayer = cnfg.AfterDropPieceAnimationMultiplayer;
-        var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y-0.3f;
+        var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y - 0.3f;
         var seq = DOTween.Sequence();
         int cellsCount = 0;
         foreach (var VARIABLE in cells) {
@@ -227,9 +221,9 @@ public class FieldManager : MonoBehaviour {
             var cellSeq = DOTween.Sequence();
             cellSeq.AppendInterval(cnfg._delayBetweenTileDrop * animSpeedMultiplayer * cellsCount);
             cellSeq.Append(VARIABLE.DropWithDecorSequence(cnfg, finY));
-           /* cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _dropLength * animSpeedMultiplayer));
-            cellSeq.Append(VARIABLE.transform.DOMoveY(finY + jumpHeight, _jumpLength / 2 * animSpeedMultiplayer));
-            cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _jumpLength / 2 * animSpeedMultiplayer));*/
+            /* cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _dropLength * animSpeedMultiplayer));
+             cellSeq.Append(VARIABLE.transform.DOMoveY(finY + jumpHeight, _jumpLength / 2 * animSpeedMultiplayer));
+             cellSeq.Append(VARIABLE.transform.DOMoveY(finY, _jumpLength / 2 * animSpeedMultiplayer));*/
             seq.Join(cellSeq);
             cellsCount++;
         }
@@ -302,9 +296,8 @@ public class FieldManager : MonoBehaviour {
         _placeCellEffectsPool.Release(particles);
     }
 
-    public virtual void SetupGame()
-    {
-        SettingsManager.Instance.SetSettings();
+    public virtual void SetupGame() {
+        _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
     }
 
     public void PlayCollectedSound() {

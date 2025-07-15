@@ -6,6 +6,7 @@ public class StartFieldConfig : ScriptableObject
 {
     [SerializeField] private List<CellRow> grid = new List<CellRow>();
 
+    public List<CellRow> Grid => grid;
     // Для удобного доступа к элементам
     public CellType GetCell(int x, int y)
     {

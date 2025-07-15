@@ -1796,6 +1796,7 @@ Transform:
   - {fileID: 1958099815}
   - {fileID: 702973136}
   - {fileID: 1681828170}
+  - {fileID: 578661763}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &269491197
@@ -4522,6 +4523,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &578661762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 578661763}
+  - component: {fileID: 578661764}
+  m_Layer: 0
+  m_Name: EntryPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &578661763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578661762}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 269093363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &578661764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578661762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eda322b933de45119fc1a9f5a092309d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameFieldManager: {fileID: 941771434}
+  _spawnRandomNature: {fileID: 1057545911}
+  _mainGameConfig: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
 --- !u!4 &596204540 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2109794754507720388, guid: 8ea910eacc3e3f44b9693f221efc61ee, type: 3}
@@ -6982,11 +7030,8 @@ MonoBehaviour:
   _jumpPercent: 0.2
   _dropLength: 0.6
   _jumpLength: 0.5
-  _spawnRandomNature: {fileID: 1057545911}
   <MainGameConfig>k__BackingField: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
   <_additionalPieceContainer>k__BackingField: {fileID: 1427227600}
-  _normal: {fileID: 2100000, guid: 76c95ddac2e11714eab30a017e11182a, type: 2}
-  _priorityMaterial: {fileID: 2100000, guid: 782522b7ead25ef408c35b7dfce74d3b, type: 2}
 --- !u!1 &946048036
 GameObject:
   m_ObjectHideFlags: 0

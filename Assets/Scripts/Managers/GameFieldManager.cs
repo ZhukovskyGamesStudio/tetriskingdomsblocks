@@ -5,13 +5,10 @@ using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class GameFieldManager : FieldManager, IResetable {
+public class GameFieldManager : FieldManager {
     public static GameFieldManager Instance;
 
     [field: Header("Game")]
-    [SerializeField]
-    private SpawnRandomNature _spawnRandomNature;
-
     [field: SerializeField]
     public MainGameConfig MainGameConfig { get; private set; }
 
@@ -28,27 +25,19 @@ public class GameFieldManager : FieldManager, IResetable {
     private bool _isSlimeExist;
 
     public Action OnCellPlaced;
+    public Action OnMoveEnded;
 
     [field: SerializeField]
     public Transform _additionalPieceContainer { get; private set; }
 
     public PieceView _additionalPiecePrefab { get; private set; }
 
-    public Material _normal, _priorityMaterial;
+    public int FieldSize => _field.GetLength(0);
 
     protected override void Awake() {
         base.Awake();
         Instance = this;
-        _spawnRandomNature.Generate();
     }
-
-    public void Reset() { }
-
-    private void GenerateField() { }
-
-    private void GenerateTask() { }
-
-    private void StartGame() { }
 
     public void GenerateNewPieces() {
         _nextBlocks = new List<PieceData>() {
@@ -135,6 +124,7 @@ public class GameFieldManager : FieldManager, IResetable {
 
         _currentMovesCount--;
         GameUI.Instance.SetMovesCount(_currentMovesCount);
+        OnMoveEnded?.Invoke();
 
         if (MainGameConfig.resourceOnPlaceCell) {
             CollectResourcesOnPlace(pieceData);
@@ -155,45 +145,6 @@ public class GameFieldManager : FieldManager, IResetable {
     }
 
     private void SlimeMove() {
-        /* List<List<(int row, int col)>> connectedGroupsPieces = null;
-         connectedGroupsPieces = SameCellsGroupCalculater.FindConnectedCellTypeGroupsWithoutCellIndexes(_field, CellType.Slime);
-         foreach (var groupPieces in connectedGroupsPieces)
-         {
-             if (_field[groupPieces[0].row, groupPieces[0].col] == CellType.Slime)
-             {
-                 List<Vector2Int> emptyCellsAround = new List<Vector2Int>();
-                 foreach (var piece in groupPieces)
-                 {
-                     foreach (var cell in FieldUtils.GetCellsAround(_field, new Vector2Int(piece.row, piece.col)))
-                     {
-                         if (_field[cell.x, cell.y] == CellType.Empty && !emptyCellsAround.Contains(cell))
-                             emptyCellsAround.Add(cell);
-                     }
-                 }
-
-                 if (emptyCellsAround.Count > 0)
-                 {
-                     var randomEmptyCell = emptyCellsAround[Random.Range(0, emptyCellsAround.Count)];
-                     var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
-                         c.CellType ==CellType.Slime);
-                     PlaceOneSizePiece(config, new Vector2Int(randomEmptyCell.x, randomEmptyCell.y));
-                     //add in task
-                     foreach (var task in _currentTasks)
-                     {
-                         if (task.TaskInfo.NeedResource == ResourceType.Slime)
-                         {
-                             task.needCount++;
-                             if (GameData.CollectedResources.TryGetValue(task.TaskInfo.NeedResource,
-                                     out int resourceCount))
-                                 task.TaskUIView.TaskInfoTextHelper.SetText((task.needCount - resourceCount).ToString());
-                             else
-                                 task.TaskUIView.TaskInfoTextHelper.SetText(task.needCount.ToString());
-                         }
-
-                     }
-                 }
-             }
-         }*/
         List<(Vector2Int, Vector3)> newSlimeCells = new List<(Vector2Int, Vector3)>();
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
@@ -359,19 +310,6 @@ public class GameFieldManager : FieldManager, IResetable {
         }
     }
 
-    /* private void CheckPlacedCellsForTask() {
-         for (int i = 0; i < _currentTasks.Count; i++) {
-             if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.placeNeedCell &&
-                 _placedCellsCount.TryGetValue(_currentTasks[i].TaskInfo.NeedCell.CellType, out int count)) {
-                 if (_currentTasks[i].TaskInfo.Count <= count) {
-                     _currentTasks[i].TaskUIView.CompleteTask();
-                     VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.2f);
-                     _currentTasks.RemoveAt(i);
-                 }
-             }
-         }
-     }*/
-
     private void CheckMonoLinesForTasks() {
         for (int i = 0; i < _currentTasks.Count; i++) {
             if (_currentTasks[i].TaskInfo.TaskType == TaskInfo.TaskType.placeMonoLine &&
@@ -384,15 +322,6 @@ public class GameFieldManager : FieldManager, IResetable {
             }
         }
     }
-
-    /*  private void CheckUnlockedCellForTask(CellTypeInfo needCell) {
-          for (int i = 0; i < _currentTasks.Count; i++) {
-              if (_currentTasks[i].TaskInfo.taskType == TaskInfo.TaskType.unlockCell && _currentTasks[i].TaskInfo.NeedCell == needCell) {
-                  _currentTasks[i].TaskUIView.CompleteTask();
-                  _currentTasks.RemoveAt(i);
-              }
-          }
-      }*/
 
     public void ExplodeCellsInRows() {
         int width = _field.GetLength(0);
@@ -700,25 +629,13 @@ public class GameFieldManager : FieldManager, IResetable {
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GoalView.Instance.SetLoseState();
         UltaManager.Instance.HideUltimateUI();
-        Invoke("DestroyCurrentPieces", 2f);
+        Invoke(nameof(DestroyCurrentPieces), 2f);
     }
 
     private void DestroyCurrentPieces() {
         NextPiecesView.Instance.DestroyPieces();
         NextPiecesView.Instance.DestroyAdditionalPiece();
     }
-    /*  private void RemoveHealthAfterLose() {
-          StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
-          StorageManager.GameDataMain.HealthCount--;
-      }
-
-     public void Restart() {
-          if (StorageManager.GameDataMain.HealthCount != 0)
-              SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-          else {
-              //floating window with "watch ad and get health"
-          }
-      }*/
 
     private void CalculateCellSpawnChances() {
         float lastChance = 0;
@@ -729,66 +646,66 @@ public class GameFieldManager : FieldManager, IResetable {
         }
     }
 
-    public override void SetupGame() {
-        CalculateFiguresSpawnChances();
-        GenerateField();
-        GenerateTask();
-        StartGame();
-
-        // MainManager.Instance._currentLevelConfig = MainGameConfig.Levels[StorageManager.GameDataMain.CurMaxLevel];
-
+    public void Init() {
         _placedPiecesAmount = 0;
         _field = new CellType[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
         _cells = new CellView[MainGameConfig.FieldSize, MainGameConfig.FieldSize];
-
-        if (MainManager.Instance._currentLevelConfig.TutorialObject != null)
-            Instantiate(MainManager.Instance._currentLevelConfig.TutorialObject);
-
-        var startCells = MainManager.Instance._currentLevelConfig.CellTypesTableConfig;
-        _currentCellsToSpawn = new List<CellType>();
-        for (int i = 0; i < startCells.CellsToSpawn.Length; i++)
-            _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
-        CalculateCellSpawnChances();
-
         _placedCellsCount = new Dictionary<CellType, int>();
-
-        _currentTasks = new List<TaskInfoAndUI>();
-
-        SetTaskDescriptions();
-
         _monoLinesCount = new Dictionary<ResourceType, int>();
-        GameUI.Instance.StartCharacterInfoTextCoroutine(MainManager.Instance._currentLevelConfig.GuideForLevelText);
-        _currentGuaranteedFirstCells = new List<CellTypeInfo>();
-        foreach (var cellInfo in MainManager.Instance._currentLevelConfig.CurrentGuaranteedFirstCells)
-            _currentGuaranteedFirstCells.Add(cellInfo);
 
         GameData = new GameData();
-        if (MainManager.Instance._currentLevelConfig.StartFieldConfig != null) {
-            Dictionary<ResourceType, int> startCellsResourcesCount = new Dictionary<ResourceType, int>();
-            for (int i = 0; i < _field.GetLength(0); i++) {
-                for (int j = 0; j < _field.GetLength(1); j++) {
-                    if (MainManager.Instance._currentLevelConfig.StartFieldConfig.GetCell(i, j) != CellType.Empty) {
-                        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
-                            c.CellType == MainManager.Instance._currentLevelConfig.StartFieldConfig.GetCell(i, j));
-                        if (!_isSlimeExist && config.CellType == CellType.Slime)
-                            _isSlimeExist = true;
-                        PlaceOneSizePiece(config, new Vector2Int(i, j), true);
-                        if (!FieldUtils.CantDestroyInRow(config.CellType) &&
-                            !startCellsResourcesCount.TryAdd(config.ResourcesForDestroy[0].ResourceType, 1))
-                            startCellsResourcesCount[config.ResourcesForDestroy[0].ResourceType]++;
-                    }
-                }
-            }
 
-            SetTaskDescriptionsFromStartField(startCellsResourcesCount);
+        CalculateFiguresSpawnChances();
+    }
+
+    public override void SetupGame() {
+        GenerateNewPieces();
+
+        base.SetupGame();
+    }
+
+    public void PlaceStartingField(LevelConfig levelConfig) {
+        if (levelConfig.StartFieldConfig == null) {
+            return;
         }
 
-        _currentMovesCount = MainManager.Instance._currentLevelConfig.MovesCount;
-        GameUI.Instance.SetMovesCount(_currentMovesCount);
+        for (int i = 0; i < _field.GetLength(0); i++) {
+            for (int j = 0; j < _field.GetLength(1); j++) {
+                if (levelConfig.StartFieldConfig.GetCell(i, j) == CellType.Empty) {
+                    continue;
+                }
 
-        GenerateNewPieces();
-        BoostersManager.Instance.SetAllText();
-        base.SetupGame();
+                CellTypeInfo config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
+                    c.CellType == levelConfig.StartFieldConfig.GetCell(i, j));
+                if (!_isSlimeExist && config.CellType == CellType.Slime) {
+                    _isSlimeExist = true;
+                }
+
+                PlaceOneSizePiece(config, new Vector2Int(i, j), true);
+            }
+        }
+    }
+
+    public void InitFromLevel(LevelConfig config) {
+        _currentMovesCount = config.MovesCount;
+        _currentGuaranteedFirstCells = new List<CellTypeInfo>();
+        foreach (var cellInfo in config.CurrentGuaranteedFirstCells) {
+            _currentGuaranteedFirstCells.Add(cellInfo);
+        }
+
+        var startCells = config.CellTypesTableConfig;
+        _currentCellsToSpawn = new List<CellType>();
+        for (int i = 0; i < startCells.CellsToSpawn.Length; i++) {
+            _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
+        }
+
+        CalculateCellSpawnChances();
+    }
+
+    //TODO refactor
+    public void SetTasks(List<TaskInfoAndUI> currentTasks, List<ResourceType> resourceTypesForTasks) {
+        _currentTasks = currentTasks;
+        _resourceTypesForTasks = resourceTypesForTasks;
     }
 
     public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo) {
@@ -823,48 +740,6 @@ public class GameFieldManager : FieldManager, IResetable {
         // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
-    private void SetTaskDescriptions() {
-        for (int i = 0; i < MainManager.Instance._currentLevelConfig.Tasks.Length; i++) {
-            var task = MainManager.Instance._currentLevelConfig.Tasks[i];
-            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(task.taskType, task.NeedResource, task.Count);
-            SetTaskUI(i, newTaskInfo, newTaskInfo);
-        }
-    }
-
-    private void SetTaskDescriptionsFromStartField(Dictionary<ResourceType, int> startTasks) {
-        int i = MainManager.Instance._currentLevelConfig.Tasks.Length;
-        foreach (var (resourceType, count) in startTasks) {
-            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(TaskInfo.TaskType.getResource, resourceType, count);
-
-            SetTaskUI(i, newTaskInfo, newTaskInfo);
-            i++;
-        }
-    }
-
-    private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task) {
-        var taskUI = GameUI.Instance.TaskUIViews[i];
-        taskUI.gameObject.SetActive(true);
-        _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
-        _resourceTypesForTasks.Add(task.NeedResource);
-        string needSpiteName = "";
-        switch (task.TaskType) {
-            case TaskInfo.TaskType.getResource:
-
-                needSpiteName = task.NeedResource.ToString();
-                break;
-
-            case TaskInfo.TaskType.placeMonoLine:
-
-                needSpiteName = task.NeedResource.ToString();
-                taskUI.TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
-                break;
-        }
-
-        taskUI.TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
-        taskUI.TaskInfoTextHelper.SetText(task.Count.ToString());
-        //GameUI.Instance.StartCharacterInfoTextCoroutine();
-    }
-
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
         GameUI.Instance.ReleaseFloatingText(needTextObject);
     }
@@ -872,7 +747,7 @@ public class GameFieldManager : FieldManager, IResetable {
     private void SaveWinGame() {
         StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
         // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance._currentLevelConfig.MagicCubesCount;
+        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

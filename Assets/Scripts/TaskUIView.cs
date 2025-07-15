@@ -12,6 +12,28 @@ public class TaskUIView : MonoBehaviour
 
    [FormerlySerializedAs("taskInfoTextHelper")] public SpawnedForOneCharTextView TaskInfoTextHelper;
    private Tween _currentTween;
+
+   public void SetData(TaskInfoSubClass task) {
+      gameObject.SetActive(true);
+      string needSpiteName = "";
+      switch (task.TaskType) {
+         case TaskInfo.TaskType.getResource:
+
+            needSpiteName = task.NeedResource.ToString();
+            break;
+
+         case TaskInfo.TaskType.placeMonoLine:
+
+            needSpiteName = task.NeedResource.ToString();
+            TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
+            break;
+      }
+
+      TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
+      TaskInfoTextHelper.SetText(task.Count.ToString());
+      
+   }
+   
    
    public void AddTextAnimation()
    {
