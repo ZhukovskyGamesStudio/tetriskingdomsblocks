@@ -41,17 +41,17 @@ public class GoalView : MonoBehaviour {
             return;
         }
 
-        if (_loseRestartText) {
-            if (StorageManager.GameDataMain.HealthCount <= 0)
-                _loseRestartText.text = "Watch add and recovery 1 energy";
-            else
-                _loseRestartText.text = "Restart";
-        }
-
-        LoseAnimation();
+        StorageManager.GameDataMain.HealthCount--;
+        var passingData = new DialogWithData() {
+            DialogType = typeof(LoseDialog),
+            Data = new LoseDialog.Data() {
+                ClickContinue = ExitGame,
+                Hp = StorageManager.GameDataMain.HealthCount
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(passingData);
+        
         _isGameEnded = true;
-        // _winState.gameObject.SetActive(false);
-        _loseState.gameObject.SetActive(true);
     }
 
     private void WinAnimation() {
