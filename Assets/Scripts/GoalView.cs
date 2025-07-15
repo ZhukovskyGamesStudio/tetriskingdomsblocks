@@ -57,8 +57,8 @@ public class GoalView : MonoBehaviour {
             DialogType = typeof(WinDialog),
             Data = new WinDialog.Data() {
                 ClickClaim = ExitGame,
-                Coins = -1,
-                Cubes = -1
+                Coins = 100,
+                Cubes = MainManager.Instance.CurrentLevelConfig.MagicCubesCount
             }
         };
         
