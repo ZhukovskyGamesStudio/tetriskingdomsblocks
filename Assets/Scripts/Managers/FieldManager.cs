@@ -73,7 +73,7 @@ public class FieldManager : MonoBehaviour {
     }
 
     protected virtual void Start() {
-        SetupGame();
+    //    SetupGame();
     }
 
     protected virtual void Update() {
