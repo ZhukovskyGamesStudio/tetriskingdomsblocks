@@ -8,7 +8,7 @@ public class ExitGameDialog : DialogBase {
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
-        _clickYes = dialogData.clickYes;
+        _clickYes = dialogData.СlickYes;
     }
 
     public void ClickYes() {
@@ -22,6 +22,6 @@ public class ExitGameDialog : DialogBase {
 
     [Serializable]
     public class Data {
-        public Action clickYes;
+        public Action СlickYes;
     }
 }

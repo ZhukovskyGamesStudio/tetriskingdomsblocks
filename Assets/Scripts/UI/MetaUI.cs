@@ -12,31 +12,39 @@ public class MetaUI : MonoBehaviour {
 
     [SerializeField]
     private TMP_Text _magicCubeCounterText;
+
     [SerializeField]
     private TMP_Text _goldCounterText;
+
     [SerializeField]
     private TMP_Text[] _resourcesCountText;
+
     [SerializeField]
     private TMP_Text _getPieceTimerText;
+
     [SerializeField]
     private TMP_Text _destroyPieceText;
-    [SerializeField]
-    private Transform _hummerContainer;
-    [SerializeField]
-    private Transform _hummerContainerStart;
-    [SerializeField]
-    private Transform _hummerContainerEnd;
+
     [SerializeField]
     private Transform _resourcesMarksContainer;
+
     [SerializeField]
     private ResourceMarkView resourceMarkViewPrefab;
+
     [SerializeField]
     private Transform _unlockCellUIContainer;
+
     [SerializeField]
     private TMP_Text _unlockCellText;
-    [SerializeField] private Transform _upgradeCellUIContainer;
-    [SerializeField] private TMP_Text _upgradeCellText;
-    [SerializeField] private TMP_Text _cellInfoText;
+
+    [SerializeField]
+    private Transform _upgradeCellUIContainer;
+
+    [SerializeField]
+    private TMP_Text _upgradeCellText;
+
+    [SerializeField]
+    private TMP_Text _cellInfoText;
 
     private void Awake() {
         Instance = this;
@@ -51,22 +59,22 @@ public class MetaUI : MonoBehaviour {
 
     public void SetActiveUnlockUI(bool active) => _unlockCellUIContainer.gameObject.SetActive(active);
 
-    public void SetPositionUnlockUI(Vector3 pos) =>_unlockCellUIContainer.transform.position = pos;
+    public void SetPositionUnlockUI(Vector3 pos) => _unlockCellUIContainer.transform.position = pos;
 
-    public void SetActiveUpgradeUI(bool active) =>_upgradeCellUIContainer.gameObject.SetActive(active);
+    public void SetActiveUpgradeUI(bool active) => _upgradeCellUIContainer.gameObject.SetActive(active);
 
     public void SetPositionUpgradeUI(Vector3 pos) => _upgradeCellUIContainer.transform.position = pos;
-    
+
     public void UnlockCellText(string text) {
         if (_unlockCellText != null)
             _unlockCellText.text = text;
     }
-    
-    public void SetUpgradeCellText(string textInfo, string textButton)
-    {
+
+    public void SetUpgradeCellText(string textInfo, string textButton) {
         _upgradeCellText.text = textButton;
         _cellInfoText.text = textInfo;
     }
+
     public void SetHealthTimerText(string text) {
         if (_healthTimerText != null)
             _healthTimerText.text = text;
@@ -102,9 +110,6 @@ public class MetaUI : MonoBehaviour {
             _destroyPieceText.text = text;
     }
 
-    public Transform HummerContainer => _hummerContainer;
-    public Transform HummerContainerStart => _hummerContainerStart;
-    public Transform HummerContainerEnd => _hummerContainerEnd;
     public Transform ResourcesMarksContainer => _resourcesMarksContainer;
     public ResourceMarkView ResourceMarkViewPrefab => resourceMarkViewPrefab;
 }
