@@ -21,6 +21,7 @@ public class GameDataForSave {
     public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
 
     public int HealthCount;
+    public FormAndCellTypeData[] InventoryFigures = new FormAndCellTypeData[]{};
 
     public string LastExitTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
     public DateTime LastExitTimeDateTime => DateTime.Parse(LastExitTime, CultureInfo.InvariantCulture);
@@ -35,6 +36,8 @@ public class GameDataForSave {
     public int RotatePieceCount;
     public int HummerCount;
 
+    public int MetaHummerCount;
+    
     public SettingsData SettingsData;
 
     public GameDataForSave() {
@@ -77,4 +80,16 @@ public struct FormPositionsData {
     public FormPositionsData(Vector2Int[] formCoordinates) {
         FormCoordinates = formCoordinates;
     }
+}
+[Serializable]
+public struct FormAndCellTypeData {
+    public CellType FormCellType;
+    public string FormName;
+
+    public FormAndCellTypeData(string formName,CellType formCellType) {
+        FormName = formName;
+        FormCellType = formCellType;
+    }
+    
+    
 }

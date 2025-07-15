@@ -32,16 +32,22 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         Instance = this;
     }
 
-    public void SetData(PieceData nextPiece) {
-        DestroyPieces();
+    public async UniTask SetData(PieceData nextPiece) {
+        MetaFieldManager.Instance.AddPieceToInventory(nextPiece);
+    }
+
+    public async UniTask CreatePieceInMeta(InventoryCellView inventoryCell) {
+        TryCancelCreatingTask();
         if (_piecesContainers.Count == 0) {
             Debug.LogWarning("NextPiecesView: No containers available for the pieces.");
             return;
         }
-
-        SetData(new List<PieceData>() { nextPiece });
+        _cts = new CancellationTokenSource();
+        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { inventoryCell.Data }, _cts.Token,
+            new List<Transform>() { _piecesContainers[0] });
+        
+        MetaFieldManager.Instance.SpawnPieceFromInventory(pieceView, inventoryCell);
     }
-
     public void SetData(List<PieceData> nextPieces) {
         DestroyPieces();
         TryCancelCreatingTask();
@@ -107,17 +113,14 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         
     }
 
-    public void DestroyAdditionalPiece()
-    {
-        if (GameFieldManager.Instance._additionalPiecePrefab != null)
-                {
-                    DestroyCellsAnimation(GameFieldManager.Instance._additionalPieceContainer);
-                    if (GameFieldManager.Instance._additionalPieceContainer.childCount != 0)
-                    {
-                        _spawnParticles[_piecesContainers.Count].gameObject.SetActive(true);
-                        _spawnParticles[_piecesContainers.Count].Play();
-                    }
-                }
+    public void DestroyAdditionalPiece() {
+        if (GameFieldManager.Instance._additionalPiecePrefab != null) {
+            DestroyCellsAnimation(GameFieldManager.Instance._additionalPieceContainer);
+            if (GameFieldManager.Instance._additionalPieceContainer.childCount != 0) {
+                _spawnParticles[_piecesContainers.Count].gameObject.SetActive(true);
+                _spawnParticles[_piecesContainers.Count].Play();
+            }
+        }
     }
 
     private void DestroyCellsAnimation(Transform cellsContainer)

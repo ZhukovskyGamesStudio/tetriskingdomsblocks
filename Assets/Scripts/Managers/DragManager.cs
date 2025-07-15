@@ -130,6 +130,11 @@ public class DragManager : MonoBehaviour
         }
         else
         {
+            if (MetaFieldManager.Instance != null) {
+                MetaFieldManager.Instance.SetCurrentPiece();
+               // MetaFieldManager.Instance.SaveInventory();
+            }
+                
             //Debug.Log("to start");
             finalPos = startingPosition;
             finalScale = initialScale;

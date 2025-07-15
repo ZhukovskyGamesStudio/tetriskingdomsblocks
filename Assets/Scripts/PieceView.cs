@@ -107,60 +107,17 @@ public class PieceView : MonoBehaviour {
         return new Vector3(width / 2f, 0, height / 2f) * -1;
     }*/
 
-    private void OnStartDrag() {
+    public void OnStartDrag() {
         DragManager.OnStartDrag(ref _isDragging,Data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer, this);
-       /* if (AdminManager.Instance.AdminToggle.isOn) {
-            return;
-        }
-
-        _isDragging = true;
-        _finalScale = Vector3.one;
-        _markedCellsContainer.localScale = Vector3.one;
-        BaseManager.PieceVerticalShift = Mathf.Abs(DragManager.CalculateShift(_data).z);
-        CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));*/
     }
 
     private void OnDrag() {
-        /*BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
-        var targetMousePos = cellManager.ShiftedDragInputPos();
-
-        targetMousePos.y = ConfigsManager.Instance.DragConfig.HeightUnderField;
-        _currentCoord = cellManager.GetPosInCoord();
-
-        bool canPlace = cellManager.CanPlace(_data, _currentCoord);
-        if (canPlace) {
-            Vector3 targetMarkedPos = new(_currentCoord.x, FieldContainers.Instance.MarkedCellsVerticalAnchor.position.y, _currentCoord.y);
-            targetMarkedPos -= BaseManager.PieceCenterToCoordShift();
-            _markedCellsContainer.position = targetMarkedPos;
-        }
-
-        _markedCellsContainer.gameObject.SetActive(canPlace);
-        _finalPos = targetMousePos;*/
-        
         DragManager.OnDragPiece(ref _currentCoord, ref _finalPos, Data, _markedCellsContainer);
     }
 
-    private void OnDrop() {
+    public void OnDrop() {
         DragManager.OnDrop(ref _isDragging, ref _isLerpingDisabled, Data, ref _markedCellsContainer,ref _finalScale, ref _finalPos,
             _currentCoord,_initialScale, _initialMarkedScale, _startingPosition, this);
-       
-       /* if (!_isDragging) {
-            return;
-        }
-
-        BaseManager cellManager = GameManager.Instance == null ? MetaManager.Instance : GameManager.Instance;
-        _markedCellsContainer.gameObject.SetActive(false);
-        _isDragging = false;
-        if (cellManager.CanPlace(_data, _currentCoord)) {
-            _isLerpingDisabled = true;
-            _finalPos = _markedCellsContainer.position + ConfigsManager.Instance.DragConfig.HigherFieldShift * Vector3.up;
-            PlacePieceAsync(cellManager).Forget();
-        } else {
-            _finalPos = _startingPosition;
-            _finalScale = _initialScale;
-            _markedCellsContainer.localScale = _initialMarkedScale;
-            _markedCellsContainer.gameObject.SetActive(false);
-        } */
     }
 
     public async UniTask PlacePieceAsync(FieldManager cellManager) {
@@ -174,7 +131,7 @@ public class PieceView : MonoBehaviour {
     }
 
     private void OnMouseDown() {
-        DragManager.OnStartDrag(ref _isDragging,Data,ref CurrentPieceMaxSize,ref _finalScale,_markedCellsContainer,this);
+        OnStartDrag();
     }
 
     private void OnMouseUp() {

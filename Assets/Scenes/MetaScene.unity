@@ -5434,6 +5434,7 @@ RectTransform:
   - {fileID: 1900556692}
   - {fileID: 102728154}
   - {fileID: 14316282}
+  - {fileID: 1769106111}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6878,6 +6879,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1063429330019585626, guid: 0bd44b2ba33465c4690cd9ae10c650b2, type: 3}
   m_PrefabInstance: {fileID: 1757660113}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1769106110
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1769106111}
+  - component: {fileID: 1769106112}
+  m_Layer: 5
+  m_Name: InventoryCellContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1769106111
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769106110}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1212849847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 277.751, y: 198.11}
+  m_SizeDelta: {x: 153.3283, y: 805.89}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1769106112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769106110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1801287231
 GameObject:
   m_ObjectHideFlags: 0
@@ -7180,6 +7243,8 @@ MonoBehaviour:
   _dropLength: 0.3
   _jumpLength: 0.1
   <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
+  _inventoryCellPrefab: {fileID: 5840542220916797315, guid: c023b817157905d41826e5c3aed3752c, type: 3}
+  _inventoryCellsContainer: {fileID: 1769106111}
   _groundMask:
     serializedVersion: 2
     m_Bits: 8

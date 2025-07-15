@@ -33,7 +33,8 @@ public static class PieceUtils {
             }
         }
 
-        bool[,] cells = cellInfo.CellForm == null ? GetRandomFigure() : TetrisPieces.PieceShapesTable[cellInfo.CellForm.FormName];
+        string formName = cellInfo.CellForm == null ? GetRandomFigure() : cellInfo.CellForm.FormName;
+        bool[,] cells = TetrisPieces.PieceShapesTable[formName];
         Guid[,] cellGuids = new Guid[cells.GetLength(0), cells.GetLength(1)];
         for (int x = 0; x < cells.GetLength(0); x++) {
             for (int y = 0; y < cells.GetLength(1); y++) {
@@ -48,19 +49,20 @@ public static class PieceUtils {
         var data = new PieceData() {
             Type = cellInfo,
             Cells = cells,
-            CellGuids = cellGuids
+            CellGuids = cellGuids,
+            FormName = formName
         };
         return data;
     }
 
-    public static bool[,] GetRandomFigure() {
+    public static string GetRandomFigure() {
         bool isMetaGame = GameFieldManager.Instance == null;
         var chancesToSpawn = isMetaGame ? MetaFieldManager.Instance.FiguresChanceToSpawn : GameFieldManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         var figureForms = PiecesViewTable.Instance.FigureForms;
         for (int i = 0; i < chancesToSpawn.Length; i++) {
             if (chancesToSpawn[i] > chance)
-                return TetrisPieces.PieceShapesTable[figureForms[i].FormName];
+                return figureForms[i].FormName;
         }
 
         return null;
