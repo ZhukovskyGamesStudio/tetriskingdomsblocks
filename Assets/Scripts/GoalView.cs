@@ -30,38 +30,60 @@ public class GoalView : MonoBehaviour {
     public void SetWinState() {
         if (_isGameEnded) return;
         WinAnimation();
-
+        
         _isGameEnded = true;
-        // _winState.gameObject.SetActive(true);
-        _loseState.gameObject.SetActive(false);
     }
 
-    public void SetLoseState() {
+    public void SetLoseState(bool outOfMoves) {
         if (_isGameEnded) {
             return;
         }
 
-        if (_loseRestartText) {
-            if (StorageManager.GameDataMain.HealthCount <= 0)
-                _loseRestartText.text = "Watch add and recovery 1 energy";
-            else
-                _loseRestartText.text = "Restart";
+        StorageManager.GameDataMain.HealthCount--;
+        var loseData = new DialogWithData {
+            DialogType = typeof(LoseDialog),
+            Data = new LoseDialog.Data {
+                ClickContinue = ExitGame,
+                Hp = StorageManager.GameDataMain.HealthCount
+            }
+        };
+        var outOfMovesData = new DialogWithData {
+            DialogType = typeof(OutOfMovesDialog),
+            Data = new OutOfMovesDialog.Data {
+                ClickAdd = GameFieldManager.Instance.AddMoves,
+                ClickClose = () => DialogsManager.Instance.ShowDialogWithData(loseData),
+                ClickBalance = () => print("balance opened"),
+                Balance = StorageManager.GameDataMain.GoldAmount,
+                Cost = 900
+            }
+        };
+        
+        if (outOfMoves) {
+            DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
+        } else {
+            DialogsManager.Instance.ShowDialogWithData(loseData);
         }
-
-        LoseAnimation();
+        
         _isGameEnded = true;
-        // _winState.gameObject.SetActive(false);
-        _loseState.gameObject.SetActive(true);
     }
 
     private void WinAnimation() {
+        var passingData = new DialogWithData() {
+            DialogType = typeof(WinDialog),
+            Data = new WinDialog.Data() {
+                ClickClaim = ExitGame,
+                Coins = 100,
+                Cubes = MainManager.Instance.CurrentLevelConfig.MagicCubesCount
+            }
+        };
+        
         _currentTween = DOTween.Sequence()
             .Append(GameUI.Instance.BgTasksImage.DOAnchorPosY(GameUI.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.3f, 0.7f))
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.2f, 0.07f))
             .Append(GameUI.Instance.OpenedDoorEndGame.DOMoveY(GameUI.Instance.OpenedDoorEndGame.position.y + 2.45f, 0.1f))
             .Append(GameFieldManager.Instance.CameraContainer.DOMoveZ(GameFieldManager.Instance.CameraContainer.position.z + 5, 3f))
-            .OnComplete(() => SceneManager.LoadScene("MetaScene"));
+            .OnComplete(() => DialogsManager.Instance.ShowDialogWithData(passingData));
     }
 
     private void LoseAnimation() {
