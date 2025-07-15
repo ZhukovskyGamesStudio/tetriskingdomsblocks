@@ -854,6 +854,7 @@ public class MetaFieldManager : FieldManager {
 
     public void SpawnPieceFromInventory(PieceView piece, InventoryCellView inventoryCell) {
         SetCurrentPiece(piece, inventoryCell);
+        piece.transform.position = _inputRaycaster.InputPos();
         piece.OnStartDrag();
     }
 
