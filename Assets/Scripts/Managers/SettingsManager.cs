@@ -19,7 +19,7 @@ public class SettingsManager : MonoBehaviour {
                 changeMusic = ChangeToggleMusic,
                 changeSound = ChangeToggleSound,
                 changeVibration = ChangeToggleVibration,
-                goToMeta = GoToMeta
+                goToMeta = AskGoToMeta
             }
         };
 
@@ -40,7 +40,12 @@ public class SettingsManager : MonoBehaviour {
 
     public void OpenSettings() => ShowSettingsDialog();
 
-    private void GoToMeta() {
-        MainManager.Instance.GoToMeta();
+    private void AskGoToMeta() {
+        DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {
+            DialogType = typeof(ExitGameDialog),
+            Data = new ExitGameDialog.Data {
+                СlickYes = MainManager.Instance.GoToMeta
+            }
+        });
     }
 }

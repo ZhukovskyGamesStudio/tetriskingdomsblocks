@@ -102,5 +102,9 @@ public class GameUI : MonoBehaviour {
         StartCoroutine(taskUI.TaskInfoTextHelper.StartSpawnText(task.Count.ToString()));
     }
 
+    public void ShowSettings() {
+        SettingsManager.Instance.ShowSettingsDialog();
+    }
+
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости
 }

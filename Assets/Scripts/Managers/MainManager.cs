@@ -18,7 +18,7 @@ public class MainManager : MonoBehaviour {
  
     private float timerNowTimeSecondCounter;
 
-    public LevelConfig _currentLevelConfig =>
+    public LevelConfig CurrentLevelConfig =>
         _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
 
     private NetworkTimeAPI _networkTimeAPI;

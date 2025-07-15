@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +36,7 @@ public class SettingsDialog : DialogBase {
 
     public void GoToMeta() {
         _goToMeta?.Invoke();
+        Hide().Forget();
     }
 
     [Serializable]

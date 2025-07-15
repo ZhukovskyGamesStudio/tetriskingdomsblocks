@@ -18,6 +18,7 @@ public class AdsManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+        DontDestroyOnLoad(this);
     }
 
     public async UniTask ShowRewarded(Action onAdEnded) {
