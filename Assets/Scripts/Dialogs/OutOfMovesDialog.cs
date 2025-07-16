@@ -7,14 +7,13 @@ public class OutOfMovesDialog : DialogBase {
     [SerializeField]
     private TextMeshProUGUI _balanceText, _costText;
     
-    private Action _clickAdd, _clickClose, _clickBalance;
+    private Action _clickAdd, _clickClose;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
         _clickAdd = dialogData.ClickAdd;
         _clickClose = dialogData.ClickClose;
-        _clickBalance = dialogData.ClickBalance;
         _balanceText.text = dialogData.Balance.ToString();
         _costText.text = _costText.text.Replace("{cost}", dialogData.Cost.ToString());
     }
@@ -30,14 +29,35 @@ public class OutOfMovesDialog : DialogBase {
     }
 
     public void ClickBalance() {
-        _clickBalance.Invoke();
+        Hide().Forget();
+        
+        var dialog = new DialogWithData {
+            DialogType = typeof(RealShopDialog),
+            Data = new RealShopDialog.Data {
+                Balance = 1000,
+                OffersGroups = new[] {
+                    new OffersGroupData {
+                        Title = "Title",
+                        Offers = new[] {
+                            new OfferData {
+                                Price = 1000,
+                                Title = "Title",
+                                Resources = new[] {
+                                    new Tuple<Sprite, string>(null, "42")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
     [Serializable]
     public class Data {
         public Action ClickAdd;
         public Action ClickClose;
-        public Action ClickBalance;
         public int Balance;
         public int Cost;
     }

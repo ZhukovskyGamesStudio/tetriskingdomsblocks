@@ -52,7 +52,6 @@ public class GoalView : MonoBehaviour {
             Data = new OutOfMovesDialog.Data {
                 ClickAdd = GameFieldManager.Instance.AddMoves,
                 ClickClose = () => DialogsManager.Instance.ShowDialogWithData(loseData),
-                ClickBalance = () => print("balance opened"),
                 Balance = StorageManager.GameDataMain.GoldAmount,
                 Cost = 900
             }
