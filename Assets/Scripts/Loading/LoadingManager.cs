@@ -21,7 +21,7 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void InitManagers() {
-        StorageManager.CreateNewSaveData();
+      //  StorageManager.CreateNewSaveData();
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
         SettingsManager.Instance.SetSettings();
     }

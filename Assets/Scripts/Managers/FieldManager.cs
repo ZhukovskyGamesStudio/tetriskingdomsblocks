@@ -85,7 +85,7 @@ public class FieldManager : MonoBehaviour {
 
     protected virtual void TryDestroyPiece() { }
 
-    public void ToggleDestroyPieceMode() {
+    public virtual void ToggleDestroyPieceMode() {
         _isDestroyPieceMode = !_isDestroyPieceMode;
 
         /* if (_isDestroyPieceMode)

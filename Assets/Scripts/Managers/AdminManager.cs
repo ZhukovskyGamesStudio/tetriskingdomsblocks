@@ -53,6 +53,9 @@ public class AdminManager : MonoBehaviour {
         StorageManager.GameDataMain.HummerCount+=5;
         StorageManager.GameDataMain.RotatePieceCount+=5;
         StorageManager.GameDataMain.DynamyteCount+=5;
+        
+        StorageManager.GameDataMain.MetaHummerCount+=5;
+        
         if(BoostersManager.Instance != null)
         BoostersManager.Instance.SetAllText();
     }

@@ -72,6 +72,11 @@ public class MetaFieldManager : FieldManager {
         CheckDragCamera();
     }
 
+    public override void ToggleDestroyPieceMode() {
+        base.ToggleDestroyPieceMode();
+        CloseCellUI();
+    }
+
     private void CheckDragCamera() {
         if (Input.GetMouseButtonDown(0)) {
             _dragStartPosition = Input.mousePosition;
@@ -81,6 +86,7 @@ public class MetaFieldManager : FieldManager {
         if (Input.GetMouseButtonUp(0)) {
             if (_currentDraggedPieceButton != null) {
                 _currentDraggedPiece.OnDrop();
+                CloseCellUI();
             } else if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode && _dragStartPosition == _dragStartPositionForUICheck)
                 TryCastLockCell();
             else if (Vector3.Distance(_dragStartPosition, _dragStartPositionForUICheck) > 5f && _currentMarkedFieldCell != -Vector2Int.one)
@@ -93,21 +99,6 @@ public class MetaFieldManager : FieldManager {
             DragCamera();
         }
     }
-
-    /*private void DragCamera()
-     {
-            Vector3 pos = _mainCamera.ScreenToViewportPoint(Input.mousePosition - _dragStartPosition);
-        Vector3 move = new Vector3(pos.x * MainMetaConfig.CameraDragSpeed, 0, pos.y * MainMetaConfig.CameraDragSpeed);
-
-        var needPosition =CameraContainer.transform.position-move;
-
-         CameraContainer.position =  new Vector3(Mathf.Clamp(needPosition.x,FieldContainers.Instance.FieldStart.position.x,FieldContainers.Instance.FieldEnd.position.x),
-             needPosition.y,
-             Mathf.Clamp(needPosition.z,FieldContainers.Instance.FieldStart .position.z,FieldContainers.Instance.FieldEnd.position.z));
-        _dragStartPosition = Input.mousePosition;
-     }*/
-
-    // Предполагается, что у тебя есть LayerMask groundMask для слоя Ground
 
     [SerializeField]
     private LayerMask _groundMask;
@@ -127,22 +118,17 @@ public class MetaFieldManager : FieldManager {
 
             CameraContainer.position = new Vector3(needPosition.x, needPosition.y, needPosition.z);
 
-            // После перемещения обновляем стартовую позицию на текущую мышь
             _dragStartPosition = Input.mousePosition;
         }
     }
 
     protected override void TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null && (StorageManager.GameDataMain.resourcesCount[0] >= 500 &&
-                                     StorageManager.GameDataMain.resourcesCount[1] >= 500 &&
-                                     StorageManager.GameDataMain.resourcesCount[2] >= 500)) {
+        if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell) return;
-            StorageManager.GameDataMain.resourcesCount[0] -= 500;
-            StorageManager.GameDataMain.resourcesCount[1] -= 500;
-            StorageManager.GameDataMain.resourcesCount[2] -= 500;
+            StorageManager.GameDataMain.MetaHummerCount --;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
 
@@ -618,19 +604,14 @@ public class MetaFieldManager : FieldManager {
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
         List<(int, int)> placedCells = GetPlacedCells(pieceData, coord);
-        foreach (var VARIABLE in placedCells) {
-            Debug.Log("place cells on " + VARIABLE.Item1 + " " + VARIABLE.Item2);
-        }
 
         UpdateResourceMarksAfterPlacePiece(placedCells);
         AddFigureFormToList(placedCells);
-        SaveInventory();
         _currentPiecesInInventory.Remove(_currentDraggedPieceButton);
         Destroy(_currentDraggedPieceButton.gameObject);
         Destroy(_currentDraggedPiece.gameObject);
         SetCurrentPiece();
-
-        StorageManager.SaveGame();
+        SaveInventory();
     }
 
     private void AddFigureFormToList(List<(int, int)> placedCells) {
