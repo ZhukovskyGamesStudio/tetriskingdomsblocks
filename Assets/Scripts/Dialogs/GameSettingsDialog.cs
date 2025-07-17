@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameSettingsDialog : DialogBase {
     [SerializeField]
-    private Toggle _musictoggle, _soundToggle, _vibrationToggle;
+    private Toggle _musicToggle, _soundToggle, _vibrationToggle;
     
     private Action _goToMeta;
     private Action<bool> _changeMusic, _changeSound, _changeVibration;
@@ -18,7 +18,7 @@ public class GameSettingsDialog : DialogBase {
         _changeSound = dialogData.ChangeSound;
         _changeVibration = dialogData.ChangeVibration;
 
-        _musictoggle.isOn = dialogData.IsMusicOn;
+        _musicToggle.isOn = dialogData.IsMusicOn;
         _soundToggle.isOn = dialogData.IsSoundOn;
         _vibrationToggle.isOn = dialogData.IsVibrationOn;
     }
