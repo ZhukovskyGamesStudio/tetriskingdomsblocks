@@ -6,7 +6,7 @@ using UnityEngine;
 public class OutOfMovesDialog : DialogBase {
     [SerializeField]
     private TextMeshProUGUI _balanceText, _costText;
-    
+
     private Action _clickAdd, _clickClose;
 
     public override void SetData(object data) {
@@ -24,8 +24,8 @@ public class OutOfMovesDialog : DialogBase {
     }
 
     public void ClickClose() {
-        _clickClose.Invoke();
         Hide().Forget();
+        _clickClose.Invoke();
     }
 
     public void ClickBalance() {
@@ -43,7 +43,7 @@ public class OutOfMovesDialog : DialogBase {
                                 Price = 1000,
                                 Title = "Title",
                                 Resources = new[] {
-                                    new Tuple<Sprite, string>(null, "42")
+                                    new Tuple<ResourceType, int>(ResourceType.Wood, 42)
                                 }
                             }
                         }

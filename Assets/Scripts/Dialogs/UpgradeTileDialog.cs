@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -46,7 +45,7 @@ public class UpgradeTileDialog : DialogBase {
     [Serializable]
     public class Data {
         public Action ClickUpgrade;
-        public List<Tuple<Sprite, int>> CostResources, IncomeResourcesBefore, IncomeResourcesAfter;
+        public List<Tuple<ResourceType, int>> CostResources, IncomeResourcesBefore, IncomeResourcesAfter;
         public string TileName;
         public int Level;
     }

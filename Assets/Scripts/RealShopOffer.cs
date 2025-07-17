@@ -17,7 +17,7 @@ public class RealShopOffer : MonoBehaviour {
 
         foreach (var resource in data.Resources) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _resourcesObject);
-            newResource.SetData(resource.Item1, resource.Item2);
+            newResource.SetData(resource.Item1, resource.Item2.ToString());
         }
     }
 }
