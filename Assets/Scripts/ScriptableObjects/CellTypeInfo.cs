@@ -7,15 +7,7 @@ public class CellTypeInfo : ScriptableObject
     [FormerlySerializedAs("cellType")] public CellType CellType;
     [FormerlySerializedAs("cellForm")] public FigureFormConfig CellForm;
     public Color MarkCellColor;
-    [FormerlySerializedAs("resourcesForPlace")] public ResourceTypeAndCountSubClass[] ResourcesForPlace;
-    [FormerlySerializedAs("resourcesForDestroy")] public ResourceTypeAndCountSubClass[] ResourcesForDestroy;
     [FormerlySerializedAs("cellName")] public string CellName;
-    public int MultiplayerForSameResourceType;
-
-    public ResourceType AfkResourceType;
-    public int MaxAfkCapacity;
-    public float AfkProduceCountPerSecond;
-    public int UpgradeCost;
-    public CellType UpgradeCellType;
-    public float ChanceToSpawn;
+    
+    public float ChanceToSpawn = 1;
 }

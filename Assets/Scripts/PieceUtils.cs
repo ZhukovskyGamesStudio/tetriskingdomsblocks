@@ -5,20 +5,31 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public static class PieceUtils {
-    public static PieceData GetNewPiece(List<CellTypeInfo> guaranteedPieces) {
+    public static PieceData GetNewMetaPiece(CellTypeInfo guaranteed) {
+        var cellsToSpawn = MetaFieldManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn = MetaFieldManager.Instance.CellsChanceToSpawn;
+
+        return GetNewPiece(cellsToSpawn, chancesToSpawn, guaranteed);
+    }
+
+    public static PieceData GetNewCorePiece(CellTypeInfo guaranteed) {
+        var cellsToSpawn = GameFieldManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn = GameFieldManager.Instance.CellsChanceToSpawn;
+
+        return GetNewPiece(cellsToSpawn, chancesToSpawn, guaranteed);
+    }
+
+    public static PieceData GetNewCorePiece(List<CellTypeInfo> guaranteedPieces) {
         if (guaranteedPieces.Count > 0) {
             var next = guaranteedPieces[0];
             guaranteedPieces.RemoveAt(0);
-            return GetNewPiece(next);
+            return GetNewCorePiece(next);
         }
 
-        return GetNewPiece(guaranteed: null);
+        return GetNewCorePiece(guaranteed: null);
     }
 
-    public static PieceData GetNewPiece(CellTypeInfo guaranteed) {
-        bool isMetaGame = GameFieldManager.Instance == null;
-        var cellsToSpawn = !isMetaGame ? GameFieldManager.Instance._currentCellsToSpawn : MetaFieldManager.Instance._currentCellsToSpawn;
-        var chancesToSpawn = !isMetaGame ? GameFieldManager.Instance.CellsChanceToSpawn : MetaFieldManager.Instance.CellsChanceToSpawn;
+    private static PieceData GetNewPiece(List<CellType> cellsToSpawn, float[] chancesToSpawn, CellTypeInfo guaranteed) {
         CellTypeInfo cellInfo = null;
 
         if (guaranteed != null) {
@@ -27,7 +38,7 @@ public static class PieceUtils {
             float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
             for (int i = 0; i < chancesToSpawn.Length; i++) {
                 if (chancesToSpawn[i] > chance) {
-                    cellInfo = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c=> c.CellType == cellsToSpawn[i]);
+                    cellInfo = PiecesViewTable.Instance.CellsList.Combined().First(c => c.CellType == cellsToSpawn[i]);
                     break;
                 }
             }
@@ -55,7 +66,7 @@ public static class PieceUtils {
         return data;
     }
 
-    public static string GetRandomFigure() {
+    private static string GetRandomFigure() {
         bool isMetaGame = GameFieldManager.Instance == null;
         var chancesToSpawn = isMetaGame ? MetaFieldManager.Instance.FiguresChanceToSpawn : GameFieldManager.Instance.FiguresChanceToSpawn;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
@@ -76,7 +87,7 @@ public static class PieceUtils {
 
         for (int x = 0; x <= fieldWidth - pieceWidth; x++) {
             for (int y = 0; y <= fieldHeight - pieceHeight; y++) {
-                if (FieldUtils.CanPlacePiece(field, piece,new Vector2Int(x,y) )) {
+                if (FieldUtils.CanPlacePiece(field, piece, new Vector2Int(x, y))) {
                     return true;
                 }
             }

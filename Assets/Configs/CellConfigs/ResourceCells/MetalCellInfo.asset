@@ -9,23 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: FieldOfWheatCellInfo
+  m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
+  m_Name: MetalCellInfo
   m_EditorClassIdentifier: 
-  CellType: 9
+  CellType: 4
   CellForm: {fileID: 0}
-  MarkCellColor: {r: 0.9529412, g: 0.77254903, b: 0.2, a: 0}
+  MarkCellColor: {r: 0.50980395, g: 0.24705882, b: 0.1764706, a: 0}
   ResourcesForPlace:
-  - ResourceType: 3
+  - ResourceType: 4
     ResourceCount: 1
   ResourcesForDestroy:
-  - ResourceType: 3
+  - ResourceType: 4
     ResourceCount: 1
-  CellName: Field of wheat
+  CellName: Metal
   MultiplayerForSameResourceType: 0
-  AfkResourceType: 3
-  MaxAfkCapacity: 100
-  AfkProduceCountPerSecond: 1
-  UpgradeCost: 0
-  UpgradeCellType: 20
   ChanceToSpawn: 1
+  ResourcesForPlace: []
+  ResourcesForDestroy: []
+  MultiplayerForSameResourceType: 0

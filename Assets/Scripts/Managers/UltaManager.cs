@@ -135,7 +135,7 @@ public class UltaManager : MonoBehaviour {
     private async UniTask SpawnNewCellFromUltimate(Vector2Int placedCellPosition, bool isEndRoundUltimate = false) {
         var pieceData = GetRandomCellType();
 
-        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
+        var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
         var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
         var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
         cellView.transform.position = finPos + _startDropStartPos;
@@ -177,7 +177,7 @@ public class UltaManager : MonoBehaviour {
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         for (int j = 0; j < chancesToSpawn.Length; j++) {
             if (chancesToSpawn[j] > chance) {
-                cellInfo = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellsToSpawn[j]);
+                cellInfo = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellsToSpawn[j]);
                 break;
             }
         }
