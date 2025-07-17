@@ -184,7 +184,7 @@ public class MetaFieldManager : FieldManager {
 
         string resourceIcon = "<sprite name=" + cellConfig.AfkResourceType + ">";
 
-        MetaUI.Instance.SetUpgradeCellText(
+        MetaUI.Instance.SetUpgradeCellText(cellConfig.CellName,
             "Max capacity: " + (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer) + "\n" + "Production speed: " + resourceIcon +
             currentCellCollectedResources + "/sec", cellConfig.UpgradeCost + " " + resourceIcon); //resource icon
         MetaUI.Instance.SetPositionUpgradeUI(cellPos);
@@ -249,7 +249,7 @@ public class MetaFieldManager : FieldManager {
         uiPos /= lockedCellGroup.Count;
         _currentMarkedFieldCell = new Vector2Int((int)cellPos.x, (int)cellPos.z);
 
-        MetaUI.Instance.UnlockCellText("Unlock for" + LockedCellGroups[groupIndex].Count + " cubes");
+        MetaUI.Instance.UnlockCellText($"Unlock\n{LockedCellGroups[groupIndex].Count} cubes");
         MetaUI.Instance.SetPositionUnlockUI(uiPos);
         MetaUI.Instance.SetActiveUnlockUI(true);
     }
@@ -382,6 +382,7 @@ public class MetaFieldManager : FieldManager {
         mark.gameObject.SetActive(true);
         //pos = _mainCamera.WorldToScreenPoint(pos);
         mark.transform.position = new Vector3(pos.x, pos.y + 1, pos.z);
+        mark.transform.localRotation = Quaternion.Euler(MetaUI.Instance.WorldCanvasRotation);
         mark.SetColor(resourceColor);
         mark.SetResourceMarkInfo(maxResource, currentResource, resourceType, _connectedGroups.Count);
         return mark;

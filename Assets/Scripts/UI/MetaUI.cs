@@ -41,7 +41,7 @@ public class MetaUI : MonoBehaviour {
     private Transform _upgradeCellUIContainer;
 
     [SerializeField]
-    private TMP_Text _upgradeCellText;
+    private TMP_Text _upgradeCellText, _upgradeCellInfoText;
 
     [SerializeField]
     private TMP_Text _cellInfoText;
@@ -57,6 +57,9 @@ public class MetaUI : MonoBehaviour {
 
     public Transform ResourcesMarksContainer => _resourcesMarksContainer;
     public ResourceMarkView ResourceMarkViewPrefab => resourceMarkViewPrefab;
+
+    [field: SerializeField]
+    public Vector3 WorldCanvasRotation { get; private set; } = new Vector3(-45, -90, 90);
 
     private void Awake() {
         Instance = this;
@@ -82,9 +85,12 @@ public class MetaUI : MonoBehaviour {
             _unlockCellText.text = text;
     }
 
-    public void SetUpgradeCellText(string textInfo, string textButton) {
+    public void SetUpgradeCellText(string cellName, string textInfo, string textButton) {
+        _cellInfoText.text = cellName;
+
+        _upgradeCellInfoText.text = textInfo;
         _upgradeCellText.text = textButton;
-        _cellInfoText.text = textInfo;
+        
     }
 
     public void SetHealthTimerText(string text) {
