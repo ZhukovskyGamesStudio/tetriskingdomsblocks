@@ -7,7 +7,7 @@ public class SpritesManager : MonoBehaviour {
     [SerializeField]
     private Sprite[] _sprites;
 
-    private Dictionary<string, Sprite> _spritesDict;
+    private Dictionary<string, Sprite> _spritesDict = new();
     
     private void Awake() {
         Instance = this;
