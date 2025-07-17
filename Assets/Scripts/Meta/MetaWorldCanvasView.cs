@@ -14,7 +14,10 @@ public class MetaWorldCanvasView : MonoBehaviour {
     private ResourceMarkView _resourceMarkViewPrefab;
 
     [field: SerializeField]
-    public Vector3 WorldCanvasRotation { get; private set; } = new Vector3(-45, -90, 90);
+    public UpgradeCellView UpgradeCellView { get; private set; }
+
+    [SerializeField]
+    private Vector3 _worldCanvasRotation = new(-45, -90, 90);
 
     private ObjectPool<ResourceMarkView> _resourcesMarksPool;
 
@@ -33,7 +36,7 @@ public class MetaWorldCanvasView : MonoBehaviour {
         mark.gameObject.SetActive(true);
         //pos = _mainCamera.WorldToScreenPoint(pos);
         mark.transform.position = new Vector3(pos.x, pos.y + 1, pos.z);
-        mark.transform.localRotation = Quaternion.Euler(WorldCanvasRotation);
+        mark.transform.localRotation = Quaternion.Euler(_worldCanvasRotation);
         mark.SetColor(resourceColor);
         mark.SetResourceMarkInfo(maxResource, currentResource, resourceType, index);
         return mark;

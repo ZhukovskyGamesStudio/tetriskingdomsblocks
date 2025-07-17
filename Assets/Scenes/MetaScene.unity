@@ -3716,7 +3716,7 @@ GameObject:
   - component: {fileID: 650496940}
   - component: {fileID: 650496939}
   m_Layer: 5
-  m_Name: CellInfoText (1)
+  m_Name: CellInfo Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6081,7 +6081,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 449.99997, y: -59.36}
+  m_AnchoredPosition: {x: 540, y: -60}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1005537036
@@ -6273,6 +6273,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1018444949}
+  - component: {fileID: 1018444950}
   m_Layer: 5
   m_Name: UpgradeCellUIContainer
   m_TagString: Untagged
@@ -6300,6 +6301,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1018444950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018444948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27dcf8675ef947d88bf6745232ea1f73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _upgradeCellUIContainer: {fileID: 1018444949}
+  _costText: {fileID: 1396020303}
+  _infoText: {fileID: 650496939}
+  _cellNameText: {fileID: 1062090573}
 --- !u!1 &1041726499
 GameObject:
   m_ObjectHideFlags: 0
@@ -6420,7 +6437,7 @@ GameObject:
   - component: {fileID: 1062090574}
   - component: {fileID: 1062090573}
   m_Layer: 5
-  m_Name: CellInfoText
+  m_Name: CellName Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7156,10 +7173,6 @@ MonoBehaviour:
   <CountersPanelView>k__BackingField: {fileID: 2142576967}
   _getPieceTimerText: {fileID: 305358913}
   _destroyPieceText: {fileID: 318395517}
-  _upgradeCellUIContainer: {fileID: 1018444949}
-  _upgradeCellText: {fileID: 1396020303}
-  _upgradeCellInfoText: {fileID: 650496939}
-  _cellInfoText: {fileID: 1062090573}
   _ruleState: {fileID: 1281305441}
   _buildState: {fileID: 1145724118}
   _ruleCamera: {fileID: 1285394020}
@@ -8656,7 +8669,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 629.99994, y: -64.36}
+  m_AnchoredPosition: {x: 756, y: -65}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1658059749
@@ -8806,7 +8819,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 89.99999, y: -69.36}
+  m_AnchoredPosition: {x: 108, y: -70}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1670337962
@@ -10004,7 +10017,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 269.99997, y: -64.36}
+  m_AnchoredPosition: {x: 324, y: -65}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1943473669
@@ -10090,7 +10103,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 809.99994, y: -69.36}
+  m_AnchoredPosition: {x: 972, y: -70}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966889014
@@ -11258,7 +11271,8 @@ MonoBehaviour:
   <UnlockFieldCellsView>k__BackingField: {fileID: 544147126}
   _resourcesMarksContainer: {fileID: 858362968}
   _resourceMarkViewPrefab: {fileID: 8757916192524139695, guid: 61bbdfbd9e1c08743a8eca4a42db9d36, type: 3}
-  <WorldCanvasRotation>k__BackingField: {x: -45, y: -90, z: 90}
+  <UpgradeCellView>k__BackingField: {fileID: 1018444950}
+  _worldCanvasRotation: {x: -45, y: -90, z: 90}
 --- !u!1 &2050352737
 GameObject:
   m_ObjectHideFlags: 0

@@ -183,11 +183,10 @@ public class MetaFieldManager : FieldManager {
 
         string resourceIcon = "<sprite name=" + cellConfig.AfkResourceType + ">";
 
-        MetaUI.Instance.SetUpgradeCellText(cellConfig.CellName,
+        MetaWorldCanvasView.Instance.UpgradeCellView.SetData(cellPos, cellConfig.CellName,
             "Max capacity: " + (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer) + "\n" + "Production speed: " + resourceIcon +
-            currentCellCollectedResources + "/sec", cellConfig.UpgradeCost + " " + resourceIcon); //resource icon
-        MetaUI.Instance.SetPositionUpgradeUI(cellPos);
-        MetaUI.Instance.SetActiveUpgradeUI(true);
+            currentCellCollectedResources + "/sec", cellConfig.UpgradeCost + " " + resourceIcon);
+        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(true);
     }
 
     public void UpgradeResourceCell() {
@@ -277,7 +276,7 @@ public class MetaFieldManager : FieldManager {
         if (_currentMarkedFieldCell == -Vector2Int.one) return;
 
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(false);
-        MetaUI.Instance.SetActiveUpgradeUI(false);
+        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(false);
         _currentMarkedFieldCell = -Vector2Int.one;
         _nowCellUnlockUIWasClose = true;
     }
