@@ -177,16 +177,37 @@ public class MetaFieldManager : FieldManager {
             PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
 
-        float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
+        float resourceMultiplier = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
+        
+        ShowUpgradeTileDialog(cellConfig, resourceMultiplier);
+    }
 
-        var currentCellCollectedResources = (int)(cellConfig.AfkProduceCountPerSecond * resourceMultiplayer);
-
-        string resourceIcon = "<sprite name=" + cellConfig.AfkResourceType + ">";
-
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetData(cellPos, cellConfig.CellName,
-            "Max capacity: " + (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer) + "\n" + "Production speed: " + resourceIcon +
-            currentCellCollectedResources + "/sec", cellConfig.UpgradeCost + " " + resourceIcon);
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(true);
+    private void ShowUpgradeTileDialog(CellTypeInfo cell, float multiplier) {
+        List<Tuple<ResourceType, int>> costResources = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
+        };
+        
+        List<Tuple<ResourceType, int>> incomeBefore = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, (int)(cell.AfkProduceCountPerSecond * multiplier))
+        };
+        
+        List<Tuple<ResourceType, int>> incomeAfter = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, -1) // TODO: убрать заглушку
+        };
+        
+        var dialogData = new DialogWithData {
+            DialogType = typeof(UpgradeTileDialog),
+            Data = new UpgradeTileDialog.Data {
+                ClickUpgrade = () => print("upgrade clicked"), // TODO: убрать заглушку клика и уровня
+                Level = 1,
+                TileName = cell.CellName,
+                CostResources = costResources,
+                IncomeResourcesBefore = incomeBefore,
+                IncomeResourcesAfter = incomeAfter,
+                Capacity = (int)(cell.MaxAfkCapacity * multiplier)
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
     public void UpgradeResourceCell() {
