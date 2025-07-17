@@ -182,7 +182,7 @@ public class MetaFieldManager : FieldManager {
         ShowUpgradeTileDialog(cellConfig, resourceMultiplier);
     }
 
-    private void ShowUpgradeTileDialog(CellTypeInfo cell, float multiplier) {
+    private void ShowUpgradeTileDialog(MetaCellTypeInfo cell, float multiplier) {
         List<Tuple<ResourceType, int>> costResources = new() {
             new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
         };
