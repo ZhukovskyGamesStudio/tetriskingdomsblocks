@@ -457,6 +457,7 @@ public class MetaFieldManager : FieldManager {
         Debug.Log("add piece to inventory");
         var inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
         inventoryCell.SetPieceInfo(pieceView);
+        NextPiecesView.Instance.SetInventoryCellIcon(inventoryCell);
         _currentPiecesInInventory.Add(inventoryCell);
     }
 

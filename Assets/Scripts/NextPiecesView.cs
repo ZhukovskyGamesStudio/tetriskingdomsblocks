@@ -38,15 +38,27 @@ public class NextPiecesView : MonoBehaviour, IResetable {
 
     public async UniTask CreatePieceInMeta(InventoryCellView inventoryCell) {
         TryCancelCreatingTask();
-        if (_piecesContainers.Count == 0) {
-            Debug.LogWarning("NextPiecesView: No containers available for the pieces.");
-            return;
-        }
+        if (_piecesContainers.Count == 0) return;
         _cts = new CancellationTokenSource();
         PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { inventoryCell.Data }, _cts.Token,
             new List<Transform>() { _piecesContainers[0] });
         
         MetaFieldManager.Instance.SpawnPieceFromInventory(pieceView, inventoryCell);
+    }
+    
+    public async UniTask SetInventoryCellIcon(InventoryCellView inventoryCell) {
+        Debug.Log("GetSprite");
+      //  TryCancelCreatingTask();
+        if (_piecesContainers.Count == 0) return;
+        _cts = new CancellationTokenSource();
+        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { inventoryCell.Data }, _cts.Token,
+            new List<Transform>() { _piecesContainers[0] });
+         
+        IconRendererManager.Instance.GetIconAsSprite(pieceView.gameObject, (texture) => {
+            inventoryCell.IconImage.sprite = texture;
+        });
+        
+       
     }
     public void SetData(List<PieceData> nextPieces) {
         DestroyPieces();
