@@ -9,8 +9,8 @@ public class ResourceCount : MonoBehaviour {
     [SerializeField]
     private TextMeshProUGUI _countText;
 
-    public void SetData(Sprite sprite, string count) {
-        _image.sprite = sprite;
+    public void SetData(ResourceType resource, string count) {
+        _image.sprite = SpritesManager.Instance.GetSprite(resource);
         _countText.text = count;
     }
 }
