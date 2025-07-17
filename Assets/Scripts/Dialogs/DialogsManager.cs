@@ -33,6 +33,14 @@ public class DialogsManager : MonoBehaviour {
         AddToQueue(dialogWithData);
     }
 
+    public void CloseDialog(Type dialogType) {
+        if (_currentDialog is null || _currentDialog.GetType() != dialogType) {
+            return;
+        }
+        
+        _currentDialog.Hide().Forget();
+    }
+
     private void AddToQueue(DialogWithData dialogWithData) {
         if (_dialogsQ.Any(d => d.DialogType == dialogWithData.DialogType)) {
             return;

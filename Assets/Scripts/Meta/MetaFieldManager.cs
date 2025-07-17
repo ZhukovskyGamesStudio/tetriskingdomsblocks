@@ -204,7 +204,8 @@ public class MetaFieldManager : FieldManager {
                 CostResources = costResources,
                 IncomeResourcesBefore = incomeBefore,
                 IncomeResourcesAfter = incomeAfter,
-                Capacity = (int)(cell.MaxAfkCapacity * multiplier)
+                Capacity = (int)(cell.MaxAfkCapacity * multiplier),
+                ClickClose = CloseCellUI
             }
         };
         DialogsManager.Instance.ShowDialogWithData(dialogData);
@@ -297,7 +298,7 @@ public class MetaFieldManager : FieldManager {
         if (_currentMarkedFieldCell == -Vector2Int.one) return;
 
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(false);
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(false);
+        DialogsManager.Instance.CloseDialog(typeof(UpgradeTileDialog));
         _currentMarkedFieldCell = -Vector2Int.one;
         _nowCellUnlockUIWasClose = true;
     }
