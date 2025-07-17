@@ -13,13 +13,13 @@ public static class StorageManager {
     public static void SaveGame() {
         string json = JsonUtility.ToJson(GameDataMain);
         PlayerPrefs.SetString(SaveKey, json);
-        Debug.Log("game saved"+json);
+      
     }
 
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
         GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-        Debug.Log("game loaded");
+     
     }
 
     public static bool IsNewPlayer() {

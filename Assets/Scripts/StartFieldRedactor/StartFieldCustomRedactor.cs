@@ -79,12 +79,6 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     
     public void SetFieldButtons()
     {
-      /*  int childCount = FieldRect.childCount;
-        for (int i = 0; i < childCount; i++)
-        {
-            Destroy(FieldRect.GetChild(0).gameObject); 
-            Debug.Log(FieldRect.GetChild(0).gameObject);
-        }*/
         
         foreach (Transform child in FieldRect)
         {
@@ -155,13 +149,13 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     }
 
     public void ChangeCellCellType(Vector2Int coord) {
-        Debug.Log($"ChangeCellCellType({coord.x}, {coord.y})");
+     
         _fieldCellTypes[coord.x, coord.y] = CurrentCellType;
         _fieldButtons[coord.x, coord.y].SetType(_fieldCellTypes[coord.x, coord.y]);
     }
     
     public void ChangeMetaCellCellType(Vector2Int coord) {
-        Debug.Log($"ChangeCellCellType({coord.x}, {coord.y})");
+      
         _metaFieldLockedCellTypes[coord.y, coord.x] = CurrentMetaCellType;
         _metaFieldButtons[coord.x, coord.y].SetType(_metaFieldLockedCellTypes[coord.y, coord.x]);
     }

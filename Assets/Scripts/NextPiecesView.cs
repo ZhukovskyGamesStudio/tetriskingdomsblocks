@@ -48,7 +48,6 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     }
     
     public async UniTask SetInventoryCellIcon(InventoryCellView inventoryCell) {
-        Debug.Log("GetSprite");
       //  TryCancelCreatingTask();
         if (_piecesContainers.Count == 0) return;
         _cts = new CancellationTokenSource();

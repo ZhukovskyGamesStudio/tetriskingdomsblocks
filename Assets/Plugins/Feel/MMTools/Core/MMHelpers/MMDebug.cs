@@ -253,7 +253,6 @@ namespace MoreMountains.Tools
 			output += colorPrefix + message + colorSuffix;
 
 			// we output to the console
-			Debug.Log(output);
 
 			// we log to the MM console
 			DebugLogItem item = LogDebugToConsole(message, color, timePrecision, displayFrameCount);

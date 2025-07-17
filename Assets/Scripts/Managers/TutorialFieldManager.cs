@@ -222,7 +222,7 @@ public class TutorialFieldManager : FieldManager
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
 
             var cellType = _field[(int)curPosition.x, (int)curPosition.y];
-            Debug.Log(cellType);
+          
             var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
             if (fullSameResourcesColumn) {
                 if (currentResourceType == ResourceType.None) {
@@ -256,8 +256,7 @@ public class TutorialFieldManager : FieldManager
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
             SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
-        } else
-            Debug.Log("not full same");
+        } 
 
         TaskUtils.CheckResourceCountForTasks(_gameData);
     }
@@ -358,7 +357,6 @@ public class TutorialFieldManager : FieldManager
             lastChance += PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
             CellsChanceToSpawn[i] = lastChance;
         }
-        Debug.Log(CellsChanceToSpawn.Length);
     }
 
     public void Init(MainGameConfig mainGameConfig, GameData gameData) {
@@ -394,7 +392,6 @@ public class TutorialFieldManager : FieldManager
                     _field[i, j] = CellType.LockedMetaCell;
                     continue;
                 }
-                Debug.Log(levelConfig.StartFieldConfig.GetCell(i, j));
                 CellTypeInfo config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c =>
                     c.CellType == levelConfig.StartFieldConfig.GetCell(i, j));
 

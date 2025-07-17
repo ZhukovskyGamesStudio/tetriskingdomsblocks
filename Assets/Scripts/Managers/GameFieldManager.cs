@@ -333,8 +333,7 @@ public class GameFieldManager : FieldManager {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
             SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
-        } else
-            Debug.Log("not full same");
+        } 
 
         TaskUtils.CheckResourceCountForTasks(_gameData);
     }

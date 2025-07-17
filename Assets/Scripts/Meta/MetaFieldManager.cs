@@ -157,8 +157,7 @@ public class MetaFieldManager : FieldManager {
         if (hit.collider != null) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            Debug.Log(cellPos + "casted cellPos");
-            if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell)
+           if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell)
                 CastLockedCell(cellPos);
             else
                 CastResourceCell(cellPos);
@@ -455,7 +454,6 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void AddPieceToInventory(PieceData pieceView) {
-        Debug.Log("add piece to inventory");
         var inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
         inventoryCell.SetPieceInfo(pieceView);
         NextPiecesView.Instance.SetInventoryCellIcon(inventoryCell);
@@ -472,7 +470,6 @@ public class MetaFieldManager : FieldManager {
         }
 
         CalculateCellSpawnChances();
-        //  Debug.Log(StorageManager.GameDataMain.FieldRows +" "+  (StorageManager.GameDataMain.FieldRows.Length > 1));
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime - TimeSpan.FromHours(2)).ToString(CultureInfo.InvariantCulture);
@@ -512,7 +509,6 @@ public class MetaFieldManager : FieldManager {
         }
 
         SetFigureFormsInfoFromData();
-        //    Debug.Log(StorageManager.GameDataMain.FieldRows[0].RowCells.Length + " field size "+ StorageManager.GameDataMain.FieldRows.Length);
         UpdateResourcesCountUIText();
 
         GetResourceCollectMarks();
@@ -556,7 +552,6 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
-        Debug.Log("collect resource from" + index);
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
         foreach (var (row, col) in _connectedGroups[index].Pieces) {
@@ -652,10 +647,7 @@ public class MetaFieldManager : FieldManager {
 
         return placedCells;
     }
-
-    private void ShakeCamera() {
-        Debug.Log("Shake camera");
-    }
+    
 
     private void UpdateResourceMarksAfterPlacePiece(List<(int, int)> placedCells) {
         List<int> connectedCellGroups = new List<int>();
@@ -675,8 +667,7 @@ public class MetaFieldManager : FieldManager {
                     _field[newRow, newCol] == CellType.Empty || _field[newRow, newCol] == CellType.LockedMetaCell || PiecesViewTable.Instance
                         .CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newRow, newCol]).AfkResourceType != cellResource) continue;
 
-                Debug.Log(_field[newRow, newCol] + "_field[newRow, newCol]_field[newRow, newCol] added them group");
-
+               
                 if (_groupCellIndex[newRow, newCol] != 0) {
                     //fix bug if piece has holes 
                     if (!connectedCellGroups.Contains(_groupCellIndex[newRow, newCol])) {
@@ -882,8 +873,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void SaveInventory() {
-        Debug.Log(_currentPiecesInInventory.Count + " " + StorageManager.GameDataMain.InventoryFigures.Length);
-        StorageManager.GameDataMain.InventoryFigures = new FormAndCellTypeData[_currentPiecesInInventory.Count];
+       StorageManager.GameDataMain.InventoryFigures = new FormAndCellTypeData[_currentPiecesInInventory.Count];
 
         for (int i = 0; i < _currentPiecesInInventory.Count; i++) {
             var pieceData = _currentPiecesInInventory[i].Data;

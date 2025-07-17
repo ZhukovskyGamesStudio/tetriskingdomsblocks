@@ -8,7 +8,6 @@ public class SettingsManager : MonoBehaviour {
     }
 
     public void SetSettings() {
-        Debug.Log(StorageManager.GameDataMain.SettingsData.IsMusicOn);
         BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
 
@@ -58,7 +57,6 @@ public class SettingsManager : MonoBehaviour {
 
     public void ChangeToggleSound(bool isOn) {
         StorageManager.GameDataMain.SettingsData.IsSoundOn = isOn;
-        Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
 
     private void AskGoToMeta() {

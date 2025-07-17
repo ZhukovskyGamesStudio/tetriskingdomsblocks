@@ -33,13 +33,12 @@ public class MainManager : MonoBehaviour {
         _networkTimeAPI = new NetworkTimeAPI();
         _networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
-            Debug.Log("has connect" + dateTime);
+          
             _hasInternetConnection = true;
             
             //SetupGame();
         }, error => {
             _currentGameTime = DateTime.Now;
-            Debug.Log("not connect");
             _hasInternetConnection = false;
             //SetupGame();
             // _hasInternetConnection = false;

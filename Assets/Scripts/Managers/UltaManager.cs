@@ -179,7 +179,6 @@ public class UltaManager : MonoBehaviour {
             ? GameFieldManager.Instance.CellsChanceToSpawn
             : TutorialFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
-        Debug.Log(chancesToSpawn.Length);
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length-1]);
         for (int j = 0; j < chancesToSpawn.Length; j++) {
             if (chancesToSpawn[j] > chance) {

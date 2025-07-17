@@ -32,7 +32,6 @@ public class LoadingManager : MonoBehaviour {
         IsLoaded = true;
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
-        Debug.Log(isNewGame);
         if (isNewGame) {
             await SceneManager.LoadSceneAsync("GameSceneTutorial");
         } else if(StorageManager.GameDataMain.CurMaxLevel >= 3){

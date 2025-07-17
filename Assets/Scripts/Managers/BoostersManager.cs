@@ -183,17 +183,16 @@ public class BoostersManager : MonoBehaviour
     }
     public void UseRotatePiece()
     {
-       // Debug.Log((StorageManager.GameDataMain.RotatePieceCount <= 0) + " "+GoalView.Instance._isGameEnded);
-        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
+       if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
         if (RotationState == RotateBoosterStates.LockRotate)
         {
-            Debug.Log("select");
+         
             RotationState = RotateBoosterStates.SelectPiece;
             _rotatePieceSelectContainer.gameObject.SetActive(true);
         }
         else
         {
-            Debug.Log("lock");
+           
             if (RotationState == RotateBoosterStates.RotatePiece)
                 _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
             RotationState = RotateBoosterStates.LockRotate;
@@ -318,7 +317,6 @@ public class BoostersManager : MonoBehaviour
     public void AnimateDynamite(Vector2Int position)
     {
         // Запоминаем исходный масштаб
-        Debug.Log(_currentDynamite);
         Vector3 originalScale = _currentDynamite.transform.localScale;
 
         // Создаем последовательность анимаций

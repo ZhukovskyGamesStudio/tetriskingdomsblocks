@@ -100,7 +100,6 @@ private LevelConfig _levelConfig;
     }
 
     private void CheckGameGoal() {
-        Debug.Log("Checking game goal");
         TaskUtils.CheckResourceCountForTasks(_gameData);
 
         if (CheckWin()) {

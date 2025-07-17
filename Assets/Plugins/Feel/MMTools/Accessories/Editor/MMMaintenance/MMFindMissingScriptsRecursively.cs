@@ -38,7 +38,6 @@ namespace MoreMountains.Tools
 			{
 				FindInGO(g);
 			}
-			Debug.Log(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", go_count, components_count, missing_count));
 		}
 	 
 		private static void FindInGO(GameObject g)

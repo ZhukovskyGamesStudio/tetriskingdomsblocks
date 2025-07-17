@@ -87,8 +87,7 @@ public class DragManager : MonoBehaviour {
         if (cellManager.CanPlace(data, currentCoord)) {
             isLerpingDisabled = true;
             finalPos = markedCellsContainer.position + ConfigsManager.Instance.DragConfig.HigherFieldShift * Vector3.up;
-            //  Debug.Log("to place " + finalPos);
-            _pieceGameObject.PlacePieceAsync(cellManager).Forget();
+          _pieceGameObject.PlacePieceAsync(cellManager).Forget();
         } else if (GameFieldManager.Instance != null && GameFieldManager.Instance.AdditionalPieceContainerUnderPiece() &&
                    data.Type.CellType != CellType.Dynamite) {
             finalScale = initialScale;
@@ -106,8 +105,7 @@ public class DragManager : MonoBehaviour {
                 MetaFieldManager.Instance.SetCurrentPiece();
                 // MetaFieldManager.Instance.SaveInventory();
             }
-
-            //Debug.Log("to start");
+            
             finalPos = startingPosition;
             finalScale = initialScale;
             markedCellsContainer.localScale = initialMarkedScale;

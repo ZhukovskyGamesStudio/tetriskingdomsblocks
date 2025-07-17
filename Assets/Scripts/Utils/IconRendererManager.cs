@@ -70,7 +70,7 @@ public class IconRendererManager : MonoBehaviour
                 0,
                 SpriteMeshType.Tight
             );
-     //   Debug.Log("GetSprite");
+    
             callback?.Invoke(sprite);
         });
     }
