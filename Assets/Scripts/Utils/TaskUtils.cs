@@ -38,7 +38,7 @@ public static class TaskUtils {
     public static bool IsResourceNeededForTasks(GameData gameData, ResourceType resourceType) {
         return gameData.CurrentTasks.Any(task => task.TaskInfo.IsResourceNeeded(resourceType));
     }
-    
+
     public static TaskUIView GetUIForResourceTask(GameData gameData, ResourceTypeAndCountSubClass resource) {
         foreach (TaskInfoAndUI taskInfoAndUI in gameData.CurrentTasks) {
             if (taskInfoAndUI.TaskInfo.TaskType != TaskInfo.TaskType.getResource) {
@@ -54,9 +54,7 @@ public static class TaskUtils {
 
         return null;
     }
-    
-    
-    
+
     public static void CheckMonoLinesForTasks(GameData gameData) {
         for (int i = 0; i < gameData.CurrentTasks.Count; i++) {
             if (gameData.CurrentTasks[i].TaskInfo.TaskType != TaskInfo.TaskType.placeMonoLine ||

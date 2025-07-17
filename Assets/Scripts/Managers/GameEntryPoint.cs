@@ -112,14 +112,38 @@ public class GameEntryPoint : MonoBehaviour {
 
         if (CheckLose()) {
             Lose();
+            return;
         }
+
+        if (_gameData.MovesLeft <= 0 && !_gameData.RejectedBuyMoves) {
+            GameUI.Instance.ShowOutOfMovesDialog(TryBuyMoves,RejectMoves);
+        }
+    }
+    
+    private void TryBuyMoves() {
+        if (StorageManager.GameDataMain.GoldAmount < 900) {
+            return;
+        }
+
+        StorageManager.GameDataMain.GoldAmount -= 900;
+        AddMoves();
+    }
+
+    private void AddMoves() {
+        _gameData.MovesLeft += 5;
+    }
+
+    private void RejectMoves() {
+        _gameData.RejectedBuyMoves = true;
+        Lose();
     }
 
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
 
     private bool CheckLose() {
-        if (_gameData.MovesLeft <= 0)
+        if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves) {
             return true;
+        }
 
         return !_gameFieldManager.CanPlaceAnyPiece();
     }
@@ -152,7 +176,8 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GameUI.Instance.ShowLoseDialog();
-        GameUI.Instance.GoalView.SetLoseState(_gameData.MovesLeft <= 0);
+        StorageManager.GameDataMain.HealthCount--;
+        GameUI.Instance.GoalView.SetLoseState();
         UltaManager.Instance.HideUltimateUI();
         GameFieldManager.Instance.SetLoseState();
     }

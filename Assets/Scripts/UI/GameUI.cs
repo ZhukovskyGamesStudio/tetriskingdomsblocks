@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
@@ -112,12 +113,12 @@ public class GameUI : MonoBehaviour {
         SettingsManager.Instance.ShowSettingsDialog();
     }
 
-    public void ShowOutOfMovesDialog() {
+    public void ShowOutOfMovesDialog(Action tryBuyMoves, Action rejectMoves) {
         var outOfMovesData = new DialogWithData {
             DialogType = typeof(OutOfMovesDialog),
             Data = new OutOfMovesDialog.Data {
-                ClickAdd = TryBuyMoves,
-                ClickClose = ShowLoseDialog,
+                ClickAdd = tryBuyMoves,
+                ClickClose = rejectMoves,
                 Balance = StorageManager.GameDataMain.GoldAmount,
                 Cost = 900
             }
@@ -125,18 +126,7 @@ public class GameUI : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
     }
 
-    private void TryBuyMoves() {
-        if (StorageManager.GameDataMain.GoldAmount < 900) {
-            return;
-        }
-
-        StorageManager.GameDataMain.GoldAmount -= 900;
-        AddMoves();
-    }
-
-    private void AddMoves() {
-        _gameData.MovesLeft += 5;
-    }
+    
 
     public void ShowLoseDialog() {
         var loseData = new DialogWithData {

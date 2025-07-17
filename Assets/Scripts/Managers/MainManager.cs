@@ -58,15 +58,15 @@ public class MainManager : MonoBehaviour {
             StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
 
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT) {
-            MetaUI.Instance.SetHealthTimerActive(false);
+            MetaUI.Instance. HealthView.SetHealthTimerActive(false);
         } else {
             CalculateOfflineHealth();
             if (_hasInternetConnection)
-                MetaUI.Instance.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime.ToString());
+                MetaUI.Instance.HealthView.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime.ToString());
             else
-                MetaUI.Instance.SetHealthTimerText("No internet connection");
+                MetaUI.Instance.HealthView.SetHealthTimerText("No internet connection");
             for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
-                MetaUI.Instance.SetHealthImageActive(i, StorageManager.GameDataMain.HealthCount > i);
+                MetaUI.Instance.HealthView.SetHealthImageActive(i, StorageManager.GameDataMain.HealthCount > i);
             }
         }
     }
@@ -106,13 +106,13 @@ public class MainManager : MonoBehaviour {
                     _lastHealthRecoveryTime = _currentGameTime;
                     StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
                     StorageManager.SaveGame();
-                    MetaUI.Instance.SetHealthImageActive(StorageManager.GameDataMain.HealthCount - 1, true);
+                    MetaUI.Instance.HealthView.SetHealthImageActive(StorageManager.GameDataMain.HealthCount - 1, true);
                 }
 
                 UpdateHealthTimerUI();
             }
-        } else if (MetaUI.Instance.HealthTimerText.gameObject.activeSelf) {
-            MetaUI.Instance.SetHealthTimerActive(false);
+        } else if (MetaUI.Instance.HealthView.HealthTimerText.gameObject.activeSelf) {
+            MetaUI.Instance.HealthView.SetHealthTimerActive(false);
         }
     }
 
@@ -121,17 +121,13 @@ public class MainManager : MonoBehaviour {
     private void UpdateHealthTimerUI() {
         if (_hasInternetConnection) {
             if (StorageManager.GameDataMain.HealthCount >= MAX_HEALTH_COUNT) {
-                if (MetaUI.Instance.HealthTimerText != null && MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
-                    MetaUI.Instance.SetHealthTimerActive(false);
+                MetaUI.Instance.HealthView.SetHealthTimerActive(false);
                 return;
             }
 
-            if (!MetaUI.Instance.HealthTimerText.gameObject.activeSelf)
-                MetaUI.Instance.SetHealthTimerActive(true);
-
-            MetaUI.Instance.SetHealthTimerText(TimeConverter.ConvertToTimeString(GetTimeUntilNextHealth()));
+            MetaUI.Instance.HealthView.UpdateHealthTimerUI(GetTimeUntilNextHealth());
         } else {
-            MetaUI.Instance.SetHealthTimerText("No internet connection");
+            MetaUI.Instance.HealthView.SetNoConnection();
         }
     }
 
