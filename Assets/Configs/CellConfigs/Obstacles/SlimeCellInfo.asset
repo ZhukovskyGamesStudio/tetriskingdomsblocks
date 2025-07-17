@@ -9,19 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
+  m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
   m_Name: SlimeCellInfo
   m_EditorClassIdentifier: 
-  CellType: 16
+  CellType: 205
   CellForm: {fileID: 11400000, guid: 010d6654ac6c69e46bee8b35a87eb304, type: 2}
-  MarkCellColor: {r: 0.25940508, g: 0.8679245, b: 0.20060521, a: 0}
+  MarkCellColor: {r: 0.25882354, g: 0.8666667, b: 0.2, a: 0}
+  CellName: Slime
+  ChanceToSpawn: 1
   ResourcesForPlace: []
   ResourcesForDestroy:
   - ResourceType: 10
     ResourceCount: 1
-  CellName: Slime
   MultiplayerForSameResourceType: 0
-  AfkResourceType: 0
-  MaxAfkCapacity: 0
-  AfkProduceCountPerSecond: 0
-  ChanceToSpawn: 0.8

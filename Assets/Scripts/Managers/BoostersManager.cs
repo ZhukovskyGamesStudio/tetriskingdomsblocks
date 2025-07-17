@@ -258,7 +258,7 @@ public class BoostersManager : MonoBehaviour
                 var needPosition = emptyCells[needIndex];
                 emptyCells.RemoveAt(needIndex);
                 var config =
-                    PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == curCellType);
+                    PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == curCellType);
                 var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config,
                     new Vector2Int(needPosition.x, needPosition.y), false);
                 
@@ -278,7 +278,7 @@ public class BoostersManager : MonoBehaviour
         if(_currentDynamite != null || StorageManager.GameDataMain.DynamyteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
-        var dinamiteCellInfo = PieceUtils.GetNewPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
+        var dinamiteCellInfo = PieceUtils.GetNewCorePiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
         NextPiecesView.Instance.CreateDynamitePieceView(dinamiteCellInfo);
     }
 
@@ -299,7 +299,7 @@ public class BoostersManager : MonoBehaviour
                     continue;
                 }
                 var cellType = GameFieldManager.Instance._field[newPosition.x, newPosition.y];
-                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
+                var cellConfig = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
                 GameFieldManager.Instance.TryAddResourceForCell( cellConfig, newPosition);
 
                 GameFieldManager.Instance.DestroyCell(newPosition);

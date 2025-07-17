@@ -9,23 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: MountainsCellInfo
+  m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
+  m_Name: WoodCellInfo
   m_EditorClassIdentifier: 
-  CellType: 7
+  CellType: 1
   CellForm: {fileID: 0}
-  MarkCellColor: {r: 0.25796545, g: 0.2655549, b: 0.2924528, a: 0}
+  MarkCellColor: {r: 0.26666668, g: 0.5019608, b: 0.12156863, a: 0}
   ResourcesForPlace:
-  - ResourceType: 2
+  - ResourceType: 1
     ResourceCount: 1
   ResourcesForDestroy:
-  - ResourceType: 2
+  - ResourceType: 1
     ResourceCount: 1
-  CellName: Mountain
+  CellName: Wood
   MultiplayerForSameResourceType: 0
-  AfkResourceType: 2
-  MaxAfkCapacity: 100
-  AfkProduceCountPerSecond: 1
-  UpgradeCost: 0
-  UpgradeCellType: 21
   ChanceToSpawn: 1
+  ResourcesForPlace: []
+  ResourcesForDestroy: []
+  MultiplayerForSameResourceType: 0

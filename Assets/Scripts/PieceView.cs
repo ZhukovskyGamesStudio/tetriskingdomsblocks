@@ -62,6 +62,7 @@ public class PieceView : MonoBehaviour {
         go.SetSeed(data.CellGuids[x, y]);
         var markedCell = PiecesViewTable.Instance.MarkedCell;
         var markCell = Instantiate(markedCell, _markedCellsContainer);
+        
         markCell.GetComponent<MeshRenderer>().material.color = new Color(data.Type.MarkCellColor.r, data.Type.MarkCellColor.g,
             data.Type.MarkCellColor.b, 0.75f);
         go.transform.localPosition = (new Vector3(x + 0.5f, 0, y + 0.5f) + shift) * FieldUtils.CellSize;

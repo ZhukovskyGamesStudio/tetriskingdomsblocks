@@ -69,7 +69,7 @@ public class GameEntryPoint : MonoBehaviour {
                 for (int j = 0; j < _mainGameConfig.FieldSize; j++) {
                     var type = levelConfig.StartFieldConfig.GetCell(i, j);
                     if (type != CellType.Empty) {
-                        var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == type);
+                        var cellConfig = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == type);
 
                         if (!FieldUtils.CantDestroyInRow(cellConfig.CellType) &&
                             !startCellsResourcesCount.TryAdd(cellConfig.ResourcesForDestroy[0].ResourceType, 1))

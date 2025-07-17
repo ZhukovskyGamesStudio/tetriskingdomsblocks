@@ -86,13 +86,13 @@ public class DragManager : MonoBehaviour {
             //  Debug.Log("to place " + finalPos);
             _pieceGameObject.PlacePieceAsync(cellManager).Forget();
         } else if (GameFieldManager.Instance != null && GameFieldManager.Instance.AdditionalPieceContainerUnderPiece() &&
-                   data.Type.CellType != CellType.Dinamyte) {
+                   data.Type.CellType != CellType.Dynamite) {
             finalScale = initialScale;
             markedCellsContainer.localScale = initialMarkedScale;
             markedCellsContainer.gameObject.SetActive(false);
             GameFieldManager.Instance.SetPieceInAdditionalContainer(ref finalPos, _pieceGameObject);
         } else if (GameFieldManager.Instance != null && GameFieldManager.Instance.AdditionalPiecePrefab != null &&
-                   GameFieldManager.Instance.AdditionalPiecePrefab == _pieceGameObject && data.Type.CellType != CellType.Dinamyte) {
+                   GameFieldManager.Instance.AdditionalPiecePrefab == _pieceGameObject && data.Type.CellType != CellType.Dynamite) {
             finalPos = GameFieldManager.Instance.AdditionalPieceContainer.position;
             finalScale = initialScale;
             markedCellsContainer.localScale = initialMarkedScale;

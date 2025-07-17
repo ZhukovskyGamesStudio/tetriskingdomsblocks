@@ -137,7 +137,7 @@ public class FieldManager : MonoBehaviour {
                     continue;
                 }
 
-                if (pieceData.Type.CellType == CellType.Dinamyte) {
+                if (pieceData.Type.CellType == CellType.Dynamite) {
                     BoostersManager.Instance.AnimateDynamite(pos);
                     //destroy dinamyte
                     return;

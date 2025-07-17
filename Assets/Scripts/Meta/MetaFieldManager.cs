@@ -174,26 +174,48 @@ public class MetaFieldManager : FieldManager {
         _currentMarkedFieldCell = new Vector2Int((int)cellPos.x, (int)cellPos.z);
 
         var cellConfig =
-            PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
+            PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
 
-        float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
+        float resourceMultiplier = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
+        
+        ShowUpgradeTileDialog(cellConfig, resourceMultiplier);
+    }
 
-        var currentCellCollectedResources = (int)(cellConfig.AfkProduceCountPerSecond * resourceMultiplayer);
-
-        string resourceIcon = "<sprite name=" + cellConfig.AfkResourceType + ">";
-
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetData(cellPos, cellConfig.CellName,
-            "Max capacity: " + (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer) + "\n" + "Production speed: " + resourceIcon +
-            currentCellCollectedResources + "/sec", cellConfig.UpgradeCost + " " + resourceIcon);
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(true);
+    private void ShowUpgradeTileDialog(MetaCellTypeInfo cell, float multiplier) {
+        List<Tuple<ResourceType, int>> costResources = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
+        };
+        
+        List<Tuple<ResourceType, int>> incomeBefore = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, (int)(cell.AfkProduceCountPerSecond * multiplier))
+        };
+        
+        List<Tuple<ResourceType, int>> incomeAfter = new() {
+            new Tuple<ResourceType, int>(cell.AfkResourceType, -1) // TODO: убрать заглушку
+        };
+        
+        var dialogData = new DialogWithData {
+            DialogType = typeof(UpgradeTileDialog),
+            Data = new UpgradeTileDialog.Data {
+                ClickUpgrade = () => print("upgrade clicked"), // TODO: убрать заглушку клика и уровня
+                Level = 1,
+                TileName = cell.CellName,
+                CostResources = costResources,
+                IncomeResourcesBefore = incomeBefore,
+                IncomeResourcesAfter = incomeAfter,
+                Capacity = (int)(cell.MaxAfkCapacity * multiplier),
+                ClickClose = CloseCellUI
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
     public void UpgradeResourceCell() {
         //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
         var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
         var cellConfig =
-            PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
+            PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
 
@@ -276,7 +298,7 @@ public class MetaFieldManager : FieldManager {
         if (_currentMarkedFieldCell == -Vector2Int.one) return;
 
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(false);
-        MetaWorldCanvasView.Instance.UpgradeCellView.SetActiveUpgradeUI(false);
+        DialogsManager.Instance.CloseDialog(typeof(UpgradeTileDialog));
         _currentMarkedFieldCell = -Vector2Int.one;
         _nowCellUnlockUIWasClose = true;
     }
@@ -348,7 +370,7 @@ public class MetaFieldManager : FieldManager {
                 collectResourceMarkPosition += _cells[row, col].transform.position;
 
                 if (needColor == Color.clear) {
-                    needColor = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
+                    needColor = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
                     needColor.a = 1;
                 }
             }
@@ -427,7 +449,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GenerateNewPieces() {
-        var pieceData = PieceUtils.GetNewPiece(guaranteed: null);
+        var pieceData = PieceUtils.GetNewMetaPiece(guaranteed: null);
         AddPieceToInventory(pieceData);
         SaveInventory();
     }
@@ -538,7 +560,7 @@ public class MetaFieldManager : FieldManager {
         int collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
         foreach (var (row, col) in _connectedGroups[index].Pieces) {
-            var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
+            var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
             if (curResource == ResourceType.None)
                 curResource = cellConfig.AfkResourceType;
             if (cellConfig.AfkResourceType != ResourceType.None) {
@@ -573,7 +595,7 @@ public class MetaFieldManager : FieldManager {
         float lastChance = 0;
         CellsChanceToSpawn = new float[_currentCellsToSpawn.Count];
         for (int i = 0; i < _currentCellsToSpawn.Count; i++) {
-            lastChance += PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
+            lastChance += PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
             CellsChanceToSpawn[i] = lastChance;
         }
     }
@@ -640,18 +662,18 @@ public class MetaFieldManager : FieldManager {
         Color needColor = Color.clear;
         foreach (var (row, col) in placedCells) {
             if (needColor == Color.clear) {
-                needColor = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
+                needColor = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]).MarkCellColor;
                 needColor.a = 1;
             }
 
-            var cellResource = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]).AfkResourceType;
+            var cellResource = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]).AfkResourceType;
 
             foreach (var pos in FieldUtils.Directions) {
                 var newRow = row + pos.y;
                 var newCol = col + pos.x;
                 if (newRow >= _field.GetLength(0) || newCol >= _field.GetLength(1) || newRow < 0 || newCol < 0 ||
                     _field[newRow, newCol] == CellType.Empty || _field[newRow, newCol] == CellType.LockedMetaCell || PiecesViewTable.Instance
-                        .CellsList.CellsConfigs.First(c => c.CellType == _field[newRow, newCol]).AfkResourceType != cellResource) continue;
+                        .CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newRow, newCol]).AfkResourceType != cellResource) continue;
 
                 Debug.Log(_field[newRow, newCol] + "_field[newRow, newCol]_field[newRow, newCol] added them group");
 
@@ -730,7 +752,7 @@ public class MetaFieldManager : FieldManager {
             ResourceType curResource = ResourceType.None;
             foreach (var (row, col) in _connectedGroups[i].Pieces) {
                 if (_field[row, col] == CellType.Empty) continue;
-                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
+                var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
                 if (curResource == ResourceType.None)
                     curResource = cellConfig.AfkResourceType;
                 if (cellConfig.AfkResourceType != ResourceType.None) {
@@ -764,7 +786,7 @@ public class MetaFieldManager : FieldManager {
             ResourceType curResource = ResourceType.None;
             Color resourceColor = Color.clear;
             foreach (var (row, col) in connectedGroupsPieces[i]) {
-                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _field[row, col]);
+                var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
 
                 if (curResource == ResourceType.None) {
                     curResource = cellConfig.AfkResourceType;
@@ -848,7 +870,7 @@ public class MetaFieldManager : FieldManager {
                 }
             }
 
-            var cellInfo = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == figure.FormCellType);
+            var cellInfo = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == figure.FormCellType);
             var data = new PieceData() { Type = cellInfo, Cells = cells, CellGuids = cellGuids, FormName = figure.FormName };
 
             AddPieceToInventory(data);

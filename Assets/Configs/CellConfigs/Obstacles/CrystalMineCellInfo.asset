@@ -9,17 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
+  m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
   m_Name: CrystalMineCellInfo
   m_EditorClassIdentifier: 
-  CellType: 14
+  CellType: 203
   CellForm: {fileID: 11400000, guid: 010d6654ac6c69e46bee8b35a87eb304, type: 2}
   MarkCellColor: {r: 1, g: 1, b: 1, a: 0}
+  CellName: Crystal mine
+  ChanceToSpawn: 1
   ResourcesForPlace: []
   ResourcesForDestroy: []
-  CellName: Crystal Mine
   MultiplayerForSameResourceType: 0
-  AfkResourceType: 0
-  MaxAfkCapacity: 0
-  AfkProduceCountPerSecond: 0
-  ChanceToSpawn: 0.8
