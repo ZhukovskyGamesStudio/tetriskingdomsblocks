@@ -12,15 +12,17 @@ public class SettingsManager : MonoBehaviour {
         BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
 
-    public void ShowSettingsDialog() {
-        var passingData = new DialogWithData() {
-            DialogType = typeof(SettingsDialog),
-            Data = new SettingsDialog.Data() {
-                data = StorageManager.GameDataMain.SettingsData,
-                changeMusic = ChangeToggleMusic,
-                changeSound = ChangeToggleSound,
-                changeVibration = ChangeToggleVibration,
-                goToMeta = AskGoToMeta
+    public void ShowGameSettingsDialog() {
+        var passingData = new DialogWithData {
+            DialogType = typeof(GameSettingsDialog),
+            Data = new GameSettingsDialog.Data {
+                ChangeMusic = ChangeToggleMusic,
+                ChangeSound = ChangeToggleSound,
+                ChangeVibration = ChangeToggleVibration,
+                GoToMeta = AskGoToMeta,
+                IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
+                IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
+                IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn
             }
         };
 
@@ -39,7 +41,7 @@ public class SettingsManager : MonoBehaviour {
         Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
 
-    public void OpenSettings() => ShowSettingsDialog();
+    public void OpenSettings() => ShowGameSettingsDialog();
 
     private void AskGoToMeta() {
         DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {
