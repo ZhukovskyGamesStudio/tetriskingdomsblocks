@@ -57,7 +57,6 @@ public class BoostersManager : MonoBehaviour
     
     void Update()
     {
-        Debug.Log(RotationState);
         if (RotationState != RotateBoosterStates.RotatePiece)
             return;
 

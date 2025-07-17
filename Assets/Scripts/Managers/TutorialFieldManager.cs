@@ -7,13 +7,16 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 public class TutorialFieldManager : FieldManager
 {
-    public static TutorialFieldManager Instance;
+      public static TutorialFieldManager Instance;
 
     [field: Header("Game")]
     [field: SerializeField]
     public Transform AdditionalPieceContainer { get; private set; }
 
-    public event Action OnCellPlaced, OnMoveEnded;
+    [SerializeField]
+    private TutorialUIElementsView _tutorialView;
+
+    public event Action OnCellPlaced, OnMoveEnded, OnPieceDestroyedByHammer;
 
     public PieceView AdditionalPiecePrefab { get; private set; }
 
@@ -22,7 +25,6 @@ public class TutorialFieldManager : FieldManager
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
 
     private int _placedPiecesAmount;
-    private bool _isSlimeExist;
     private GameData _gameData;
     private MainGameConfig _mainGameConfig;
 
@@ -35,11 +37,29 @@ public class TutorialFieldManager : FieldManager
 
     public void GenerateNewPieces() {
         _nextBlocks = new List<PieceData>() {
-            PieceUtils.GetNewPiece(_currentGuaranteedFirstCells),
-            PieceUtils.GetNewPiece(_currentGuaranteedFirstCells),
-            PieceUtils.GetNewPiece(_currentGuaranteedFirstCells)
+            PieceUtils.GetNewTutorialCorePiece(_currentGuaranteedFirstCells)
         };
         NextPiecesView.Instance.SetData(_nextBlocks);
+    }
+
+    protected override void TryDestroyPiece() {
+        Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
+        if (hit.collider != null && StorageManager.GameDataMain.HummerCount > 0) {
+            Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
+                Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+            if (FieldUtils.CantDestroyInRow(_field[(int)cellPos.x, (int)cellPos.z])) return;
+            BoostersManager.Instance.BreackCellWithHummer();
+
+            if (StorageManager.GameDataMain.HummerCount <= 0)
+                _isDestroyPieceMode = false;
+            HummerDestoyPieceAnimation(new CellView[] { _cells[(int)cellPos.x, (int)cellPos.z] });
+
+            var configSlime = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
+            TryAddResourceForCell(configSlime, new Vector2Int((int)cellPos.x, (int)cellPos.z));
+
+            _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
+            OnPieceDestroyedByHammer?.Invoke();
+        }
     }
 
     public bool AdditionalPieceContainerUnderPiece() =>
@@ -67,12 +87,11 @@ public class TutorialFieldManager : FieldManager
             GenerateNewPieces();
         }
     }
-
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
 
-        OnCellPlaced?.Invoke();
-        _nextBlocks.Remove(pieceData);
+    OnCellPlaced?.Invoke();
+       /*     _nextBlocks.Remove(pieceData);
         if (AdditionalPiecePrefab != null && AdditionalPiecePrefab.Data == pieceData) {
             AdditionalPiecePrefab = null;
         } else {
@@ -80,18 +99,27 @@ public class TutorialFieldManager : FieldManager
             if (_placedPiecesAmount % 3 == 0)
                 GenerateNewPieces();
         }
-
+*/
         if (_mainGameConfig.resourceOnPlaceCell) {
             CollectResourcesOnPlace(pieceData);
         }
 
+
         ExplodeCellsInRows();
         OnMoveEnded?.Invoke();
     }
+
+    private void DestroyCellAfterPlacePiece(Vector2Int coord, CellType cellType) {
+        var configSlime = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
+        TryAddResourceForCell(configSlime, coord);
+
+        DestroyCell(coord);
+    }
+
     protected override void SpawnResourceFxForCell(Vector2Int place, CellView go) {
         var cellType = _field[place.x, place.y];
         ResourceTypeAndCountSubClass[] resourcesForPlace =
-            PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
+            PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType).ResourcesForPlace;
         var onCanvasPosition = _mainCamera.WorldToScreenPoint(go.transform.position);
 
         for (int index = 0; index < resourcesForPlace.Length; index++) {
@@ -114,7 +142,7 @@ public class TutorialFieldManager : FieldManager
                     continue;
                 }
 
-                var needResources = placedPiece.Type.ResourcesForPlace;
+                var needResources = ((CoreCellTypeInfo)placedPiece.Type).ResourcesForPlace;
                 for (int i = 0; i < needResources.Length; i++) {
                     var resourceType = needResources[i];
                     if (resourceType == null) {
@@ -133,17 +161,18 @@ public class TutorialFieldManager : FieldManager
     public void ExplodeCellsInRows() {
         int width = _field.GetLength(0);
         int height = _field.GetLength(1);
+        string unlockedCellText = "";
         int isDestroyingLinesCount = 0;
         for (int y = 0; y < height; y++) {
             if (Enumerable.Range(0, width).All(x => !FieldUtils.CantBecomeRow(_field[x, y]))) {
-                DestroyLine(y, width, true);
+                DestroyLine(y, width, true, ref unlockedCellText);
                 isDestroyingLinesCount++;
             }
         }
 
         for (int x = 0; x < width; x++) {
             if (Enumerable.Range(0, height).All(y => !FieldUtils.CantBecomeRow(_field[x, y]))) {
-                DestroyLine(x, height, false);
+                DestroyLine(x, height, false, ref unlockedCellText);
                 isDestroyingLinesCount++;
             }
         }
@@ -151,6 +180,11 @@ public class TutorialFieldManager : FieldManager
         if (isDestroyingLinesCount != 0) {
             SpawnDestroyRowVibration();
             _gameAudio.PlayNextSound(_gameAudio.RowCollected);
+
+            if (unlockedCellText != "") {
+                GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f,
+                    Vector2.zero);
+            }
 
             DestroyAllMarkedCells(isDestroyingLinesCount);
         }
@@ -175,7 +209,7 @@ public class TutorialFieldManager : FieldManager
         }
     }
 
-    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow) //cut this to pieces
+    private void DestroyLine(int mainAxisCurrentValue, int secondAxisLenght, bool isRow, ref string unlockedCellText) //cut this to pieces
     {
         bool fullSameResourcesColumn = _mainGameConfig.bonusResourcesOnDestroyLine ? true : false;
         int bonusResourcesOnDestroyLine = 0;
@@ -188,7 +222,8 @@ public class TutorialFieldManager : FieldManager
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
 
             var cellType = _field[(int)curPosition.x, (int)curPosition.y];
-            var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
+            Debug.Log(cellType);
+            var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
             if (fullSameResourcesColumn) {
                 if (currentResourceType == ResourceType.None) {
                     if (config.ResourcesForDestroy.Length == 0)
@@ -241,7 +276,7 @@ public class TutorialFieldManager : FieldManager
         ref ResourceType currentBonusResourceType) {
         Vector2Int curPosition = !isRow ? new Vector2Int(mainAxisCurrentValue, secondAxis) : new Vector2Int(secondAxis, mainAxisCurrentValue);
         var cellType = _field[curPosition.x, curPosition.y];
-        var config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
+        var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
 
         if (!cellTypesInLine.TryAdd(cellType, 1)) {
             cellTypesInLine[cellType]++;
@@ -276,19 +311,8 @@ public class TutorialFieldManager : FieldManager
         return bonusResourcesOnDestroyLine;
     }
 
-    private Vector2Int GetRandomEmptyCell() {
-        List<Vector2Int> _emptyCells = new List<Vector2Int>();
-        for (int i = 0; i < _field.GetLength(0); i++) {
-            for (int j = 0; j < _field.GetLength(1); j++)
-                if (_field[i, j] == CellType.Empty)
-                    _emptyCells.Add(new Vector2Int(i, j));
-        }
-
-        if (_emptyCells.Count == 0) return new Vector2Int(-1, -1);
-        return _emptyCells[Random.Range(0, _emptyCells.Count)];
-    }
-
-    public void TryAddResourceForCell(CellTypeInfo config, Vector2Int coord) {
+   
+    public void TryAddResourceForCell(CoreCellTypeInfo config, Vector2Int coord) {
         if (config.ResourcesForDestroy.Length == 0) {
             return;
         }
@@ -314,19 +338,6 @@ public class TutorialFieldManager : FieldManager
         _field[coord.x, coord.y] = CellType.Empty;
         _cells[coord.x, coord.y].DestroyCell();
     }
-
-    public bool CanPlaceAnyPiece() {
-        if (AdditionalPiecePrefab != null && PieceUtils.CanPlacePiece(_field, AdditionalPiecePrefab.Data)) {
-            return true;
-        }
-
-        if (_nextBlocks.Any(t => t != null && PieceUtils.CanPlacePiece(_field, t))) {
-            return true;
-        }
-
-        return false;
-    }
-
     public void SetWinState() {
         ExplodeCellsInRows();
     }
@@ -344,9 +355,10 @@ public class TutorialFieldManager : FieldManager
         float lastChance = 0;
         CellsChanceToSpawn = new float[_currentCellsToSpawn.Count];
         for (int i = 0; i < _currentCellsToSpawn.Count; i++) {
-            lastChance += PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
+            lastChance += PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
             CellsChanceToSpawn[i] = lastChance;
         }
+        Debug.Log(CellsChanceToSpawn.Length);
     }
 
     public void Init(MainGameConfig mainGameConfig, GameData gameData) {
@@ -361,8 +373,8 @@ public class TutorialFieldManager : FieldManager
 
     public override void SetupGame() {
         GenerateNewPieces();
-
-        base.SetupGame();
+        base.SetupGame(); 
+        CalculateCellSpawnChances();
     }
 
     public void PlaceStartingField(LevelConfig levelConfig) {
@@ -373,20 +385,32 @@ public class TutorialFieldManager : FieldManager
         for (int i = 0; i < _field.GetLength(0); i++) {
             for (int j = 0; j < _field.GetLength(1); j++) {
                 if (levelConfig.StartFieldConfig.GetCell(i, j) == CellType.Empty) {
+                    _tutorialView.SetHolesPositions(NextPiecesView.Instance._piecesContainers[0].position,
+                        new Vector3(i, 0, j));
                     continue;
                 }
 
-                CellTypeInfo config = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
-                    c.CellType == levelConfig.StartFieldConfig.GetCell(i, j));
-                if (!_isSlimeExist && config.CellType == CellType.Slime) {
-                    _isSlimeExist = true;
+                if (levelConfig.StartFieldConfig.GetCell(i, j) == CellType.LockedMetaCell) {
+                    _field[i, j] = CellType.LockedMetaCell;
+                    continue;
                 }
+                Debug.Log(levelConfig.StartFieldConfig.GetCell(i, j));
+                CellTypeInfo config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c =>
+                    c.CellType == levelConfig.StartFieldConfig.GetCell(i, j));
 
-                PlaceOneSizePiece(config, new Vector2Int(i, j), true);
+                PlaceOneSizePiece(config, new Vector2Int(i, j), true, false);
             }
         }
     }
 
+    public void ClearAllLockedCells() {
+        for (int i = 0; i < _field.GetLength(0); i++) {
+            for (int j = 0; j < _field.GetLength(1); j++) {
+                if (_field[i, j] == CellType.LockedMetaCell)
+                    _field[i, j] = CellType.Empty;
+            }
+        }
+    }
     public void InitFromLevel(LevelConfig config) {
         _currentGuaranteedFirstCells = new List<CellTypeInfo>();
         foreach (var cellInfo in config.CurrentGuaranteedFirstCells) {
@@ -398,11 +422,9 @@ public class TutorialFieldManager : FieldManager
         for (int i = 0; i < startCells.CellsToSpawn.Length; i++) {
             _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
         }
-
-        CalculateCellSpawnChances();
     }
 
-    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo) {
+    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo, bool spawnResourceFX = true) {
         GameObject tmpContainer = new();
         tmpContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         List<Vector3> poses = new List<Vector3>();
@@ -416,7 +438,8 @@ public class TutorialFieldManager : FieldManager
         if (setNewInfo) {
             _field[pos.x, pos.y] = cellInfo.CellType;
             _cells[pos.x, pos.y] = go;
-            SpawnResourceFxForCell(pos, go);
+            if (spawnResourceFX)
+                SpawnResourceFxForCell(pos, go);
         }
 
         if (!_gameData.PlacedCellsCount.TryAdd(cellInfo.CellType, 1)) {
@@ -437,7 +460,7 @@ public class TutorialFieldManager : FieldManager
     }
 
     private void SaveWinGame() {
-        MainManager.Instance.IncreaseMaxLevel();
+     //   MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }
 }

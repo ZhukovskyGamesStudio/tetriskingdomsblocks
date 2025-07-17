@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
-  m_Name: WheatCellInfo
+  m_Name: TutorialWoodCellInfo 1
   m_EditorClassIdentifier: 
-  CellType: 3
-  CellForm: {fileID: 0}
-  MarkCellColor: {r: 0.9529412, g: 0.77254903, b: 0.2, a: 0}
-  CellName: Wheat
+  CellType: 1
+  CellForm: {fileID: 11400000, guid: 010d6654ac6c69e46bee8b35a87eb304, type: 2}
+  MarkCellColor: {r: 0.26666668, g: 0.5019608, b: 0.12156863, a: 0}
+  CellName: Wood
   ChanceToSpawn: 1
   ResourcesForPlace:
-  - ResourceType: 3
+  - ResourceType: 1
     ResourceCount: 1
   ResourcesForDestroy:
-  - ResourceType: 3
+  - ResourceType: 1
     ResourceCount: 1
   MultiplayerForSameResourceType: 0

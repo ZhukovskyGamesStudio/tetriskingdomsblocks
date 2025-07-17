@@ -16,8 +16,13 @@ public class DragManager : MonoBehaviour {
         return new Vector3(width / 2f, 0, height / 2f) * -1;
     }
 
+    private static FieldManager GetCurrentFieldManager() {
+        if (GameFieldManager.Instance != null) return GameFieldManager.Instance;
+        else if (MetaFieldManager.Instance != null) return MetaFieldManager.Instance;
+        else return TutorialFieldManager.Instance;
+    }
     public static void OnDragPiece(ref Vector2Int currentCoord, ref Vector3 finalPos, PieceData data, Transform markedCellsContainer) {
-        FieldManager cellManager = GameFieldManager.Instance == null ? MetaFieldManager.Instance : GameFieldManager.Instance;
+        FieldManager cellManager = GetCurrentFieldManager();
         var targetMousePos = cellManager.ShiftedDragInputPos();
 
         targetMousePos.y = ConfigsManager.Instance.DragConfig.HeightUnderField;
@@ -33,7 +38,6 @@ public class DragManager : MonoBehaviour {
         markedCellsContainer.gameObject.SetActive(canPlace);
         finalPos = targetMousePos;
     }
-
     public static void ReplaceMaterialInChildren(Transform parent, Material newMaterial) {
         foreach (var meshRenderer in parent.GetComponentsInChildren<MeshRenderer>()) {
             if (meshRenderer.CompareTag("Marked")) {
@@ -77,7 +81,7 @@ public class DragManager : MonoBehaviour {
             return;
         }
 
-        FieldManager cellManager = GameFieldManager.Instance == null ? MetaFieldManager.Instance : GameFieldManager.Instance;
+        FieldManager cellManager = GetCurrentFieldManager();
         markedCellsContainer.gameObject.SetActive(false);
         isDragging = false;
         if (cellManager.CanPlace(data, currentCoord)) {

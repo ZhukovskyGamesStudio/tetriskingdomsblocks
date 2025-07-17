@@ -43,5 +43,8 @@ public class RedactorFieldButton : MonoBehaviour {
         { CellType.GoldMine, Color.yellow },
         { CellType.CrystalMine, Color.magenta },
         { CellType.Slime, Color.green },
+        { CellType.Wood, Color.green },
+        { CellType.Stone, Color.grey },
+        { CellType.LockedMetaCell, Color.blue },
     };
 }

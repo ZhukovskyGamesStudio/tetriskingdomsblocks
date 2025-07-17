@@ -27,8 +27,12 @@ public class FloatingTextView : MonoBehaviour
             Invoke("HideText", showTime);
     }
 
-    public void HideText() => GameFieldManager.Instance.ReleaseFloatingText(this);
-
+    public void HideText() {
+        if (GameFieldManager.Instance != null)
+            GameFieldManager.Instance.ReleaseFloatingText(this);
+        else
+            TutorialFieldManager.Instance.ReleaseFloatingText(this);
+    } 
 
     public void MoveUpText(float showTime, Vector2 finalPosition)
     {

@@ -8,6 +8,7 @@ public class SettingsManager : MonoBehaviour {
     }
 
     public void SetSettings() {
+        Debug.Log(StorageManager.GameDataMain.SettingsData.IsMusicOn);
         BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
 
