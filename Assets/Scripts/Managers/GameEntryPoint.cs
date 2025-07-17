@@ -9,30 +9,51 @@ public class GameEntryPoint : MonoBehaviour {
     [SerializeField]
     private SpawnRandomNature _spawnRandomNature;
 
-    [field: SerializeField]
-    public MainGameConfig _mainGameConfig;
+    [SerializeField]
+    private GameAudio _gameAudio;
 
-    private List<TaskInfoAndUI> _currentTasks = new List<TaskInfoAndUI>();
-    private List<ResourceType> _resourceTypesForTasks = new List<ResourceType>();
+    [SerializeField]
+    private MainGameConfig _mainGameConfig;
+
+    [SerializeField]
+    private UltaManager _ultaManager;
+
+    private GameData _gameData;
 
     private void Start() {
-        _spawnRandomNature.Generate();
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
+        _gameData = new GameData {
+            MovesLeft = levelConfig.MovesCount
+        };
+
         CreateTasksForLevel(levelConfig);
 
-        _gameFieldManager.Init();
+        _gameFieldManager.Init(_mainGameConfig, _gameData);
+
         _gameFieldManager.InitFromLevel(levelConfig);
         _gameFieldManager.SetupGame();
         _gameFieldManager.PlaceStartingField(levelConfig);
-        _gameFieldManager.SetTasks(_currentTasks, _resourceTypesForTasks);
-
+        _gameFieldManager.OnMoveEnded += OnMoveEnded;
+        _gameFieldManager.OnPieceDestroyedByHammer += CheckGameGoal;
+        _ultaManager.Init(_mainGameConfig);
         GameUI.Instance.StartCharacterInfoTextCoroutine(levelConfig.GuideForLevelText);
         GameUI.Instance.SetMovesCount(levelConfig.MovesCount);
         BoostersManager.Instance.SetAllText();
+        BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
+        UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
 
         if (levelConfig.TutorialObject != null) {
             Instantiate(levelConfig.TutorialObject);
         }
+
+        _spawnRandomNature.Generate();
+    }
+
+    private void OnMoveEnded() {
+        _gameData.MovesLeft--;
+        GameUI.Instance.SetMovesCount(_gameData.MovesLeft);
+
+        CheckGameGoal();
     }
 
     private void CreateTasksForLevel(LevelConfig levelConfig) {
@@ -75,9 +96,64 @@ public class GameEntryPoint : MonoBehaviour {
         var taskUI = GameUI.Instance.TaskUIViews[i];
         taskUI.SetData(task);
 
-        _currentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
-        _resourceTypesForTasks.Add(task.NeedResource);
+        _gameData.CurrentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
+        _gameData.ResourceTypesForTasks.Add(task.NeedResource);
 
         //GameUI.Instance.StartCharacterInfoTextCoroutine();
+    }
+
+    private void CheckGameGoal() {
+        TaskUtils.CheckResourceCountForTasks(_gameData);
+
+        if (CheckWin()) {
+            UltaManager.Instance.UltimateActionEndRound(Win);
+            return;
+        }
+
+        if (CheckLose()) {
+            Lose();
+        }
+    }
+
+    private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
+
+    private bool CheckLose() {
+        if (_gameData.MovesLeft <= 0)
+            return true;
+
+        return !_gameFieldManager.CanPlaceAnyPiece();
+    }
+
+    private void Win() {
+        SaveWinGame();
+
+        GameFieldManager.Instance.SetWinState();
+        GameUI.Instance.SetMainText("You win!");
+        GameUI.Instance.SetTasksActive(false);
+        NextPiecesView.Instance.DestroyPieces();
+        NextPiecesView.Instance.DestroyAdditionalPiece();
+        VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
+        GameUI.Instance.GoalView.SetWinState();
+
+        _gameAudio.PlayNextSound(_gameAudio.Win);
+    }
+
+    private void SaveWinGame() {
+        StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+        // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
+        MainManager.Instance.IncreaseMaxLevel();
+        StorageManager.SaveGame();
+    }
+
+    private void Lose() {
+        MainManager.Instance.RemoveHealthAfterLose();
+        GameUI.Instance.SetMainText("You lose:(");
+        GameUI.Instance.SetTasksActive(false);
+        VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
+        GameUI.Instance.ShowLoseDialog();
+        GameUI.Instance.GoalView.SetLoseState(_gameData.MovesLeft <= 0);
+        UltaManager.Instance.HideUltimateUI();
+        GameFieldManager.Instance.SetLoseState();
     }
 }

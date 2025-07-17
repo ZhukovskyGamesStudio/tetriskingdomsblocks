@@ -160,7 +160,7 @@ public class FieldManager : MonoBehaviour {
                 _field[place.x, place.y] = pieceData.Type.CellType;
                 _cells[place.x, place.y] = go;
 
-                SpawnResourceFx(place, go);
+                SpawnResourceFxForCell(place, go);
                 cellsAmount++;
 
                 if (UltaManager.Instance != null) {
@@ -265,7 +265,7 @@ public class FieldManager : MonoBehaviour {
         SpawnSmokeParticle(piece.transform.position).Forget();
     }
 
-    protected virtual void SpawnResourceFx(Vector2Int place, CellView go) { }
+    protected virtual void SpawnResourceFxForCell(Vector2Int place, CellView go) { }
 
     protected void ShakeCamera(float percent) {
         percent = Mathf.LerpUnclamped(0.3f, 1f, percent);

@@ -40,6 +40,9 @@ public class GameUI : MonoBehaviour {
     [SerializeField]
     private SpawnedForOneCharTextView _characterInfoTextHelper;
 
+    [field: SerializeField]
+    public GoalView GoalView { get; private set; }
+
     private ObjectPool<FloatingTextView> _floatingTextsPool;
 
     private void Awake() {
@@ -47,14 +50,17 @@ public class GameUI : MonoBehaviour {
         _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
     }
 
+    public void Init(GameData gameData) {
+        _gameData = gameData;
+    }
+
+    private GameData _gameData;
+
     public Transform HolesForBgContainer => _holesForBgContainer;
     public Transform BlackBgContainer => _blackBgContainer;
     public RectTransform BgTasksImage => _bgTasksImage;
     public Transform OpenedDoorEndGame => _openedDoorEndGame;
     public TaskUIView[] TaskUIViews => _taskUIViews;
-    public Transform DownUITransform => _downUITransform;
-    public SpawnedForOneCharTextView CharacterInfoTextHelper => _characterInfoTextHelper;
-    public Transform FloatingTextContainer => _floatingTextContainer;
 
     public void SetMovesCount(int count) {
         _currentMovesCountText.text = count.ToString();
@@ -104,6 +110,57 @@ public class GameUI : MonoBehaviour {
 
     public void ShowSettings() {
         SettingsManager.Instance.ShowSettingsDialog();
+    }
+
+    public void ShowOutOfMovesDialog() {
+        var outOfMovesData = new DialogWithData {
+            DialogType = typeof(OutOfMovesDialog),
+            Data = new OutOfMovesDialog.Data {
+                ClickAdd = AddMoves,
+                ClickClose = ShowLoseDialog,
+                ClickBalance = () => print("balance opened"),
+                Balance = StorageManager.GameDataMain.GoldAmount,
+                Cost = 900
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
+    }
+
+    private void TryBuyMoves() {
+        if (StorageManager.GameDataMain.GoldAmount < 900) {
+            return;
+        }
+
+        StorageManager.GameDataMain.GoldAmount -= 900;
+        AddMoves();
+    }
+
+    private void AddMoves() {
+        _gameData.MovesLeft += 5;
+    }
+
+    public void ShowLoseDialog() {
+        var loseData = new DialogWithData {
+            DialogType = typeof(LoseDialog),
+            Data = new LoseDialog.Data {
+                ClickContinue = MainManager.Instance.GoToMeta,
+                Hp = StorageManager.GameDataMain.HealthCount
+            }
+        };
+
+        DialogsManager.Instance.ShowDialogWithData(loseData);
+    }
+
+    public void ShowWinDialog() {
+        var winData = new DialogWithData() {
+            DialogType = typeof(WinDialog),
+            Data = new WinDialog.Data() {
+                ClickClaim = MainManager.Instance.GoToMeta,
+                Coins = MainManager.Instance.CurrentLevelConfig.GoldAmount,
+                Cubes = MainManager.Instance.CurrentLevelConfig.MagicCubesCount
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(winData);
     }
 
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости

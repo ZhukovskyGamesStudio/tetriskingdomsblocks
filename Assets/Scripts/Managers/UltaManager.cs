@@ -44,12 +44,16 @@ public class UltaManager : MonoBehaviour {
     [SerializeField]
     private bool _isRandomPos;
 
+    public Action OnUltimateEndedWorking;
+    private MainGameConfig _mainGameConfig;
+
     private void Awake() {
         Instance = this;
     }
 
-    private void Start() {
-        _ultimateProgressBar.maxValue = GameFieldManager.Instance.MainGameConfig.NeededUltimatePoints;
+    public void Init(MainGameConfig mainGameConfig) {
+        _mainGameConfig = mainGameConfig;
+        _ultimateProgressBar.maxValue = _mainGameConfig.NeededUltimatePoints;
         _ultimateButton.onClick.AddListener(UltimateAction);
     }
 
@@ -61,7 +65,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     public void AddUltimatePoints(int points) {
-        if (_ultimateIsActive || GoalView.Instance._isGameEnded) return;
+        if (_ultimateIsActive || GameUI.Instance.GoalView._isGameEnded) return;
         _currentPoints += points;
         //_ultimateProgressBar.value += points;
 
@@ -72,7 +76,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private void ActivateButton() {
-        if (GoalView.Instance._isGameEnded) return;
+        if (GameUI.Instance.GoalView._isGameEnded) return;
         _ultimateButton.enabled = true;
         _ultimateButton.gameObject.SetActive(true);
         _ultimateProgressBar.gameObject.SetActive(false);
@@ -86,7 +90,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private async void UltimateAction() {
-        if (GoalView.Instance._isGameEnded) {
+        if (GameUI.Instance.GoalView._isGameEnded) {
             return;
         }
 
@@ -98,8 +102,7 @@ public class UltaManager : MonoBehaviour {
         _starsParticles.gameObject.SetActive(true);
         _starsParticles.Play();
 
-        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field,
-            GameFieldManager.Instance.MainGameConfig.MaxUltimateCells);
+        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field, _mainGameConfig.MaxUltimateCells);
         var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
@@ -110,15 +113,11 @@ public class UltaManager : MonoBehaviour {
         _starsParticles.Stop();
         _starsParticles.gameObject.SetActive(false);
         await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
-
-        if (!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose()) {
-            GameFieldManager.Instance.Lose();
-        }
-
         _ultimateIsActive = false;
+        OnUltimateEndedWorking?.Invoke();
     }
 
-    public async void UltimateActionEndRound() {
+    public async void UltimateActionEndRound(Action onUltimateEnded) {
         HideUltimateUI();
         _ultimateIsActive = true;
 
@@ -129,11 +128,8 @@ public class UltaManager : MonoBehaviour {
         }
 
         await UniTask.Delay(TimeSpan.FromSeconds(1f));
-
-        GameFieldManager.Instance.ExplodeCellsInRows();
-
-        GameFieldManager.Instance.Win();
         _ultimateIsActive = false;
+        onUltimateEnded?.Invoke();
     }
 
     private async UniTask SpawnNewCellFromUltimate(Vector2Int placedCellPosition, bool isEndRoundUltimate = false) {

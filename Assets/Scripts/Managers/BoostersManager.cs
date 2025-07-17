@@ -38,6 +38,7 @@ public class BoostersManager : MonoBehaviour
     private Vector2 _lastInputPosition;
     
     public static BoostersManager Instance;
+    public Action OnBoosterEndedWorking;
 
     public enum RotateBoosterStates
     {
@@ -184,7 +185,7 @@ public class BoostersManager : MonoBehaviour
     public void UseRotatePiece()
     {
        // Debug.Log((StorageManager.GameDataMain.RotatePieceCount <= 0) + " "+GoalView.Instance._isGameEnded);
-        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GoalView.Instance._isGameEnded) return;
+        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
         if (RotationState == RotateBoosterStates.LockRotate)
         {
             Debug.Log("select");
@@ -217,7 +218,7 @@ public class BoostersManager : MonoBehaviour
     }
     public void UseRandomField()
     {
-        if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GoalView.Instance._isGameEnded) return;
+        if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
 
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
         int cellsCount = 0;
@@ -269,14 +270,12 @@ public class BoostersManager : MonoBehaviour
 
         GameFieldManager.Instance.ExplodeCellsInRows();
 
-        CheckGameGoal();
-
-        GameFieldManager.Instance.CheckResourceCountForTasks();
+        OnBoosterEndedWorking?.Invoke();
     }
 
     public void UseDynamite()
     {
-        if(_currentDynamite != null || StorageManager.GameDataMain.DynamyteCount <= 0 || GoalView.Instance._isGameEnded) return;
+        if(_currentDynamite != null || StorageManager.GameDataMain.DynamyteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
         var dinamiteCellInfo = PieceUtils.GetNewPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
@@ -292,39 +291,29 @@ public class BoostersManager : MonoBehaviour
     {
         int dinamyteRadius = ConfigsManager.Instance.BoostersConfig.DynamiteRadius;
 
-        for (int i = 0; i < dinamyteRadius * 2 + 1; i++)
-        {
-            for (int j = 0; j < dinamyteRadius * 2 + 1; j++)
-            {
+        for (int i = 0; i < dinamyteRadius * 2 + 1; i++) {
+            for (int j = 0; j < dinamyteRadius * 2 + 1; j++) {
                 var newPosition = new Vector2Int(position.x - dinamyteRadius + i, position.y - dinamyteRadius + j);
-                if (FieldUtils.IsInsideField(GameFieldManager.Instance._field, newPosition)
-                    && !FieldUtils.CantDestroyInRow(GameFieldManager.Instance._field[newPosition.x, newPosition.y]))
-                {
-                    var configSlime = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c =>
-                        c.CellType == GameFieldManager.Instance._field[newPosition.x, newPosition.y]);
-                    for (int k = 0; k < GameFieldManager.Instance._currentTasks.Count; k++)
-                    {
-                        if (GameFieldManager.Instance._currentTasks[k].TaskInfo.TaskType ==
-                            TaskInfo.TaskType.getResource)
-                        {
-                            GameFieldManager.Instance.CheckNeedResourceInTask(k, configSlime, newPosition);
-                        }
-                    }
-
-                    GameFieldManager.Instance.DestroyCell(newPosition);
+                if (!FieldUtils.IsInsideField(GameFieldManager.Instance._field, newPosition) ||
+                    FieldUtils.CantDestroyInRow(GameFieldManager.Instance._field[newPosition.x, newPosition.y])) {
+                    continue;
                 }
+                var cellType = GameFieldManager.Instance._field[newPosition.x, newPosition.y];
+                var cellConfig = PiecesViewTable.Instance.CellsList.CellsConfigs.First(c => c.CellType == cellType);
+                GameFieldManager.Instance.TryAddResourceForCell( cellConfig, newPosition);
+
+                GameFieldManager.Instance.DestroyCell(newPosition);
             }
         }
         VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
         Instantiate(_dynamiteBoomFx, _currentDynamite.transform.position, Quaternion.identity);
         Destroy(_currentDynamite.gameObject);
         _currentDynamite = null;
-        GameFieldManager.Instance.CheckResourceCountForTasks();
         StorageManager.GameDataMain.DynamyteCount--;
         _dinamyteCountText.text =  StorageManager.GameDataMain.DynamyteCount.ToString();
         _dinamyteButton.enabled = true;
         _dinamyteButton.gameObject.SetActive(true);
-        CheckGameGoal();
+        OnBoosterEndedWorking?.Invoke();
     }
 
     public void AnimateDynamite(Vector2Int position)
@@ -344,12 +333,7 @@ public class BoostersManager : MonoBehaviour
         );
 
     }
-
-    private void CheckGameGoal()
-    {
-        if (!GameFieldManager.Instance.CheckWin() && GameFieldManager.Instance.CheckLose())
-            GameFieldManager.Instance.Lose();
-    }
+    
 
     public void SetAllText()
     {

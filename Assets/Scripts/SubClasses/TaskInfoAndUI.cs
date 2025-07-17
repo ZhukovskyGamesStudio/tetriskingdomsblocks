@@ -27,4 +27,6 @@ public class TaskInfoSubClass
         NeedResource = needResource;
         Count = count;
     }
+    
+    public bool IsResourceNeeded(ResourceType resourceType) => TaskType == TaskInfo.TaskType.getResource && (NeedResource == ResourceType.None || NeedResource == resourceType);
 }

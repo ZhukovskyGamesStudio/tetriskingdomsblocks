@@ -3,16 +3,17 @@ using System.Collections.Generic;
 
 [Serializable]
 public class GameData {
+    public int MovesLeft;
 
-    public TaskData TaskData = new TaskData();
-    
     //TODO import serializableDictionary
     public Dictionary<ResourceType, int> CollectedResources = new Dictionary<ResourceType, int>();
-}
-[Serializable]
 
-public class TaskData {
-    public Dictionary<ResourceType, int> GoalToCollect = new Dictionary<ResourceType, int>();
+    public List<TaskInfoAndUI> CurrentTasks = new List<TaskInfoAndUI>();
+    public List<ResourceType> ResourceTypesForTasks = new List<ResourceType>();
+
+    //Game stats
+    public Dictionary<CellType, int> PlacedCellsCount = new Dictionary<CellType, int>();
+    public Dictionary<ResourceType, int> MonoLinesCount = new Dictionary<ResourceType, int>();
 }
 
 [Serializable]

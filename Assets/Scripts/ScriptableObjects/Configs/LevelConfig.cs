@@ -13,15 +13,20 @@ public class LevelConfig : ScriptableObject {
 
     [field: SerializeField]
     public CellsAndResourceTypesTableConfig CellTypesTableConfig { get; private set; }
+
+    [field: SerializeField]
+    public int GoldAmount { get; private set; } = 100;
+
     [field: SerializeField]
     public int MagicCubesCount { get; private set; }
-      [field: SerializeField]
-        public Transform TutorialObject { get; private set; }
-        
-        [field: SerializeField]
-        public StartFieldConfig StartFieldConfig { get; private set; }
 
-        [field: SerializeField]
-        
-        public int MovesCount{ get; private set; }
+    [field: SerializeField]
+    public Transform TutorialObject { get; private set; }
+
+    [field: SerializeField]
+    public StartFieldConfig StartFieldConfig { get; private set; }
+
+    [field: SerializeField]
+
+    public int MovesCount { get; private set; }
 }

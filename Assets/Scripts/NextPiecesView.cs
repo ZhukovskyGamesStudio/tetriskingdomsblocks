@@ -114,9 +114,9 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     }
 
     public void DestroyAdditionalPiece() {
-        if (GameFieldManager.Instance._additionalPiecePrefab != null) {
-            DestroyCellsAnimation(GameFieldManager.Instance._additionalPieceContainer);
-            if (GameFieldManager.Instance._additionalPieceContainer.childCount != 0) {
+        if (GameFieldManager.Instance.AdditionalPiecePrefab != null) {
+            DestroyCellsAnimation(GameFieldManager.Instance.AdditionalPieceContainer);
+            if (GameFieldManager.Instance.AdditionalPieceContainer.childCount != 0) {
                 _spawnParticles[_piecesContainers.Count].gameObject.SetActive(true);
                 _spawnParticles[_piecesContainers.Count].Play();
             }
