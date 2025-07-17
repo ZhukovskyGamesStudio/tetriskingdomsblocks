@@ -11,15 +11,37 @@ public class SettingsManager : MonoBehaviour {
         BackgroundMusicManager.Instance.ChangeIsPlayingMusic(StorageManager.GameDataMain.SettingsData.IsMusicOn);
     }
 
-    public void ShowSettingsDialog() {
-        var passingData = new DialogWithData() {
-            DialogType = typeof(SettingsDialog),
-            Data = new SettingsDialog.Data() {
-                data = StorageManager.GameDataMain.SettingsData,
-                changeMusic = ChangeToggleMusic,
-                changeSound = ChangeToggleSound,
-                changeVibration = ChangeToggleVibration,
-                goToMeta = AskGoToMeta
+    public void ShowGameSettingsDialog() {
+        var passingData = new DialogWithData {
+            DialogType = typeof(GameSettingsDialog),
+            Data = new GameSettingsDialog.Data {
+                ChangeMusic = ChangeToggleMusic,
+                ChangeSound = ChangeToggleSound,
+                ChangeVibration = ChangeToggleVibration,
+                GoToMeta = AskGoToMeta,
+                IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
+                IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
+                IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn
+            }
+        };
+
+        DialogsManager.Instance.ShowDialogWithData(passingData);
+    }
+
+    public void ShowMetaSettingsDialog() {
+        var passingData = new DialogWithData {
+            DialogType = typeof(MetaSettingsDialog),
+            Data = new MetaSettingsDialog.Data {
+                ChangeMusic = ChangeToggleMusic,
+                ChangeSound = ChangeToggleSound,
+                ChangeVibration = ChangeToggleVibration,
+                ChangeNotifications = (bool isOn) => print("notifications: " + isOn),
+                IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
+                IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
+                IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn,
+                IsNotificationsOn = true,
+                ClickSupport = () => print("support clicked"), // TODO: убрать заглушки
+                ClickTerms = () => print("terms clicked")
             }
         };
 
@@ -37,8 +59,6 @@ public class SettingsManager : MonoBehaviour {
         StorageManager.GameDataMain.SettingsData.IsSoundOn = isOn;
         Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
-
-    public void OpenSettings() => ShowSettingsDialog();
 
     private void AskGoToMeta() {
         DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {

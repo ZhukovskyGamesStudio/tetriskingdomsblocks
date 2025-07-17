@@ -110,7 +110,7 @@ public class GameUI : MonoBehaviour {
     }
 
     public void ShowSettings() {
-        SettingsManager.Instance.ShowSettingsDialog();
+        SettingsManager.Instance.ShowGameSettingsDialog();
     }
 
     public void ShowOutOfMovesDialog(Action tryBuyMoves, Action rejectMoves) {
