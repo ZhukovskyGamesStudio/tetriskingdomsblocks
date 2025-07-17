@@ -6,46 +6,42 @@ using UnityEngine;
 [Serializable]
 public class GameDataForSave {
     public int CurMaxLevel;
-
-    /*public int WoodAmount;
-    public int RocksAmount;
-    public int FoodAmount;
-    public int MetalAmount;*/
-    public int[] resourcesCount;
+    public int[] ResourcesCount;
     public List<int> RemainedLockedZones;
     public int GoldAmount;
     public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
-    public FormPositionsData[] FigureFormsData;
+    public int HealthCount;
+    
+    public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
+    public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};
+    public MetaFieldData[] FieldRows;
+    
+    
     public string LastHealthRecoveryTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
     public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
-
-    public int HealthCount;
-    public FormAndCellTypeData[] InventoryFigures = new FormAndCellTypeData[]{};
 
     public string LastExitTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
     public DateTime LastExitTimeDateTime => DateTime.Parse(LastExitTime, CultureInfo.InvariantCulture);
 
     public string LastGetPieceTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
     public DateTime LastGetPieceTimeDateTime => DateTime.Parse(LastGetPieceTime, CultureInfo.InvariantCulture);
+    
 
-    public MetaFieldData[] FieldRows;
-
-    public int DynamyteCount;
+    public int DynamiteCount;
     public int RandomFieldCount;
     public int RotatePieceCount;
     public int HummerCount;
-
     public int MetaHummerCount;
     
     public SettingsData SettingsData;
 
     public GameDataForSave() {
         HealthCount = 3;
-        resourcesCount = new int[4];
-        resourcesCount[0] = 3000;
-        resourcesCount[1] = 3000;
-        resourcesCount[2] = 3000;
+        ResourcesCount = new int[4];
+        ResourcesCount[0] = 3000;
+        ResourcesCount[1] = 3000;
+        ResourcesCount[2] = 3000;
         SettingsData = new SettingsData {
             IsSoundOn = true,
             IsMusicOn = true,

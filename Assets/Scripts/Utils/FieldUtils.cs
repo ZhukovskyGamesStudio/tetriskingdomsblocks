@@ -28,11 +28,10 @@ public static class FieldUtils {
     };
     
     private static readonly List<CellType> ResourcesCells = new List<CellType>() {
-        CellType.Forest,
-        CellType.FieldOfWheat,
-        CellType.Mountain,
-        CellType.Metal,
-        CellType.Village
+        CellType.Wood,
+        CellType.Stone,
+        CellType.Wheat,
+        CellType.Metal
     };
     
     private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {

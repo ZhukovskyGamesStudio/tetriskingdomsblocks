@@ -46,6 +46,29 @@ public static class PieceUtils {
         return GetNewPiece(cellsToSpawn, chancesToSpawn, guaranteed);
     }
 
+    public static PieceData GetExactPiece(CellTypeInfo info) {
+        string formName = info.CellForm == null ? GetRandomFigure() : info.CellForm.FormName;
+        bool[,] cells = TetrisPieces.PieceShapesTable[formName];
+        Guid[,] cellGuids = new Guid[cells.GetLength(0), cells.GetLength(1)];
+        for (int x = 0; x < cells.GetLength(0); x++) {
+            for (int y = 0; y < cells.GetLength(1); y++) {
+                if (cells[x, y]) {
+                    cellGuids[x, y] = Guid.NewGuid();
+                } else {
+                    cellGuids[x, y] = Guid.Empty;
+                }
+            }
+        }
+
+        var data = new PieceData() {
+            Type = info,
+            Cells = cells,
+            CellGuids = cellGuids,
+            FormName = formName
+        };
+        return data;
+    }
+
     private static PieceData GetNewPiece(List<CellType> cellsToSpawn, float[] chancesToSpawn, CellTypeInfo guaranteed) {
         CellTypeInfo cellInfo = null;
 
@@ -61,26 +84,7 @@ public static class PieceUtils {
             }
         }
 
-        string formName = cellInfo.CellForm == null ? GetRandomFigure() : cellInfo.CellForm.FormName;
-        bool[,] cells = TetrisPieces.PieceShapesTable[formName];
-        Guid[,] cellGuids = new Guid[cells.GetLength(0), cells.GetLength(1)];
-        for (int x = 0; x < cells.GetLength(0); x++) {
-            for (int y = 0; y < cells.GetLength(1); y++) {
-                if (cells[x, y]) {
-                    cellGuids[x, y] = Guid.NewGuid();
-                } else {
-                    cellGuids[x, y] = Guid.Empty;
-                }
-            }
-        }
-
-        var data = new PieceData() {
-            Type = cellInfo,
-            Cells = cells,
-            CellGuids = cellGuids,
-            FormName = formName
-        };
-        return data;
+        return GetExactPiece(cellInfo);
     }
 
     private static string GetRandomFigure() {

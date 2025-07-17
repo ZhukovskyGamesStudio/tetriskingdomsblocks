@@ -30,7 +30,7 @@ public class AdminManager : MonoBehaviour {
 
     public void AddResources() {
         for (int i = 0; i < 3; i++) {
-            StorageManager.GameDataMain.resourcesCount[i] += 1000;
+            StorageManager.GameDataMain.ResourcesCount[i] += 1000;
         }
 
         StorageManager.GameDataMain.MagicCubesAmount += 20;
@@ -52,7 +52,7 @@ public class AdminManager : MonoBehaviour {
         StorageManager.GameDataMain.RandomFieldCount+=5;
         StorageManager.GameDataMain.HummerCount+=5;
         StorageManager.GameDataMain.RotatePieceCount+=5;
-        StorageManager.GameDataMain.DynamyteCount+=5;
+        StorageManager.GameDataMain.DynamiteCount+=5;
         
         StorageManager.GameDataMain.MetaHummerCount+=5;
         

@@ -218,11 +218,11 @@ public class MetaFieldManager : FieldManager {
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
 
-        if (StorageManager.GameDataMain.resourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) return;
+        if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) return;
 
-        StorageManager.GameDataMain.resourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
+        StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
         MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
-            StorageManager.GameDataMain.resourcesCount[(int)cellConfig.AfkResourceType - 1]);
+            StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
         foreach (var cell in cellsToUpgrade) {
             _field[cell.x, cell.y] = cellConfig.UpgradeCellType;
             //_cells[cell.x, cell.y].Upgrade(); upgrade animation and after end animation change cell view to new
@@ -419,20 +419,20 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void BuyPiece() {
-        if (StorageManager.GameDataMain.resourcesCount[0] >= 100 && StorageManager.GameDataMain.resourcesCount[1] >= 100 &&
-            StorageManager.GameDataMain.resourcesCount[2] >= 100) {
+        if (StorageManager.GameDataMain.ResourcesCount[0] >= 100 && StorageManager.GameDataMain.ResourcesCount[1] >= 100 &&
+            StorageManager.GameDataMain.ResourcesCount[2] >= 100) {
             // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
-            StorageManager.GameDataMain.resourcesCount[0] -= 100;
-            StorageManager.GameDataMain.resourcesCount[1] -= 100;
-            StorageManager.GameDataMain.resourcesCount[2] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[0] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[1] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[2] -= 100;
             UpdateResourcesCountUIText();
             GenerateNewPieces(); // for test
         }
     }
 
     public void UpdateResourcesCountUIText() {
-        for (int i = 0; i < StorageManager.GameDataMain.resourcesCount.Length; i++)
-            MetaUI.Instance.CountersPanelView.SetResourceCount(i, StorageManager.GameDataMain.resourcesCount[i]);
+        for (int i = 0; i < StorageManager.GameDataMain.ResourcesCount.Length; i++)
+            MetaUI.Instance.CountersPanelView.SetResourceCount(i, StorageManager.GameDataMain.ResourcesCount[i]);
     }
 
     public void GetPiece() {
@@ -525,7 +525,7 @@ public class MetaFieldManager : FieldManager {
 
     private void SetFigureFormsInfoFromData() {
         _formGroupCellIndex = new int[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
-        if (StorageManager.GameDataMain.FigureFormsData.Length == 0) return;
+        if (StorageManager.GameDataMain.FigureFormsData.Count == 0) return;
         int currentIndex = 1;
         foreach (var formCells in StorageManager.GameDataMain.FigureFormsData) {
             List<Vector2Int> cells = new List<Vector2Int>();
@@ -540,13 +540,9 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void SetFigureFormsInfoToData() {
-        FormPositionsData[] forms = new FormPositionsData[_formGroupCellPositions.Count];
-        int index = 0;
-        foreach (var cells in _formGroupCellPositions) {
-            var cellArray = cells.Value.ToArray();
-            forms[index] = new FormPositionsData(cellArray);
-            index++;
-        }
+        List<FormPositionsData> forms = _formGroupCellPositions
+            .Select(cells => cells.Value.ToArray())
+            .Select(cellArray => new FormPositionsData(cellArray)).ToList();
 
         StorageManager.GameDataMain.FigureFormsData = forms;
     }
@@ -565,7 +561,7 @@ public class MetaFieldManager : FieldManager {
         }
 
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-        StorageManager.GameDataMain.resourcesCount[(int)curResource - 1] += (int)(collectedResouces * multiplayerResources);
+        StorageManager.GameDataMain.ResourcesCount[(int)curResource - 1] += (int)(collectedResouces * multiplayerResources);
         UpdateResourcesCountUIText();
     }
 
@@ -873,11 +869,11 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void SaveInventory() {
-       StorageManager.GameDataMain.InventoryFigures = new FormAndCellTypeData[_currentPiecesInInventory.Count];
+       StorageManager.GameDataMain.InventoryFigures = new List<FormAndCellTypeData>();
 
         for (int i = 0; i < _currentPiecesInInventory.Count; i++) {
             var pieceData = _currentPiecesInInventory[i].Data;
-            StorageManager.GameDataMain.InventoryFigures[i] = new FormAndCellTypeData(pieceData.FormName, pieceData.Type.CellType);
+            StorageManager.GameDataMain.InventoryFigures.Add(new FormAndCellTypeData(pieceData.FormName, pieceData.Type.CellType));
         }
 
         StorageManager.SaveGame();

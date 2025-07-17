@@ -273,11 +273,11 @@ public class BoostersManager : MonoBehaviour
 
     public void UseDynamite()
     {
-        if(_currentDynamite != null || StorageManager.GameDataMain.DynamyteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
+        if(_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
-        var dinamiteCellInfo = PieceUtils.GetNewCorePiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
-        NextPiecesView.Instance.CreateDynamitePieceView(dinamiteCellInfo);
+        PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
+        NextPiecesView.Instance.CreateDynamitePieceView(dynamiteCellInfo);
     }
 
     public void SetCurrentDynamite(Transform pieceView)
@@ -307,8 +307,8 @@ public class BoostersManager : MonoBehaviour
         Instantiate(_dynamiteBoomFx, _currentDynamite.transform.position, Quaternion.identity);
         Destroy(_currentDynamite.gameObject);
         _currentDynamite = null;
-        StorageManager.GameDataMain.DynamyteCount--;
-        _dinamyteCountText.text =  StorageManager.GameDataMain.DynamyteCount.ToString();
+        StorageManager.GameDataMain.DynamiteCount--;
+        _dinamyteCountText.text =  StorageManager.GameDataMain.DynamiteCount.ToString();
         _dinamyteButton.enabled = true;
         _dinamyteButton.gameObject.SetActive(true);
         OnBoosterEndedWorking?.Invoke();
@@ -335,7 +335,7 @@ public class BoostersManager : MonoBehaviour
     public void SetAllText()
     {
         _randomFieldCountText.text =  StorageManager.GameDataMain.RandomFieldCount.ToString();
-        _dinamyteCountText.text =  StorageManager.GameDataMain.DynamyteCount.ToString();
+        _dinamyteCountText.text =  StorageManager.GameDataMain.DynamiteCount.ToString();
         _hummerCountText.text =  StorageManager.GameDataMain.HummerCount.ToString();
         _rotatePieceCountText.text =  StorageManager.GameDataMain.RotatePieceCount.ToString();
     }

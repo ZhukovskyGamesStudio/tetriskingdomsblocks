@@ -586,8 +586,7 @@ public class GameFieldManager : FieldManager {
         List<GameObject> cells = new List<GameObject>();
         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-        //go.SetSeed(pieceData.CellGuids[x, y]);
-
+        go.SetSeed(Guid.NewGuid());
         go.transform.localPosition = new Vector3(pos.x, -0.2f, pos.y);
         poses.Add(new Vector3(pos.x, -0.2f, pos.y));
         if (setNewInfo) {
@@ -602,17 +601,12 @@ public class GameFieldManager : FieldManager {
 
         cells.Add(go.gameObject);
 
-        //go.GetComponent<CellView>().PlaceCellOnField();
-
-        //SpawnSmokeParticle(go.transform.position).Forget();
-
-        // tmpContainer.transform.localPosition = GetAveragePosition(poses);
+       
         foreach (var cell in cells) {
             cell.transform.SetParent(tmpContainer.transform);
         }
 
         return go;
-        // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
