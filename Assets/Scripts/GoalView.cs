@@ -15,17 +15,9 @@ public class GoalView : MonoBehaviour {
         _isGameEnded = true;
     }
 
-    public void SetLoseState(bool outOfMoves) {
+    public void SetLoseState() {
         if (_isGameEnded) {
             return;
-        }
-
-        StorageManager.GameDataMain.HealthCount--;
-
-        if (outOfMoves) {
-            GameUI.Instance.ShowOutOfMovesDialog();
-        } else {
-            GameUI.Instance.ShowLoseDialog();
         }
 
         _isGameEnded = true;
