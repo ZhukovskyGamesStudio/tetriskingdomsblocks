@@ -3188,7 +3188,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &702973136
 Transform:
@@ -3225,7 +3225,7 @@ MonoBehaviour:
   _dinamyteButton: {fileID: 1017819453}
   _hummerButton: {fileID: 402762524}
   _rotatePieceButton: {fileID: 955152528}
-  <_dynamiteContainer>k__BackingField: {fileID: 1017819456}
+  <_dynamiteContainer>k__BackingField: {fileID: 1921715628}
   RotationState: 0
   _rotatePieceCancelButton: {fileID: 1472261489}
   _rotatePieceAcceptButton: {fileID: 1751951772}
@@ -4093,11 +4093,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &1017819456 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1364820824026021522, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
-  m_PrefabInstance: {fileID: 3129333976229727279}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1054968185
 GameObject:
   m_ObjectHideFlags: 0
@@ -6972,6 +6967,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1901205850}
   m_CullTransparentMesh: 1
+--- !u!4 &1921715628 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2235423857893987825, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+  m_PrefabInstance: {fileID: 3129333976229727279}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1958099812
 GameObject:
   m_ObjectHideFlags: 0
@@ -8279,7 +8279,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133942824}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d88b2db005784d91a05e82c2d96bfbd7, type: 3}
   m_Name: 
@@ -8533,6 +8533,34 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 702973137}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 702973137}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: BoostersManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320539742810447456, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3629807925070910403, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.4399903
@@ -8577,6 +8605,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 4823088166687543268, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4823088166687543268, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
       propertyPath: _gameAudio
       value: 

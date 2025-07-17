@@ -284,6 +284,7 @@ public class BoostersManager : MonoBehaviour
     public void SetCurrentDynamite(Transform pieceView)
     {
         _currentDynamite = pieceView;
+        Debug.Log("_currentDynamite"+pieceView.position);
     }
 
     private void ExplodeDynamite(Vector2Int position)

@@ -13,6 +13,7 @@ public class InventoryCellView : MonoBehaviour, IPointerDownHandler
     }
     
     public void OnPointerDown(PointerEventData eventData) {
+        Debug.Log("OnPointerDown");
         NextPiecesView.Instance.CreatePieceInMeta(this);
     }
 

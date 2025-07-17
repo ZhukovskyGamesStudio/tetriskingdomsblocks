@@ -74,6 +74,7 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         _cts = new CancellationTokenSource();
         PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { nextPiece }, _cts.Token,
             new List<Transform>() { BoostersManager.Instance._dynamiteContainer });
+        Debug.Log(pieceView + " "+BoostersManager.Instance._dynamiteContainer.position);
         BoostersManager.Instance.SetCurrentDynamite(pieceView.transform.GetChild(0));
     }
 
