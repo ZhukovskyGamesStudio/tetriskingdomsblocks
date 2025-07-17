@@ -51,4 +51,8 @@ public class MetaUI : MonoBehaviour {
         _buildCamera.SetActive(false);
         MetaWorldCanvasView.Instance.gameObject.SetActive(true);
     }
+
+    public void OpenSettings() {
+        SettingsManager.Instance.ShowMetaSettingsDialog();
+    }
 }

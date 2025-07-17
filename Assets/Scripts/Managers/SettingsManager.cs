@@ -28,6 +28,26 @@ public class SettingsManager : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(passingData);
     }
 
+    public void ShowMetaSettingsDialog() {
+        var passingData = new DialogWithData {
+            DialogType = typeof(MetaSettingsDialog),
+            Data = new MetaSettingsDialog.Data {
+                ChangeMusic = ChangeToggleMusic,
+                ChangeSound = ChangeToggleSound,
+                ChangeVibration = ChangeToggleVibration,
+                ChangeNotifications = (bool isOn) => print("notifications: " + isOn),
+                IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
+                IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
+                IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn,
+                IsNotificationsOn = true,
+                ClickSupport = () => print("support clicked"), // TODO: убрать заглушки
+                ClickTerms = () => print("terms clicked")
+            }
+        };
+
+        DialogsManager.Instance.ShowDialogWithData(passingData);
+    }
+
     public void ChangeToggleVibration(bool isOn) => StorageManager.GameDataMain.SettingsData.IsVibrationOn = isOn;
 
     public void ChangeToggleMusic(bool isOn) {
@@ -39,8 +59,6 @@ public class SettingsManager : MonoBehaviour {
         StorageManager.GameDataMain.SettingsData.IsSoundOn = isOn;
         Debug.Log(StorageManager.GameDataMain.SettingsData.IsSoundOn);
     }
-
-    public void OpenSettings() => ShowGameSettingsDialog();
 
     private void AskGoToMeta() {
         DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {
