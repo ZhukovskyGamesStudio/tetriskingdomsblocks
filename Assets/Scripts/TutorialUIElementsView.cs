@@ -11,14 +11,22 @@ public class TutorialUIElementsView : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameFieldManager.Instance.OnCellPlaced += DestroyTutorial;
-        foreach (var hole in _holeImages) {
-            hole.SetParent( GameUI.Instance.HolesForBgContainer);
-        }
-        _blackBGImage.SetParent(GameUI.Instance.BlackBgContainer);
-        _fingerImage.SetParent(GameUI.Instance.BlackBgContainer);
-        StrechImageToFullSreen();
+       TutorialFieldManager.Instance.OnCellPlaced += DestroyTutorial;
+     //   foreach (var hole in _holeImages) {
+     //       hole.SetParent( GameUI.Instance.HolesForBgContainer);
+      //  }
+      //  _blackBGImage.SetParent(GameUI.Instance.BlackBgContainer);
+      //  _fingerImage.SetParent(GameUI.Instance.BlackBgContainer);
         StartAnimation();
+    }
+
+    public void SetHolesPositions(Vector3 posHoleFirst, Vector3 posHoleSecond) {
+        posHoleFirst = (Vector2)Camera.main.WorldToScreenPoint(posHoleFirst);
+        posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(posHoleSecond);
+        // Присваиваем позицию UI-элементу
+        _holeImages[0].transform.position= posHoleFirst;
+        _fingerImage.transform.position = _holeImages[0].transform.position;
+        _holeImages[1].transform.position = posHoleSecond;
     }
 
     public void StartAnimation()
@@ -43,7 +51,7 @@ public class TutorialUIElementsView : MonoBehaviour
     
     void StrechImageToFullSreen()
     {
-        RectTransform rectTransform = _blackBGImage;
+       /* RectTransform rectTransform = _blackBGImage;
         
         rectTransform.anchorMin = Vector2.zero; // (0, 0)
         rectTransform.anchorMax = Vector2.one;   // (1, 1)
@@ -55,10 +63,10 @@ public class TutorialUIElementsView : MonoBehaviour
         _holeImages[0].anchoredPosition = new Vector3(-50, -1195, 0);
         _fingerImage.position = _holeImages[0].position;
         _holeImages[0].localScale = Vector3.one;
-        _holeImages[1].localScale = Vector3.one;
+        _holeImages[1].localScale = Vector3.one;*/
     }
 
-    private void DestroyTutorial()
+    public void DestroyTutorial()
     {
         _currentTween.Kill();
         foreach (var hole in _holeImages)
@@ -70,6 +78,6 @@ public class TutorialUIElementsView : MonoBehaviour
         Destroy(_fingerImage.gameObject);
         
         Destroy(gameObject);
-        GameFieldManager.Instance.OnCellPlaced -= DestroyTutorial;
+        TutorialFieldManager.Instance.OnCellPlaced -= DestroyTutorial;
     }
 }

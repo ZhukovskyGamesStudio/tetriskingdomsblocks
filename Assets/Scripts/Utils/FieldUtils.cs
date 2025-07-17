@@ -23,7 +23,8 @@ public static class FieldUtils {
         CellType.Ice,
         CellType.Box,
         CellType.Crystal,
-        CellType.Slime
+        CellType.Slime,
+        CellType.LockedMetaCell
     };
     
     private static readonly List<CellType> ResourcesCells = new List<CellType>() {

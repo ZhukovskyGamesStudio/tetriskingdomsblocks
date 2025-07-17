@@ -28,6 +28,23 @@ public static class PieceUtils {
 
         return GetNewCorePiece(guaranteed: null);
     }
+    
+    public static PieceData GetNewTutorialCorePiece(List<CellTypeInfo> guaranteedPieces) {
+        if (guaranteedPieces.Count > 0) {
+            var next = guaranteedPieces[0];
+            guaranteedPieces.RemoveAt(0);
+            return GetNewTutorialCorePiece(next);
+        }
+
+        return GetNewTutorialCorePiece(guaranteed: null);
+    }
+    
+    public static PieceData GetNewTutorialCorePiece(CellTypeInfo guaranteed) {
+        var cellsToSpawn = TutorialFieldManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn = TutorialFieldManager.Instance.CellsChanceToSpawn;
+
+        return GetNewPiece(cellsToSpawn, chancesToSpawn, guaranteed);
+    }
 
     private static PieceData GetNewPiece(List<CellType> cellsToSpawn, float[] chancesToSpawn, CellTypeInfo guaranteed) {
         CellTypeInfo cellInfo = null;

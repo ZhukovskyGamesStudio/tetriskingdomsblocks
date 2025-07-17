@@ -8,8 +8,9 @@ using UnityEngine;
 public class NextPiecesView : MonoBehaviour, IResetable {
     public static NextPiecesView Instance;
 
-    [SerializeField]
-    private List<Transform> _piecesContainers;
+    [field: SerializeField]
+    public List<Transform> _piecesContainers { get; private set; }
+
 
     [SerializeField]
     private float _piecesScale = 0.4f;
