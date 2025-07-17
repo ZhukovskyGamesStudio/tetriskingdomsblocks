@@ -13,7 +13,7 @@ public class UpgradeTileDialog : DialogBase {
     [SerializeField]
     private Transform _costResources, _incomeResourcesBefore, _incomeResourcesAfter;
 
-    private Action _clickUpgrade;
+    private Action _clickUpgrade, _clickClose;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
@@ -22,6 +22,7 @@ public class UpgradeTileDialog : DialogBase {
                                          .Replace("{level}", dialogData.Level.ToString());
         _capacityText.text = _capacityText.text.Replace("{capacity}", dialogData.Capacity.ToString());
         _clickUpgrade = dialogData.ClickUpgrade;
+        _clickClose = dialogData.ClickClose;
         
         foreach (var resource in dialogData.CostResources) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _costResources);
@@ -43,9 +44,13 @@ public class UpgradeTileDialog : DialogBase {
         _clickUpgrade.Invoke();
     }
 
+    public void ClickClose() {
+        _clickClose.Invoke();
+    }
+
     [Serializable]
     public class Data {
-        public Action ClickUpgrade;
+        public Action ClickUpgrade, ClickClose;
         public List<Tuple<ResourceType, int>> CostResources, IncomeResourcesBefore, IncomeResourcesAfter;
         public string TileName;
         public int Level;
