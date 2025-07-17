@@ -116,9 +116,8 @@ public class GameUI : MonoBehaviour {
         var outOfMovesData = new DialogWithData {
             DialogType = typeof(OutOfMovesDialog),
             Data = new OutOfMovesDialog.Data {
-                ClickAdd = AddMoves,
+                ClickAdd = TryBuyMoves,
                 ClickClose = ShowLoseDialog,
-                ClickBalance = () => print("balance opened"),
                 Balance = StorageManager.GameDataMain.GoldAmount,
                 Cost = 900
             }
