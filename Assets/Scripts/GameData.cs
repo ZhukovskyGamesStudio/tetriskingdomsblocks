@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-[Serializable]
 public class GameData {
     public int MovesLeft;
-
-    //TODO import serializableDictionary
+    public bool RejectedBuyMoves;
+    
     public Dictionary<ResourceType, int> CollectedResources = new Dictionary<ResourceType, int>();
 
     public List<TaskInfoAndUI> CurrentTasks = new List<TaskInfoAndUI>();

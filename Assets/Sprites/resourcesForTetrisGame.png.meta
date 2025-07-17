@@ -166,11 +166,24 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: resourcesForTetrisGame_0
+      name: Wood
       rect:
         serializedVersion: 2
         x: 6
@@ -192,7 +205,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: resourcesForTetrisGame_1
+      name: Rocks
       rect:
         serializedVersion: 2
         x: 53
@@ -623,8 +636,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      resourcesForTetrisGame_0: -799560456
-      resourcesForTetrisGame_1: -1856627834
+      Rocks: -1856627834
+      Wood: -799560456
       resourcesForTetrisGame_10: 407219458
       resourcesForTetrisGame_11: -849668922
       resourcesForTetrisGame_12: 1516627191
