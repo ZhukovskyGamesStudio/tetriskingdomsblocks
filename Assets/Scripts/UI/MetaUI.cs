@@ -46,6 +46,18 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private TMP_Text _cellInfoText;
 
+    [SerializeField]
+    private GameObject _ruleState, _buildState;
+
+    [SerializeField]
+    private GameObject _ruleCamera, _buildCamera;
+
+    [SerializeField]
+    private GameObject _worldCanvas;
+
+    public Transform ResourcesMarksContainer => _resourcesMarksContainer;
+    public ResourceMarkView ResourceMarkViewPrefab => resourceMarkViewPrefab;
+
     private void Awake() {
         Instance = this;
     }
@@ -110,6 +122,19 @@ public class MetaUI : MonoBehaviour {
             _destroyPieceText.text = text;
     }
 
-    public Transform ResourcesMarksContainer => _resourcesMarksContainer;
-    public ResourceMarkView ResourceMarkViewPrefab => resourceMarkViewPrefab;
+    public void OpenBuildState() {
+        _buildState.SetActive(true);
+        _ruleState.SetActive(false);
+        _ruleCamera.SetActive(false);
+        _buildCamera.SetActive(true);
+        _worldCanvas.SetActive(false);
+    }
+
+    public void OpenRuleState() {
+        _buildState.SetActive(false);
+        _ruleState.SetActive(true);
+        _ruleCamera.SetActive(true);
+        _buildCamera.SetActive(false);
+        _worldCanvas.SetActive(true);
+    }
 }

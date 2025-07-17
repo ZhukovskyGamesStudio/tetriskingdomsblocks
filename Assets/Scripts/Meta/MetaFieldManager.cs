@@ -2,14 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
-using DG.Tweening;
-using TMPro;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
 
 public class MetaFieldManager : FieldManager {

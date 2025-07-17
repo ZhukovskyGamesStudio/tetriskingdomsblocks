@@ -10,6 +10,7 @@ namespace ScriptableObjects.Configs {
         public float HeightUnderField;
         
         [Header("Drop animation")]
+        public bool IsSquishingOnDrop = false;
         public float MoveBeforeDropAnimationSpeed;
         public AnimationCurve MoveBeforeDropAnimationCurve;
         public float AfterDropPieceAnimationMultiplayer;

@@ -57,16 +57,7 @@ public class FieldManager : MonoBehaviour {
 
     [SerializeField]
     protected LayerMask _pieceMask;
-
-    [Header("Drop Animation Settings")]
-    [SerializeField]
-    private bool _isSquishingOnDrop = false;
-
-    [SerializeField]
-    private float _delayBetweenTileDrop = 0.15f, _delayBetweenDecorDrop = 0.1f, _jumpPercent = 0.125f;
-
-    [SerializeField]
-    private float _dropLength = 0.3f, _jumpLength = 0.1f;
+  
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
@@ -241,7 +232,7 @@ public class FieldManager : MonoBehaviour {
         callbackSeq.AppendCallback(() => dropCallback?.Invoke());
         seq.Join(callbackSeq);
 
-        if (_isSquishingOnDrop) {
+        if (cnfg.IsSquishingOnDrop) {
             seq.Append(piece.DOScaleY(piece.localScale.y * 0.6f, 0.25f))
                 .Join(piece.DOScaleX(piece.localScale.x * 1.1f, 0.25f * animSpeedMultiplayer))
                 .Join(piece.DOScaleZ(piece.localScale.z * 1.1f, 0.25f))
