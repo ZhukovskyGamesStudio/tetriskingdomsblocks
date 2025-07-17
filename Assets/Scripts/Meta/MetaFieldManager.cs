@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
@@ -82,8 +83,11 @@ public class MetaFieldManager : FieldManager {
             if (_currentDraggedPieceButton != null) {
                 _currentDraggedPiece.OnDrop();
                 CloseCellUI();
-            } else if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode && _dragStartPosition == _dragStartPositionForUICheck)
-                TryCastLockCell();
+            } else if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode && _dragStartPosition == _dragStartPositionForUICheck) {
+                if (!EventSystem.current.IsPointerOverGameObject()) {
+                    TryCastLockCell();
+                }
+            }
             else if (Vector3.Distance(_dragStartPosition, _dragStartPositionForUICheck) > 5f && _currentMarkedFieldCell != -Vector2Int.one)
                 CloseCellUI();
 
@@ -153,6 +157,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void TryCastLockCell() {
+        
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
