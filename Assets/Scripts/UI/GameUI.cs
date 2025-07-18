@@ -41,6 +41,9 @@ public class GameUI : MonoBehaviour {
     [SerializeField]
     private SpawnedForOneCharTextView _characterInfoTextHelper;
 
+    [SerializeField]
+    private GameObject _shuffleWindow, _bombWindow, _hammerWindow, _rotateWindow;
+
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
 
@@ -126,8 +129,6 @@ public class GameUI : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
     }
 
-    
-
     public void ShowLoseDialog() {
         var loseData = new DialogWithData {
             DialogType = typeof(LoseDialog),
@@ -150,6 +151,22 @@ public class GameUI : MonoBehaviour {
             }
         };
         DialogsManager.Instance.ShowDialogWithData(winData);
+    }
+
+    public void SetShuffleActive(bool isActive) {
+        _shuffleWindow.SetActive(isActive);
+    }
+    
+    public void SetBombActive(bool isActive) {
+        _bombWindow.SetActive(isActive);
+    }
+    
+    public void SetHammerActive(bool isActive) {
+        _hammerWindow.SetActive(isActive);
+    }
+    
+    public void SetRotateActive(bool isActive) {
+        _rotateWindow.SetActive(isActive);
     }
 
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости
