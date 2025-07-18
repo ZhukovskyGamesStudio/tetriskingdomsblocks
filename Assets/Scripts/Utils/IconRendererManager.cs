@@ -20,6 +20,8 @@ public class IconRendererManager : MonoBehaviour
     private readonly Dictionary<string, Texture2D> _iconCache = new Dictionary<string, Texture2D>();
     private bool _isRendering;
     private float _lastRenderTime;
+    
+    private TextureFormat format;
 
     private void Awake()
     {
@@ -50,6 +52,14 @@ public class IconRendererManager : MonoBehaviour
         _renderLight.type = LightType.Directional;
         _renderLight.cullingMask = _renderLayer;
         _renderLight.intensity = 1f;
+
+#if UNITY_EDITOR
+        format = TextureFormat.RGBA32;
+#elif UNITY_IOS
+            format = TextureFormat.ASTC_4x4;
+#elif UNITY_ANDROID
+        format = TextureFormat.ETC2_RGBA8;
+#endif
     }
     
     public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback)
@@ -178,11 +188,13 @@ public class IconRendererManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         _renderCamera.enabled = true;
         _renderCamera.Render();
+       
+        Debug.Log(format);
         _renderCamera.enabled = false;
         Texture2D icon = new Texture2D(
             _renderTexture.width,
             _renderTexture.height,
-            TextureFormat.RGBA32,
+            format,
             false
         );
 
