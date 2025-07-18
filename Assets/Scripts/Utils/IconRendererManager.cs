@@ -13,9 +13,11 @@ public class IconRendererManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera _renderCamera;
     [SerializeField] private Light _renderLight;
-
-    public static IconRendererManager Instance;
     
+    [SerializeField]
+    private Material _unlitMaterial;
+    public static IconRendererManager Instance;
+    [SerializeField]
     private RenderTexture _renderTexture;
     private readonly Dictionary<string, Texture2D> _iconCache = new Dictionary<string, Texture2D>();
     private bool _isRendering;
@@ -29,17 +31,8 @@ public class IconRendererManager : MonoBehaviour
         InitializeRenderSystem();
     }
 
-    private void InitializeRenderSystem()
-    {
-        // Создаем RenderTexture
-        _renderTexture = new RenderTexture(_textureSize, _textureSize, 24, RenderTextureFormat.Default)
-        {
-            antiAliasing = 1,
-            autoGenerateMips = false,
-            useMipMap = false,
-            depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt
-        };
-        _renderTexture.Create();
+    private void InitializeRenderSystem() {
+
         // Настраиваем камеру
         _renderCamera.orthographic = true;
         _renderCamera.orthographicSize = 1;
@@ -69,6 +62,9 @@ public class IconRendererManager : MonoBehaviour
         return TextureFormat.RGBA32;
 #endif
     }
+
+   
+    
     public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback)
     {
         GetIcon(prefab, (texture) => {
@@ -158,7 +154,7 @@ public class IconRendererManager : MonoBehaviour
 
             if (renderer.material != null)
             {
-                var mat = new Material(Shader.Find("Unlit/Texture"));
+                var mat = _unlitMaterial;
                 if (renderer.material.mainTexture != null)
                     mat.mainTexture = renderer.material.mainTexture;
                 renderer.material = mat;
