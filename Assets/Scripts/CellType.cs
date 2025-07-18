@@ -29,6 +29,7 @@ public enum CellType {
     MountainLevel2 = 301,
     ForestLevel2 = 302,
     FieldOfWheatLevel2 = 303,
+    MetalMinesLevel2 = 304,
 
     Sawmill = 1000,
     Smithy = 1001,

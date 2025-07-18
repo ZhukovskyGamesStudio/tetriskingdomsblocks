@@ -41,7 +41,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 920217479743783404, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: m_Name
-      value: MetalMineCellView
+      value: MetalMine2CellView
       objectReference: {fileID: 0}
     - target: {fileID: 920217479743783404, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: m_Layer
@@ -53,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: CellType
-      value: 104
+      value: 304
       objectReference: {fileID: 0}
     - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: _cellCollider
@@ -212,6 +212,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e83a7324594993745b32305f6c20eed4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6122916176333970018}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e83a7324594993745b32305f6c20eed4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5817769983643062069}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e83a7324594993745b32305f6c20eed4, type: 3}
 --- !u!4 &5170026041318384424 stripped
@@ -297,4 +300,78 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 67525e707e7796545868c6fe38792e2f, type: 3}
   m_PrefabInstance: {fileID: 6012954966578986377}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6284324149179771102
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5170026041318384424}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+      propertyPath: m_Name
+      value: block_iron_mine_1_2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+--- !u!4 &5817769983643062069 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 02cfe58b325f5624a8d86dd1d2ad9bde, type: 3}
+  m_PrefabInstance: {fileID: 6284324149179771102}
   m_PrefabAsset: {fileID: 0}
