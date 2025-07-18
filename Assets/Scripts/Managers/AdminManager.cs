@@ -29,11 +29,13 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddResources() {
-        for (int i = 0; i < 3; i++) {
-            StorageManager.GameDataMain.ResourcesCount[i] += 1000;
+        
+        for (int i = 0; i <  StorageManager.GameDataMain.ResourcesCount.Length; i++) {
+            StorageManager.GameDataMain.ResourcesCount[i] += 100;
         }
 
         StorageManager.GameDataMain.MagicCubesAmount += 20;
+        StorageManager.GameDataMain.GoldAmount += 100;
         if(MetaUI.Instance != null)
             MetaUI.Instance.CountersPanelView.SetMagicCubes( StorageManager.GameDataMain.MagicCubesAmount );
         
