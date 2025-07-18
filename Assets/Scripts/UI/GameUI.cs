@@ -155,18 +155,34 @@ public class GameUI : MonoBehaviour {
 
     public void SetShuffleActive(bool isActive) {
         _shuffleWindow.SetActive(isActive);
+        
+        _bombWindow.SetActive(false);
+        _hammerWindow.SetActive(false);
+        _rotateWindow.SetActive(false);
     }
     
     public void SetBombActive(bool isActive) {
         _bombWindow.SetActive(isActive);
+        
+        _shuffleWindow.SetActive(false);
+        _hammerWindow.SetActive(false);
+        _rotateWindow.SetActive(false);
     }
     
     public void SetHammerActive(bool isActive) {
         _hammerWindow.SetActive(isActive);
+        
+        _bombWindow.SetActive(false);
+        _shuffleWindow.SetActive(false);
+        _rotateWindow.SetActive(false);
     }
     
     public void SetRotateActive(bool isActive) {
         _rotateWindow.SetActive(isActive);
+        
+        _bombWindow.SetActive(false);
+        _hammerWindow.SetActive(false);
+        _shuffleWindow.SetActive(false);
     }
 
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости
