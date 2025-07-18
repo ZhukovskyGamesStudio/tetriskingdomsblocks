@@ -191,26 +191,29 @@ public class MetaFieldManager : FieldManager {
         List<Tuple<ResourceType, int>> costResources = new() {
             new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
         };
+
+        int production = (int)(cell.AfkProduceCountPerSecond * multiplier);
         
         List<Tuple<ResourceType, int>> incomeBefore = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, (int)(cell.AfkProduceCountPerSecond * multiplier))
+            new Tuple<ResourceType, int>(cell.AfkResourceType, production)
         };
         
         List<Tuple<ResourceType, int>> incomeAfter = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, -1) // TODO: убрать заглушку
+            new Tuple<ResourceType, int>(cell.AfkResourceType, production*2) // TODO: брать из конфига
         };
         
         var dialogData = new DialogWithData {
             DialogType = typeof(UpgradeTileDialog),
             Data = new UpgradeTileDialog.Data {
-                ClickUpgrade = () => print("upgrade clicked"), // TODO: убрать заглушку клика и уровня
+                ClickUpgrade = UpgradeResourceCell, // TODO: убрать заглушку клика и уровня
                 Level = 1,
                 TileName = cell.CellName,
                 CostResources = costResources,
                 IncomeResourcesBefore = incomeBefore,
                 IncomeResourcesAfter = incomeAfter,
                 Capacity = (int)(cell.MaxAfkCapacity * multiplier),
-                ClickClose = CloseCellUI
+                ClickClose = CloseCellUI,
+                IsMaxLevel = cell.UpgradeCellType == CellType.Empty
             }
         };
         DialogsManager.Instance.ShowDialogWithData(dialogData);
@@ -219,21 +222,30 @@ public class MetaFieldManager : FieldManager {
     public void UpgradeResourceCell() {
         //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
         var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
-        var cellConfig =
-            PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
-                c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
+        var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
 
-        if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) return;
+        if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) {
+            return;
+        }
 
         StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
         MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
             StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
+        
+        var upgradedPrefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellConfig.UpgradeCellType);
         foreach (var cell in cellsToUpgrade) {
             _field[cell.x, cell.y] = cellConfig.UpgradeCellType;
-            //_cells[cell.x, cell.y].Upgrade(); upgrade animation and after end animation change cell view to new
+            _cells[cell.x, cell.y].UpgradeStart();
+            var seed = _cells[cell.x, cell.y].Seed;
+          
+            var newCell = Instantiate(upgradedPrefab, FieldContainers.Instance.FieldContainer);
+            newCell.transform.localPosition =  _cells[cell.x, cell.y].transform.localPosition;
+            _cells[cell.x, cell.y] = newCell;
+            StorageManager.GameDataMain.FieldRows[cell.x].RowCells[cell.y].CellType = cellConfig.UpgradeCellType;
+            newCell.SetSeed(seed);
+            newCell.UpgradeEnd();
         }
-        //destroy old cell and spawn new cell
 
         CloseCellUI();
     }

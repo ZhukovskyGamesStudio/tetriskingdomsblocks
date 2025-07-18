@@ -9,11 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037d82202267607469629535a4741c1c, type: 3}
-  m_Name: Upg2ForestCellInfo
+  m_Script: {fileID: 11500000, guid: f0d8561a07e34c21ad6f8d07465c45cd, type: 3}
+  m_Name: Upg2FieldOfWheatInfo
   m_EditorClassIdentifier: 
-  CellType: 302
+  CellType: 303
   CellForm: {fileID: 0}
-  MarkCellColor: {r: 0.26735216, g: 0.5, b: 0.12028301, a: 0}
-  CellName: Forest II
+  MarkCellColor: {r: 0.9529412, g: 0.77254903, b: 0.2, a: 0}
+  CellName: Field of wheat II
   ChanceToSpawn: 1
+  AfkResourceType: 3
+  MaxAfkCapacity: 600
+  AfkProduceCountPerSecond: 6
+  UpgradeCost: 6
+  UpgradeCellType: 0

@@ -13,9 +13,6 @@ public class MetaWorldCanvasView : MonoBehaviour {
     [SerializeField]
     private ResourceMarkView _resourceMarkViewPrefab;
 
-    [field: SerializeField]
-    public UpgradeCellView UpgradeCellView { get; private set; }
-
     [SerializeField]
     private Vector3 _worldCanvasRotation = new(-45, -90, 90);
 

@@ -23,7 +23,9 @@ public class CellView : MonoBehaviour {
 
     private Tween _currentTween;
     public Guid Seed { get; private set; } = Guid.NewGuid();
-
+    
+    //TODO move into config
+    private float _upgradeTime = 0.4f;
     public void SetSeed(Guid seed) {
         Seed = seed;
         if (_objectsContainer) {
@@ -91,6 +93,18 @@ public class CellView : MonoBehaviour {
 
         return seq;
     }
+  
+   
+
+    public void UpgradeStart() {
+        DOTween.Sequence().Append(transform.DOScale(transform.localScale * 0f, _upgradeTime / 2));
+    }
+
+    public void UpgradeEnd() {
+        var finScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+        DOTween.Sequence().AppendInterval(_upgradeTime / 2).Append(transform.DOScale(finScale, _upgradeTime / 2));
+    }
     
     public static AnimationCurve InvertCurve(AnimationCurve original)
     {
@@ -103,6 +117,7 @@ public class CellView : MonoBehaviour {
         }
         return new AnimationCurve(keys);
     }
+    
     
     private void OnDestroy() {
         _currentTween.Kill();

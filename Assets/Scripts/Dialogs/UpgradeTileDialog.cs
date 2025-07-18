@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UpgradeTileDialog : DialogBase {
     [SerializeField]
-    private TextMeshProUGUI _headerText, _capacityText;
+    private TextMeshProUGUI _headerText, _capacityText, _buttonText;
 
     [SerializeField]
     private ResourceCount _resourcePrefab;
@@ -13,6 +14,9 @@ public class UpgradeTileDialog : DialogBase {
     [SerializeField]
     private Transform _costResources, _incomeResourcesBefore, _incomeResourcesAfter;
 
+    [SerializeField]
+    private Button _upgradeButton;
+    
     private Action _clickUpgrade, _clickClose;
 
     public override void SetData(object data) {
@@ -23,6 +27,10 @@ public class UpgradeTileDialog : DialogBase {
         _capacityText.text = _capacityText.text.Replace("{capacity}", dialogData.Capacity.ToString());
         _clickUpgrade = dialogData.ClickUpgrade;
         _clickClose = dialogData.ClickClose;
+        _upgradeButton.interactable = !dialogData.IsMaxLevel;
+        if (dialogData.IsMaxLevel) {
+            _buttonText.text = "Max level!";
+        }
         
         foreach (var resource in dialogData.CostResources) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _costResources);
@@ -55,5 +63,6 @@ public class UpgradeTileDialog : DialogBase {
         public string TileName;
         public int Level;
         public int Capacity;
+        public bool IsMaxLevel;
     }
 }
