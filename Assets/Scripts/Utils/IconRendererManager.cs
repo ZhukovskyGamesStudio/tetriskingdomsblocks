@@ -30,7 +30,7 @@ public class IconRendererManager : MonoBehaviour
     private void InitializeRenderSystem()
     {
         // Создаем RenderTexture
-        _renderTexture = new RenderTexture(_textureSize, _textureSize, 24, RenderTextureFormat.ARGB32)
+        _renderTexture = new RenderTexture(_textureSize, _textureSize, 24, RenderTextureFormat.Default)
         {
             antiAliasing = 1,
             autoGenerateMips = false,
@@ -176,9 +176,9 @@ public class IconRendererManager : MonoBehaviour
     private IEnumerator RenderIconTexture(GameObject target, string itemId, System.Action<Texture2D> callback)
     {
         yield return new WaitForEndOfFrame();
-
+        _renderCamera.enabled = true;
         _renderCamera.Render();
-
+        _renderCamera.enabled = false;
         Texture2D icon = new Texture2D(
             _renderTexture.width,
             _renderTexture.height,
@@ -193,7 +193,7 @@ public class IconRendererManager : MonoBehaviour
 
         if (!_iconCache.ContainsKey(itemId))
             _iconCache.Add(itemId, icon);
-
+       
         callback?.Invoke(icon);
     }
 

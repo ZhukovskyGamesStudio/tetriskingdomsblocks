@@ -100,7 +100,7 @@ public class CellView : MonoBehaviour {
         DOTween.Sequence().Append(transform.DOScale(transform.localScale * 0f, _upgradeTime / 2));
     }
 
-    public void UpgradeEnd() {
+    public void UpgradeEnd(DragConfig dragConfig,float finY) {
         var finScale = transform.localScale;
         transform.localScale = Vector3.zero;
         DOTween.Sequence().AppendInterval(_upgradeTime / 2).Append(transform.DOScale(finScale, _upgradeTime / 2));

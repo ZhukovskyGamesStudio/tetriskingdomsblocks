@@ -37,6 +37,7 @@ public class MetaFieldManager : FieldManager {
     private Vector3 _dragStartPosition;
     private Vector3 _dragStartPositionForUICheck;
     private bool _nowCellUnlockUIWasClose;
+    private float _instantiatedCellsGlobalY = -0.25f;
     public Dictionary<int, List<Vector2Int>> LockedCellGroups { get; private set; }
 
     private Vector2Int _currentMarkedFieldCell;
@@ -233,6 +234,8 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
             StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
         
+        var dragConfig = ConfigsManager.Instance.DragConfig;
+        var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y - 0.3f;
         var upgradedPrefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellConfig.UpgradeCellType);
         foreach (var cell in cellsToUpgrade) {
             _field[cell.x, cell.y] = cellConfig.UpgradeCellType;
@@ -240,11 +243,13 @@ public class MetaFieldManager : FieldManager {
             var seed = _cells[cell.x, cell.y].Seed;
           
             var newCell = Instantiate(upgradedPrefab, FieldContainers.Instance.FieldContainer);
-            newCell.transform.localPosition =  _cells[cell.x, cell.y].transform.localPosition;
+            var pos =  _cells[cell.x, cell.y].transform.localPosition;
+            pos.y = _instantiatedCellsGlobalY;
+            newCell.transform.localPosition = pos;
             _cells[cell.x, cell.y] = newCell;
             StorageManager.GameDataMain.FieldRows[cell.x].RowCells[cell.y].CellType = cellConfig.UpgradeCellType;
             newCell.SetSeed(seed);
-            newCell.UpgradeEnd();
+            newCell.UpgradeEnd(dragConfig, finY);
         }
 
         CloseCellUI();
@@ -501,7 +506,7 @@ public class MetaFieldManager : FieldManager {
                     _field[i, j] = CellType.LockedMetaCell;
                     var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(CellType.LockedMetaCell);
                     var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-                    go.transform.localPosition = new Vector3(i, -0.25f, j);
+                    go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
                     _cells[i, j] = go;
                     // go.SetSeed(Guid.NewGuid());
 
@@ -517,7 +522,7 @@ public class MetaFieldManager : FieldManager {
                     if (cellType != CellType.Empty) {
                         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
                         var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-                        go.transform.localPosition = new Vector3(i, -0.25f, j);
+                        go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
                         _cells[i, j] = go;
 
                         go.SetSeed(Guid.NewGuid());
