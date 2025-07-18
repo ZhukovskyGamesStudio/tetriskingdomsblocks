@@ -36,9 +36,10 @@ public class IconRendererManager : MonoBehaviour
         {
             antiAliasing = 1,
             autoGenerateMips = false,
-            useMipMap = false
+            useMipMap = false,
+            depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt
         };
-
+        _renderTexture.Create();
         // Настраиваем камеру
         _renderCamera.orthographic = true;
         _renderCamera.orthographicSize = 1;
@@ -53,15 +54,21 @@ public class IconRendererManager : MonoBehaviour
         _renderLight.cullingMask = _renderLayer;
         _renderLight.intensity = 1f;
 
+        format = GetMobileTextureFormat();
+
+    }
+    TextureFormat GetMobileTextureFormat()
+    {
 #if UNITY_EDITOR
-        format = TextureFormat.RGBA32;
+        return TextureFormat.RGBA32;
 #elif UNITY_IOS
-            format = TextureFormat.ASTC_4x4;
+    return TextureFormat.ASTC_4x4;
 #elif UNITY_ANDROID
-        format = TextureFormat.ETC2_RGBA8;
+        if (SystemInfo.SupportsTextureFormat(TextureFormat.ETC2_RGBA8))
+            return TextureFormat.ETC2_RGBA8;
+        return TextureFormat.RGBA32;
 #endif
     }
-    
     public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback)
     {
         GetIcon(prefab, (texture) => {
