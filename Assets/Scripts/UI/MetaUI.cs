@@ -15,6 +15,9 @@ public class MetaUI : MonoBehaviour {
 
     [SerializeField]
     private TMP_Text _destroyPieceText;
+    
+    [SerializeField]
+    private TMP_Text _playText;
 
     [SerializeField]
     private GameObject _ruleState, _buildState;
@@ -26,6 +29,9 @@ public class MetaUI : MonoBehaviour {
         Instance = this;
     }
 
+    public void SetPlayText(string text) {
+        _playText.text = text;
+    }
     public void SetGetPieceTimer(string text) {
         if (_getPieceTimerText != null)
             _getPieceTimerText.text = text;
