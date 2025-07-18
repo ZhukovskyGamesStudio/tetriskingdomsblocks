@@ -81,6 +81,15 @@ public class PieceView : MonoBehaviour {
         _isLerpingDisabled = false;
     }
 
+    public async UniTask AppearFromInventoryAsync() {
+        Vector3 finScale = _cellsContainer.localScale;
+        _cellsContainer.localScale = Vector3.zero;
+        await DOTween.Sequence()
+            .Append(_cellsContainer.DOScale(finScale * 1.1f, 0.2f))
+            .Append(_cellsContainer.DOScale(finScale, 0.2f))
+            .AsyncWaitForCompletion();
+    }
+
     private void Update() {
         if (_isDragging) {
             DragManager.OnDragPiece(ref _currentCoord, ref _finalPos, Data, _markedCellsContainer);

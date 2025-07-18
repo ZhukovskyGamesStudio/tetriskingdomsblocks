@@ -22,8 +22,9 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void InitManagers() {
-        if (StorageManager.IsNewPlayer())
+        if (StorageManager.IsNewPlayer()) {
             StorageManager.CreateNewSaveData();
+        }
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
         SettingsManager.Instance.SetSettings();
     }
@@ -34,8 +35,11 @@ public class LoadingManager : MonoBehaviour {
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
         if (isNewGame) {
             await SceneManager.LoadSceneAsync("GameSceneTutorial");
-        } else if(StorageManager.GameDataMain.CurMaxLevel >= 3){
-            StorageManager.LoadGame();
+            return;
+        }
+
+        StorageManager.LoadGame();
+        if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
             await SceneManager.LoadSceneAsync("MetaScene");
         } else {
             await SceneManager.LoadSceneAsync("GameScene");

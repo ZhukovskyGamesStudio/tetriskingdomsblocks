@@ -40,9 +40,13 @@ public class MetaFieldManager : FieldManager {
     public Dictionary<int, List<Vector2Int>> LockedCellGroups { get; private set; }
 
     private Vector2Int _currentMarkedFieldCell;
-    //  private float timerNowTimeSecondCounter;
-    // private const int MAX_HEALTH_COUNT = 3;
-    //  private DateTime _lastHealthRecoveryTime;
+
+    [SerializeField]
+    private Transform _cameraMin;
+
+    [ SerializeField]
+
+    private Transform _cameraMax;
 
     protected override void Awake() {
         base.Awake();
@@ -71,13 +75,17 @@ public class MetaFieldManager : FieldManager {
         CloseCellUI();
     }
 
+    private bool _isDragging;
+    
     private void CheckDragCamera() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
+            _isDragging = true;
         }
 
         if (Input.GetMouseButtonUp(0)) {
+            _isDragging = false;
             if (_currentDraggedPieceButton != null) {
                 _currentDraggedPiece.OnDrop();
                 CloseCellUI();
@@ -91,7 +99,7 @@ public class MetaFieldManager : FieldManager {
             _nowCellUnlockUIWasClose = false;
         }
 
-        if (Input.GetMouseButton(0) && _currentDraggedPieceButton == null) {
+        if (Input.GetMouseButton(0) && _isDragging && _currentDraggedPieceButton == null) {
             DragCamera();
         }
     }
@@ -106,11 +114,9 @@ public class MetaFieldManager : FieldManager {
         if (Physics.Raycast(prevRay, out RaycastHit prevHit, Mathf.Infinity, _groundMask) &&
             Physics.Raycast(currRay, out RaycastHit currHit, Mathf.Infinity, _groundMask)) {
             Vector3 delta = prevHit.point - currHit.point;
-            Vector3 needPosition = CameraContainer.position + delta * 1; // MainMetaConfig.CameraDragSpeed;
-            needPosition.x = Mathf.Clamp(needPosition.x, FieldContainers.Instance.FieldStart.position.x,
-                FieldContainers.Instance.FieldEnd.position.x);
-            needPosition.z = Mathf.Clamp(needPosition.z, FieldContainers.Instance.FieldStart.position.z,
-                FieldContainers.Instance.FieldEnd.position.z);
+            Vector3 needPosition = CameraContainer.position + delta;
+            needPosition.x = Mathf.Clamp(needPosition.x, _cameraMin.position.x, _cameraMax.position.x);
+            needPosition.z = Mathf.Clamp(needPosition.z, _cameraMin.position.z, _cameraMax.position.z);
 
             CameraContainer.position = new Vector3(needPosition.x, needPosition.y, needPosition.z);
 
@@ -426,7 +432,7 @@ public class MetaFieldManager : FieldManager {
             StorageManager.GameDataMain.ResourcesCount[1] -= 100;
             StorageManager.GameDataMain.ResourcesCount[2] -= 100;
             UpdateResourcesCountUIText();
-            GenerateNewPieces(); // for test
+            GenerateNewPiece(); // for test
         }
     }
 
@@ -439,7 +445,7 @@ public class MetaFieldManager : FieldManager {
         if (_hasInternetConnection &&
             (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 2) {
             StorageManager.GameDataMain.LastGetPieceTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-            GenerateNewPieces(); // for test
+            GenerateNewPiece(); // for test
         }
     }
 
@@ -447,16 +453,16 @@ public class MetaFieldManager : FieldManager {
         DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
     }
 
-    public void GenerateNewPieces() {
+    public void GenerateNewPiece() {
         var pieceData = PieceUtils.GetNewMetaPiece(guaranteed: null);
         AddPieceToInventory(pieceData);
         SaveInventory();
     }
 
     public void AddPieceToInventory(PieceData pieceView) {
-        var inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
+        InventoryCellView inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
         inventoryCell.SetPieceInfo(pieceView);
-        NextPiecesView.Instance.SetInventoryCellIcon(inventoryCell);
+        MetaBuildManager.Instance.SetInventoryCellIcon(inventoryCell);
         _currentPiecesInInventory.Add(inventoryCell);
     }
 
