@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.Pool;
 using System.Collections;
 using AYellowpaper.SerializedCollections;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour {
     public static GameUI Instance;
@@ -41,6 +42,9 @@ public class GameUI : MonoBehaviour {
 
     [SerializeField]
     private SpawnedForOneCharTextView _characterInfoTextHelper;
+
+    [SerializeField]
+    private GameObject _rotateSelect, _rotateUse;
 
     [SerializedDictionary]
     public SerializedDictionary<BoosterType, GameObject> _boostersWindows;
@@ -174,8 +178,17 @@ public class GameUI : MonoBehaviour {
         SetBoosterActive(booster, !_boostersWindows[booster].activeSelf);
     }
 
+    public void SetUseRotateActive() {
+        _rotateSelect.SetActive(false);
+        _rotateUse.SetActive(true);
+    }
+
     public void SetBoosterActive(BoosterType booster, bool isActive) {
-        if(booster != BoosterType.Bomb || !isActive) BoostersManager.Instance.CancelDynamite();
+        if (booster != BoosterType.Bomb || !isActive) BoostersManager.Instance.CancelDynamite();
+        if (booster == BoosterType.Rotate && isActive) {
+            _rotateSelect.SetActive(true);
+            _rotateUse.SetActive(false);
+        }
         
         foreach (var boosterWindow in _boostersWindows) {
             boosterWindow.Value.SetActive(boosterWindow.Key == booster && isActive);
