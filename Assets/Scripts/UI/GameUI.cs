@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
 using System.Collections;
+using AYellowpaper.SerializedCollections;
 
 public class GameUI : MonoBehaviour {
     public static GameUI Instance;
@@ -41,8 +42,8 @@ public class GameUI : MonoBehaviour {
     [SerializeField]
     private SpawnedForOneCharTextView _characterInfoTextHelper;
 
-    [SerializeField]
-    private GameObject _shuffleWindow, _bombWindow, _hammerWindow, _rotateWindow;
+    [SerializedDictionary]
+    public SerializedDictionary<BoosterType, GameObject> _boostersWindows;
 
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
@@ -153,37 +154,31 @@ public class GameUI : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(winData);
     }
 
-    public void SetShuffleActive(bool isActive) {
-        _shuffleWindow.SetActive(isActive);
-        
-        _bombWindow.SetActive(false);
-        _hammerWindow.SetActive(false);
-        _rotateWindow.SetActive(false);
-    }
-    
-    public void SetBombActive(bool isActive) {
-        _bombWindow.SetActive(isActive);
-        
-        _shuffleWindow.SetActive(false);
-        _hammerWindow.SetActive(false);
-        _rotateWindow.SetActive(false);
-    }
-    
-    public void SetHammerActive(bool isActive) {
-        _hammerWindow.SetActive(isActive);
-        
-        _bombWindow.SetActive(false);
-        _shuffleWindow.SetActive(false);
-        _rotateWindow.SetActive(false);
-    }
-    
-    public void SetRotateActive(bool isActive) {
-        _rotateWindow.SetActive(isActive);
-        
-        _bombWindow.SetActive(false);
-        _hammerWindow.SetActive(false);
-        _shuffleWindow.SetActive(false);
+    public void SwitchShuffleWindowActive() {
+        SwitchBoosterActive(BoosterType.Shuffle);
     }
 
+    public void SwitchBombWindowActive() {
+        SwitchBoosterActive(BoosterType.Bomb);
+    }
+    
+    public void SwitchHammerWindowActive() {
+        SwitchBoosterActive(BoosterType.Hammer);
+    }
+    
+    public void SwitchRotateWindowActive() {
+        SwitchBoosterActive(BoosterType.Rotate);
+    }
+
+    public void SwitchBoosterActive(BoosterType booster) {
+        SetBoosterActive(booster, !_boostersWindows[booster].activeSelf);
+    }
+
+    public void SetBoosterActive(BoosterType booster, bool isActive) {
+        foreach (var boosterWindow in _boostersWindows) {
+            boosterWindow.Value.SetActive(boosterWindow.Key == booster && isActive);
+        }
+    }
+	
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости
 }

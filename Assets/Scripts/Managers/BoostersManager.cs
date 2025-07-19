@@ -274,7 +274,6 @@ public class BoostersManager : MonoBehaviour
     public void UseDynamite()
     {
         if(_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
-        GameUI.Instance.SetBombActive(true);
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
         PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
@@ -288,7 +287,7 @@ public class BoostersManager : MonoBehaviour
 
     private void ExplodeDynamite(Vector2Int position)
     {
-        GameUI.Instance.SetBombActive(false);
+        GameUI.Instance.SetBoosterActive(BoosterType.Bomb, false);
         int dinamyteRadius = ConfigsManager.Instance.BoostersConfig.DynamiteRadius;
 
         for (int i = 0; i < dinamyteRadius * 2 + 1; i++) {
@@ -346,4 +345,11 @@ public class BoostersManager : MonoBehaviour
     {
         
     }
+}
+
+public enum BoosterType {
+    Shuffle,
+    Bomb,
+    Hammer,
+    Rotate
 }
