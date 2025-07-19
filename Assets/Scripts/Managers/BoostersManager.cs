@@ -22,6 +22,8 @@ public class BoostersManager : MonoBehaviour
     [field:SerializeField] 
     public Transform _dynamiteContainer { get; private set; }
     private Transform _currentDynamite;
+    private bool _dynamiteExploding;
+    private bool _dynamiteCancelled;
     
     public RotateBoosterStates RotationState ; 
     private float _initialRotationY; 
@@ -95,7 +97,6 @@ public class BoostersManager : MonoBehaviour
         }
     }
 
-    
     public void ApplyRotation()
     {
         if (!_rotationChanged) 
@@ -181,6 +182,7 @@ public class BoostersManager : MonoBehaviour
         _rotationChanged = false;
         _lastInputPosition = Vector2.zero;
     }
+
     public void UseRotatePiece()
     {
        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
@@ -274,6 +276,8 @@ public class BoostersManager : MonoBehaviour
     public void UseDynamite()
     {
         if(_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
+        _dynamiteExploding = false;
+        _dynamiteCancelled = false;
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
         PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
@@ -283,11 +287,21 @@ public class BoostersManager : MonoBehaviour
     public void SetCurrentDynamite(Transform pieceView)
     {
         _currentDynamite = pieceView;
+        if(_dynamiteCancelled) CancelDynamite();
+    }
+
+    public void CancelDynamite() {
+        _dynamiteCancelled = true;
+        if (_dynamiteExploding || _currentDynamite is null) return;
+        
+        Destroy(_currentDynamite.parent.gameObject);
+        _currentDynamite = null;
+        _dinamyteButton.enabled = true;
+        _dinamyteButton.gameObject.SetActive(true);
     }
 
     private void ExplodeDynamite(Vector2Int position)
     {
-        GameUI.Instance.SetBoosterActive(BoosterType.Bomb, false);
         int dinamyteRadius = ConfigsManager.Instance.BoostersConfig.DynamiteRadius;
 
         for (int i = 0; i < dinamyteRadius * 2 + 1; i++) {
@@ -315,8 +329,9 @@ public class BoostersManager : MonoBehaviour
         OnBoosterEndedWorking?.Invoke();
     }
 
-    public void AnimateDynamite(Vector2Int position)
-    {
+    public void AnimateDynamite(Vector2Int position) {
+        _dynamiteExploding = true;
+        GameUI.Instance.SetBoosterActive(BoosterType.Bomb, false);
         // Запоминаем исходный масштаб
         Vector3 originalScale = _currentDynamite.transform.localScale;
 

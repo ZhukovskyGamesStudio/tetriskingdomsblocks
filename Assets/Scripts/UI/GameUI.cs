@@ -175,6 +175,8 @@ public class GameUI : MonoBehaviour {
     }
 
     public void SetBoosterActive(BoosterType booster, bool isActive) {
+        if(booster != BoosterType.Bomb || !isActive) BoostersManager.Instance.CancelDynamite();
+        
         foreach (var boosterWindow in _boostersWindows) {
             boosterWindow.Value.SetActive(boosterWindow.Key == booster && isActive);
         }
