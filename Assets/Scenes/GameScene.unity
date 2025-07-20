@@ -4904,6 +4904,10 @@ MonoBehaviour:
   _rotatePieceButton: {fileID: 955152528}
   <_dynamiteContainer>k__BackingField: {fileID: 3129333976229727283}
   RotationState: 0
+  _dynamiteImageButton: {fileID: 990072202}
+  _hummerImageButton: {fileID: 1845193045}
+  _randomImageButton: {fileID: 1909696063}
+  _rotateImageButton: {fileID: 1377330333}
   _rotatePieceCancelButton: {fileID: 1472261489}
   _rotatePieceAcceptButton: {fileID: 1751951772}
   _rotatePieceSelectContainer: {fileID: 1506419578}
@@ -14676,6 +14680,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3189075591560478336, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.w
+      value: -0.0842476
+      objectReference: {fileID: 0}
+    - target: {fileID: 3189075591560478336, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.x
+      value: -0.32351398
+      objectReference: {fileID: 0}
+    - target: {fileID: 3219426085335871965, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.w
+      value: -0.081265934
+      objectReference: {fileID: 0}
+    - target: {fileID: 3219426085335871965, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.x
+      value: -0.2957015
+      objectReference: {fileID: 0}
     - target: {fileID: 3629807925070910403, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.4399903
@@ -14716,6 +14736,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4002667320539321876, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.w
+      value: -0.0771122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4002667320539321876, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.x
+      value: -0.309587
+      objectReference: {fileID: 0}
     - target: {fileID: 4445077119396603824, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
       propertyPath: m_Camera
       value: 
@@ -14740,6 +14768,14 @@ PrefabInstance:
       propertyPath: '<_piecesContainers>k__BackingField.Array.data[2]'
       value: 
       objectReference: {fileID: 3129333976229727280}
+    - target: {fileID: 5407346466887348552, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.w
+      value: -0.07200099
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407346466887348552, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
+      propertyPath: m_margin.x
+      value: -0.24561977
+      objectReference: {fileID: 0}
     - target: {fileID: 7298247143223043172, guid: c6c328c25ce51a7438b3c7d8666f48ea, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1

@@ -17,9 +17,15 @@ public class AdminManager : MonoBehaviour {
 
     public static bool IsInfiniteHealth = true;
 
+    [SerializeField]
+    private Toggle _infiniteBoostersToggle;
+
+    public bool IsInfiniteBoosters = true;  
+
     private void Awake() {
         Instance = this;
         _infiniteHpToggle.SetIsOnWithoutNotify(IsInfiniteHealth);
+        _infiniteBoostersToggle.SetIsOnWithoutNotify(IsInfiniteBoosters);
         DontDestroyOnLoad(this);
         SetupLevelButtons();
     }
@@ -84,5 +90,9 @@ public class AdminManager : MonoBehaviour {
 
     public void SetInfinite(bool isInfinite) {
         IsInfiniteHealth = isInfinite;
+    }
+    
+    public void SetInfiniteBoosters(bool isInfiniteBoosters) {
+        IsInfiniteBoosters = isInfiniteBoosters;
     }
 }

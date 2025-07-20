@@ -540,7 +540,7 @@ public class MetaFieldManager : FieldManager {
         GetInventoryFromSave();
         MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
         MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
-        MetaUI.Instance.SetPlayText("Level "+StorageManager.GameDataMain.CurMaxLevel+1);
+        MetaUI.Instance.SetPlayText("Level "+(StorageManager.GameDataMain.CurMaxLevel+1));
         //   SetupHealth();
         base.SetupGame();
     }

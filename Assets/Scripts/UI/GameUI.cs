@@ -159,18 +159,22 @@ public class GameUI : MonoBehaviour {
     }
 
     public void SwitchShuffleWindowActive() {
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.RandomFieldCount <= 0|| GoalView._isGameEnded)) return;
         SwitchBoosterActive(BoosterType.Shuffle);
     }
 
     public void SwitchBombWindowActive() {
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.DynamiteCount <= 0|| GoalView._isGameEnded)) return;
         SwitchBoosterActive(BoosterType.Bomb);
     }
     
     public void SwitchHammerWindowActive() {
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.HummerCount <= 0|| GoalView._isGameEnded)) return;
         SwitchBoosterActive(BoosterType.Hammer);
     }
     
     public void SwitchRotateWindowActive() {
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.RotatePieceCount <= 0|| GoalView._isGameEnded)) return;
         SwitchBoosterActive(BoosterType.Rotate);
     }
 

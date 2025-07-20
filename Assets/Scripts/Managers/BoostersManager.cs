@@ -32,6 +32,11 @@ public class BoostersManager : MonoBehaviour
     private bool _rotationChanged;
     private PieceView _currentPieceView;
     
+    [SerializeField] private Image _dynamiteImageButton;
+    [SerializeField] private Image _hummerImageButton;
+    [SerializeField] private Image _randomImageButton;
+    [SerializeField] private Image _rotateImageButton;
+    
     [SerializeField] private Button _rotatePieceCancelButton;
     [SerializeField] private Button _rotatePieceAcceptButton;
     [SerializeField] private Transform _rotatePieceSelectContainer;
@@ -49,6 +54,37 @@ public class BoostersManager : MonoBehaviour
         LockRotate,
         SelectPiece,
         RotatePiece
+    }
+
+    public void SetBoosterButtons() {
+        var lockSprite = ConfigsManager.Instance.BoostersConfig.LockBoosterSprite;
+        int curLevel = StorageManager.GameDataMain.CurMaxLevel;
+        if (!AdminManager.Instance.IsInfiniteBoosters) {
+            if (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel > curLevel) {
+                _rotateImageButton.sprite = lockSprite;
+                _rotatePieceButton.enabled = false;
+                _rotatePieceCountText.text = (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel+1) + "lvl";
+            }
+
+            if (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel > curLevel) {
+                _dynamiteImageButton.sprite = lockSprite;
+                _dinamyteButton.enabled = false;
+                _dinamyteCountText.text = (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel+1) + "lvl";
+            }
+
+            if (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel > curLevel) {
+                _hummerImageButton.sprite = lockSprite;
+                _hummerButton.enabled = false;
+                _hummerCountText.text = (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel+1) + "lvl";
+            }
+
+            if (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel > curLevel) {
+                _randomImageButton.sprite = lockSprite;
+                _randomFieldButton.enabled = false;
+                _randomFieldCountText.text = (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel+1) + "lvl";
+            }
+        }
+           
     }
     private void Awake()
     {
@@ -147,7 +183,7 @@ public class BoostersManager : MonoBehaviour
 
     public void UseRotatePiece()
     {
-       if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
+       if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel > StorageManager.GameDataMain.CurMaxLevel|| StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded)) return;
         if (RotationState == RotateBoosterStates.LockRotate)
         {
             RotationState = RotateBoosterStates.SelectPiece;
@@ -165,7 +201,7 @@ public class BoostersManager : MonoBehaviour
 
     public void UseHummer()
     {
-        if (StorageManager.GameDataMain.HummerCount <= 0) {
+        if (!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.HummerCount <= 0|| GameUI.Instance.GoalView._isGameEnded)) {
             return;
         }
         GameFieldManager.Instance.ToggleDestroyPieceMode();
@@ -178,7 +214,7 @@ public class BoostersManager : MonoBehaviour
     }
     public void UseRandomField()
     {
-        if(StorageManager.GameDataMain.RandomFieldCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||StorageManager.GameDataMain.RandomFieldCount <= 0|| GameUI.Instance.GoalView._isGameEnded)) return;
 
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
         int cellsCount = 0;
@@ -235,7 +271,7 @@ public class BoostersManager : MonoBehaviour
 
     public void UseDynamite()
     {
-        if(_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
+        if(!AdminManager.Instance.IsInfiniteBoosters && (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel > StorageManager.GameDataMain.CurMaxLevel||_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded)) return;
         _dynamiteExploding = false;
         _dynamiteCancelled = false;
         _dinamyteButton.enabled = false;

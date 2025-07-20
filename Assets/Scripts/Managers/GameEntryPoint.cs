@@ -41,6 +41,7 @@ public class GameEntryPoint : MonoBehaviour {
         BoostersManager.Instance.SetAllText();
         BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
         UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
+        BoostersManager.Instance.SetBoosterButtons();
 
         if (levelConfig.TutorialObject != null) {
             Instantiate(levelConfig.TutorialObject);
