@@ -22,10 +22,14 @@ public class BoostersManager : MonoBehaviour
     [field:SerializeField] 
     public Transform _dynamiteContainer { get; private set; }
     private Transform _currentDynamite;
+    private bool _dynamiteExploding;
+    private bool _dynamiteCancelled;
     
     public RotateBoosterStates RotationState ; 
-    private float _initialRotationY; 
-    private bool _rotationChanged; 
+    private int _initialRotationY;
+    private int _currentRotationY;
+    private Vector3 _rotatingPiecePosition;
+    private bool _rotationChanged;
     private PieceView _currentPieceView;
     
     [SerializeField] private Button _rotatePieceCancelButton;
@@ -54,79 +58,38 @@ public class BoostersManager : MonoBehaviour
         _rotatePieceButton.onClick.AddListener(()=> UseRotatePiece());
         _rotatePieceCancelButton.onClick.AddListener(()=> UseRotatePiece());
     }
+
+    public void RotatePieceLeft() {
+        _currentRotationY -= 90;
+        if (_currentRotationY < 0) _currentRotationY += 360;
+        _currentPieceView.transform.rotation = Quaternion.Euler(0, _currentRotationY, 0);
+    }
     
-    void Update()
-    {
-        if (RotationState != RotateBoosterStates.RotatePiece)
-            return;
-
-        bool isInputActive = false;
-        float rotationDelta = 0f;
-
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Moved)
-            {
-                rotationDelta = touch.deltaPosition.x * 0.5f; // Чувствительность
-                isInputActive = true;
-            }
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            Vector2 currentMousePos = Input.mousePosition;
-            if (_lastInputPosition != Vector2.zero)
-            {
-                rotationDelta = (currentMousePos.x - _lastInputPosition.x) * 0.3f; // Чувствительность
-                isInputActive = true;
-            }
-
-            _lastInputPosition = currentMousePos;
-        }
-        else
-        {
-            _lastInputPosition = Vector2.zero;
-        }
-
-        if (isInputActive)
-        {
-            _currentPieceView.transform.Rotate(0, -rotationDelta, 0); // Вращаем по оси Y
-            _rotationChanged = true;
-        }
+    public void RotatePieceRight() {
+        _currentRotationY += 90;
+        _currentRotationY %= 360;
+        _currentPieceView.transform.rotation = Quaternion.Euler(0, _currentRotationY, 0);
     }
 
-    
+    public void CancelRotation() {
+        _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
+        _currentRotationY = _initialRotationY;
+        ApplyRotation();
+    }
+
     public void ApplyRotation()
     {
-        if (!_rotationChanged) 
+        if (_currentRotationY == _initialRotationY)
             return;
 
-        float currentRotationY = _currentPieceView.transform.rotation.eulerAngles.y % 360f;
-        if (currentRotationY < 0) currentRotationY += 360f;
-
-        float closestAngle = Mathf.Round(currentRotationY / 90f) * 90f;
-        closestAngle = closestAngle % 360f; 
-
-        _currentPieceView.transform.rotation = Quaternion.Euler(0, closestAngle, 0);
-
-        if (Mathf.Abs(closestAngle - _initialRotationY) > 89f)
-        {
-            int degrees = Mathf.RoundToInt(closestAngle - _initialRotationY);
-            if (degrees < 0) degrees += 360;
-            RotateFigure(degrees);
-        }
-        else
-        {
-            UseRotatePiece();
-            return;
-        }
+        RotateFigure(_currentRotationY - _initialRotationY);
 
         RotationState = RotateBoosterStates.LockRotate;
         _rotatePieceButtonsContainer.gameObject.SetActive(false);
         _currentPieceView = null;
 
         StorageManager.GameDataMain.RotatePieceCount--;
-        _rotatePieceCountText.text =  StorageManager.GameDataMain.RotatePieceCount.ToString();
+        _rotatePieceCountText.text = StorageManager.GameDataMain.RotatePieceCount.ToString();
     }
     
     private void RotateFigure(int degrees)
@@ -172,23 +135,22 @@ public class BoostersManager : MonoBehaviour
 
     public void SelectPieceToRotate(PieceView pieceView)
     {
-        _rotatePieceSelectContainer.gameObject.SetActive(false);
-        _rotatePieceButtonsContainer.gameObject.SetActive(true);
+        GameUI.Instance.SetUseRotateActive();
         RotationState = RotateBoosterStates.RotatePiece;
-        _initialRotationY = pieceView.transform.rotation.eulerAngles.y; 
+        _initialRotationY = (int)Mathf.Round(pieceView.transform.rotation.eulerAngles.y);
+        _currentRotationY = _initialRotationY;
+        _rotatingPiecePosition = pieceView.transform.position;
         _currentPieceView = pieceView;
-        _rotatePieceButtonsContainer.transform.position = pieceView.transform.position + new Vector3(1.5f,1,0);
         _rotationChanged = false;
         _lastInputPosition = Vector2.zero;
     }
+
     public void UseRotatePiece()
     {
        if(StorageManager.GameDataMain.RotatePieceCount <= 0|| GameUI.Instance.GoalView._isGameEnded) return;
         if (RotationState == RotateBoosterStates.LockRotate)
         {
-         
             RotationState = RotateBoosterStates.SelectPiece;
-            _rotatePieceSelectContainer.gameObject.SetActive(true);
         }
         else
         {
@@ -274,6 +236,8 @@ public class BoostersManager : MonoBehaviour
     public void UseDynamite()
     {
         if(_currentDynamite != null || StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded) return;
+        _dynamiteExploding = false;
+        _dynamiteCancelled = false;
         _dinamyteButton.enabled = false;
         _dinamyteButton.gameObject.SetActive(false);
         PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
@@ -283,6 +247,17 @@ public class BoostersManager : MonoBehaviour
     public void SetCurrentDynamite(Transform pieceView)
     {
         _currentDynamite = pieceView;
+        if(_dynamiteCancelled) CancelDynamite();
+    }
+
+    public void CancelDynamite() {
+        _dynamiteCancelled = true;
+        if (_dynamiteExploding || _currentDynamite is null) return;
+        
+        Destroy(_currentDynamite.parent.gameObject);
+        _currentDynamite = null;
+        _dinamyteButton.enabled = true;
+        _dinamyteButton.gameObject.SetActive(true);
     }
 
     private void ExplodeDynamite(Vector2Int position)
@@ -314,8 +289,9 @@ public class BoostersManager : MonoBehaviour
         OnBoosterEndedWorking?.Invoke();
     }
 
-    public void AnimateDynamite(Vector2Int position)
-    {
+    public void AnimateDynamite(Vector2Int position) {
+        _dynamiteExploding = true;
+        GameUI.Instance.SetBoosterActive(BoosterType.Bomb, false);
         // Запоминаем исходный масштаб
         Vector3 originalScale = _currentDynamite.transform.localScale;
 
@@ -344,4 +320,11 @@ public class BoostersManager : MonoBehaviour
     {
         
     }
+}
+
+public enum BoosterType {
+    Shuffle,
+    Bomb,
+    Hammer,
+    Rotate
 }

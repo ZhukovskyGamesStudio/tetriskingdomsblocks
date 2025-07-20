@@ -3,6 +3,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
 using System.Collections;
+using AYellowpaper.SerializedCollections;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour {
     public static GameUI Instance;
@@ -40,6 +42,12 @@ public class GameUI : MonoBehaviour {
 
     [SerializeField]
     private SpawnedForOneCharTextView _characterInfoTextHelper;
+
+    [SerializeField]
+    private GameObject _rotateSelect, _rotateUse;
+
+    [SerializedDictionary]
+    public SerializedDictionary<BoosterType, GameObject> _boostersWindows;
 
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
@@ -126,8 +134,6 @@ public class GameUI : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(outOfMovesData);
     }
 
-    
-
     public void ShowLoseDialog() {
         var loseData = new DialogWithData {
             DialogType = typeof(LoseDialog),
@@ -152,5 +158,42 @@ public class GameUI : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(winData);
     }
 
+    public void SwitchShuffleWindowActive() {
+        SwitchBoosterActive(BoosterType.Shuffle);
+    }
+
+    public void SwitchBombWindowActive() {
+        SwitchBoosterActive(BoosterType.Bomb);
+    }
+    
+    public void SwitchHammerWindowActive() {
+        SwitchBoosterActive(BoosterType.Hammer);
+    }
+    
+    public void SwitchRotateWindowActive() {
+        SwitchBoosterActive(BoosterType.Rotate);
+    }
+
+    public void SwitchBoosterActive(BoosterType booster) {
+        SetBoosterActive(booster, !_boostersWindows[booster].activeSelf);
+    }
+
+    public void SetUseRotateActive() {
+        _rotateSelect.SetActive(false);
+        _rotateUse.SetActive(true);
+    }
+
+    public void SetBoosterActive(BoosterType booster, bool isActive) {
+        if (booster != BoosterType.Bomb || !isActive) BoostersManager.Instance.CancelDynamite();
+        if (booster == BoosterType.Rotate && isActive) {
+            _rotateSelect.SetActive(true);
+            _rotateUse.SetActive(false);
+        }
+        
+        foreach (var boosterWindow in _boostersWindows) {
+            boosterWindow.Value.SetActive(boosterWindow.Key == booster && isActive);
+        }
+    }
+	
     // Методы для работы с TaskUI, GoalView, NextPiecesView и т.д. можно добавить по мере необходимости
 }
