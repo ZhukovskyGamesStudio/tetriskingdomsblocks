@@ -46,7 +46,8 @@ public class FieldManager : MonoBehaviour {
 
     protected InputRaycaster _inputRaycaster;
     // protected LevelConfig _currentLevelConfig;
-
+    public event Action<Vector2Int, bool[,]> OnCellPlaced;
+    
     private Tween _currentTween;
 
     [Header("Audio")]
@@ -130,6 +131,7 @@ public class FieldManager : MonoBehaviour {
 
     public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
+        OnCellPlaced?.Invoke(pos,pieceData.Cells);
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {

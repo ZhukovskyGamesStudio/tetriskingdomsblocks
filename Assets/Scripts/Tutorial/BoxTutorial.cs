@@ -1,21 +1,20 @@
-using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class IceTutorial : TutorialObjectHidedAfterTap
+public class BoxTutorial : TutorialObjectHidedAfterTap
 {
-    [SerializeField] private RectTransform rectTransformIceMark;
+    [SerializeField] private RectTransform rectTransformBoxMark;
     [SerializeField]private TMP_Text _tutorialText;
 
     protected override void Start() {
         base.Start();
         GameFieldManager.Instance.OnCellPlaced += CheckIceCells;
-       var mainCamera = Camera.main;
+        var mainCamera = Camera.main;
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
             for (int j = 0; j < GameFieldManager.Instance._field.GetLength(1); j++) {
-                if (GameFieldManager.Instance._field[i, j] == CellType.Ice) {
-                    var iceHoleUI = Instantiate(rectTransformIceMark, GameUI.Instance.HolesForBgContainer);
+                if (GameFieldManager.Instance._field[i, j] == CellType.Box) {
+                    var iceHoleUI = Instantiate(rectTransformBoxMark, GameUI.Instance.HolesForBgContainer);
                     iceHoleUI.transform.position = (Vector2)mainCamera.WorldToScreenPoint(new Vector3(i,0,j));
                 }
             }
@@ -26,12 +25,15 @@ public class IceTutorial : TutorialObjectHidedAfterTap
         for (int x = 0; x < needCells.GetLength(0); x++) {
             for (int y = 0; y < needCells.GetLength(1); y++) {
                 Vector2Int place = new(coord.x + x, coord.y + y);
-                Debug.Log(place + " place piece ");
-                if (needCells[x, y] && GameFieldManager.Instance._field[place.x, place.y] == CellType.Ice) {
-                    Destroy(_rectTransform.gameObject);
-                    GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
-                    Debug.Log("destroy tutorial");
-                    return;
+                if (needCells[x, y]) {
+                    foreach (var checkedCell in FieldUtils.GetCellsAround(GameFieldManager.Instance._field, place)) {
+                        if (GameFieldManager.Instance._field[checkedCell.x, checkedCell.y] == CellType.Box) {
+                            Destroy(_rectTransform.gameObject);
+                            GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
+                            Debug.Log("destroy tutorial");
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -53,4 +55,3 @@ public class IceTutorial : TutorialObjectHidedAfterTap
             });
     }
 }
-

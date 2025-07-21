@@ -12,8 +12,7 @@ public class GameFieldManager : FieldManager {
     [field: SerializeField]
     public Transform AdditionalPieceContainer { get; private set; }
 
-    public event Action OnCellPlaced, OnMoveEnded, OnPieceDestroyedByHammer;
-
+    public event Action OnMoveEnded, OnPieceDestroyedByHammer;
     public PieceView AdditionalPiecePrefab { get; private set; }
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
@@ -95,7 +94,6 @@ public class GameFieldManager : FieldManager {
             return;
         }
 
-        OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
         if (AdditionalPiecePrefab != null && AdditionalPiecePrefab.Data == pieceData) {
             AdditionalPiecePrefab = null;

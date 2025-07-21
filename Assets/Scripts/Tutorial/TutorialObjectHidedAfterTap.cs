@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TutorialObjectHidedAfterTap : MonoBehaviour
 {
-    [SerializeField] private RectTransform _rectTransform;
-    void Start()
+    [SerializeField] protected RectTransform _rectTransform;
+    protected virtual void Start()
     {
         // Создаем Canvas
         Transform canvasObj = GameUI.Instance.BlackBgContainer;
@@ -17,7 +17,7 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour
         _rectTransform.offsetMax = Vector2.zero;
         gameObject.transform.localScale = Vector3.one;
     }
-    void Update()
+    /*void Update()
     {
         if (Input.touchCount > 0)
         {
@@ -32,5 +32,5 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
             Destroy(gameObject);
 #endif
-    }
+    }*/
 }
