@@ -32,6 +32,7 @@ public class GameFieldManager : FieldManager {
     }
 
     public void GenerateNewPieces() {
+        if(StorageManager.GameDataMain.HealthCount <= 0)return;
         _nextBlocks = new List<PieceData>() {
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
