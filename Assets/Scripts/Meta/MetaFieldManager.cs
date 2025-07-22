@@ -105,9 +105,6 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    [SerializeField]
-    private LayerMask _groundMask;
-
     private void DragCamera() {
         Ray prevRay = _mainCamera.ScreenPointToRay(_dragStartPosition);
         Ray currRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -162,9 +159,13 @@ public class MetaFieldManager : FieldManager {
     private void TryCastLockCell() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null) {
-            Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-           if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell)
+            Vector2Int cellPos = new Vector2Int(Mathf.RoundToInt(hit.collider.transform.localPosition.x), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+
+            if (!FieldUtils.IsInsideField(_field, cellPos)) {
+                return;
+            }
+
+            if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
                 CastLockedCell(cellPos);
             else
                 CastResourceCell(cellPos);
@@ -173,11 +174,11 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    private void CastResourceCell(Vector3 cellPos) {
+    private void CastResourceCell(Vector2Int cellPos) {
         if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
-        int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z] - 1;
+        int groupIndex = _groupCellIndex[cellPos.x, cellPos.y] - 1;
 
-        _currentMarkedFieldCell = new Vector2Int((int)cellPos.x, (int)cellPos.z);
+        _currentMarkedFieldCell = new Vector2Int(cellPos.x, cellPos.y);
 
         var cellConfig =
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
@@ -255,10 +256,10 @@ public class MetaFieldManager : FieldManager {
         CloseCellUI();
     }
 
-    private void CastLockedCell(Vector3 cellPos) {
+    private void CastLockedCell(Vector2Int cellPos) {
         if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
 
-        int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z] - 1000;
+        int groupIndex = _groupCellIndex[cellPos.x, cellPos.y] - 1000;
 
         if (groupIndex != 1) {
             var lockedCells = LockedCellGroups[groupIndex];
@@ -288,7 +289,7 @@ public class MetaFieldManager : FieldManager {
         }
 
         uiPos /= lockedCellGroup.Count;
-        _currentMarkedFieldCell = new Vector2Int((int)cellPos.x, (int)cellPos.z);
+        _currentMarkedFieldCell = new Vector2Int(cellPos.x, cellPos.y);
 
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetData(uiPos, LockedCellGroups[groupIndex].Count);
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(true);
