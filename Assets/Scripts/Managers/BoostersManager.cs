@@ -62,19 +62,14 @@ public class BoostersManager : MonoBehaviour {
     [SerializeField]
     private ParticleSystem _dynamiteBoomFx;
 
-    private Vector2 _lastInputPosition;
-
     public static BoostersManager Instance;
     public Action OnBoosterEndedWorking;
 
     private bool _dynamiteExploding;
-    private bool _dynamiteCancelled;
 
     public RotateBoosterStates RotationState;
     private int _initialRotationY;
     private int _currentRotationY;
-    private Vector3 _rotatingPiecePosition;
-    private bool _rotationChanged;
     private PieceView _currentPieceView;
 
     public enum RotateBoosterStates {
@@ -129,12 +124,6 @@ public class BoostersManager : MonoBehaviour {
         _currentPieceView.transform.rotation = Quaternion.Euler(0, _currentRotationY, 0);
     }
 
-    public void CancelRotation() {
-        _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
-        _currentRotationY = _initialRotationY;
-        ApplyRotation();
-    }
-
     public void ApplyRotation() {
         if (_currentRotationY == _initialRotationY)
             return;
@@ -142,7 +131,6 @@ public class BoostersManager : MonoBehaviour {
         RotateFigure(_currentRotationY - _initialRotationY);
 
         RotationState = RotateBoosterStates.LockRotate;
-        _rotatePieceButtonsContainer.gameObject.SetActive(false);
         _currentPieceView = null;
 
         StorageManager.GameDataMain.RotatePieceCount--;
@@ -190,10 +178,7 @@ public class BoostersManager : MonoBehaviour {
         RotationState = RotateBoosterStates.RotatePiece;
         _initialRotationY = (int)Mathf.Round(pieceView.transform.rotation.eulerAngles.y);
         _currentRotationY = _initialRotationY;
-        _rotatingPiecePosition = pieceView.transform.position;
         _currentPieceView = pieceView;
-        _rotationChanged = false;
-        _lastInputPosition = Vector2.zero;
     }
 
     public void UseRotatePiece() {
@@ -206,8 +191,6 @@ public class BoostersManager : MonoBehaviour {
             if (RotationState == RotateBoosterStates.RotatePiece)
                 _currentPieceView.transform.rotation = Quaternion.Euler(0, _initialRotationY, 0);
             RotationState = RotateBoosterStates.LockRotate;
-            _rotatePieceSelectContainer.gameObject.SetActive(false);
-            _rotatePieceButtonsContainer.gameObject.SetActive(false);
         }
     }
 
@@ -285,11 +268,9 @@ public class BoostersManager : MonoBehaviour {
 
         GameFieldManager.Instance.TogglePlaceDynamiteMode();
         _dynamiteExploding = false;
-        _dynamiteCancelled = false;
     }
 
     public void CancelDynamite() {
-        _dynamiteCancelled = true;
         if (_dynamiteExploding) return;
 
         _dinamyteButton.enabled = true;
