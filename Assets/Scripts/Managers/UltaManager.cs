@@ -17,6 +17,9 @@ public class UltaManager : MonoBehaviour {
     private Button _ultimateButton;
 
     [SerializeField]
+    private GameObject _useUltimateMenu;
+    
+    [SerializeField]
     private FallingStarFx _starPrefab;
 
     [SerializeField]
@@ -67,7 +70,6 @@ public class UltaManager : MonoBehaviour {
     public void AddUltimatePoints(int points) {
         if (_ultimateIsActive || GameUI.Instance.GoalView._isGameEnded) return;
         _currentPoints += points;
-        //_ultimateProgressBar.value += points;
 
         _ultimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() => {
             if (_currentPoints >= _ultimateProgressBar.maxValue)
@@ -77,14 +79,14 @@ public class UltaManager : MonoBehaviour {
 
     private void ActivateButton() {
         if (GameUI.Instance.GoalView._isGameEnded) return;
+        _useUltimateMenu.SetActive(true);
         _ultimateButton.enabled = true;
-        _ultimateButton.gameObject.SetActive(true);
         _ultimateProgressBar.gameObject.SetActive(false);
         //make animations(maybe scale from 0 to 1)
     }
 
     private void HideButton() {
-        _ultimateButton.gameObject.SetActive(false);
+        _useUltimateMenu.SetActive(false);
         _ultimateProgressBar.gameObject.SetActive(true);
         //make animations(maybe scale from 0 to 1)
     }
