@@ -27,6 +27,7 @@ public class PieceView : MonoBehaviour {
     private float _colliderSize = 1.65f;
 
     public void SetData(PieceData data, float initialScale = 1f) {
+        name = data.Type.CellType + data.FormName;
         Data = data;
         _startingPosition = _cellsContainer.position;
         var width = Data.Cells.GetLength(0);

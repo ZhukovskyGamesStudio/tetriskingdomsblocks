@@ -46,12 +46,14 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         CreatePiecesAsync(nextPieces, _cts.Token, _piecesContainers).Forget();
     }
     
-    public async UniTask CreateDynamitePieceView(PieceData nextPiece) {
+    public async UniTask<PieceView> CreateDynamitePieceView(Vector3 pos) {
+        PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
         TryCancelCreatingTask();
         _cts = new CancellationTokenSource();
-        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { nextPiece }, _cts.Token,
+        BoostersManager.Instance._dynamiteContainer.position = pos;
+        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { dynamiteCellInfo }, _cts.Token,
             new List<Transform>() { BoostersManager.Instance._dynamiteContainer });
-        BoostersManager.Instance.SetCurrentDynamite(pieceView.transform.GetChild(0));
+        return pieceView;
     }
 
     private async UniTask<PieceView> CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token, List<Transform> containers) {

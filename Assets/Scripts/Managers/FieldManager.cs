@@ -45,9 +45,10 @@ public class FieldManager : MonoBehaviour {
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
 
     protected InputRaycaster _inputRaycaster;
+
     // protected LevelConfig _currentLevelConfig;
     public event Action<Vector2Int, bool[,]> OnCellPlaced;
-    
+
     private Tween _currentTween;
 
     [Header("Audio")]
@@ -55,52 +56,77 @@ public class FieldManager : MonoBehaviour {
     protected GameAudio _gameAudio;
 
     protected bool _isDestroyPieceMode;
+    protected bool _placeDynamiteMode;
 
     [SerializeField]
-    protected LayerMask _pieceMask;
-  
+    protected LayerMask _pieceMask, _groundMask;
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
     }
 
     protected virtual void Start() {
-    //    SetupGame();
+        //    SetupGame();
     }
 
     protected virtual void Update() {
         if (Input.GetMouseButtonDown(0)) {
-            if (_isDestroyPieceMode)
+            if (_isDestroyPieceMode) {
                 TryDestroyPiece();
+            } else if (_placeDynamiteMode) {
+                TryPlaceDynamite();
+            }
         }
     }
 
     protected virtual void TryDestroyPiece() { }
 
+    private async void TryPlaceDynamite() {
+        Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _groundMask);
+
+        if (hit.collider != null && StorageManager.GameDataMain.DynamiteCount > 0) {
+            Vector2Int coord = FieldUtils.ClampToCoord(hit.point);
+
+            if (!FieldUtils.IsInsideField(_field, coord)) {
+                return;
+            }
+
+            if (!FieldUtils.CanPlaceOnCell(_field[coord.x, coord.y])) {
+                return;
+            }
+
+            var pos = new Vector3(coord.x, 1f, coord.y);
+            _placeDynamiteMode = false;
+            var p = await NextPiecesView.Instance.CreateDynamitePieceView(pos);
+            PlacePiece(p.Data, coord, p._cells, p._cellsContainer);
+            Destroy(p.gameObject);
+        }
+    }
+
     public virtual void ToggleDestroyPieceMode() {
         _isDestroyPieceMode = !_isDestroyPieceMode;
+    }
 
-        /* if (_isDestroyPieceMode)
-             HummerManager.Instance.ShowHummerAnimation();
-         else
-             HummerManager.Instance.HideHummerAnimation();*/
+    public virtual void TogglePlaceDynamiteMode() {
+        _placeDynamiteMode = !_placeDynamiteMode;
     }
 
     protected async void HummerDestoyPieceAnimation(CellView[] cells) {
-        Vector3 hummerNeedPos =Vector3.zero;
+        Vector3 hummerNeedPos = Vector3.zero;
         foreach (var cell in cells) {
             cell.OffCollider();
             hummerNeedPos += cell.transform.position;
         }
+
         hummerNeedPos /= cells.Length;
         await HummerManager.Instance.HummerDestroyPieceAnimation(hummerNeedPos);
         DestroyPieceWithHummer(cells);
     }
 
     private void DestroyPieceWithHummer(CellView[] cells) {
-        foreach (var cell in cells) 
+        foreach (var cell in cells)
             cell.DestroyCell();
-        
+
         VibrationsManager.Instance.SpawnVibration(VibrationType.PlacePiece);
         ShakeCamera(0.6f);
     }
@@ -131,7 +157,7 @@ public class FieldManager : MonoBehaviour {
 
     public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
-        OnCellPlaced?.Invoke(pos,pieceData.Cells);
+        OnCellPlaced?.Invoke(pos, pieceData.Cells);
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
@@ -140,7 +166,7 @@ public class FieldManager : MonoBehaviour {
                 }
 
                 if (pieceData.Type.CellType == CellType.Dynamite) {
-                    BoostersManager.Instance.AnimateDynamite(pos);
+                    BoostersManager.Instance.AnimateDynamite(cellsContainer, pos);
                     //destroy dinamyte
                     return;
                 }
