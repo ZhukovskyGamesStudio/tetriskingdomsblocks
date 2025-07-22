@@ -13,6 +13,9 @@ public class TaskUIView : MonoBehaviour
    [FormerlySerializedAs("taskInfoTextHelper")] public SpawnedForOneCharTextView TaskInfoTextHelper;
    private Tween _currentTween;
 
+   [SerializeField]
+   private GameObject _checkmark;
+
    public void SetData(TaskInfoSubClass task) {
       gameObject.SetActive(true);
       string needSpiteName = "";
@@ -51,6 +54,9 @@ public class TaskUIView : MonoBehaviour
       _currentTween = DOTween.Sequence()
          .Append(CurrentTaskInfo.transform.DOScale(Vector3.one * 1.5f, 0.3f)) 
          .Append(CurrentTaskInfo.transform.DOScale(Vector3.one * 0.95f, 0.2f))
-         .Append(CurrentTaskInfo.transform.DOScale(Vector3.one, 0.07f));
+         .Append(CurrentTaskInfo.transform.DOScale(Vector3.one, 0.07f))
+         .OnComplete(() => {
+            _checkmark.SetActive(true);
+         });
    }
 }
