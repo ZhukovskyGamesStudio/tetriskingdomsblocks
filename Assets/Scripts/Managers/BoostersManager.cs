@@ -115,10 +115,6 @@ public class BoostersManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-
-        _rotatePieceAcceptButton.onClick.AddListener(() => ApplyRotation());
-        _rotatePieceButton.onClick.AddListener(() => UseRotatePiece());
-        _rotatePieceCancelButton.onClick.AddListener(() => UseRotatePiece());
     }
 
     public void RotatePieceLeft() {
@@ -290,8 +286,6 @@ public class BoostersManager : MonoBehaviour {
         GameFieldManager.Instance.TogglePlaceDynamiteMode();
         _dynamiteExploding = false;
         _dynamiteCancelled = false;
-        _dinamyteButton.enabled = false;
-        _dinamyteButton.gameObject.SetActive(false);
     }
 
     public void CancelDynamite() {
