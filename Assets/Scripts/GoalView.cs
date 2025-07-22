@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GoalView : MonoBehaviour {
     [SerializeField]
-    private RectTransform _taskState, _winState, _loseState;
+    private RectTransform _taskState;
 
     public bool _isGameEnded { get; private set; }
     private Tween _currentTween;
@@ -36,12 +36,6 @@ public class GoalView : MonoBehaviour {
                 if (GameFieldManager.Instance != null) GameUI.Instance.ShowWinDialog();
                 else SceneManager.LoadScene("GameScene");
             });
-    }
-
-    private void LoseAnimation() {
-        _currentTween = DOTween.Sequence()
-            .Append(GameUI.Instance.BgTasksImage.DOAnchorPosY(GameUI.Instance.BgTasksImage.anchoredPosition.y + 370, 1f))
-            .Append(_loseState.DOAnchorPosY(_loseState.anchoredPosition.y - 800, 0.6f));
     }
 
     public void ExitGame() {
