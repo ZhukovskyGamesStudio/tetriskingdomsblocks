@@ -27,7 +27,7 @@ public class MetaFieldDecor : MonoBehaviour {
         GameObject obj;
         for (int i = 0; i < _treePositions.Count; i++) {
             obj = Instantiate(_trees[UnityEngine.Random.Range(0, _trees.Count)], _treePositions[i].position,
-                Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0), transform);
+                Quaternion.Euler(-90, UnityEngine.Random.Range(0, 360), 0), transform);
             obj.isStatic = true;
         }
     }
