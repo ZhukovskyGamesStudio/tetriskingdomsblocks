@@ -33,8 +33,10 @@ public class MetaUI : MonoBehaviour {
         _playText.text = text;
     }
     public void SetGetPieceTimer(string text) {
-        if (_getPieceTimerText != null)
+        if (_getPieceTimerText != null) {
             _getPieceTimerText.text = text;
+        }
+            
     }
 
     public void SetDestroyPieceText(string text) {

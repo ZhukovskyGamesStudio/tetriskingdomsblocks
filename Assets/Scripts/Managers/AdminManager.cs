@@ -48,7 +48,20 @@ public class AdminManager : MonoBehaviour {
         MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }
 
-    public void RestoreAllHPForAdminButton() => StorageManager.GameDataMain.HealthCount = 3;
+    public void RestoreAllHPForAdminButton() {
+        StorageManager.GameDataMain.HealthCount = 3;
+        if(MetaUI.Instance == null )return;
+        MetaUI.Instance.HealthView.SetHealthImageActive(0, true);
+        MetaUI.Instance.HealthView.SetHealthImageActive(1, true);
+        MetaUI.Instance.HealthView.SetHealthImageActive(2, true);
+    }
+
+    public void RemoveOneHealthAdminButton() {  
+        Debug.Log(StorageManager.GameDataMain.HealthCount);
+        if(StorageManager.GameDataMain.HealthCount <= 0)return;
+         StorageManager.GameDataMain.HealthCount--;
+         if(MetaUI.Instance != null )MetaUI.Instance.HealthView.SetHealthImageActive(StorageManager.GameDataMain.HealthCount, false);
+    }
 
     public void GenerateNewPiecesForButton() {
         if (GameFieldManager.Instance != null)
