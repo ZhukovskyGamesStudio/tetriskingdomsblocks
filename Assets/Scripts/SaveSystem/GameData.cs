@@ -37,7 +37,6 @@ public class GameDataForSave {
     public SettingsData SettingsData;
 
     public GameDataForSave() {
-        HealthCount = 3;
         ResourcesCount = new int[4];
         ResourcesCount[0] = 3000;
         ResourcesCount[1] = 3000;

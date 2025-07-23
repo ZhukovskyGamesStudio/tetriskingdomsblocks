@@ -31,8 +31,6 @@ public class MetaFieldManager : FieldManager {
     private int[,] _formGroupCellIndex;
     private Dictionary<int, List<Vector2Int>> _formGroupCellPositions = new Dictionary<int, List<Vector2Int>>();
 
-    private int _minutesToGetPiece = 120;
-   
 
     private Vector3 _dragStartPosition;
     private Vector3 _dragStartPositionForUICheck;
@@ -459,9 +457,9 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GetPiece() {
-        if (_hasInternetConnection &&
-            (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 8) {
-            StorageManager.GameDataMain.LastGetPieceTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
+        if (MainManager.Instance._hasInternetConnection &&
+            MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
+            StorageManager.GameDataMain.LastGetPieceTime = (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
             GenerateNewPiece(); 
         }
     }
@@ -541,10 +539,12 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
         MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
         MetaUI.Instance.SetPlayText("Level "+(StorageManager.GameDataMain.CurMaxLevel+1));
-
+        
+Debug.Log(StorageManager.GameDataMain.HealthCount + " saved health" + MainManager.Instance._hasInternetConnection + " internet connect"); 
         if (MainManager.Instance._hasInternetConnection) {
+           
             MainManager.Instance.SetupGetPieceTimer();
-                    MainManager.Instance.SetupHealth();
+            MainManager.Instance.SetupHealth();
         }
         
         //   SetupHealth();

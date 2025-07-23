@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class HealthView : MonoBehaviour {
     [SerializeField]
-    private Transform[] _healthImages;
+    private TMP_Text _healthCountText;
 
     [SerializeField]
     private TMP_Text _healthTimerText;
 
     public TMP_Text HealthTimerText => _healthTimerText;
 
-    public void SetHealthImageActive(int index, bool active) {
-        if (_healthImages != null && index >= 0 && index < _healthImages.Length && _healthImages[index] != null)
-            _healthImages[index].gameObject.SetActive(active);
+    public void SetHealthCountText(int index) {
+        if (_healthCountText != null)
+            _healthCountText.text = index.ToString();
     }
 
     public void SetHealthTimerText(string text) {
