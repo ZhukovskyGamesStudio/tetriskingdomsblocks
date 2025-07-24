@@ -111,6 +111,10 @@ public class FieldManager : MonoBehaviour {
         _placeDynamiteMode = !_placeDynamiteMode;
     }
 
+    public void DisablePlaceDynamiteMode() {
+        _placeDynamiteMode = false;
+    }
+
     protected async void HummerDestoyPieceAnimation(CellView[] cells) {
         Vector3 hummerNeedPos = Vector3.zero;
         foreach (var cell in cells) {

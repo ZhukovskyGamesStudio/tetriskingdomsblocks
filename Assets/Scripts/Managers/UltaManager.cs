@@ -49,13 +49,14 @@ public class UltaManager : MonoBehaviour {
 
     public Action OnUltimateEndedWorking;
     private MainGameConfig _mainGameConfig;
-
+    private GameData _gameData;
     private void Awake() {
         Instance = this;
     }
 
-    public void Init(MainGameConfig mainGameConfig) {
+    public void Init(MainGameConfig mainGameConfig, GameData gameData) {
         _mainGameConfig = mainGameConfig;
+        _gameData = gameData;
         _ultimateProgressBar.maxValue = _mainGameConfig.NeededUltimatePoints;
         _ultimateButton.onClick.AddListener(UltimateAction);
     }
@@ -68,7 +69,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     public void AddUltimatePoints(int points) {
-        if (_ultimateIsActive || GameUI.Instance.GoalView._isGameEnded) return;
+        if (_ultimateIsActive || _gameData.IsGameEnded) return;
         _currentPoints += points;
 
         _ultimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() => {
@@ -78,7 +79,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private void ActivateButton() {
-        if (GameUI.Instance.GoalView._isGameEnded) return;
+        if ( _gameData.IsGameEnded) return;
         _useUltimateMenu.SetActive(true);
         _ultimateButton.enabled = true;
         _ultimateProgressBar.gameObject.SetActive(false);
@@ -92,7 +93,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private async void UltimateAction() {
-        if (GameUI.Instance.GoalView._isGameEnded) {
+        if ( _gameData.IsGameEnded) {
             return;
         }
 

@@ -75,8 +75,9 @@ public class AdminManager : MonoBehaviour {
         
         StorageManager.GameDataMain.MetaHummerCount+=5;
         
-        if(BoostersManager.Instance != null)
-        BoostersManager.Instance.SetAllText();
+        if(BoostersManager.Instance != null) {
+            GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
+        }
     }
 
     public void RestartGame() {
