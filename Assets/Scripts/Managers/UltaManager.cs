@@ -11,15 +11,6 @@ public class UltaManager : MonoBehaviour {
     public static UltaManager Instance;
 
     [SerializeField]
-    private Slider _ultimateProgressBar;
-
-    [SerializeField]
-    private Button _ultimateButton;
-
-    [SerializeField]
-    private GameObject _useUltimateMenu;
-    
-    [SerializeField]
     private FallingStarFx _starPrefab;
 
     [SerializeField]
@@ -33,12 +24,6 @@ public class UltaManager : MonoBehaviour {
     [SerializeField]
     private Vector3 _startDropStartPos;
 
-    [SerializeField]
-    private Animation _ultimateAnimationUI;
-
-    [SerializeField]
-    private AnimationClip _hideUiClip;
-
     public bool _ultimateIsActive { get; private set; }
 
     [SerializeField]
@@ -50,6 +35,7 @@ public class UltaManager : MonoBehaviour {
     public Action OnUltimateEndedWorking;
     private MainGameConfig _mainGameConfig;
     private GameData _gameData;
+
     private void Awake() {
         Instance = this;
     }
@@ -57,51 +43,41 @@ public class UltaManager : MonoBehaviour {
     public void Init(MainGameConfig mainGameConfig, GameData gameData) {
         _mainGameConfig = mainGameConfig;
         _gameData = gameData;
-        _ultimateProgressBar.maxValue = _mainGameConfig.NeededUltimatePoints;
-        _ultimateButton.onClick.AddListener(UltimateAction);
-    }
-
-    public void HideUltimateUI() {
-        _ultimateAnimationUI.Play(_hideUiClip.name);
-        var animationObject = _ultimateButton.gameObject.activeInHierarchy ? _ultimateButton.transform : _ultimateProgressBar.transform;
-        DOTween.Sequence().Append(animationObject.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack))
-            .Append(animationObject.DOScale(Vector3.zero, 0.7f).SetEase(Ease.InBack));
+        GameUI.Instance.GoalView.UltimateProgressBar.maxValue = _mainGameConfig.NeededUltimatePoints;
+        GameUI.Instance.GoalView.UltimateButton.onClick.AddListener(UltimateAction);
     }
 
     public void AddUltimatePoints(int points) {
         if (_ultimateIsActive || _gameData.IsGameEnded) return;
         _currentPoints += points;
 
-        _ultimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() => {
-            if (_currentPoints >= _ultimateProgressBar.maxValue)
+        GameUI.Instance.GoalView.UltimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() => {
+            if (_currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
                 ActivateButton();
         });
     }
 
     private void ActivateButton() {
-        if ( _gameData.IsGameEnded) return;
-        _useUltimateMenu.SetActive(true);
-        _ultimateButton.enabled = true;
-        _ultimateProgressBar.gameObject.SetActive(false);
-        //make animations(maybe scale from 0 to 1)
-    }
+        if (_gameData.IsGameEnded) {
+            return;
+        }
 
-    private void HideButton() {
-        _useUltimateMenu.SetActive(false);
-        _ultimateProgressBar.gameObject.SetActive(true);
+        GameUI.Instance.GoalView.UseUltimateMenu.SetActive(true);
+        GameUI.Instance.GoalView.UltimateButton.enabled = true;
+        GameUI.Instance.GoalView.UltimateProgressBar.gameObject.SetActive(false);
         //make animations(maybe scale from 0 to 1)
     }
 
     private async void UltimateAction() {
-        if ( _gameData.IsGameEnded) {
+        if (_gameData.IsGameEnded) {
             return;
         }
 
-        _ultimateButton.enabled = false;
-        _ultimateProgressBar.value = 0;
+        GameUI.Instance.GoalView.UltimateButton.enabled = false;
+        GameUI.Instance.GoalView.UltimateProgressBar.value = 0;
         _currentPoints = 0;
         _ultimateIsActive = true;
-        HideButton();
+        GameUI.Instance.GoalView.HideUltimateButton();
         _starsParticles.gameObject.SetActive(true);
         _starsParticles.Play();
 
@@ -121,7 +97,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     public async void UltimateActionEndRound(Action onUltimateEnded) {
-        HideUltimateUI();
+        GameUI.Instance.GoalView.HideUltimateUI();
         _ultimateIsActive = true;
         var needField = GameFieldManager.Instance != null ? GameFieldManager.Instance._field : TutorialFieldManager.Instance._field;
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(needField, 0);
@@ -139,9 +115,9 @@ public class UltaManager : MonoBehaviour {
         var pieceData = GetRandomCellType();
 
         var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
-        var cellView = GameFieldManager.Instance != null ?
-            GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false):
-            TutorialFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false) ;
+        var cellView = GameFieldManager.Instance != null
+            ? GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false)
+            : TutorialFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
         var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
         cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
@@ -182,7 +158,7 @@ public class UltaManager : MonoBehaviour {
             ? GameFieldManager.Instance.CellsChanceToSpawn
             : TutorialFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
-        float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length-1]);
+        float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         for (int j = 0; j < chancesToSpawn.Length; j++) {
             if (chancesToSpawn[j] > chance) {
                 cellInfo = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellsToSpawn[j]);

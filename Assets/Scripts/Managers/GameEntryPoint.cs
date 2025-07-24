@@ -182,7 +182,7 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.GoalView.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GameUI.Instance.ShowLoseDialog();
-        UltaManager.Instance.HideUltimateUI();
+        GameUI.Instance.GoalView.HideUltimateUI();
         GameFieldManager.Instance.SetLoseState();
     }
 }
