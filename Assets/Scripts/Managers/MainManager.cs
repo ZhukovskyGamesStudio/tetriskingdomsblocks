@@ -103,13 +103,19 @@ public class MainManager : MonoBehaviour {
                         Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
                     StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
                     StorageManager.SaveGame();
-                    MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
+                    if(MetaUI.Instance?.HealthView != null) {
+                        MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
+                    }
                 }
 
-                UpdateHealthTimerUI();
+                if (MetaUI.Instance?.HealthView != null) {
+                    UpdateHealthTimerUI();
+                }
             }
         } else if (MetaUI.Instance.HealthView.HealthTimerText.gameObject.activeSelf) {
-            MetaUI.Instance.HealthView.SetHealthTimerActive(false);
+            if (MetaUI.Instance?.HealthView != null) {
+                MetaUI.Instance.HealthView.SetHealthTimerActive(false);
+            }
         }
     }
 

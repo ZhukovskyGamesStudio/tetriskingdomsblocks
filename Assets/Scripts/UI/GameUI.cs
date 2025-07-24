@@ -41,9 +41,6 @@ public class GameUI : MonoBehaviour {
     private Transform _floatingTextContainer;
 
     [SerializeField]
-    private SpawnedForOneCharTextView _characterInfoTextHelper;
-
-    [SerializeField]
     private GameObject _rotateSelect, _rotateUse;
 
     [SerializedDictionary]
@@ -93,10 +90,6 @@ public class GameUI : MonoBehaviour {
         foreach (var taskUI in _taskUIViews) {
             taskUI.gameObject.SetActive(active);
         }
-    }
-
-    public Coroutine StartCharacterInfoTextCoroutine(string text) {
-        return StartCoroutine(_characterInfoTextHelper.StartSpawnText(text));
     }
 
     public void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task) {

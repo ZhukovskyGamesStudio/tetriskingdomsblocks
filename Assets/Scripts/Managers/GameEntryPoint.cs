@@ -36,7 +36,6 @@ public class GameEntryPoint : MonoBehaviour {
         _gameFieldManager.OnMoveEnded += OnMoveEnded;
         _gameFieldManager.OnPieceDestroyedByHammer += CheckGameGoal;
         _ultaManager.Init(_mainGameConfig);
-        GameUI.Instance.StartCharacterInfoTextCoroutine(levelConfig.GuideForLevelText);
         GameUI.Instance.SetMovesCount(levelConfig.MovesCount);
         BoostersManager.Instance.SetAllText();
         BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;

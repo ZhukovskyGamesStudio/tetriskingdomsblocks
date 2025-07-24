@@ -7,7 +7,7 @@ public class TutorialUIElementsView : MonoBehaviour
 {
     [SerializeField] private RectTransform[] _holeImages;
     [SerializeField] private RectTransform _blackBGImage;
-    [SerializeField] private RectTransform _fingerImage;
+    [SerializeField] private Image _fingerImage;
     [SerializeField] private Transform _firstTutorialContainer;
     [SerializeField] private Transform _secondTutorialContainer;
     [SerializeField] private Transform _thirdTutorialContainer;
@@ -56,20 +56,17 @@ public class TutorialUIElementsView : MonoBehaviour
 
     public void StartAnimation()
     {
+        _fingerImage.rectTransform.localScale = Vector3.one;
+        var color = _fingerImage.color;
+        color.a = 0;
+        _fingerImage.color = color;
         _currentTween = DOTween.Sequence()
-            .Append(_fingerImage.DOScale(Vector3.one, 0.8f))
-            .Append(_fingerImage.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.DOScale(Vector3.one, 0.8f))
-            .Append(_fingerImage.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.DOScale(Vector3.one, 0.8f))
-            .Append(_fingerImage.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.DOMove(_holeImages[1].transform.position, 2.5f))
-            .Append(_fingerImage.DOScale(Vector3.one, 0.8f))
-            .Append(_fingerImage.DOMove(_holeImages[0].transform.position, 1))
-            .Append(_fingerImage.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.DOMove(_holeImages[1].transform.position, 2.5f))
-            .Append(_fingerImage.DOScale(Vector3.one, 0.8f))
-            .Append(_fingerImage.DOMove(_holeImages[0].transform.position, 1))
+            .Append(_fingerImage.DOFade(1, 0.8f))
+            .Join(_fingerImage.rectTransform.DOScale(Vector3.one * 0.75f, 0.8f))
+            .Append(_fingerImage.rectTransform.DOMove(_holeImages[1].transform.position, 2.5f))
+            .Append(_fingerImage.rectTransform.DOScale(Vector3.one, 0.8f))
+            .Join(_fingerImage.DOFade(0, 0.8f))
+            .Append(_fingerImage.rectTransform.DOMove(_holeImages[0].transform.position, 1))
             .SetLoops(-1, LoopType.Restart);
     }
     
