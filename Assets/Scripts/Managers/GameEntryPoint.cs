@@ -177,7 +177,6 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GameUI.Instance.ShowLoseDialog();
-        StorageManager.GameDataMain.HealthCount--;
         GameUI.Instance.GoalView.SetLoseState();
         UltaManager.Instance.HideUltimateUI();
         GameFieldManager.Instance.SetLoseState();

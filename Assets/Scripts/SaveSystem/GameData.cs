@@ -19,13 +19,13 @@ public class GameDataForSave {
     public MetaFieldData[] FieldRows;
     
     
-    public string LastHealthRecoveryTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public string LastHealthRecoveryTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
 
-    public string LastExitTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public string LastExitTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastExitTimeDateTime => DateTime.Parse(LastExitTime, CultureInfo.InvariantCulture);
 
-    public string LastGetPieceTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+    public string LastGetPieceTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastGetPieceTimeDateTime => DateTime.Parse(LastGetPieceTime, CultureInfo.InvariantCulture);
     
 
@@ -38,7 +38,6 @@ public class GameDataForSave {
     public SettingsData SettingsData;
 
     public GameDataForSave() {
-        HealthCount = 3;
         ResourcesCount = new int[4];
         ResourcesCount[0] = 3000;
         ResourcesCount[1] = 3000;

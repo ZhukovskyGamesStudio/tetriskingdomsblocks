@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -48,7 +49,17 @@ public class AdminManager : MonoBehaviour {
         MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }
 
-    public void RestoreAllHPForAdminButton() => StorageManager.GameDataMain.HealthCount = 3;
+    public void RestoreAllHPForAdminButton() {
+        StorageManager.GameDataMain.HealthCount = 5;
+        if(MetaUI.Instance == null )return;
+        MetaUI.Instance.HealthView.SetHealthCountText(5);
+    }
+
+    public void RemoveOneHealthAdminButton() {  
+     
+        if(StorageManager.GameDataMain.HealthCount <= 0)return;
+         MainManager.Instance.RemoveHealthAfterLose();
+    }
 
     public void GenerateNewPiecesForButton() {
         if (GameFieldManager.Instance != null)
