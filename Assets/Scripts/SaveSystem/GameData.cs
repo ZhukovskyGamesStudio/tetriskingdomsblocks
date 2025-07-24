@@ -13,6 +13,7 @@ public class GameDataForSave {
     public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
+    public int PlacedInMetaPiecesCount;
     
     public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
     public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};

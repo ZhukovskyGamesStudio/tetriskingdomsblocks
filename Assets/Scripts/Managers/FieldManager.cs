@@ -180,7 +180,7 @@ public class FieldManager : MonoBehaviour {
 
                 CellView go = cells[x, y];
 
-                _field[place.x, place.y] = pieceData.Type.CellType;
+                _field[place.x, place.y] = cells[x, y].CellType;//fix if has problem
                 _cells[place.x, place.y] = go;
 
                 SpawnResourceFxForCell(place, go);
