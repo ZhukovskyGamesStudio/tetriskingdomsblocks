@@ -10,7 +10,9 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MetaFieldManager : FieldManager {
     public static MetaFieldManager Instance { get; private set; }
-
+    [field: SerializeField]
+    private VillageStuffConfig _villageStuffConfig;
+    
     [field: Header("Meta")]
     [field: SerializeField]
     public MainMetaConfig MainMetaConfig { get; private set; }
@@ -469,8 +471,11 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GenerateNewPiece() {
-        var pieceData = PieceUtils.GetNewMetaPiece(guaranteed: null);
+        Debug.Log(StorageManager.GameDataMain.PlacedInMetaPiecesCount);
+        CellTypeInfo cellTypeInfo = StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
+        var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
         AddPieceToInventory(pieceData);
+        StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
         SaveInventory();
     }
 
@@ -492,10 +497,6 @@ public class MetaFieldManager : FieldManager {
 
         CalculateCellSpawnChances();
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
-            /*Debug.Log(MainManager.Instance._currentGameTime);
-            StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-   StorageManager.GameDataMain.LastGetPieceTime =
-                (MainManager.Instance._currentGameTime - TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);*/
             StorageManager.GameDataMain.FieldSaveIsCreated = true;
             StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
             for (int i = 0; i < _field.GetLength(0); i++) {
@@ -513,17 +514,25 @@ public class MetaFieldManager : FieldManager {
             }
         } else if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1) {
             _field = new CellType[StorageManager.GameDataMain.FieldRows.Length, StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
+            Vector2Int villagePosition = -Vector2Int.one;
             for (int i = 0; i < _field.GetLength(0); i++) {
                 for (int j = 0; j < _field.GetLength(1); j++) {
                     _field[i, j] = StorageManager.GameDataMain.FieldRows[i].RowCells[j].CellType;
                     var cellType = _field[i, j];
                     if (cellType != CellType.Empty) {
-                        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
-                        var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-                        go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
-                        _cells[i, j] = go;
+                        if (cellType != CellType.VillagePart) {
+                            CellView prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
+                            var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
+                            go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
+                            _cells[i, j] = go;
 
-                        go.SetSeed(Guid.NewGuid());
+                            go.SetSeed(Guid.NewGuid());
+                            if (cellType == CellType.Village)
+                                villagePosition = new Vector2Int(i, j);
+                        } else {
+                            CellView prefab = _cells[villagePosition.x, villagePosition.y];
+                            _cells[i, j] = prefab;
+                        }
                     }
                 }
             }
@@ -540,17 +549,14 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
         MetaUI.Instance.SetPlayText("Level "+(StorageManager.GameDataMain.CurMaxLevel+1));
         
-Debug.Log(StorageManager.GameDataMain.HealthCount + " saved health" + MainManager.Instance._hasInternetConnection + " internet connect"); 
         if (MainManager.Instance._hasInternetConnection) {
            
             MainManager.Instance.SetupGetPieceTimer();
             MainManager.Instance.SetupHealth();
         }
         
-        //   SetupHealth();
         base.SetupGame();
     }
-
     public void MoveBuildCameraToFixedPosition(Vector3 needPosition) { }
 
     private void SetFigureFormsInfoFromData() {

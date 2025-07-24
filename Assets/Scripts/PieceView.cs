@@ -58,7 +58,8 @@ public class PieceView : MonoBehaviour {
     }
 
     private void CreateCellAndMarkedCellView(PieceData data, int x, int y, Vector3 shift) {
-        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(data.Type.CellType);
+        var needCellType = (data.Type.CellType == CellType.Village &&(x != 0 || y != 0 ) )? CellType.VillagePart :data.Type.CellType;
+        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(needCellType);
         CellView go = Instantiate(prefab, _cellsContainer);
         go.SetSeed(data.CellGuids[x, y]);
         var markedCell = PiecesViewTable.Instance.MarkedCell;
