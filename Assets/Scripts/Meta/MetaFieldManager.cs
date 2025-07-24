@@ -127,7 +127,8 @@ public class MetaFieldManager : FieldManager {
         if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell) return;
+            var cellType = _field[(int)cellPos.x, (int)cellPos.z];
+            if (cellType == CellType.LockedMetaCell ||cellType == CellType.VillagePart || cellType == CellType.Village ) return;
             StorageManager.GameDataMain.MetaHummerCount--;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
@@ -194,14 +195,14 @@ public class MetaFieldManager : FieldManager {
             new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
         };
 
-        int production = (int)(cell.AfkProduceCountPerSecond * multiplier);
+        float production = (cell.AfkProduceCountPerSecond * multiplier);
         
-        List<Tuple<ResourceType, int>> incomeBefore = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, production)
+        List<Tuple<ResourceType, float>> incomeBefore = new() {
+            new Tuple<ResourceType, float>(cell.AfkResourceType, production)
         };
         
-        List<Tuple<ResourceType, int>> incomeAfter = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, production*2) // TODO: брать из конфига
+        List<Tuple<ResourceType, float>> incomeAfter = new() {
+            new Tuple<ResourceType, float>(cell.AfkResourceType, production*2) // TODO: брать из конфига
         };
         
         var dialogData = new DialogWithData {

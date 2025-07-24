@@ -59,7 +59,8 @@ public class UpgradeTileDialog : DialogBase {
     [Serializable]
     public class Data {
         public Action ClickUpgrade, ClickClose;
-        public List<Tuple<ResourceType, int>> CostResources, IncomeResourcesBefore, IncomeResourcesAfter;
+        public List<Tuple<ResourceType, int>> CostResources;
+        public List<Tuple<ResourceType, float>> IncomeResourcesBefore, IncomeResourcesAfter;
         public string TileName;
         public int Level;
         public int Capacity;
