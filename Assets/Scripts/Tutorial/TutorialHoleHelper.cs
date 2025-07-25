@@ -9,16 +9,22 @@ public class TutorialHoleHelper : MonoBehaviour {
     private Transform _holesContainer;
 
     private List<GameObject> _curHoles = new List<GameObject>();
-
+    
     public void SpawnHoles(List<Vector3Int> cells) {
         if (_holesContainer == null) {
             _holesContainer = GameObject.FindGameObjectWithTag("TutorialHoleContainer").transform;
         }
         
+        Camera mainCamera = Camera.main!;
         foreach (var pos in cells) {
-            var image = Instantiate(_holeImagePrefab, _holesContainer);
+            Image image = Instantiate(_holeImagePrefab, _holesContainer);
             _curHoles.Add(image.gameObject);
-            image.transform.position = Camera.main.WorldToScreenPoint(pos);
+            image.transform.position = mainCamera.WorldToScreenPoint(pos);
+            
+            Vector2 min = mainCamera.WorldToScreenPoint(pos - new Vector3(0.5f, 0, 0.5f));
+            Vector2 max = mainCamera.WorldToScreenPoint(pos + new Vector3(0.5f, 0, 0.5f));
+            image.rectTransform.sizeDelta = (max - min);
+            
         }
     }
 
