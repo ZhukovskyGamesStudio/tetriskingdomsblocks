@@ -383,8 +383,8 @@ public class TutorialFieldManager : FieldManager
         for (int i = 0; i < _field.GetLength(0); i++) {
             for (int j = 0; j < _field.GetLength(1); j++) {
                 if (levelConfig.StartFieldConfig.GetCell(i, j) == CellType.Empty) {
-                    _tutorialView.SetHolesPositions(NextPiecesView.Instance._piecesContainers[0].position,
-                        new Vector3(i, 0, j));
+                   // _tutorialView.SetHolesPositions(NextPiecesView.Instance._piecesContainers[0].position,
+                    //    new Vector3(i, 0, j));
                     continue;
                 }
 
