@@ -8,63 +8,14 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BoostersManager : MonoBehaviour {
-    [SerializeField]
-    private TMP_Text _randomFieldCountText;
-
-    [SerializeField]
-    private TMP_Text _dinamyteCountText;
-
-    [SerializeField]
-    private TMP_Text _hummerCountText;
-
-    [SerializeField]
-    private TMP_Text _rotatePieceCountText;
-
-    [SerializeField]
-    private Button _randomFieldButton;
-
-    [SerializeField]
-    private Button _dinamyteButton;
-
-    [SerializeField]
-    private Button _hummerButton;
-
-    [SerializeField]
-    private Button _rotatePieceButton;
-
-    [field: SerializeField]
-    public Transform _dynamiteContainer { get; private set; }
-
-    [SerializeField]
-    private Image _dynamiteImageButton;
-
-    [SerializeField]
-    private Image _hummerImageButton;
-
-    [SerializeField]
-    private Image _randomImageButton;
-
-    [SerializeField]
-    private Image _rotateImageButton;
-
-    [SerializeField]
-    private Button _rotatePieceCancelButton;
-
-    [SerializeField]
-    private Button _rotatePieceAcceptButton;
-
-    [SerializeField]
-    private Transform _rotatePieceSelectContainer;
-
-    [SerializeField]
-    private Transform _rotatePieceButtonsContainer;
+   
 
     [SerializeField]
     private ParticleSystem _dynamiteBoomFx;
 
     public static BoostersManager Instance;
     public Action OnBoosterEndedWorking;
-
+    private GameData _gameData;
     private bool _dynamiteExploding;
 
     public RotateBoosterStates RotationState;
@@ -77,39 +28,17 @@ public class BoostersManager : MonoBehaviour {
         SelectPiece,
         RotatePiece
     }
-
-    public void SetBoosterButtons() {
-        var lockSprite = ConfigsManager.Instance.BoostersConfig.LockBoosterSprite;
-        int curLevel = StorageManager.GameDataMain.CurMaxLevel;
-        if (!AdminManager.Instance.IsInfiniteBoosters) {
-            if (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel > curLevel) {
-                _rotateImageButton.sprite = lockSprite;
-                _rotatePieceButton.enabled = false;
-                _rotatePieceCountText.text = (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel + 1) + "lvl";
-            }
-
-            if (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel > curLevel) {
-                _dynamiteImageButton.sprite = lockSprite;
-                _dinamyteButton.enabled = false;
-                _dinamyteCountText.text = (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel + 1) + "lvl";
-            }
-
-            if (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel > curLevel) {
-                _hummerImageButton.sprite = lockSprite;
-                _hummerButton.enabled = false;
-                _hummerCountText.text = (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel + 1) + "lvl";
-            }
-
-            if (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel > curLevel) {
-                _randomImageButton.sprite = lockSprite;
-                _randomFieldButton.enabled = false;
-                _randomFieldCountText.text = (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel + 1) + "lvl";
-            }
-        }
-    }
+    
 
     private void Awake() {
         Instance = this;
+    }
+
+
+    public void Init(GameData gameData) {
+        _gameData = gameData;
+        GameUI.Instance.GameBoostersButtons.SetBoosterButtons(ConfigsManager.Instance.BoostersConfig, StorageManager.GameDataMain.CurMaxLevel);
+        GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
     }
 
     public void RotatePieceLeft() {
@@ -134,7 +63,7 @@ public class BoostersManager : MonoBehaviour {
         _currentPieceView = null;
 
         StorageManager.GameDataMain.RotatePieceCount--;
-        _rotatePieceCountText.text = StorageManager.GameDataMain.RotatePieceCount.ToString();
+        GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
     }
 
     private void RotateFigure(int degrees) {
@@ -174,7 +103,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void SelectPieceToRotate(PieceView pieceView) {
-        GameUI.Instance.SetUseRotateActive();
+        GameUI.Instance.BoostersPanels.SetUseRotateActive();
         RotationState = RotateBoosterStates.RotatePiece;
         _initialRotationY = (int)Mathf.Round(pieceView.transform.rotation.eulerAngles.y);
         _currentRotationY = _initialRotationY;
@@ -182,9 +111,9 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseRotatePiece() {
-        if (!AdminManager.Instance.IsInfiniteBoosters &&
-            (ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel > StorageManager.GameDataMain.CurMaxLevel ||
-             StorageManager.GameDataMain.RotatePieceCount <= 0 || GameUI.Instance.GoalView._isGameEnded)) return;
+        if (!CanRotate()) {
+            return;
+        }
         if (RotationState == RotateBoosterStates.LockRotate) {
             RotationState = RotateBoosterStates.SelectPiece;
         } else {
@@ -195,9 +124,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseHummer() {
-        if (!AdminManager.Instance.IsInfiniteBoosters &&
-            (ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel > StorageManager.GameDataMain.CurMaxLevel ||
-             StorageManager.GameDataMain.HummerCount <= 0 || GameUI.Instance.GoalView._isGameEnded)) {
+        if (!CanHammer()) {
             return;
         }
 
@@ -206,13 +133,13 @@ public class BoostersManager : MonoBehaviour {
 
     public void BreackCellWithHummer() {
         StorageManager.GameDataMain.HummerCount--;
-        _hummerCountText.text = StorageManager.GameDataMain.HummerCount.ToString();
+        GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
     }
 
     public void UseRandomField() {
-        if (!AdminManager.Instance.IsInfiniteBoosters &&
-            (ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel > StorageManager.GameDataMain.CurMaxLevel ||
-             StorageManager.GameDataMain.RandomFieldCount <= 0 || GameUI.Instance.GoalView._isGameEnded)) return;
+        if (!CanShuffle()) {
+            return;
+        }
 
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
         int cellsCount = 0;
@@ -229,7 +156,7 @@ public class BoostersManager : MonoBehaviour {
 
         if (cellsToPlace.Count == 0) return;
         StorageManager.GameDataMain.RandomFieldCount--;
-        _randomFieldCountText.text = StorageManager.GameDataMain.RandomFieldCount.ToString();
+        GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         List<Vector2Int> emptyCells = new List<Vector2Int>();
 
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
@@ -260,9 +187,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseDynamite() {
-        if (!AdminManager.Instance.IsInfiniteBoosters &&
-            (ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel > StorageManager.GameDataMain.CurMaxLevel ||
-             StorageManager.GameDataMain.DynamiteCount <= 0 || GameUI.Instance.GoalView._isGameEnded)) {
+        if (!CanDynamite()) {
             return;
         }
 
@@ -273,8 +198,7 @@ public class BoostersManager : MonoBehaviour {
     public void CancelDynamite() {
         if (_dynamiteExploding) return;
 
-        _dinamyteButton.enabled = true;
-        _dinamyteButton.gameObject.SetActive(true);
+        GameFieldManager.Instance.DisablePlaceDynamiteMode();
     }
 
     private void ExplodeDynamite(Transform dynamite, Vector2Int position) {
@@ -301,15 +225,14 @@ public class BoostersManager : MonoBehaviour {
         Destroy(dynamite.gameObject);
 
         StorageManager.GameDataMain.DynamiteCount--;
-        _dinamyteCountText.text = StorageManager.GameDataMain.DynamiteCount.ToString();
-        _dinamyteButton.enabled = true;
-        _dinamyteButton.gameObject.SetActive(true);
+        GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
+      
         OnBoosterEndedWorking?.Invoke();
     }
 
     public void AnimateDynamite(Transform dynamite, Vector2Int position) {
         _dynamiteExploding = true;
-        GameUI.Instance.SetBoosterActive(BoosterType.Bomb, false);
+        GameUI.Instance.BoostersPanels.SetBoosterActive(BoosterType.Bomb, false);
         // Запоминаем исходный масштаб
         Vector3 originalScale = dynamite.transform.localScale;
 
@@ -320,13 +243,35 @@ public class BoostersManager : MonoBehaviour {
                 .OnComplete(() => { ExplodeDynamite(dynamite, position); }) // Удаляем объект после анимации
         );
     }
-
-    public void SetAllText() {
-        _randomFieldCountText.text = StorageManager.GameDataMain.RandomFieldCount.ToString();
-        _dinamyteCountText.text = StorageManager.GameDataMain.DynamiteCount.ToString();
-        _hummerCountText.text = StorageManager.GameDataMain.HummerCount.ToString();
-        _rotatePieceCountText.text = StorageManager.GameDataMain.RotatePieceCount.ToString();
+    
+    public bool CanShuffle() {
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel, StorageManager.GameDataMain.RandomFieldCount);
     }
+
+    public bool CanDynamite() {
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel, StorageManager.GameDataMain.DynamiteCount);
+    }
+
+    public bool CanHammer() {
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel, StorageManager.GameDataMain.HummerCount);
+    }
+
+    public bool CanRotate() {
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel, StorageManager.GameDataMain.RotatePieceCount);
+    }
+
+    private bool CanUseBooster(int unlockLvl, int hasAmount) {
+        if (_gameData.IsGameEnded) {
+            return false;
+        }
+
+        if (StorageManager.GameDataMain.CurMaxLevel < unlockLvl) {
+            return false;
+        }
+
+        return hasAmount > 0 || AdminManager.Instance.IsInfiniteBoosters;
+    }
+    
 }
 
 public enum BoosterType {

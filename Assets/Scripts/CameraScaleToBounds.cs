@@ -6,9 +6,9 @@ using UnityEngine;
 public class CameraScaleToBounds : MonoBehaviour {
     [SerializeField]
     private CinemachineCamera _virtualCamera;
-    
+
     private CinemachinePositionComposer _framingComposer; // Optional, if you want to use a composer for camera framing
-    
+
     [SerializeField]
     private Transform _targetArea; // The object or root that should always be visible
 
@@ -18,10 +18,15 @@ public class CameraScaleToBounds : MonoBehaviour {
     private float _aspectRatio = -1;
 
     private void Awake() {
-        _framingComposer= _virtualCamera.GetComponent<CinemachinePositionComposer>();
+        _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
+        TryFitToBounds();
     }
 
     private void Update() {
+        TryFitToBounds();
+    }
+
+    private void TryFitToBounds() {
         float curAspect = (float)Screen.width / Screen.height;
         if (!Mathf.Approximately(curAspect, _aspectRatio)) {
             _aspectRatio = curAspect;

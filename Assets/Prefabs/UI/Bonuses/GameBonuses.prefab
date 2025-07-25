@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5228042560409129107}
+  - component: {fileID: 7896990296216829672}
   m_Layer: 5
   m_Name: GameBonuses
   m_TagString: Untagged
@@ -30,7 +31,7 @@ RectTransform:
   m_Children:
   - {fileID: 3174000815938162332}
   - {fileID: 6869075744226883522}
-  - {fileID: 1574836494597150007}
+  - {fileID: 2943837982435929772}
   - {fileID: 8975273576288472170}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -39,6 +40,30 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7896990296216829672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4890335658195972056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf37067dad0403591244a9127aa8b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <RotateSelect>k__BackingField: {fileID: 1589841912146556007}
+  <RotateUse>k__BackingField: {fileID: 4137942163996317825}
+  BoostersWindows:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 180475077524010399}
+    - Key: 1
+      Value: {fileID: 7590207712786684088}
+    - Key: 2
+      Value: {fileID: 1304114386594477421}
+    - Key: 3
+      Value: {fileID: 5171686423584472890}
 --- !u!1001 &778275743056426574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -131,11 +156,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4712638150934789838, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 4712638150934789838, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ConfirmShuffle
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+--- !u!1 &180475077524010399 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 598363617784447953, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+  m_PrefabInstance: {fileID: 778275743056426574}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &3174000815938162332 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2792422288835033298, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
@@ -149,6 +199,74 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5228042560409129107}
     m_Modifications:
+    - target: {fileID: 1674642356523799526, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 109.85986
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ConfirmRotate
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SwitchRotateWindowActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079672083365051859, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300213455905136361, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 2300213455905136361, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 2300213455905136361, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ConfirmRotate
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300213455905136361, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300213455905136361, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195295126988294328, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -109.85986
+      objectReference: {fileID: 0}
     - target: {fileID: 4851071847238906777, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -229,6 +347,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5170718121333293029, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5170718121333293029, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5170718121333293029, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ApplyRotate
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170718121333293029, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170718121333293029, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293739768568855418, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5293739768568855418, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RotateRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293739768568855418, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5459422614219672685, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5459422614219672685, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RotateLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5459422614219672685, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8654069663081889993, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
       propertyPath: m_Name
       value: Rotate
@@ -238,6 +400,21 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+--- !u!1 &1589841912146556007 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3011970458695797652, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+  m_PrefabInstance: {fileID: 4601812297274195955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4137942163996317825 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 481893536725329778, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+  m_PrefabInstance: {fileID: 4601812297274195955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5171686423584472890 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8654069663081889993, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
+  m_PrefabInstance: {fileID: 4601812297274195955}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8975273576288472170 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4851071847238906777, guid: 3651d7db414175541be441e5f37cd9a7, type: 3}
@@ -335,6 +512,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bomb
       objectReference: {fileID: 0}
+    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ConfirmDynamite
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6019916033572882982, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0014648438
+      objectReference: {fileID: 0}
+    - target: {fileID: 6019916033572882982, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -174.10742
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -345,6 +550,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 327279049768552320, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
   m_PrefabInstance: {fileID: 6618428265793384514}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7590207712786684088 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3642484944591153402, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+  m_PrefabInstance: {fileID: 6618428265793384514}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7410969024028822489
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -353,6 +563,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5228042560409129107}
     m_Modifications:
+    - target: {fileID: 628120482584183503, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0014648438
+      objectReference: {fileID: 0}
+    - target: {fileID: 628120482584183503, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -174.10742
+      objectReference: {fileID: 0}
     - target: {fileID: 5621495105497867637, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -433,6 +651,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7896990296216829672}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchHammerWindowActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ConfirmHammer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameBoostersPanels, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8412768290314256052, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -442,7 +684,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
---- !u!224 &1574836494597150007 stripped
+--- !u!1 &1304114386594477421 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8412768290314256052, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+  m_PrefabInstance: {fileID: 7410969024028822489}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2943837982435929772 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5621495105497867637, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
   m_PrefabInstance: {fileID: 7410969024028822489}

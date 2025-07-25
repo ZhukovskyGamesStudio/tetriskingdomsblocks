@@ -49,12 +49,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: CellType
-      value: 207
+      value: 300
       objectReference: {fileID: 0}
-    - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
-      propertyPath: _cellCollider
-      value: 
-      objectReference: {fileID: 3030815457593028490}
     - target: {fileID: 1240971781532316088, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
       propertyPath: <CellType>k__BackingField
       value: 2
@@ -111,7 +107,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1691349259426728308, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+    - {fileID: 8325579802438069636, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
+    - {fileID: 1684071944323455264, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1992755646559075033, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
@@ -122,10 +121,5 @@ PrefabInstance:
 --- !u!4 &2807757598421355635 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1992755646559075033, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
-  m_PrefabInstance: {fileID: 4418198476316325546}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &3030815457593028490 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 1684071944323455264, guid: f2c2511bbe105174285dbf42e26d2e43, type: 3}
   m_PrefabInstance: {fileID: 4418198476316325546}
   m_PrefabAsset: {fileID: 0}

@@ -30,4 +30,8 @@ public static class StorageManager {
     public static bool IsNewPlayer() {
         return !PlayerPrefs.HasKey(SaveKey);
     }
+    
+    public static bool IsTutorialCompleted() {
+        return GameDataMain is { CurMaxLevel: >= 1 };
+    }
 }

@@ -11,7 +11,6 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     [field: SerializeField]
     public List<Transform> _piecesContainers { get; private set; }
 
-
     [SerializeField]
     private float _piecesScale = 0.4f;
 
@@ -24,9 +23,9 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     [SerializeField]
     private List<ParticleSystem> _spawnParticles;
 
-
     [SerializeField]
     private GameAudio _gameAudio;
+
     private CancellationTokenSource _cts;
 
     private void Awake() {
@@ -36,28 +35,30 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     public async UniTask SetData(PieceData nextPiece) {
         MetaFieldManager.Instance.AddPieceToInventory(nextPiece);
     }
-    
-    
+
     public void SetData(List<PieceData> nextPieces) {
         DestroyPieces();
         TryCancelCreatingTask();
         _cts = new CancellationTokenSource();
-      
+
         CreatePiecesAsync(nextPieces, _cts.Token, _piecesContainers).Forget();
     }
-    
+
     public async UniTask<PieceView> CreateDynamitePieceView(Vector3 pos) {
         PieceData dynamiteCellInfo = PieceUtils.GetExactPiece(ConfigsManager.Instance.BoostersConfig.DinamyteCellInfo);
         TryCancelCreatingTask();
         _cts = new CancellationTokenSource();
-        BoostersManager.Instance._dynamiteContainer.position = pos;
-        PieceView pieceView =await CreatePiecesAsync(new List<PieceData>() { dynamiteCellInfo }, _cts.Token,
-            new List<Transform>() { BoostersManager.Instance._dynamiteContainer });
+        GameObject container = new GameObject("Dynamite Container");
+        container.transform.position = pos;
+        PieceView pieceView = await CreatePiecesAsync(new List<PieceData>() { dynamiteCellInfo }, _cts.Token,
+            new List<Transform>() { container.transform });
+        pieceView.transform.SetParent(null);
+        Destroy(container);
         return pieceView;
     }
 
     private async UniTask<PieceView> CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token, List<Transform> containers) {
-      PieceView pieceView =null;
+        PieceView pieceView = null;
         for (int i = 0; i < nextPieces.Count; i++) {
             token.ThrowIfCancellationRequested();
 
@@ -72,9 +73,10 @@ public class NextPiecesView : MonoBehaviour, IResetable {
             go.AppearAsync().Forget();
             _spawnParticles[i].gameObject.SetActive(true);
             _spawnParticles[i].Play();
-           
+
             //await UniTask.WaitWhile(()=>    _appearAudioSource[i].isPlaying, cancellationToken: token);
         }
+
         _createParticleSystem.Play();
         _gameAudio.PlayNextSound(_gameAudio.PiecesAppear);
         await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
@@ -92,17 +94,13 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     }
 
     public void DestroyPieces() {
-        for (int i = 0; i < _piecesContainers.Count; i++)
-        {
+        for (int i = 0; i < _piecesContainers.Count; i++) {
             DestroyCellsAnimation(_piecesContainers[i]);
-            if (_piecesContainers[i].childCount != 0)
-            {
+            if (_piecesContainers[i].childCount != 0) {
                 _spawnParticles[i].gameObject.SetActive(true);
                 _spawnParticles[i].Play();
             }
         }
-
-        
     }
 
     public void DestroyAdditionalPiece() {
@@ -115,23 +113,21 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         }
     }
 
-    private void DestroyCellsAnimation(Transform cellsContainer)
-    {
-      //  float animationMultiplayer = ConfigsManager.Instance.DragConfig.DestroyPieceAnimationMultiplayer;
+    private void DestroyCellsAnimation(Transform cellsContainer) {
+        //  float animationMultiplayer = ConfigsManager.Instance.DragConfig.DestroyPieceAnimationMultiplayer;
 
-    //    DOTween.Sequence()
-          //  .Append(cellsContainer.DOScale(cellsContainer.localScale * 1.1f, 0.2f * animationMultiplayer))
-         //   .Append(cellsContainer.DOScale(0, 0.2f * animationMultiplayer)).OnComplete(() =>
-         //  {
-                foreach (Transform child in cellsContainer)
-                {
-                    Destroy(child.gameObject);
-                }
-         //  });
+        //    DOTween.Sequence()
+        //  .Append(cellsContainer.DOScale(cellsContainer.localScale * 1.1f, 0.2f * animationMultiplayer))
+        //   .Append(cellsContainer.DOScale(0, 0.2f * animationMultiplayer)).OnComplete(() =>
+        //  {
+        foreach (Transform child in cellsContainer) {
+            Destroy(child.gameObject);
+        }
+        //  });
 
         //particles
     }
-    
+
     public void Reset() {
         DestroyPieces();
     }

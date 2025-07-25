@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameEntryPoint : MonoBehaviour {
     [SerializeField]
@@ -35,13 +36,13 @@ public class GameEntryPoint : MonoBehaviour {
         _gameFieldManager.PlaceStartingField(levelConfig);
         _gameFieldManager.OnMoveEnded += OnMoveEnded;
         _gameFieldManager.OnPieceDestroyedByHammer += CheckGameGoal;
-        _ultaManager.Init(_mainGameConfig);
-        GameUI.Instance.StartCharacterInfoTextCoroutine(levelConfig.GuideForLevelText);
-        GameUI.Instance.SetMovesCount(levelConfig.MovesCount);
-        BoostersManager.Instance.SetAllText();
+        _ultaManager.Init(_mainGameConfig, _gameData);
+        BoostersManager.Instance.Init(_gameData);
+        GameUI.Instance.GoalView.SetMovesCount(levelConfig.MovesCount);
         BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
         UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
-        BoostersManager.Instance.SetBoosterButtons();
+        
+      
 
         if (levelConfig.TutorialObject != null) {
             Instantiate(levelConfig.TutorialObject);
@@ -52,7 +53,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void OnMoveEnded() {
         _gameData.MovesLeft--;
-        GameUI.Instance.SetMovesCount(_gameData.MovesLeft);
+        GameUI.Instance.GoalView.SetMovesCount(_gameData.MovesLeft);
 
         CheckGameGoal();
     }
@@ -94,7 +95,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task) {
-        var taskUI = GameUI.Instance.TaskUIViews[i];
+        var taskUI = GameUI.Instance.GoalView.TaskUIViews[i];
         taskUI.SetData(task);
 
         _gameData.CurrentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
@@ -106,21 +107,21 @@ public class GameEntryPoint : MonoBehaviour {
     private void CheckGameGoal() {
         TaskUtils.CheckResourceCountForTasks(_gameData);
 
-        if (CheckWin()) {
+        if (CheckWin() && !_gameData.IsGameEnded) {
             UltaManager.Instance.UltimateActionEndRound(Win);
             return;
         }
 
-        if (CheckLose()) {
+        if (CheckLose() && !_gameData.IsGameEnded) {
             Lose();
             return;
         }
 
         if (_gameData.MovesLeft <= 0 && !_gameData.RejectedBuyMoves) {
-            GameUI.Instance.ShowOutOfMovesDialog(TryBuyMoves,RejectMoves);
+            GameUI.Instance.ShowOutOfMovesDialog(TryBuyMoves, RejectMoves);
         }
     }
-    
+
     private void TryBuyMoves() {
         if (StorageManager.GameDataMain.GoldAmount < 900) {
             return;
@@ -153,12 +154,16 @@ public class GameEntryPoint : MonoBehaviour {
         SaveWinGame();
 
         GameFieldManager.Instance.SetWinState();
-        GameUI.Instance.SetMainText("You win!");
-        GameUI.Instance.SetTasksActive(false);
+        GameUI.Instance.GoalView.SetTasksActive(false);
         NextPiecesView.Instance.DestroyPieces();
         NextPiecesView.Instance.DestroyAdditionalPiece();
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
-        GameUI.Instance.GoalView.SetWinState();
+        _gameData.IsGameEnded = true;
+        if (GameFieldManager.Instance != null) {
+            GameUI.Instance.ShowWinDialog();
+        } else {
+            SceneManager.LoadScene("GameScene");
+        }
 
         _gameAudio.PlayNextSound(_gameAudio.Win);
     }
@@ -172,14 +177,12 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void Lose() {
+        _gameData.IsGameEnded = true;
         MainManager.Instance.RemoveHealthAfterLose();
-        GameUI.Instance.SetMainText("You lose:(");
-        GameUI.Instance.SetTasksActive(false);
+        GameUI.Instance.GoalView.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
         GameUI.Instance.ShowLoseDialog();
-        StorageManager.GameDataMain.HealthCount--;
-        GameUI.Instance.GoalView.SetLoseState();
-        UltaManager.Instance.HideUltimateUI();
+        GameUI.Instance.GoalView.HideUltimateUI();
         GameFieldManager.Instance.SetLoseState();
     }
 }

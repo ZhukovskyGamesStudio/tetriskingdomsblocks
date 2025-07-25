@@ -111,6 +111,10 @@ public class FieldManager : MonoBehaviour {
         _placeDynamiteMode = !_placeDynamiteMode;
     }
 
+    public void DisablePlaceDynamiteMode() {
+        _placeDynamiteMode = false;
+    }
+
     protected async void HummerDestoyPieceAnimation(CellView[] cells) {
         Vector3 hummerNeedPos = Vector3.zero;
         foreach (var cell in cells) {
@@ -176,7 +180,7 @@ public class FieldManager : MonoBehaviour {
 
                 CellView go = cells[x, y];
 
-                _field[place.x, place.y] = pieceData.Type.CellType;
+                _field[place.x, place.y] = cells[x, y].CellType;//fix if has problem
                 _cells[place.x, place.y] = go;
 
                 SpawnResourceFxForCell(place, go);

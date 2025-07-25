@@ -10,7 +10,9 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MetaFieldManager : FieldManager {
     public static MetaFieldManager Instance { get; private set; }
-
+    [field: SerializeField]
+    private VillageStuffConfig _villageStuffConfig;
+    
     [field: Header("Meta")]
     [field: SerializeField]
     public MainMetaConfig MainMetaConfig { get; private set; }
@@ -31,8 +33,6 @@ public class MetaFieldManager : FieldManager {
     private int[,] _formGroupCellIndex;
     private Dictionary<int, List<Vector2Int>> _formGroupCellPositions = new Dictionary<int, List<Vector2Int>>();
 
-    private int _minutesToGetPiece = 120;
-   
 
     private Vector3 _dragStartPosition;
     private Vector3 _dragStartPositionForUICheck;
@@ -127,7 +127,8 @@ public class MetaFieldManager : FieldManager {
         if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            if (_field[(int)cellPos.x, (int)cellPos.z] == CellType.LockedMetaCell) return;
+            var cellType = _field[(int)cellPos.x, (int)cellPos.z];
+            if (cellType == CellType.LockedMetaCell ||cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) return;
             StorageManager.GameDataMain.MetaHummerCount--;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
@@ -194,14 +195,14 @@ public class MetaFieldManager : FieldManager {
             new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
         };
 
-        int production = (int)(cell.AfkProduceCountPerSecond * multiplier);
+        float production = (cell.AfkProduceCountPerSecond * multiplier);
         
-        List<Tuple<ResourceType, int>> incomeBefore = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, production)
+        List<Tuple<ResourceType, float>> incomeBefore = new() {
+            new Tuple<ResourceType, float>(cell.AfkResourceType, production)
         };
         
-        List<Tuple<ResourceType, int>> incomeAfter = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, production*2) // TODO: брать из конфига
+        List<Tuple<ResourceType, float>> incomeAfter = new() {
+            new Tuple<ResourceType, float>(cell.AfkResourceType, production*2) // TODO: брать из конфига
         };
         
         var dialogData = new DialogWithData {
@@ -227,18 +228,31 @@ public class MetaFieldManager : FieldManager {
         var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
 
-        if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) {
-            return;
-        }
+        if (cellConfig.AfkResourceType != ResourceType.Gold) {
+            if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) {
+                return;
+            }
 
-        StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
-        MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
-            StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
+            StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
+            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
+                StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
+        }
+       else {
+            if (StorageManager.GameDataMain.GoldAmount < cellConfig.UpgradeCost) {
+                return;
+            }
+
+            StorageManager.GameDataMain.GoldAmount -= cellConfig.UpgradeCost;
+            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
+                StorageManager.GameDataMain.GoldAmount);
+        }
+      
         
         var dragConfig = ConfigsManager.Instance.DragConfig;
         var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y - 0.3f;
         var upgradedPrefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellConfig.UpgradeCellType);
         foreach (var cell in cellsToUpgrade) {
+            if (_field[cell.x, cell.y] == CellType.VillagePart) continue;
             _field[cell.x, cell.y] = cellConfig.UpgradeCellType;
             _cells[cell.x, cell.y].UpgradeStart();
             var seed = _cells[cell.x, cell.y].Seed;
@@ -417,7 +431,7 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    private ResourceMarkView SpawnResourceMark(Vector3 pos, int maxResource, int currentResource, ResourceType resourceType,
+    private ResourceMarkView SpawnResourceMark(Vector3 pos, int maxResource, float currentResource, ResourceType resourceType,
         Color resourceColor) {
         return MetaWorldCanvasView.Instance.SpawnResourceMark(pos, maxResource, currentResource, resourceType, resourceColor, _connectedGroups.Count);
     }
@@ -459,9 +473,9 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GetPiece() {
-        if (_hasInternetConnection &&
-            (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 8) {
-            StorageManager.GameDataMain.LastGetPieceTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
+        if (MainManager.Instance._hasInternetConnection &&
+            MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
+            StorageManager.GameDataMain.LastGetPieceTime = (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
             GenerateNewPiece(); 
         }
     }
@@ -471,8 +485,11 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GenerateNewPiece() {
-        var pieceData = PieceUtils.GetNewMetaPiece(guaranteed: null);
+        Debug.Log(StorageManager.GameDataMain.PlacedInMetaPiecesCount);
+        CellTypeInfo cellTypeInfo = StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
+        var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
         AddPieceToInventory(pieceData);
+        StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
         SaveInventory();
     }
 
@@ -494,10 +511,6 @@ public class MetaFieldManager : FieldManager {
 
         CalculateCellSpawnChances();
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
-            /*Debug.Log(MainManager.Instance._currentGameTime);
-            StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-   StorageManager.GameDataMain.LastGetPieceTime =
-                (MainManager.Instance._currentGameTime - TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);*/
             StorageManager.GameDataMain.FieldSaveIsCreated = true;
             StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
             for (int i = 0; i < _field.GetLength(0); i++) {
@@ -515,17 +528,25 @@ public class MetaFieldManager : FieldManager {
             }
         } else if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1) {
             _field = new CellType[StorageManager.GameDataMain.FieldRows.Length, StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
+            Vector2Int villagePosition = -Vector2Int.one;
             for (int i = 0; i < _field.GetLength(0); i++) {
                 for (int j = 0; j < _field.GetLength(1); j++) {
                     _field[i, j] = StorageManager.GameDataMain.FieldRows[i].RowCells[j].CellType;
                     var cellType = _field[i, j];
                     if (cellType != CellType.Empty) {
-                        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
-                        var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-                        go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
-                        _cells[i, j] = go;
+                        if (cellType != CellType.VillagePart) {
+                            CellView prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
+                            var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
+                            go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
+                            _cells[i, j] = go;
 
-                        go.SetSeed(Guid.NewGuid());
+                            go.SetSeed(Guid.NewGuid());
+                            if (FieldUtils.IsVillageCell(cellType))
+                                villagePosition = new Vector2Int(i, j);
+                        } else {
+                            CellView prefab = _cells[villagePosition.x, villagePosition.y];
+                            _cells[i, j] = prefab;
+                        }
                     }
                 }
             }
@@ -541,16 +562,15 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
         MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
         MetaUI.Instance.SetPlayText("Level "+(StorageManager.GameDataMain.CurMaxLevel+1));
-
+        
         if (MainManager.Instance._hasInternetConnection) {
+           
             MainManager.Instance.SetupGetPieceTimer();
-                    MainManager.Instance.SetupHealth();
+            MainManager.Instance.SetupHealth();
         }
         
-        //   SetupHealth();
         base.SetupGame();
     }
-
     public void MoveBuildCameraToFixedPosition(Vector3 needPosition) { }
 
     private void SetFigureFormsInfoFromData() {
@@ -578,7 +598,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
-        int collectedResouces = 0;
+        float collectedResouces = 0;
         ResourceType curResource = ResourceType.None;
         foreach (var (row, col) in _connectedGroups[index].Pieces) {
             var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
@@ -586,13 +606,20 @@ public class MetaFieldManager : FieldManager {
                 curResource = cellConfig.AfkResourceType;
             if (cellConfig.AfkResourceType != ResourceType.None) {
                 collectedResouces += StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount;
-                StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = 0;
+                StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount -= Mathf.FloorToInt(StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount);
             }
         }
 
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-        StorageManager.GameDataMain.ResourcesCount[(int)curResource - 1] += (int)(collectedResouces * multiplayerResources);
-        UpdateResourcesCountUIText();
+        var finalResourceCount = collectedResouces * multiplayerResources;
+        if (curResource != ResourceType.Gold) {
+             StorageManager.GameDataMain.ResourcesCount[(int)curResource - 1] += finalResourceCount;
+                    UpdateResourcesCountUIText();
+        } else {
+             StorageManager.GameDataMain.GoldAmount += finalResourceCount;
+             MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
+        }
+           
     }
 
     public override void SaveEnergyData() {
@@ -764,7 +791,7 @@ public class MetaFieldManager : FieldManager {
     private void UpdateResourceMarks() {
         for (int i = 0; i < _connectedGroups.Count; i++) {
             if (_connectedGroups[i].ResourceMarkView == null) continue;
-            int collectedResouces = 0;
+            float collectedResouces = 0;
             int maxCollectedResouces = 0;
             ResourceType curResource = ResourceType.None;
             foreach (var (row, col) in _connectedGroups[i].Pieces) {
@@ -798,7 +825,7 @@ public class MetaFieldManager : FieldManager {
 //fix afk calculate
         for (int i = 0; i < connectedGroupsPieces.Count; i++) {
             Vector3 collectResourceMarkPosition = Vector3.zero;
-            int collectedResouces = 0;
+            float collectedResouces = 0;
             int maxCollectedResouces = 0;
             ResourceType curResource = ResourceType.None;
             Color resourceColor = Color.clear;
@@ -815,8 +842,8 @@ public class MetaFieldManager : FieldManager {
                     float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[connectedGroupsPieces[i].Count];
 
                     maxCollectedResouces += (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer);
-                    int afkCollectedResources = StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount +
-                                                (int)(afkTimeInSeconds * cellConfig.AfkProduceCountPerSecond * resourceMultiplayer);
+                    float afkCollectedResources = StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount +
+                                                afkTimeInSeconds * cellConfig.AfkProduceCountPerSecond * resourceMultiplayer;
                     afkCollectedResources = Mathf.Min(afkCollectedResources, (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer));
                     StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = afkCollectedResources;
                     collectedResouces += afkCollectedResources;
