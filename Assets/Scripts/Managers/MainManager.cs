@@ -10,7 +10,7 @@ public class MainManager : MonoBehaviour {
     public MainManagerConfig _mainConfig { get; private set; }
 
     public DateTime _currentGameTime { get; private set; }
-    protected bool _hasInternetConnection;
+    public bool _hasInternetConnection{ get; private set; }
 
     private const int MAX_HEALTH_COUNT = 3;
     private const float MINUTES_TO_HEALTH_RECOVERY = 5;
@@ -29,14 +29,12 @@ public class MainManager : MonoBehaviour {
     }
 
     protected virtual void Start() {
-        _currentGameTime = DateTime.Now;
+        //_currentGameTime = DateTime.Now;
         _networkTimeAPI = new NetworkTimeAPI();
         _networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
           
             _hasInternetConnection = true;
-            
-            //SetupGame();
         }, error => {
             _currentGameTime = DateTime.Now;
             _hasInternetConnection = false;
@@ -52,7 +50,20 @@ public class MainManager : MonoBehaviour {
         UpdateTimerAndHealth();
     }
 
-    private void SetupHealth() {
+    public void SetupGetPieceTimer() {
+        Debug.Log(StorageManager.GameDataMain.LastGetPieceTime + "LastGetPieceTimeBefore" + _currentGameTime);
+        if (StorageManager.GameDataMain.LastGetPieceTime == DateTime.MinValue.ToString(CultureInfo.InvariantCulture)) {
+            StorageManager.GameDataMain.LastGetPieceTime = (_currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
+            StorageManager.GameDataMain.LastExitTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
+            StorageManager.SaveGame();
+            Debug.Log("First time save");
+        }
+
+        Debug.Log(StorageManager.GameDataMain.LastGetPieceTime + "LastGetPieceTime");
+    }
+
+    public void SetupHealth() {
+        Debug.Log(_currentGameTime);
         if (StorageManager.GameDataMain.HealthCount > MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.HealthCount = MAX_HEALTH_COUNT;
 
@@ -61,7 +72,7 @@ public class MainManager : MonoBehaviour {
         } else {
             CalculateOfflineHealth();
             if (_hasInternetConnection)
-                MetaUI.Instance.HealthView.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime.ToString());
+                MetaUI.Instance.HealthView.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime);
             else
                 MetaUI.Instance.HealthView.SetHealthTimerText("No internet connection");
             for (int i = 0; i < MAX_HEALTH_COUNT; i++) {
@@ -87,7 +98,7 @@ public class MainManager : MonoBehaviour {
    
 
     private void UpdateTimerAndHealth() {
-        if (MetaUI.Instance == null) return;
+        if (MetaUI.Instance == null && !_hasInternetConnection) return;
         if (_hasInternetConnection) {
             timerNowTimeSecondCounter += Time.unscaledDeltaTime;
             if (timerNowTimeSecondCounter >= 1) {

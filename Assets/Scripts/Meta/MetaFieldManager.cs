@@ -63,9 +63,9 @@ public class MetaFieldManager : FieldManager {
 
     protected override void Update() {
         base.Update();
-        if (_hasInternetConnection &&
-            (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours < 2) {
-            MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(GetTimeUntilNextPiece()) + " to \n new piece");
+   //     Debug.Log((StorageManager.GameDataMain.LastGetPieceTimeDateTime-MainManager.Instance._currentGameTime ));
+        if (MainManager.Instance._hasInternetConnection&&(StorageManager.GameDataMain.LastGetPieceTimeDateTime - MainManager.Instance._currentGameTime).TotalHours > 0) {
+            MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(  StorageManager.GameDataMain.LastGetPieceTimeDateTime-MainManager.Instance._currentGameTime ) + " to \n free tetramin");
         }
 
         CheckDragCamera();
@@ -427,13 +427,12 @@ public class MetaFieldManager : FieldManager {
 
         TimeSpan timeSinceLastUpdate = MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime;
         double minutesPassed = timeSinceLastUpdate.TotalMinutes;
-        double minutesUntilNext = _minutesToGetPiece - (minutesPassed % _minutesToGetPiece);
-
+        double minutesUntilNext = 480 - (minutesPassed % 480);
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
 
     public void Play() {
-        if (StorageManager.GameDataMain.HealthCount != 0) {
+        if (StorageManager.GameDataMain.HealthCount > 0) {
             StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
             StorageManager.SaveGame();
             SceneManager.LoadScene("GameScene");
@@ -450,7 +449,7 @@ public class MetaFieldManager : FieldManager {
             StorageManager.GameDataMain.ResourcesCount[1] -= 100;
             StorageManager.GameDataMain.ResourcesCount[2] -= 100;
             UpdateResourcesCountUIText();
-            GenerateNewPiece(); // for test
+            GenerateNewPiece(); 
         }
     }
 
@@ -461,9 +460,9 @@ public class MetaFieldManager : FieldManager {
 
     public void GetPiece() {
         if (_hasInternetConnection &&
-            (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 2) {
+            (MainManager.Instance._currentGameTime - StorageManager.GameDataMain.LastGetPieceTimeDateTime).TotalHours >= 8) {
             StorageManager.GameDataMain.LastGetPieceTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-            GenerateNewPiece(); // for test
+            GenerateNewPiece(); 
         }
     }
 
@@ -495,10 +494,10 @@ public class MetaFieldManager : FieldManager {
 
         CalculateCellSpawnChances();
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
-            StorageManager.GameDataMain.LastGetPieceTime =
-                (MainManager.Instance._currentGameTime - TimeSpan.FromHours(2)).ToString(CultureInfo.InvariantCulture);
+            /*Debug.Log(MainManager.Instance._currentGameTime);
             StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
-
+   StorageManager.GameDataMain.LastGetPieceTime =
+                (MainManager.Instance._currentGameTime - TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);*/
             StorageManager.GameDataMain.FieldSaveIsCreated = true;
             StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
             for (int i = 0; i < _field.GetLength(0); i++) {
@@ -542,6 +541,12 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
         MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
         MetaUI.Instance.SetPlayText("Level "+(StorageManager.GameDataMain.CurMaxLevel+1));
+
+        if (MainManager.Instance._hasInternetConnection) {
+            MainManager.Instance.SetupGetPieceTimer();
+                    MainManager.Instance.SetupHealth();
+        }
+        
         //   SetupHealth();
         base.SetupGame();
     }
