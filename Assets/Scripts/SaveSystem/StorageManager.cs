@@ -19,7 +19,12 @@ public static class StorageManager {
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
         GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-     
+        
+        
+        //Удаляет сохранение при обновлении игры, удалить после тестов
+        if (GameDataMain.CreatedVersion != Application.version) {
+            CreateNewSaveData();
+        }
     }
 
     public static bool IsNewPlayer() {
