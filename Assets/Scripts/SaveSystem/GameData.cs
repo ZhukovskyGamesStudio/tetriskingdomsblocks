@@ -7,9 +7,9 @@ using UnityEngine;
 public class GameDataForSave {
     public string CreatedVersion;
     public int CurMaxLevel;
-    public int[] ResourcesCount;
+    public float[] ResourcesCount;
     public List<int> RemainedLockedZones;
-    public int GoldAmount;
+    public float GoldAmount;
     public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
@@ -39,7 +39,7 @@ public class GameDataForSave {
     public SettingsData SettingsData;
 
     public GameDataForSave() {
-        ResourcesCount = new int[4];
+        ResourcesCount = new float[4];
         ResourcesCount[0] = 3000;
         ResourcesCount[1] = 3000;
         ResourcesCount[2] = 3000;
@@ -63,9 +63,9 @@ public struct MetaFieldData {
 [Serializable]
 public struct ResourceAndCountData {
     public CellType CellType;
-    public int ResourceCount;
+    public float ResourceCount;
 
-    public ResourceAndCountData(CellType cellType, int resourceCount) {
+    public ResourceAndCountData(CellType cellType, float resourceCount) {
         CellType = cellType;
         ResourceCount = resourceCount;
     }

@@ -39,12 +39,12 @@ public class UpgradeTileDialog : DialogBase {
         
         foreach (var resource in dialogData.IncomeResourcesBefore) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _incomeResourcesBefore);
-            newResource.SetData(resource.Item1, resource.Item2 + "/sec");
+            newResource.SetData(resource.Item1, Mathf.FloorToInt(resource.Item2*3600) + "/h");
         }
         
         foreach (var resource in dialogData.IncomeResourcesAfter) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _incomeResourcesAfter);
-            newResource.SetData(resource.Item1, resource.Item2 + "/sec");
+            newResource.SetData(resource.Item1, Mathf.FloorToInt(resource.Item2*3600) + "/h");
         }
     }
 
