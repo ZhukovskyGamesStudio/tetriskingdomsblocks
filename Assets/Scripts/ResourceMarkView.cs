@@ -18,14 +18,14 @@ public class ResourceMarkView : MonoBehaviour
         _buttonMark.onClick.AddListener(() =>CollectResources());
     }
 
-    public void SetResourceMarkInfo(int maxResource, int currentResource, ResourceType resourceType, int index)
+    public void SetResourceMarkInfo(int maxResource, float currentResource, ResourceType resourceType, int index)
     {
         markIndex = index;
-        if ((float)currentResource / maxResource > 0.1f)
+        if (currentResource / maxResource > 0.1f)
         {
             gameObject.SetActive(true);
-        _resourceMarkText.text = currentResource + "\n <sprite name=" + resourceType + ">";
-        _resourceFillImage.fillAmount = (float)currentResource / maxResource;
+        _resourceMarkText.text = Mathf.FloorToInt(currentResource) + "\n <sprite name=" + resourceType + ">";
+        _resourceFillImage.fillAmount = currentResource / maxResource;
         }
 
         if (gameObject.activeInHierarchy && !_isAnimate)

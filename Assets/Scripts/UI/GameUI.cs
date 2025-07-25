@@ -57,7 +57,7 @@ public class GameUI : MonoBehaviour {
             Data = new OutOfMovesDialog.Data {
                 ClickAdd = tryBuyMoves,
                 ClickClose = rejectMoves,
-                Balance = StorageManager.GameDataMain.GoldAmount,
+                Balance = Mathf.FloorToInt(StorageManager.GameDataMain.GoldAmount) ,
                 Cost = 900
             }
         };
