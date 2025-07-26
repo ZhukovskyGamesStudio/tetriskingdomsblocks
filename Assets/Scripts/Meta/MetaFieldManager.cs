@@ -63,9 +63,9 @@ public class MetaFieldManager : FieldManager {
 
     protected override void Update() {
         base.Update();
-   //     Debug.Log((StorageManager.GameDataMain.LastGetPieceTimeDateTime-MainManager.Instance._currentGameTime ));
-        if (MainManager.Instance._hasInternetConnection&&(StorageManager.GameDataMain.LastGetPieceTimeDateTime - MainManager.Instance._currentGameTime).TotalHours > 0) {
-            MetaUI.Instance.SetGetPieceTimer(TimeConverter.ConvertToTimeString(  StorageManager.GameDataMain.LastGetPieceTimeDateTime-MainManager.Instance._currentGameTime ) + " to \n free tetramin");
+        
+        if (MainManager.Instance._hasInternetConnection) {
+            MetaUI.Instance.UpdateGetPieceTimer(StorageManager.GameDataMain.LastGetPieceTimeDateTime-MainManager.Instance._currentGameTime);
         }
 
         CheckDragCamera();
@@ -486,6 +486,7 @@ public class MetaFieldManager : FieldManager {
         if (MainManager.Instance._hasInternetConnection &&
             MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime = (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
+            MetaUI.Instance.SetGetPieceButtonActive(false);
             GenerateNewPiece(); 
         }
     }

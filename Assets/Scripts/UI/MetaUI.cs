@@ -13,6 +13,9 @@ public class MetaUI : MonoBehaviour {
     public CountersPanelView CountersPanelView { get; private set; }
 
     [SerializeField]
+    private GameObject _getPieceTimer;
+    
+    [SerializeField]
     private TMP_Text _getPieceTimerText;
 
     [SerializeField]
@@ -29,6 +32,8 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public RectTransform _mainCanvas { get;set; }
+    [SerializeField]
+    private GameObject _getPieceButton, _buyPieceButton;
 
     private Vector3 _buildCameraShift;
 
@@ -66,8 +71,28 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
+    public void OpenResources() {
+        
+    }
+
     public void SetPlayText(string text) {
         _playText.text = text;
+    }
+
+    public void SetGetPieceButtonActive(bool isActive) {
+        _getPieceTimer.SetActive(!isActive);
+        _buyPieceButton.SetActive(!isActive);
+        
+        _getPieceButton.SetActive(isActive);
+    }
+
+    public void UpdateGetPieceTimer(TimeSpan timeLeft) {
+        if (timeLeft.TotalSeconds > 0) {
+            _getPieceTimerText.text = TimeConverter.ConvertToTimeString(timeLeft);
+        }
+        else if (_getPieceTimer.activeSelf) {
+            SetGetPieceButtonActive(true);
+        }
     }
 
     public void SetGetPieceTimer(string text) {
