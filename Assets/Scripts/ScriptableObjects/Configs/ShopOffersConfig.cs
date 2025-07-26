@@ -11,6 +11,7 @@ public class ShopOffersConfig : ScriptableObject {
 [Serializable]
 public class OfferData {
     public string Title;
+    public string Id;
     public float Price;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> Resources;
