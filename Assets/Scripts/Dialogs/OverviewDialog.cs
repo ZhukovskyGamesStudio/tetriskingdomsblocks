@@ -14,7 +14,7 @@ public class OverviewDialog : DialogBase {
 
         foreach (ResourceCountAndIncome resource in dialogData.Resources) {
             ResourceOutput newResource = Instantiate(_resourcePrefab, _resourcesParent);
-            newResource.SetData(resource.Count, resource.Income + "/sec", resource.Type);
+            newResource.SetData(resource.Count, resource.Income, resource.Type);
         }
     }
 
