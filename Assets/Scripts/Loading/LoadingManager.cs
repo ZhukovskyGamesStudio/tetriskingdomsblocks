@@ -34,7 +34,7 @@ public class LoadingManager : MonoBehaviour {
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
         if (isNewGame) {
-            await SceneManager.LoadSceneAsync("TutorialGameScene");
+            await SceneManager.LoadSceneAsync("MetaScene");
             return;
         }
 

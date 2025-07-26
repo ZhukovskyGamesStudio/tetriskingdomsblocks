@@ -34,23 +34,11 @@ public class OutOfMovesDialog : DialogBase {
         var dialog = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
-                Balance = 1000,
-                OffersGroups = new[] {
-                    new OffersGroupData {
-                        Title = "Title",
-                        Offers = new[] {
-                            new OfferData {
-                                Price = 1000,
-                                Title = "Title",
-                                Resources = new[] {
-                                    new Tuple<ResourceType, int>(ResourceType.Wood, 42)
-                                }
-                            }
-                        }
-                    }
-                }
+                Balance = 1000
             }
         };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 

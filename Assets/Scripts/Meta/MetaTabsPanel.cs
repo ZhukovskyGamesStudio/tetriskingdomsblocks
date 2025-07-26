@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MetaTabsPanel : MonoBehaviour {
+    public static MetaTabsPanel Instance;
+    
     [SerializeField]
     private RectTransform _activeButtonExample, _notActiveButtonExample;
     
@@ -16,7 +18,8 @@ public class MetaTabsPanel : MonoBehaviour {
     private Vector2 _activeSize, _notActiveSize;
     private MetaTab _selectedTab = MetaTab.Rule;
     
-    private void Start() {
+    private void Awake() {
+        Instance = this;
         _activeSize = _activeButtonExample.sizeDelta;
         _notActiveSize = _notActiveButtonExample.sizeDelta;
     }
@@ -30,12 +33,14 @@ public class MetaTabsPanel : MonoBehaviour {
     public void OpenShop() {
         if (_selectedTab == MetaTab.Shop) return;
         
+        MetaUI.Instance.OpenShop();
         ChangeTab(MetaTab.Shop);
     }
     
     public void OpenRule() {
         if (_selectedTab == MetaTab.Rule) return;
 
+        MetaUI.Instance.OpenRuleState();
         ChangeTab(MetaTab.Rule);
     }
     

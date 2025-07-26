@@ -41,6 +41,11 @@ public class DialogsManager : MonoBehaviour {
         _currentDialog.Hide().Forget();
     }
 
+    public void CloseAllDialogs() {
+        _dialogsQ.Clear();
+        _currentDialog?.Hide().Forget();
+    }
+
     private void AddToQueue(DialogWithData dialogWithData) {
         if (_dialogsQ.Any(d => d.DialogType == dialogWithData.DialogType)) {
             return;
