@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Pool;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
@@ -32,11 +33,34 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private GameObject _getPieceButton, _buyPieceButton;
 
+    [field: SerializeField]
+    public RectTransform _mainCanvas { get;set; }
+
     private Vector3 _buildCameraShift;
+
+    [SerializeField]
+    private TMP_Text _floatingTextPrefab;
+    
+    [SerializeField]
+    private Transform _floatingTextContainer;
+    
+    private ObjectPool<TMP_Text> _floatingTextsPool;
 
     private void Awake() {
         Instance = this;
+        _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         InitBuildCameras();
+    }
+    
+    public TMP_Text ShowFloatingText() {
+        var floatingText = _floatingTextsPool.Get();
+        floatingText.gameObject.SetActive(true);
+        return floatingText;
+    }
+
+    public void ReleaseFloatingText(TMP_Text needTextObject) {
+        needTextObject.gameObject.SetActive(false);
+        _floatingTextsPool.Release(needTextObject);
     }
 
     private void InitBuildCameras() {

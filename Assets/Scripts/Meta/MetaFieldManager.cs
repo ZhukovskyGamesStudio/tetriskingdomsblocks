@@ -236,6 +236,8 @@ public class MetaFieldManager : FieldManager {
             StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
             MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
                 StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
+            
+          
         }
        else {
             if (StorageManager.GameDataMain.GoldAmount < cellConfig.UpgradeCost) {
@@ -243,8 +245,16 @@ public class MetaFieldManager : FieldManager {
             }
 
             StorageManager.GameDataMain.GoldAmount -= cellConfig.UpgradeCost;
-            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
-                StorageManager.GameDataMain.GoldAmount);
+            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1, StorageManager.GameDataMain.GoldAmount);
+            Vector3 finalUiNeedPos = Vector3.zero;
+            foreach (var cellPos in cellsToUpgrade) 
+                finalUiNeedPos += new Vector3(cellPos.x,0,cellPos.y);
+            
+            finalUiNeedPos /= cellsToUpgrade.Count;
+            
+            UIAnimationsUtils.FromPointToPointAnimation((cellConfig.UpgradeCost), ResourceType.Gold,
+                MetaUI.Instance.CountersPanelView.GetGoldPosition,
+                _mainCamera.WorldToScreenPoint(finalUiNeedPos));
         }
       
         
@@ -619,6 +629,9 @@ public class MetaFieldManager : FieldManager {
         } else {
              StorageManager.GameDataMain.GoldAmount += finalResourceCount;
              MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
+             UIAnimationsUtils.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Gold,
+                 Input.mousePosition,
+                 MetaUI.Instance.CountersPanelView.GetGoldPosition);
         }
            
     }
@@ -841,7 +854,8 @@ public class MetaFieldManager : FieldManager {
 
                 if (cellConfig.AfkResourceType != ResourceType.None) {
                     float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[connectedGroupsPieces[i].Count];
-
+                    if (StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount < 0)
+                        StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount = 0;
                     maxCollectedResouces += (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer);
                     float afkCollectedResources = StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount +
                                                 afkTimeInSeconds * cellConfig.AfkProduceCountPerSecond * resourceMultiplayer;
@@ -856,7 +870,8 @@ public class MetaFieldManager : FieldManager {
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
             var resourceMark = SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces, curResource,
                 resourceColor);
-            resourceMark.gameObject.SetActive((float)collectedResouces / maxCollectedResouces > 0.1f);
+            Debug.Log($"{collectedResouces} / {maxCollectedResouces}");
+            resourceMark.gameObject.SetActive(collectedResouces / maxCollectedResouces > 0.1f);
             _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));
         }
 

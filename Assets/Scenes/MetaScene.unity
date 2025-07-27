@@ -2281,19 +2281,9 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 464481141}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1966804085}
-        m_TargetAssemblyTypeName: MetaTabsPanel, Assembly-CSharp
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: [{m_Target: {fileID: 1966804085}, m_TargetAssemblyTypeName: 'MetaTabsPanel,
+            Assembly-CSharp', m_MethodName: OpenShop, m_Mode: 1, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: 'UnityEngine.Object,
+              UnityEngine', m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: '', m_BoolArgument: 0}, m_CallState: 2}]
 --- !u!114 &464481141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4303,6 +4293,41 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &762985105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 762985106}
+  m_Layer: 5
+  m_Name: FloatingTextsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &762985106
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762985105}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1212849847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &767123342
 GameObject:
   m_ObjectHideFlags: 0
@@ -4773,19 +4798,9 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 811742470}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1966804085}
-        m_TargetAssemblyTypeName: MetaTabsPanel, Assembly-CSharp
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: [{m_Target: {fileID: 1966804085}, m_TargetAssemblyTypeName: 'MetaTabsPanel,
+            Assembly-CSharp', m_MethodName: OpenShop, m_Mode: 1, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: 'UnityEngine.Object,
+              UnityEngine', m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: '', m_BoolArgument: 0}, m_CallState: 2}]
 --- !u!114 &811742470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7098,6 +7113,7 @@ RectTransform:
   - {fileID: 615416849}
   - {fileID: 261058403}
   - {fileID: 1966804083}
+  - {fileID: 762985106}
   - {fileID: 1281305442}
   - {fileID: 1145724119}
   m_Father: {fileID: 0}
@@ -7129,6 +7145,9 @@ MonoBehaviour:
   _buildState: {fileID: 1145724118}
   _ruleCamera: {fileID: 1285394020}
   _buildCamera: {fileID: 35854985}
+  <_mainCanvas>k__BackingField: {fileID: 1212849847}
+  _floatingTextPrefab: {fileID: 5088590035246366190, guid: f8c2ad8b473e5e54d9085a477e0b87b3, type: 3}
+  _floatingTextContainer: {fileID: 762985106}
   _getPieceButton: {fileID: 455377671}
   _buyPieceButton: {fileID: 653479981}
 --- !u!1 &1222653061
@@ -8764,9 +8783,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 596523684}
-  - {fileID: 774147870}
+  m_Children: [{fileID: 596523684}, {fileID: 774147870}]
   m_Father: {fileID: 1145724119}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
@@ -10844,19 +10861,9 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2041053258}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1966804085}
-        m_TargetAssemblyTypeName: MetaTabsPanel, Assembly-CSharp
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: [{m_Target: {fileID: 1966804085}, m_TargetAssemblyTypeName: 'MetaTabsPanel,
+            Assembly-CSharp', m_MethodName: OpenShop, m_Mode: 1, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: 'UnityEngine.Object,
+              UnityEngine', m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: '', m_BoolArgument: 0}, m_CallState: 2}]
 --- !u!114 &2041053258
 MonoBehaviour:
   m_ObjectHideFlags: 0

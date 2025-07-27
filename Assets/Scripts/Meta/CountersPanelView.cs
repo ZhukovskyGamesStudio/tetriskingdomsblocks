@@ -11,6 +11,8 @@ public class CountersPanelView : MonoBehaviour {
     [SerializeField]
     private TMP_Text[] _resourcesCountText;
     
+    public Vector3 GetGoldPosition => _goldCounterText.transform.position;
+    public Vector3 GetMagicCubesPosition => _magicCubeCounterText.transform.position;
     public void SetMagicCubes(int value) {
         if (_magicCubeCounterText != null)
             _magicCubeCounterText.text = value.ToString();
