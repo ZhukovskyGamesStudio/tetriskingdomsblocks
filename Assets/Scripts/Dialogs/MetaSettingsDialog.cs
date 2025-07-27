@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MetaSettingsDialog : DialogBase {
     [SerializeField]
-    private Toggle _musicToggle, _soundToggle, _vibrationToggle, _notificationsToggle;
+    private UIToggle _musicToggle, _soundToggle, _vibrationToggle, _notificationsToggle;
     
     private Action<bool> _changeMusic, _changeSound, _changeVibration, _changeNotifications;
     private Action _clickSupport, _clickTerms;
@@ -20,10 +20,10 @@ public class MetaSettingsDialog : DialogBase {
         _changeVibration = dialogData.ChangeVibration;
         _changeNotifications = dialogData.ChangeNotifications;
 
-        _musicToggle.isOn = dialogData.IsMusicOn;
-        _soundToggle.isOn = dialogData.IsSoundOn;
-        _vibrationToggle.isOn = dialogData.IsVibrationOn;
-        _notificationsToggle.isOn = dialogData.IsNotificationsOn;
+        _musicToggle.Init(dialogData.IsMusicOn);
+        _soundToggle.Init(dialogData.IsSoundOn);
+        _vibrationToggle.Init(dialogData.IsVibrationOn);
+        _notificationsToggle.Init(dialogData.IsNotificationsOn);
     }
 
     public void ToggleVibrations(bool isOn) {
