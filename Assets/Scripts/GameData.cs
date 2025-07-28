@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class GameData {
     public int MovesLeft;
     public bool RejectedBuyMoves;
+    public bool IsGameEnded;
     
     public Dictionary<ResourceType, int> CollectedResources = new Dictionary<ResourceType, int>();
 

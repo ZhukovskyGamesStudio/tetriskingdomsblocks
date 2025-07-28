@@ -12,8 +12,7 @@ public class GameFieldManager : FieldManager {
     [field: SerializeField]
     public Transform AdditionalPieceContainer { get; private set; }
 
-    public event Action OnCellPlaced, OnMoveEnded, OnPieceDestroyedByHammer;
-
+    public event Action OnMoveEnded, OnPieceDestroyedByHammer;
     public PieceView AdditionalPiecePrefab { get; private set; }
 
     private List<PieceData> _nextBlocks = new List<PieceData>();
@@ -33,6 +32,7 @@ public class GameFieldManager : FieldManager {
     }
 
     public void GenerateNewPieces() {
+        if(StorageManager.GameDataMain.HealthCount <= 0)return;
         _nextBlocks = new List<PieceData>() {
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
@@ -95,7 +95,6 @@ public class GameFieldManager : FieldManager {
             return;
         }
 
-        OnCellPlaced?.Invoke();
         _nextBlocks.Remove(pieceData);
         if (AdditionalPiecePrefab != null && AdditionalPiecePrefab.Data == pieceData) {
             AdditionalPiecePrefab = null;
@@ -333,8 +332,7 @@ public class GameFieldManager : FieldManager {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
             SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
-        } else
-            Debug.Log("not full same");
+        } 
 
         TaskUtils.CheckResourceCountForTasks(_gameData);
     }
@@ -587,8 +585,7 @@ public class GameFieldManager : FieldManager {
         List<GameObject> cells = new List<GameObject>();
         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
-        //go.SetSeed(pieceData.CellGuids[x, y]);
-
+        go.SetSeed(Guid.NewGuid());
         go.transform.localPosition = new Vector3(pos.x, -0.2f, pos.y);
         poses.Add(new Vector3(pos.x, -0.2f, pos.y));
         if (setNewInfo) {
@@ -603,17 +600,12 @@ public class GameFieldManager : FieldManager {
 
         cells.Add(go.gameObject);
 
-        //go.GetComponent<CellView>().PlaceCellOnField();
-
-        //SpawnSmokeParticle(go.transform.position).Forget();
-
-        // tmpContainer.transform.localPosition = GetAveragePosition(poses);
+       
         foreach (var cell in cells) {
             cell.transform.SetParent(tmpContainer.transform);
         }
 
         return go;
-        // ShowDropImpact(tmpContainer.transform, pieceData, tmpContainer, 1);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {

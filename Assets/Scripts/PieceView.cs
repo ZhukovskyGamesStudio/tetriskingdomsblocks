@@ -27,6 +27,7 @@ public class PieceView : MonoBehaviour {
     private float _colliderSize = 1.65f;
 
     public void SetData(PieceData data, float initialScale = 1f) {
+        name = data.Type.CellType + data.FormName;
         Data = data;
         _startingPosition = _cellsContainer.position;
         var width = Data.Cells.GetLength(0);
@@ -57,7 +58,8 @@ public class PieceView : MonoBehaviour {
     }
 
     private void CreateCellAndMarkedCellView(PieceData data, int x, int y, Vector3 shift) {
-        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(data.Type.CellType);
+        var needCellType = (FieldUtils.IsVillageCell(data.Type.CellType) &&(x != 0 || y != 0 ) )? CellType.VillagePart :data.Type.CellType;
+        var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(needCellType);
         CellView go = Instantiate(prefab, _cellsContainer);
         go.SetSeed(data.CellGuids[x, y]);
         var markedCell = PiecesViewTable.Instance.MarkedCell;
@@ -79,6 +81,15 @@ public class PieceView : MonoBehaviour {
         await DOTween.Sequence().Append(_cellsContainer.DOScale(finScale * 1.1f, 0.2f)).Append(_cellsContainer.DOScale(finScale, 0.2f))
             .AsyncWaitForCompletion();
         _isLerpingDisabled = false;
+    }
+
+    public async UniTask AppearFromInventoryAsync() {
+        Vector3 finScale = _cellsContainer.localScale;
+        _cellsContainer.localScale = Vector3.zero;
+        await DOTween.Sequence()
+            .Append(_cellsContainer.DOScale(finScale * 1.1f, 0.2f))
+            .Append(_cellsContainer.DOScale(finScale, 0.2f))
+            .AsyncWaitForCompletion();
     }
 
     private void Update() {

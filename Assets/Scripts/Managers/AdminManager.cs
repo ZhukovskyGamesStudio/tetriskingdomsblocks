@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,9 +18,15 @@ public class AdminManager : MonoBehaviour {
 
     public static bool IsInfiniteHealth = true;
 
+    [SerializeField]
+    private Toggle _infiniteBoostersToggle;
+
+    public bool IsInfiniteBoosters = true;  
+
     private void Awake() {
         Instance = this;
         _infiniteHpToggle.SetIsOnWithoutNotify(IsInfiniteHealth);
+        _infiniteBoostersToggle.SetIsOnWithoutNotify(IsInfiniteBoosters);
         DontDestroyOnLoad(this);
         SetupLevelButtons();
     }
@@ -29,18 +36,30 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddResources() {
-        for (int i = 0; i < 3; i++) {
-            StorageManager.GameDataMain.resourcesCount[i] += 1000;
+        
+        for (int i = 0; i <  StorageManager.GameDataMain.ResourcesCount.Length; i++) {
+            StorageManager.GameDataMain.ResourcesCount[i] += 100;
         }
 
         StorageManager.GameDataMain.MagicCubesAmount += 20;
+        StorageManager.GameDataMain.GoldAmount += 100;
         if(MetaUI.Instance != null)
             MetaUI.Instance.CountersPanelView.SetMagicCubes( StorageManager.GameDataMain.MagicCubesAmount );
         
         MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }
 
-    public void RestoreAllHPForAdminButton() => StorageManager.GameDataMain.HealthCount = 3;
+    public void RestoreAllHPForAdminButton() {
+        StorageManager.GameDataMain.HealthCount = 5;
+        if(MetaUI.Instance == null )return;
+        MetaUI.Instance.HealthView.SetHealthCountText(5);
+    }
+
+    public void RemoveOneHealthAdminButton() {  
+     
+        if(StorageManager.GameDataMain.HealthCount <= 0)return;
+         MainManager.Instance.RemoveHealthAfterLose();
+    }
 
     public void GenerateNewPiecesForButton() {
         if (GameFieldManager.Instance != null)
@@ -52,12 +71,13 @@ public class AdminManager : MonoBehaviour {
         StorageManager.GameDataMain.RandomFieldCount+=5;
         StorageManager.GameDataMain.HummerCount+=5;
         StorageManager.GameDataMain.RotatePieceCount+=5;
-        StorageManager.GameDataMain.DynamyteCount+=5;
+        StorageManager.GameDataMain.DynamiteCount+=5;
         
         StorageManager.GameDataMain.MetaHummerCount+=5;
         
-        if(BoostersManager.Instance != null)
-        BoostersManager.Instance.SetAllText();
+        if(BoostersManager.Instance != null) {
+            GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
+        }
     }
 
     public void RestartGame() {
@@ -82,5 +102,9 @@ public class AdminManager : MonoBehaviour {
 
     public void SetInfinite(bool isInfinite) {
         IsInfiniteHealth = isInfinite;
+    }
+    
+    public void SetInfiniteBoosters(bool isInfiniteBoosters) {
+        IsInfiniteBoosters = isInfiniteBoosters;
     }
 }

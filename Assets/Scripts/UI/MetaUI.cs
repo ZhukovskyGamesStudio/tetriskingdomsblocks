@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -17,18 +18,38 @@ public class MetaUI : MonoBehaviour {
     private TMP_Text _destroyPieceText;
 
     [SerializeField]
+    private TMP_Text _playText;
+
+    [SerializeField]
     private GameObject _ruleState, _buildState;
 
     [SerializeField]
     private GameObject _ruleCamera, _buildCamera;
 
+    private Vector3 _buildCameraShift;
+
     private void Awake() {
         Instance = this;
+        InitBuildCameras();
+    }
+
+    private void InitBuildCameras() {
+        var ray = new Ray(_buildCamera.transform.position, _buildCamera.transform.forward);
+        var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
+
+        if (hit) {
+            _buildCameraShift =  _buildCamera.transform.position - hitinfo.point;
+        }
+    }
+
+    public void SetPlayText(string text) {
+        _playText.text = text;
     }
 
     public void SetGetPieceTimer(string text) {
-        if (_getPieceTimerText != null)
+        if (_getPieceTimerText != null) {
             _getPieceTimerText.text = text;
+        }
     }
 
     public void SetDestroyPieceText(string text) {
@@ -41,6 +62,14 @@ public class MetaUI : MonoBehaviour {
         _ruleState.SetActive(false);
         _ruleCamera.SetActive(false);
         _buildCamera.SetActive(true);
+
+        var ray = new Ray(_ruleCamera.transform.position, _ruleCamera.transform.forward);
+        var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
+
+        if (hit) {
+            _buildCamera.transform.position = hitinfo.point + _buildCameraShift;
+        }
+
         MetaWorldCanvasView.Instance.gameObject.SetActive(false);
     }
 
@@ -50,5 +79,15 @@ public class MetaUI : MonoBehaviour {
         _ruleCamera.SetActive(true);
         _buildCamera.SetActive(false);
         MetaWorldCanvasView.Instance.gameObject.SetActive(true);
+    }
+
+    public void OpenSettings() {
+        SettingsManager.Instance.ShowMetaSettingsDialog();
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.white;
+        Gizmos.DrawLine(_ruleCamera.transform.position, _ruleCamera.transform.position + _ruleCamera.transform.forward * 30);
+        Gizmos.DrawLine(_buildCamera.transform.position, _buildCamera.transform.position + _buildCamera.transform.forward * 30);
     }
 }

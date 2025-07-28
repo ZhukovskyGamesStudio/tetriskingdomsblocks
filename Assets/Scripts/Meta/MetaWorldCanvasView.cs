@@ -13,9 +13,6 @@ public class MetaWorldCanvasView : MonoBehaviour {
     [SerializeField]
     private ResourceMarkView _resourceMarkViewPrefab;
 
-    [field: SerializeField]
-    public UpgradeCellView UpgradeCellView { get; private set; }
-
     [SerializeField]
     private Vector3 _worldCanvasRotation = new(-45, -90, 90);
 
@@ -30,7 +27,7 @@ public class MetaWorldCanvasView : MonoBehaviour {
         _resourcesMarksPool = new ObjectPool<ResourceMarkView>(() => Instantiate(_resourceMarkViewPrefab, _resourcesMarksContainer));
     }
 
-    public ResourceMarkView SpawnResourceMark(Vector3 pos, int maxResource, int currentResource, ResourceType resourceType, Color resourceColor,
+    public ResourceMarkView SpawnResourceMark(Vector3 pos, int maxResource, float currentResource, ResourceType resourceType, Color resourceColor,
         int index) {
         var mark = _resourcesMarksPool.Get();
         mark.gameObject.SetActive(true);

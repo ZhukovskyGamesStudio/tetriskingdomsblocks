@@ -18,5 +18,7 @@ MonoBehaviour:
   CellName: Gold mine
   ChanceToSpawn: 1
   ResourcesForPlace: []
-  ResourcesForDestroy: []
+  ResourcesForDestroy:
+  - ResourceType: 8
+    ResourceCount: 1
   MultiplayerForSameResourceType: 0

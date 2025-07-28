@@ -13,16 +13,25 @@ public static class StorageManager {
     public static void SaveGame() {
         string json = JsonUtility.ToJson(GameDataMain);
         PlayerPrefs.SetString(SaveKey, json);
-        Debug.Log("game saved"+json);
+      
     }
 
     public static void LoadGame() {
         string json = PlayerPrefs.GetString(SaveKey);
         GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-        Debug.Log("game loaded");
+        
+        
+        //Удаляет сохранение при обновлении игры, удалить после тестов
+        if (GameDataMain.CreatedVersion != Application.version) {
+            CreateNewSaveData();
+        }
     }
 
     public static bool IsNewPlayer() {
         return !PlayerPrefs.HasKey(SaveKey);
+    }
+    
+    public static bool IsTutorialCompleted() {
+        return GameDataMain is { CurMaxLevel: >= 1 };
     }
 }

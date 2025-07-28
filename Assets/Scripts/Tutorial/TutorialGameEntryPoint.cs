@@ -1,11 +1,8 @@
-
- using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-public class TutorialGameEntryPoint : MonoBehaviour
-{
+using UnityEngine.SceneManagement;
 
-
+public class TutorialGameEntryPoint : MonoBehaviour {
     [SerializeField]
     private TutorialFieldManager _gameFieldManager;
 
@@ -22,10 +19,12 @@ public class TutorialGameEntryPoint : MonoBehaviour
     private UltaManager _ultaManager;
 
     private GameData _gameData;
-[SerializeField]
-private LevelConfig _levelConfig;
+
+    [SerializeField]
+    private LevelConfig _levelConfig;
+
     private void Start() {
-        LevelConfig levelConfig =_levelConfig;
+        LevelConfig levelConfig = _levelConfig;
         _gameData = new GameData {
             MovesLeft = levelConfig.MovesCount
         };
@@ -38,11 +37,11 @@ private LevelConfig _levelConfig;
         _gameFieldManager.SetupGame();
         _gameFieldManager.PlaceStartingField(levelConfig);
         _gameFieldManager.OnPieceDestroyedByHammer += CheckGameGoal;
-        _ultaManager.Init(_mainGameConfig);
-        GameUI.Instance.StartCharacterInfoTextCoroutine(levelConfig.GuideForLevelText);
-        GameUI.Instance.SetMovesCount(levelConfig.MovesCount);
-    //    BoostersManager.Instance.SetAllText();
-     //   BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
+        _ultaManager.Init(_mainGameConfig, _gameData);
+        BoostersManager.Instance.Init(_gameData);
+        GameUI.Instance.GoalView.SetMovesCount(levelConfig.MovesCount);
+        //    BoostersManager.Instance.SetAllText();
+        //   BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
         UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
         TutorialFieldManager.Instance.OnMoveEnded += CheckGameGoal;
 
@@ -60,23 +59,23 @@ private LevelConfig _levelConfig;
             SetTaskUI(i, newTaskInfo, newTaskInfo);
         }
 
-       /* if (levelConfig.StartFieldConfig != null) {
-            Dictionary<ResourceType, int> startCellsResourcesCount = new Dictionary<ResourceType, int>();
-            for (int i = 0; i < _mainGameConfig.FieldSize; i++) {
-                for (int j = 0; j < _mainGameConfig.FieldSize; j++) {
-                    var type = levelConfig.StartFieldConfig.GetCell(i, j);
-                    if (type != CellType.Empty && type != CellType.LockedMetaCell) {
-                        var cellConfig = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == type);
+        /* if (levelConfig.StartFieldConfig != null) {
+             Dictionary<ResourceType, int> startCellsResourcesCount = new Dictionary<ResourceType, int>();
+             for (int i = 0; i < _mainGameConfig.FieldSize; i++) {
+                 for (int j = 0; j < _mainGameConfig.FieldSize; j++) {
+                     var type = levelConfig.StartFieldConfig.GetCell(i, j);
+                     if (type != CellType.Empty && type != CellType.LockedMetaCell) {
+                         var cellConfig = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == type);
 
-                        if (!FieldUtils.CantDestroyInRow(cellConfig.CellType) &&
-                            !startCellsResourcesCount.TryAdd(cellConfig.ResourcesForDestroy[0].ResourceType, 1))
-                            startCellsResourcesCount[cellConfig.ResourcesForDestroy[0].ResourceType]++;
-                    }
-                }
-            }
-  SetTaskDescriptionsFromStartField(levelConfig, startCellsResourcesCount);
-          
-        }*/
+                         if (!FieldUtils.CantDestroyInRow(cellConfig.CellType) &&
+                             !startCellsResourcesCount.TryAdd(cellConfig.ResourcesForDestroy[0].ResourceType, 1))
+                             startCellsResourcesCount[cellConfig.ResourcesForDestroy[0].ResourceType]++;
+                     }
+                 }
+             }
+   SetTaskDescriptionsFromStartField(levelConfig, startCellsResourcesCount);
+
+         }*/
     }
 
     private void SetTaskDescriptionsFromStartField(LevelConfig levelConfig, Dictionary<ResourceType, int> startTasks) {
@@ -90,7 +89,7 @@ private LevelConfig _levelConfig;
     }
 
     private void SetTaskUI(int i, TaskInfoSubClass newTaskInfo, TaskInfoSubClass task) {
-        var taskUI = GameUI.Instance.TaskUIViews[i];
+        var taskUI = GameUI.Instance.GoalView.TaskUIViews[i];
         taskUI.SetData(task);
 
         _gameData.CurrentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
@@ -100,28 +99,30 @@ private LevelConfig _levelConfig;
     }
 
     private void CheckGameGoal() {
-        Debug.Log("Checking game goal");
         TaskUtils.CheckResourceCountForTasks(_gameData);
 
-        if (CheckWin()) {
+        if (CheckWin() && !_gameData.IsGameEnded) {
             TutorialFieldManager.Instance.ClearAllLockedCells();
             UltaManager.Instance.UltimateActionEndRound(Win);
-            return;
         }
     }
-    
+
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
 
     private void Win() {
         SaveWinGame();
 
         TutorialFieldManager.Instance.SetWinState();
-        GameUI.Instance.SetMainText("You win!");
-        GameUI.Instance.SetTasksActive(false);
+        GameUI.Instance.GoalView.SetTasksActive(false);
         NextPiecesView.Instance.DestroyPieces();
-       // NextPiecesView.Instance.DestroyAdditionalPiece();
+        // NextPiecesView.Instance.DestroyAdditionalPiece();
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);
-        GameUI.Instance.GoalView.SetWinState();
+        _gameData.IsGameEnded = true;
+        if (GameFieldManager.Instance != null) {
+            GameUI.Instance.ShowWinDialog();
+        } else {
+            SceneManager.LoadScene("GameScene");
+        }
 
         _gameAudio.PlayNextSound(_gameAudio.Win);
     }

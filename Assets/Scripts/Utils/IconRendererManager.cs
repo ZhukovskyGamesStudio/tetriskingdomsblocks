@@ -13,13 +13,17 @@ public class IconRendererManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera _renderCamera;
     [SerializeField] private Light _renderLight;
-
-    public static IconRendererManager Instance;
     
+    [SerializeField]
+    private Material _unlitMaterial;
+    public static IconRendererManager Instance;
+    [SerializeField]
     private RenderTexture _renderTexture;
     private readonly Dictionary<string, Texture2D> _iconCache = new Dictionary<string, Texture2D>();
     private bool _isRendering;
     private float _lastRenderTime;
+    
+    private TextureFormat format;
 
     private void Awake()
     {
@@ -27,15 +31,7 @@ public class IconRendererManager : MonoBehaviour
         InitializeRenderSystem();
     }
 
-    private void InitializeRenderSystem()
-    {
-        // Создаем RenderTexture
-        _renderTexture = new RenderTexture(_textureSize, _textureSize, 24, RenderTextureFormat.ARGB32)
-        {
-            antiAliasing = 1,
-            autoGenerateMips = false,
-            useMipMap = false
-        };
+    private void InitializeRenderSystem() {
 
         // Настраиваем камеру
         _renderCamera.orthographic = true;
@@ -50,7 +46,24 @@ public class IconRendererManager : MonoBehaviour
         _renderLight.type = LightType.Directional;
         _renderLight.cullingMask = _renderLayer;
         _renderLight.intensity = 1f;
+
+        format = GetMobileTextureFormat();
+
     }
+    TextureFormat GetMobileTextureFormat()
+    {
+#if UNITY_EDITOR
+        return TextureFormat.RGBA32;
+#elif UNITY_IOS
+    return TextureFormat.ASTC_4x4;
+#elif UNITY_ANDROID
+        if (SystemInfo.SupportsTextureFormat(TextureFormat.ETC2_RGBA8))
+            return TextureFormat.ETC2_RGBA8;
+        return TextureFormat.RGBA32;
+#endif
+    }
+
+   
     
     public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback)
     {
@@ -70,7 +83,7 @@ public class IconRendererManager : MonoBehaviour
                 0,
                 SpriteMeshType.Tight
             );
-     //   Debug.Log("GetSprite");
+    
             callback?.Invoke(sprite);
         });
     }
@@ -141,7 +154,7 @@ public class IconRendererManager : MonoBehaviour
 
             if (renderer.material != null)
             {
-                var mat = new Material(Shader.Find("Unlit/Texture"));
+                var mat = _unlitMaterial;
                 if (renderer.material.mainTexture != null)
                     mat.mainTexture = renderer.material.mainTexture;
                 renderer.material = mat;
@@ -176,13 +189,15 @@ public class IconRendererManager : MonoBehaviour
     private IEnumerator RenderIconTexture(GameObject target, string itemId, System.Action<Texture2D> callback)
     {
         yield return new WaitForEndOfFrame();
-
+        _renderCamera.enabled = true;
         _renderCamera.Render();
-
+       
+        Debug.Log(format);
+        _renderCamera.enabled = false;
         Texture2D icon = new Texture2D(
             _renderTexture.width,
             _renderTexture.height,
-            TextureFormat.RGBA32,
+            format,
             false
         );
 
@@ -193,7 +208,7 @@ public class IconRendererManager : MonoBehaviour
 
         if (!_iconCache.ContainsKey(itemId))
             _iconCache.Add(itemId, icon);
-
+       
         callback?.Invoke(icon);
     }
 

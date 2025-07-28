@@ -16,14 +16,15 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void Start() {
-        bool isNewGame = StorageManager.IsNewPlayer();
+        bool isNewGame = !StorageManager.IsTutorialCompleted();
         InitManagers();
         LoadAndChangeScene(isNewGame);
     }
 
     private void InitManagers() {
-        if (StorageManager.IsNewPlayer())
+        if (!StorageManager.IsTutorialCompleted()) {
             StorageManager.CreateNewSaveData();
+        }
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
         SettingsManager.Instance.SetSettings();
     }
@@ -32,11 +33,13 @@ public class LoadingManager : MonoBehaviour {
         IsLoaded = true;
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
-        Debug.Log(isNewGame);
         if (isNewGame) {
-            await SceneManager.LoadSceneAsync("GameSceneTutorial");
-        } else if(StorageManager.GameDataMain.CurMaxLevel >= 3){
-            StorageManager.LoadGame();
+            await SceneManager.LoadSceneAsync("TutorialGameScene");
+            return;
+        }
+
+        StorageManager.LoadGame();
+        if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
             await SceneManager.LoadSceneAsync("MetaScene");
         } else {
             await SceneManager.LoadSceneAsync("GameScene");

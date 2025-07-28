@@ -17,6 +17,10 @@ public static class FieldUtils {
         CellType.Ice,
         CellType.Slime
     };
+    private static readonly List<CellType> VillageCells = new List<CellType>() {
+        CellType.Village,
+        CellType.VillageLevel2,
+    };
 
     private static readonly List<CellType> CantBecomeRowCells = new List<CellType>() {
         CellType.Empty,
@@ -28,9 +32,9 @@ public static class FieldUtils {
     };
     
     private static readonly List<CellType> ResourcesCells = new List<CellType>() {
+        CellType.Wood,
         CellType.Stone,
         CellType.Wheat,
-        CellType.Wood,
         CellType.Metal
     };
     
@@ -104,5 +108,6 @@ public static class FieldUtils {
     public static bool CantDestroyInRow(CellType cellType) => CantDestroyInRowCells.Contains(cellType);
     public static bool IsResourceCell(CellType cellType) => ResourcesCells.Contains(cellType);
     
+    public static bool IsVillageCell(CellType cellType) => VillageCells.Contains(cellType);
     public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CellSize, Mathf.RoundToInt(coord.z) / CellSize);
 }

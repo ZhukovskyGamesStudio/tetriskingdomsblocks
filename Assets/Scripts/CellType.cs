@@ -15,13 +15,6 @@ public enum CellType {
     FieldOfWheat = 103,
     MetalMines = 104,
     LockedMetaCell = 105,
-    
-    
-    Sawmill,
-    Smithy,
-    MiniCity,
-    Mine,
-    Farm,
 
     Box = 200,
     Ice = 201,
@@ -30,10 +23,18 @@ public enum CellType {
     Crystal = 204,
     Slime = 205,
 
-    Dynamite,
-   
-    VillagePart,
-    FieldOfWheatLevel2,
-    MountainLevel2,
-    ForestLevel2
+    Dynamite = 250,
+
+    VillagePart = 300,
+    MountainLevel2 = 301,
+    ForestLevel2 = 302,
+    FieldOfWheatLevel2 = 303,
+    MetalMinesLevel2 = 304,
+    VillageLevel2 = 305,
+
+    Sawmill = 1000,
+    Smithy = 1001,
+    MiniCity = 1002,
+    Mine = 1003,
+    Farm = 1004,
 }

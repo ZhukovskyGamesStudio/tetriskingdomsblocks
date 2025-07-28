@@ -46,6 +46,10 @@ public class DialogsManager : MonoBehaviour {
             return;
         }
 
+        if (_currentDialog != null && _currentDialog.GetType() == dialogWithData.DialogType) {
+            return;
+        }
+
         _dialogsQ.Enqueue(dialogWithData);
         TryShowFromQueue();
     }
