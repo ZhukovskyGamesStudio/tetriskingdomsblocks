@@ -21,19 +21,15 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour
         {
             Touch touch = Input.GetTouch(0);
 
-            if (touch.phase == TouchPhase.Began) {
+            if (touch.phase == TouchPhase.Began) 
                 Destroy(gameObject);
-                GameEntryPoint.Instance.Win();
-            }
                 
         }
         
         // Также оставляем поддержку мыши для тестирования в редакторе
 #if UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0)) 
             Destroy(gameObject);
-            GameEntryPoint.Instance.Win();
-        }
             
 #endif
     }

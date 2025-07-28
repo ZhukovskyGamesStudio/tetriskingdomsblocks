@@ -22,7 +22,7 @@ public static class StorageManager {
         
         
         //Удаляет сохранение при обновлении игры, удалить после тестов
-        if (GameDataMain.CreatedVersion != Application.version) {
+        if (GameDataMain.CreatedVersion == null || GameDataMain.CreatedVersion != Application.version) {
             CreateNewSaveData();
         }
     }
