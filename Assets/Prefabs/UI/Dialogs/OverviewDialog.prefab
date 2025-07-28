@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6733596176652109605
 CanvasRenderer:
@@ -618,6 +618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _showHideAnimation: {fileID: 2817154502153262395}
+  ForceOverlay: 0
   _resourcePrefab: {fileID: 1548526013061828717, guid: 3f6e6cfdef97e834993e49727a35159d, type: 3}
   _resourcesParent: {fileID: 8930440968505800920}
 --- !u!114 &2817154502153262395
