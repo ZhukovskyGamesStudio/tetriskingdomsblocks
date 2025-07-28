@@ -30,10 +30,11 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private GameObject _ruleCamera, _buildCamera;
 
-    [field: SerializeField]
-    public RectTransform _mainCanvas { get;set; }
     [SerializeField]
     private GameObject _getPieceButton, _buyPieceButton;
+
+    [field: SerializeField]
+    public RectTransform _mainCanvas { get;set; }
 
     private Vector3 _buildCameraShift;
 
@@ -123,11 +124,24 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenRuleState() {
+        DialogsManager.Instance.CloseAllDialogs();
         _buildState.SetActive(false);
         _ruleState.SetActive(true);
         _ruleCamera.SetActive(true);
         _buildCamera.SetActive(false);
         MetaWorldCanvasView.Instance.gameObject.SetActive(true);
+    }
+
+    public void OpenShop() {
+        _ruleState.SetActive(false);
+        var dialog = new DialogWithData {
+            DialogType = typeof(RealShopDialog),
+            Data = new RealShopDialog.Data {
+                ClickClose = MetaTabsPanel.Instance.OpenRule
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
     public void OpenSettings() {

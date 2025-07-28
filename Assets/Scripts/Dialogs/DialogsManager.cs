@@ -13,12 +13,18 @@ public class DialogsManager : MonoBehaviour {
     [SerializeField]
     private Transform _dialogsContainer;
 
+    [SerializeField]
+    private Canvas _dialogsCanvas;
+
     private DialogBase _currentDialog;
+
+    private int _dialogsCanvasSortingOrder;
 
     public static DialogsManager Instance { get; private set; }
 
     private void Awake() {
         Instance = this;
+        _dialogsCanvasSortingOrder = _dialogsCanvas.sortingOrder;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -39,6 +45,11 @@ public class DialogsManager : MonoBehaviour {
         }
         
         _currentDialog.Hide().Forget();
+    }
+
+    public void CloseAllDialogs() {
+        _dialogsQ.Clear();
+        _currentDialog?.Hide().Forget();
     }
 
     private void AddToQueue(DialogWithData dialogWithData) {
@@ -65,6 +76,7 @@ public class DialogsManager : MonoBehaviour {
 
         DialogWithData dialog = _dialogsQ.Dequeue();
         DialogBase prefab = _dialogsPrefabs.Find(d => d.GetComponent(dialog.DialogType) != null);
+        _dialogsCanvas.sortingOrder = prefab.ForceOverlay ? 1000 : _dialogsCanvasSortingOrder;
         var dialogObj = Instantiate(prefab, _dialogsContainer);
         _currentDialog = dialogObj;
         dialogObj.SetData(dialog.Data);

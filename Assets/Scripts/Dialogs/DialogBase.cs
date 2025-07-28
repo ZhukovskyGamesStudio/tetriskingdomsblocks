@@ -9,6 +9,8 @@ public class DialogBase : MonoBehaviour {
     private Action _onClose;
     private bool _isHiding;
 
+    public bool ForceOverlay;
+
     public virtual async UniTask Show(Action onClose) {
         _onClose = onClose;
         await _showHideAnimation.Show();
