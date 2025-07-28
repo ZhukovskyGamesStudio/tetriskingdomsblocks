@@ -73,6 +73,21 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
+    public void OpenProfile() {
+        var dialog = new DialogWithData {
+            DialogType = typeof(ProfileDialog),
+            Data = new ProfileDialog.Data {
+                BuiltCells = 123,
+                Levels = 123,
+                WeeksBest = 123, // TODO: убрать заглушки
+                Wins = 123,
+                PlayerName = "PlayerName12345"
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
     public void OpenResources() {
         var dialog = new DialogWithData {
             DialogType = typeof(OverviewDialog),
