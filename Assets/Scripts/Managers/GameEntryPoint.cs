@@ -147,7 +147,9 @@ public class GameEntryPoint : MonoBehaviour {
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
 
     private bool CheckLose() {
-        if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves) {
+        if(UltaManager.Instance._currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
+            return false;
+        if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves ) {
             return true;
         }
 

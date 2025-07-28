@@ -575,7 +575,7 @@ public class GameFieldManager : FieldManager {
                     _isSlimeExist = true;
                 }
 
-                PlaceOneSizePiece(config, new Vector2Int(i, j), true);
+                PlaceOneSizePiece(config, new Vector2Int(i, j), true,false);
             }
         }
     }
@@ -595,7 +595,7 @@ public class GameFieldManager : FieldManager {
         CalculateCellSpawnChances();
     }
 
-    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo) {
+    public CellView PlaceOneSizePiece(CellTypeInfo cellInfo, Vector2Int pos, bool setNewInfo, bool spawnFX = true) {
         GameObject tmpContainer = new();
         tmpContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         List<Vector3> poses = new List<Vector3>();
@@ -608,6 +608,7 @@ public class GameFieldManager : FieldManager {
         if (setNewInfo) {
             _field[pos.x, pos.y] = cellInfo.CellType;
             _cells[pos.x, pos.y] = go;
+            if(spawnFX)
             SpawnResourceFxForCell(pos, go);
         }
 
