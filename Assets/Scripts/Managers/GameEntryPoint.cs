@@ -41,11 +41,12 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.GoalView.SetMovesCount(levelConfig.MovesCount);
         BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
         UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
+        GameUI.Instance.HideNeededContainers();
         
       
 
         if (levelConfig.TutorialObject != null) {
-            Instantiate(levelConfig.TutorialObject);
+            Instantiate(levelConfig.TutorialObject, GameUI.Instance.BlackBgContainer);
         }
 
         _spawnRandomNature.Generate();

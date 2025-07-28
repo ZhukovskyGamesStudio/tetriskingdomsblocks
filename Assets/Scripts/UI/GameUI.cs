@@ -23,7 +23,15 @@ public class GameUI : MonoBehaviour {
 
     [field:SerializeField]
     public GameBoostersPanels BoostersPanels { get; private set; }
-
+    
+    [field:SerializeField]
+    public Transform _tasksContainer { get; private set; }
+    [SerializeField]
+    private Transform _boostersContainer;
+    [SerializeField]
+    private Transform _movesContainer;
+    [SerializeField]
+    private Transform _ultimateContainer;
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
 
@@ -37,6 +45,20 @@ public class GameUI : MonoBehaviour {
     public Transform HolesForBgContainer => _holesForBgContainer;
     public Transform BlackBgContainer => _blackBgContainer;
 
+    public void HideNeededContainers() {
+        var curLevel = StorageManager.GameDataMain.CurMaxLevel;
+        if (curLevel < 3) {
+            _boostersContainer.gameObject.SetActive(false);
+            if (curLevel < 2) {
+                 _ultimateContainer.gameObject.SetActive(false);
+                 if (curLevel == 0)  
+                     _movesContainer.gameObject.SetActive(false);
+            }
+        }
+       
+        
+      
+    } 
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
         var floatingText = _floatingTextsPool.Get();
         floatingText.SetText(newPosition, needText, textSize, showTime, finalposition);

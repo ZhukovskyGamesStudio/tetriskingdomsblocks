@@ -1,27 +1,27 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TutorialUIElementsView : MonoBehaviour {
     [SerializeField]
     private RectTransform[] _holeImages;
-
-    [SerializeField]
+    
     private RectTransform _blackBGImage;
-
-    [SerializeField]
+    private TMP_Text _tutorialText;
     private Image _fingerImage;
 
-    [SerializeField]
-    private Transform _firstTutorialContainer;
 
     [SerializeField]
-    private Transform _secondTutorialContainer;
+    private string _firstTutorialText;
 
     [SerializeField]
-    private Transform _thirdTutorialContainer;
+    private string _secondTutorialText;
+
+    [SerializeField]
+    private string _thirdTutorialText;
 
     [SerializeField]
     private Tween _currentTween;
@@ -38,7 +38,10 @@ public class TutorialUIElementsView : MonoBehaviour {
     private int _tutorialStep = 1;
 
     void Start() {
-        TutorialFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
+        GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
+        
+        SpawnAllTutorialObjects();
+        SetHolesPositions();
         StartAnimation();
         ShowFirstStepTutorial();
     }
@@ -57,6 +60,13 @@ public class TutorialUIElementsView : MonoBehaviour {
 #endif
     }
 
+    private void SpawnAllTutorialObjects() {
+        
+        _blackBGImage = gameObject.GetComponent<RectTransform>();
+        _tutorialText = gameObject.transform.GetChild(0).GetComponent<TMP_Text>();
+        _fingerImage = gameObject.transform.GetChild(1).GetComponent<Image>();
+    }
+    
     private void TrySkipStep() {
         if (_canSkipTutorial) {
             if (_tutorialStep == 2)
@@ -66,13 +76,16 @@ public class TutorialUIElementsView : MonoBehaviour {
         }
     }
 
-    public void SetHolesPositions(Vector3 posHoleFirst, Vector3 posHoleSecond) {
-        posHoleFirst = (Vector2)Camera.main.WorldToScreenPoint(posHoleFirst);
-        posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(posHoleSecond);
+    public void SetHolesPositions() {
+        var posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(NextPiecesView.Instance.transform.position);
         // Присваиваем позицию UI-элементу
-        _holeImages[0].transform.position = posHoleFirst;
+        Debug.Log(GameUI.Instance._tasksContainer);
+        var posHoleFirst = GameUI.Instance._tasksContainer.position;
+        _holeImages[1].transform.SetParent(GameUI.Instance._tasksContainer);
+        _holeImages[0].transform.SetParent(_holeHelper._holesContainer);
+        _holeImages[1].position = posHoleFirst;
+        _holeImages[0].transform.position = posHoleSecond; 
         _fingerImage.transform.position = _holeImages[0].transform.position;
-        _holeImages[1].transform.position = posHoleSecond;
     }
 
     public void StartAnimation() {
@@ -90,13 +103,14 @@ public class TutorialUIElementsView : MonoBehaviour {
     private void ShowFirstStepTutorial() {
         _holeHelper.DestroyHoles();
         _holeHelper.SpawnHoles(_firstStepCells);
+        _tutorialText.text = _firstTutorialText;
     }
     
 
-    public void HideFirstStepTutorial() {
+    public void HideFirstStepTutorial(Vector2Int pos,bool[,] cells ) {
         _holeHelper.DestroyHoles();
-        TutorialFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
-        _firstTutorialContainer.gameObject.SetActive(false);
+        GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
+        
         ShowSecondStepTutorial();
         _currentTween.Kill();
         _canSkipTutorial = true;
@@ -108,13 +122,12 @@ public class TutorialUIElementsView : MonoBehaviour {
         _holeHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
         Time.timeScale = 0;
-        _secondTutorialContainer.gameObject.SetActive(true);
+        _tutorialText.text = _secondTutorialText;
         _holeImages[2].gameObject.SetActive(true);
     }
 
     public void HideSecondStepTutorial() {
         _holeHelper.DestroyHoles();
-        _secondTutorialContainer.gameObject.SetActive(false);
         _holeImages[2].gameObject.SetActive(false);
         Time.timeScale = 1;
         _canSkipTutorial = false;
@@ -126,13 +139,12 @@ public class TutorialUIElementsView : MonoBehaviour {
         _tutorialStep = 3;
         Time.timeScale = 0;
         _canSkipTutorial = true;
-        _thirdTutorialContainer.gameObject.SetActive(true);
+        _tutorialText.text = _thirdTutorialText;
         _holeImages[3].gameObject.SetActive(true);
     }
 
     public void HideThirdStepTutorial() {
         _holeHelper.DestroyHoles();
-        _thirdTutorialContainer.gameObject.SetActive(false);
         Time.timeScale = 1;
         _holeImages[3].gameObject.SetActive(false);
         DestroyTutorial();

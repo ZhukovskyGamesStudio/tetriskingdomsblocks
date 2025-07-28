@@ -5,8 +5,8 @@ using UnityEngine.UI;
 public class TutorialHoleHelper : MonoBehaviour {
     [SerializeField]
     private Image _holeImagePrefab;
-    
-    private Transform _holesContainer;
+    [field:SerializeField]
+    public Transform _holesContainer { get;private set;}
 
     private List<GameObject> _curHoles = new List<GameObject>();
     

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a773567063b44364894942891608bca8, type: 3}
+  m_Name: TutorialWoodCellInfoPlus
+  m_EditorClassIdentifier: 
+  CellType: 1
+  CellForm: {fileID: 11400000, guid: 8897b1090ed566444af9a7359ffaea3b, type: 2}
+  MarkCellColor: {r: 0.26666668, g: 0.5019608, b: 0.12156863, a: 0}
+  CellName: Wood
+  ChanceToSpawn: 1
+  ResourcesForPlace:
+  - ResourceType: 1
+    ResourceCount: 1
+  ResourcesForDestroy:
+  - ResourceType: 1
+    ResourceCount: 1
+  MultiplayerForSameResourceType: 0
