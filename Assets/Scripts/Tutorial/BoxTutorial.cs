@@ -13,8 +13,7 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
     [SerializeField]
     private TutorialHoleHelper _holeHelper;
 
-    protected override void Start() {
-        base.Start();
+    protected void Start() {
         GameFieldManager.Instance.OnCellPlaced += CheckIceCells;
         List<Vector3Int> boxPoses = new List<Vector3Int>();
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
@@ -36,7 +35,7 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
                     foreach (var checkedCell in FieldUtils.GetCellsAround(GameFieldManager.Instance._field, place)) {
                         if (GameFieldManager.Instance._field[checkedCell.x, checkedCell.y] == CellType.Box) {
                             _holeHelper.DestroyHoles();
-                            Destroy(_rectTransform.gameObject);
+                            //Destroy(_rectTransform.gameObject);
                             GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
                             return;
                         }

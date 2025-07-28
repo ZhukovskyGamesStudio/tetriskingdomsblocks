@@ -14,8 +14,8 @@ public class IceTutorial : TutorialObjectHidedAfterTap {
     [SerializeField]
     private TutorialHoleHelper _holeHelper;
 
-    protected override void Start() {
-        base.Start();
+    protected void Start() {
+      //  base.Start();
         GameFieldManager.Instance.OnCellPlaced += CheckIceCells;
         var mainCamera = Camera.main;
         List<Vector3Int> icePoses = new List<Vector3Int>();
@@ -38,7 +38,7 @@ public class IceTutorial : TutorialObjectHidedAfterTap {
                 Vector2Int place = new(coord.x + x, coord.y + y);
                 if (needCells[x, y] && GameFieldManager.Instance._field[place.x, place.y] == CellType.Ice) {
                     _holeHelper.DestroyHoles();
-                    Destroy(_rectTransform.gameObject);
+                   // Destroy(_rectTransform.gameObject);
                     GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
                     return;
                 }

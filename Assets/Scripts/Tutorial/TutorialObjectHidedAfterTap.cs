@@ -1,36 +1,40 @@
+using System;
+using TMPro;
 using UnityEngine;
 
 public class TutorialObjectHidedAfterTap : MonoBehaviour
 {
-    [SerializeField] protected RectTransform _rectTransform;
-    protected virtual void Start()
-    {
-        // Создаем Canvas
-        Transform canvasObj = GameUI.Instance.BlackBgContainer;
-        
-        gameObject.transform.SetParent(canvasObj.transform);
-        
-        // Настраиваем RectTransform
-        _rectTransform.anchorMin = Vector2.zero;
-        _rectTransform.anchorMax = Vector2.one;
-        _rectTransform.offsetMin = Vector2.zero;
-        _rectTransform.offsetMax = Vector2.zero;
-        gameObject.transform.localScale = Vector3.one;
+    [SerializeField]
+    private TMP_Text _tutorialText;
+    [SerializeField]
+    private Transform _tutorialHole;
+    private void Start() {
+        var moveCounterPos = GameUI.Instance._movesContainer.transform.position;
+        _tutorialHole.transform.parent = GameUI.Instance.HolesForBgContainer;
+        _tutorialHole.transform.position = moveCounterPos;
+        _tutorialText.transform.position = new Vector3(moveCounterPos.x, moveCounterPos.y-250, moveCounterPos.z);
     }
-    /*void Update()
+
+    void Update()
     {
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            
-            if (touch.phase == TouchPhase.Began)
+
+            if (touch.phase == TouchPhase.Began) {
                 Destroy(gameObject);
+                GameEntryPoint.Instance.Win();
+            }
+                
         }
         
         // Также оставляем поддержку мыши для тестирования в редакторе
 #if UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) {
             Destroy(gameObject);
+            GameEntryPoint.Instance.Win();
+        }
+            
 #endif
-    }*/
+    }
 }

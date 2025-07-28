@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,6 +21,11 @@ public class GameEntryPoint : MonoBehaviour {
     private UltaManager _ultaManager;
 
     private GameData _gameData;
+    public static GameEntryPoint Instance;
+
+    private void Awake() {
+        Instance = this;//need for Tutorial win state set
+    }
 
     private void Start() {
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
@@ -152,7 +158,7 @@ public class GameEntryPoint : MonoBehaviour {
         return !_gameFieldManager.CanPlaceAnyPiece();
     }
 
-    private void Win() {
+    public void Win() {
         SaveWinGame();
 
         GameFieldManager.Instance.SetWinState();
