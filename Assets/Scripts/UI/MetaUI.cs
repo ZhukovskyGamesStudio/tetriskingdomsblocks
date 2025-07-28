@@ -96,17 +96,6 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
-    public void SetGetPieceTimer(string text) {
-        if (_getPieceTimerText != null) {
-            _getPieceTimerText.text = text;
-        }
-    }
-
-    public void SetDestroyPieceText(string text) {
-        if (_destroyPieceText != null)
-            _destroyPieceText.text = text;
-    }
-
     public void OpenBuildState() {
         _buildState.SetActive(true);
         _ruleState.SetActive(false);

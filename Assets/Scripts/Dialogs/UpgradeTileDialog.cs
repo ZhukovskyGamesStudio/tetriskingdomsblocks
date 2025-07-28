@@ -6,46 +6,54 @@ using UnityEngine.UI;
 
 public class UpgradeTileDialog : DialogBase {
     [SerializeField]
-    private TextMeshProUGUI _headerText, _capacityText, _buttonText;
+    private TextMeshProUGUI _capacityText, _afterCapacityText, _incomeText, _afterIncomeText;
 
     [SerializeField]
-    private ResourceCount _resourcePrefab;
+    private TextMeshProUGUI _headerText, _levelText, _afterLevelText, _costText;
 
     [SerializeField]
-    private Transform _costResources, _incomeResourcesBefore, _incomeResourcesAfter;
+    private List<Image> _resourceImages;
 
     [SerializeField]
-    private Button _upgradeButton;
+    private List<GameObject> _hideOnMaxLevel, _showOnMaxLevel;
     
     private Action _clickUpgrade, _clickClose;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
-
+        
+        if(!dialogData.IsMaxLevel) OpenUpgradeState(dialogData);
+        
         _headerText.text = _headerText.text.Replace("{tileName}", dialogData.TileName)
-                                         .Replace("{level}", dialogData.Level.ToString());
-        _capacityText.text = _capacityText.text.Replace("{capacity}", dialogData.Capacity.ToString());
-        _clickUpgrade = dialogData.ClickUpgrade;
+            .Replace("{level}", dialogData.CurrentLevel.ToString());
+
+        _capacityText.text = dialogData.CapacityBefore.ToString();
+        _incomeText.text = dialogData.IncomeBefore.ToString();
+        _levelText.text = _levelText.text.Replace("{level}", dialogData.CurrentLevel.ToString());
         _clickClose = dialogData.ClickClose;
-        _upgradeButton.interactable = !dialogData.IsMaxLevel;
+
+        Sprite resourceSprite = SpritesManager.Instance.GetSprite(dialogData.Resource);
+        foreach (Image _resourceImage in _resourceImages) {
+            _resourceImage.sprite = resourceSprite;
+        }
+
         if (dialogData.IsMaxLevel) {
-            _buttonText.text = "Max level!";
+            foreach (GameObject gmObject in _hideOnMaxLevel) {
+                gmObject.SetActive(false);
+            }
+            
+            foreach (GameObject gmObject in _showOnMaxLevel) {
+                gmObject.SetActive(true);
+            }
         }
-        
-        foreach (var resource in dialogData.CostResources) {
-            ResourceCount newResource = Instantiate(_resourcePrefab, _costResources);
-            newResource.SetData(resource.Item1, resource.Item2.ToString());
-        }
-        
-        foreach (var resource in dialogData.IncomeResourcesBefore) {
-            ResourceCount newResource = Instantiate(_resourcePrefab, _incomeResourcesBefore);
-            newResource.SetData(resource.Item1, Mathf.FloorToInt(resource.Item2*3600) + "/h");
-        }
-        
-        foreach (var resource in dialogData.IncomeResourcesAfter) {
-            ResourceCount newResource = Instantiate(_resourcePrefab, _incomeResourcesAfter);
-            newResource.SetData(resource.Item1, Mathf.FloorToInt(resource.Item2*3600) + "/h");
-        }
+    }
+
+    private void OpenUpgradeState(Data dialogData) {
+        _afterCapacityText.text = dialogData.CapacityAfter.ToString();
+        _afterIncomeText.text = dialogData.IncomeAfter.ToString();
+        _afterLevelText.text = _levelText.text.Replace("{level}", (dialogData.CurrentLevel + 1).ToString());
+        _clickUpgrade = dialogData.ClickUpgrade;
+        _costText.text = dialogData.UpgradeCost.ToString();
     }
 
     public void ClickUpgrade() {
@@ -59,11 +67,11 @@ public class UpgradeTileDialog : DialogBase {
     [Serializable]
     public class Data {
         public Action ClickUpgrade, ClickClose;
-        public List<Tuple<ResourceType, int>> CostResources;
-        public List<Tuple<ResourceType, float>> IncomeResourcesBefore, IncomeResourcesAfter;
+        public ResourceType Resource;
+        public int IncomeBefore, IncomeAfter, CapacityBefore, CapacityAfter;
         public string TileName;
-        public int Level;
-        public int Capacity;
+        public int CurrentLevel;
         public bool IsMaxLevel;
+        public int UpgradeCost;
     }
 }
