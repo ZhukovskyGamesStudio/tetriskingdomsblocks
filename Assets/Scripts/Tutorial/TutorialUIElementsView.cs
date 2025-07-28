@@ -39,11 +39,12 @@ public class TutorialUIElementsView : MonoBehaviour {
 
     void Start() {
         GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
-        
-        SpawnAllTutorialObjects();
+       
+        SpawnAllTutorialObjects(); 
+        ShowFirstStepTutorial();
         SetHolesPositions();
         StartAnimation();
-        ShowFirstStepTutorial();
+        
     }
 
     private void Update() {
@@ -77,15 +78,20 @@ public class TutorialUIElementsView : MonoBehaviour {
     }
 
     public void SetHolesPositions() {
-        var posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(NextPiecesView.Instance.transform.position);
+        var posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(NextPiecesView.Instance._piecesContainers[0].transform.position);
         // Присваиваем позицию UI-элементу
-        Debug.Log(GameUI.Instance._tasksContainer);
         var posHoleFirst = GameUI.Instance._tasksContainer.position;
-        _holeImages[1].transform.SetParent(GameUI.Instance._tasksContainer);
-        _holeImages[0].transform.SetParent(_holeHelper._holesContainer);
+        _holeImages[1].transform.parent = _holeHelper._holesContainer;
+        _holeImages[0].transform.parent = _holeHelper._holesContainer;
+        _holeImages[2].transform.parent = _holeHelper._holesContainer;
         _holeImages[1].position = posHoleFirst;
         _holeImages[0].transform.position = posHoleSecond; 
+        _holeImages[2].transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4,0,3.5f)); 
+        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4,0,2)); 
         _fingerImage.transform.position = _holeImages[0].transform.position;
+        _holeImages[0].gameObject.SetActive(true);
+        _holeImages[1].gameObject.SetActive(false);
+        _holeImages[2].gameObject.SetActive(false);
     }
 
     public void StartAnimation() {
@@ -95,7 +101,7 @@ public class TutorialUIElementsView : MonoBehaviour {
         _fingerImage.color = color;
         _currentTween = DOTween.Sequence().Append(_fingerImage.DOFade(1, 0.8f))
             .Join(_fingerImage.rectTransform.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.rectTransform.DOMove(_holeImages[1].transform.position, 2.5f))
+            .Append(_fingerImage.rectTransform.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4,0,3)), 2.5f))
             .Append(_fingerImage.rectTransform.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
             .Append(_fingerImage.rectTransform.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);
     }
@@ -110,12 +116,12 @@ public class TutorialUIElementsView : MonoBehaviour {
     public void HideFirstStepTutorial(Vector2Int pos,bool[,] cells ) {
         _holeHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
-        
+        GameFieldManager.Instance.ClearAllLockedCells();
         ShowSecondStepTutorial();
         _currentTween.Kill();
         _canSkipTutorial = true;
         _holeImages[0].gameObject.SetActive(false);
-        _holeImages[1].gameObject.SetActive(false);
+        _fingerImage.gameObject.SetActive(false);
     }
 
     public void ShowSecondStepTutorial() {
@@ -131,6 +137,8 @@ public class TutorialUIElementsView : MonoBehaviour {
         _holeImages[2].gameObject.SetActive(false);
         Time.timeScale = 1;
         _canSkipTutorial = false;
+        _tutorialText.gameObject.SetActive(false);
+        _tutorialText.transform.position = new Vector3(GameUI.Instance._tasksContainer.position.x,GameUI.Instance._tasksContainer.position.y-100f,0); 
         Invoke(nameof(ShowThirdStepTutorial), 0.5f);
     }
 
@@ -140,13 +148,14 @@ public class TutorialUIElementsView : MonoBehaviour {
         Time.timeScale = 0;
         _canSkipTutorial = true;
         _tutorialText.text = _thirdTutorialText;
-        _holeImages[3].gameObject.SetActive(true);
+        _tutorialText.gameObject.SetActive(true);
+        _holeImages[1].gameObject.SetActive(true);
     }
 
     public void HideThirdStepTutorial() {
         _holeHelper.DestroyHoles();
         Time.timeScale = 1;
-        _holeImages[3].gameObject.SetActive(false);
+        _holeImages[1].gameObject.SetActive(false);
         DestroyTutorial();
     }
 

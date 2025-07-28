@@ -28,7 +28,8 @@ public static class FieldUtils {
         CellType.Box,
         CellType.Crystal,
         CellType.Slime,
-        CellType.LockedMetaCell
+        CellType.LockedMetaCell,
+        CellType.LockedCoreCell,
     };
     
     private static readonly List<CellType> ResourcesCells = new List<CellType>() {
@@ -39,6 +40,7 @@ public static class FieldUtils {
     };
     
     private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {
+        CellType.LockedCoreCell,
         CellType.GoldMine,
         CellType.CrystalMine,
         CellType.Empty,

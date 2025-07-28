@@ -22,6 +22,7 @@ public enum CellType {
     CrystalMine = 203,
     Crystal = 204,
     Slime = 205,
+    LockedCoreCell = 206,
 
     Dynamite = 250,
 

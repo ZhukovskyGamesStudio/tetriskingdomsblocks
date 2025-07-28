@@ -29,4 +29,6 @@ public class LevelConfig : ScriptableObject {
     [field: SerializeField]
 
     public int MovesCount { get; private set; }
+    [field: SerializeField]
+    public int FirstFiguresCount { get; private set; }
 }

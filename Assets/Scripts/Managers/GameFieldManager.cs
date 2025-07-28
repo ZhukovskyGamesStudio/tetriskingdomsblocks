@@ -32,12 +32,21 @@ public class GameFieldManager : FieldManager {
     }
 
     public void GenerateNewPieces() {
-        if(StorageManager.GameDataMain.HealthCount <= 0)return;
         _nextBlocks = new List<PieceData>() {
-            PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
-            PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells),
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells)
         };
+        if (_placedPiecesAmount == 0 && MainManager.Instance.CurrentLevelConfig.FirstFiguresCount == 1) {
+            _placedPiecesAmount = 2;
+            NextPiecesView.Instance.SetData(_nextBlocks);
+            return;
+        }
+        _nextBlocks.Add(PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells));
+        if (_placedPiecesAmount == 0 && MainManager.Instance.CurrentLevelConfig.FirstFiguresCount == 2) {
+            _placedPiecesAmount = 1;
+            NextPiecesView.Instance.SetData(_nextBlocks);
+            return;
+        }
+        _nextBlocks.Add(PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells));
         NextPiecesView.Instance.SetData(_nextBlocks);
     }
 
@@ -193,6 +202,14 @@ public class GameFieldManager : FieldManager {
         DestroyCell(coord);
     }
 
+    public void ClearAllLockedCells() {
+        for (int i = 0; i < _field.GetLength(0); i++) {
+            for (int j = 0; j < _field.GetLength(1); j++) {
+                if (_field[i, j] == CellType.LockedCoreCell)
+                    DestroyCell(new Vector2Int(i, j));
+            }
+        }
+    }
     protected override void SpawnResourceFxForCell(Vector2Int place, CellView go) {
         var cellType = _field[place.x, place.y];
         ResourceTypeAndCountSubClass[] resourcesForPlace =

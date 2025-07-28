@@ -46,5 +46,6 @@ public class RedactorFieldButton : MonoBehaviour {
         { CellType.Wood, Color.green },
         { CellType.Stone, Color.grey },
         { CellType.LockedMetaCell, Color.blue },
+        { CellType.LockedCoreCell, Color.blue },
     };
 }

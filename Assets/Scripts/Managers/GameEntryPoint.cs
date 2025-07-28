@@ -88,6 +88,7 @@ public class GameEntryPoint : MonoBehaviour {
     private void SetTaskDescriptionsFromStartField(LevelConfig levelConfig, Dictionary<ResourceType, int> startTasks) {
         int i = levelConfig.Tasks.Length;
         foreach (var (resourceType, count) in startTasks) {
+            if((int)resourceType > 0 &&  (int)resourceType < 5)continue;
             TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(TaskInfo.TaskType.getResource, resourceType, count);
 
             SetTaskUI(i, newTaskInfo, newTaskInfo);

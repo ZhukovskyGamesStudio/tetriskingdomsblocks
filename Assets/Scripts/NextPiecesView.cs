@@ -73,13 +73,14 @@ public class NextPiecesView : MonoBehaviour, IResetable {
             go.AppearAsync().Forget();
             _spawnParticles[i].gameObject.SetActive(true);
             _spawnParticles[i].Play();
-
+ Debug.Log($"piece number {i}");
             //await UniTask.WaitWhile(()=>    _appearAudioSource[i].isPlaying, cancellationToken: token);
         }
 
         _createParticleSystem.Play();
         _gameAudio.PlayNextSound(_gameAudio.PiecesAppear);
         await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
+       
         return pieceView;
     }
 
