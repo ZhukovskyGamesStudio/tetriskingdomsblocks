@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
@@ -73,7 +74,19 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenResources() {
+        var dialog = new DialogWithData {
+            DialogType = typeof(OverviewDialog),
+            Data = new OverviewDialog.Data {
+                Resources = new List<OverviewResourceInfo> {
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64)
+                }
+            }
+        };
         
+        DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
     public void SetPlayText(string text) {

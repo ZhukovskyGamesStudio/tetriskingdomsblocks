@@ -19,6 +19,11 @@ public class UpgradeTileDialog : DialogBase {
     
     private Action _clickUpgrade, _clickClose;
 
+    private string FormatIncome(int income) {
+        if (income > 0) return "+" + income.ToString();
+        return income.ToString();
+    }
+    
     public override void SetData(object data) {
         Data dialogData = data as Data;
         
@@ -28,7 +33,7 @@ public class UpgradeTileDialog : DialogBase {
             .Replace("{level}", dialogData.CurrentLevel.ToString());
 
         _capacityText.text = dialogData.CapacityBefore.ToString();
-        _incomeText.text = dialogData.IncomeBefore.ToString();
+        _incomeText.text = FormatIncome(dialogData.IncomeBefore);
         _levelText.text = _levelText.text.Replace("{level}", dialogData.CurrentLevel.ToString());
         _clickClose = dialogData.ClickClose;
 
@@ -50,7 +55,7 @@ public class UpgradeTileDialog : DialogBase {
 
     private void OpenUpgradeState(Data dialogData) {
         _afterCapacityText.text = dialogData.CapacityAfter.ToString();
-        _afterIncomeText.text = dialogData.IncomeAfter.ToString();
+        _afterIncomeText.text = FormatIncome(dialogData.IncomeAfter);
         _afterLevelText.text = _levelText.text.Replace("{level}", (dialogData.CurrentLevel + 1).ToString());
         _clickUpgrade = dialogData.ClickUpgrade;
         _costText.text = dialogData.UpgradeCost.ToString();
