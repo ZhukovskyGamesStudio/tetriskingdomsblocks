@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OverviewDialog : DialogBase {
     [SerializeField]
-    private ResourceOutput _resourcePrefab;
+    private OverviewResource _resourcePrefab;
 
     [SerializeField]
     private Transform _resourcesParent;
@@ -12,26 +12,28 @@ public class OverviewDialog : DialogBase {
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
-        foreach (ResourceCountAndIncome resource in dialogData.Resources) {
-            ResourceOutput newResource = Instantiate(_resourcePrefab, _resourcesParent);
-            newResource.SetData(resource.Count, resource.Income, resource.Type);
+        foreach (OverviewResourceInfo resource in dialogData.Resources) {
+            OverviewResource newResource = Instantiate(_resourcePrefab, _resourcesParent);
+            newResource.SetData(resource);
         }
     }
 
     [Serializable]
     public class Data {
-        public List<ResourceCountAndIncome> Resources;
+        public List<OverviewResourceInfo> Resources;
     }
 }
 
-public class ResourceCountAndIncome {
-    public ResourceType Type;
+public class OverviewResourceInfo {
+    public ResourceType ResourceType;
     public int Count;
     public int Income;
+    public int Consumption;
 
-    public ResourceCountAndIncome(ResourceType type, int count, int income) {
-        Type = type;
+    public OverviewResourceInfo(ResourceType type, int count, int income, int consumption) {
+        ResourceType = type;
         Count = count;
         Income = income;
+        Consumption = consumption;
     }
 }

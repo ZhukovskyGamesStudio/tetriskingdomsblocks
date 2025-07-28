@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
@@ -73,7 +74,19 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenResources() {
+        var dialog = new DialogWithData {
+            DialogType = typeof(OverviewDialog),
+            Data = new OverviewDialog.Data {
+                Resources = new List<OverviewResourceInfo> {
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
+                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64)
+                }
+            }
+        };
         
+        DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
     public void SetPlayText(string text) {
@@ -94,17 +107,6 @@ public class MetaUI : MonoBehaviour {
         else if (_getPieceTimer.activeSelf) {
             SetGetPieceButtonActive(true);
         }
-    }
-
-    public void SetGetPieceTimer(string text) {
-        if (_getPieceTimerText != null) {
-            _getPieceTimerText.text = text;
-        }
-    }
-
-    public void SetDestroyPieceText(string text) {
-        if (_destroyPieceText != null)
-            _destroyPieceText.text = text;
     }
 
     public void OpenBuildState() {

@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000002861, y: -214.00006}
+  m_AnchoredPosition: {x: 0.000002861, y: -180}
   m_SizeDelta: {x: 464.3569, y: 145.16852}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &734996093956500399
@@ -621,6 +621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _showHideAnimation: {fileID: 3432957397656019599}
+  ForceOverlay: 0
   _balanceText: {fileID: 6877364288623758064}
   _titlePrefab: {fileID: 2939851961356401680, guid: 9e1f2e4244feccc42883f1b77951561c, type: 3}
   _offersContainer: {fileID: 1166317733282826475}

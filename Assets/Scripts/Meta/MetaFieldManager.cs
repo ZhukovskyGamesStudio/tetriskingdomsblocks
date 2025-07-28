@@ -189,34 +189,25 @@ public class MetaFieldManager : FieldManager {
         
         ShowUpgradeTileDialog(cellConfig, resourceMultiplier);
     }
-
+    
     private void ShowUpgradeTileDialog(MetaCellTypeInfo cell, float multiplier) {
-        List<Tuple<ResourceType, int>> costResources = new() {
-            new Tuple<ResourceType, int>(cell.AfkResourceType, cell.UpgradeCost)
-        };
-
-        float production = (cell.AfkProduceCountPerSecond * multiplier);
-        
-        List<Tuple<ResourceType, float>> incomeBefore = new() {
-            new Tuple<ResourceType, float>(cell.AfkResourceType, production)
-        };
-        
-        List<Tuple<ResourceType, float>> incomeAfter = new() {
-            new Tuple<ResourceType, float>(cell.AfkResourceType, production*2) // TODO: брать из конфига
-        };
+        float production = cell.AfkProduceCountPerSecond * multiplier;
+        float capacity = cell.MaxAfkCapacity * multiplier;
         
         var dialogData = new DialogWithData {
             DialogType = typeof(UpgradeTileDialog),
             Data = new UpgradeTileDialog.Data {
-                ClickUpgrade = UpgradeResourceCell, // TODO: убрать заглушку клика и уровня
-                Level = 1,
-                TileName = cell.CellName,
-                CostResources = costResources,
-                IncomeResourcesBefore = incomeBefore,
-                IncomeResourcesAfter = incomeAfter,
-                Capacity = (int)(cell.MaxAfkCapacity * multiplier),
+                ClickUpgrade = UpgradeResourceCell, 
                 ClickClose = CloseCellUI,
-                IsMaxLevel = cell.UpgradeCellType == CellType.Empty
+                Resource = cell.AfkResourceType,
+                IncomeBefore = (int)production,
+                IncomeAfter = (int)(production * 2), // TODO: брать из конфига
+                CapacityBefore = (int)capacity,
+                CapacityAfter = (int)(capacity * 2), // TODO: брать из конфига
+                TileName = cell.CellName,
+                CurrentLevel = 1, // TODO: убрать заглушку уровня
+                IsMaxLevel = cell.UpgradeCellType == CellType.Empty,
+                UpgradeCost = cell.UpgradeCost
             }
         };
         DialogsManager.Instance.ShowDialogWithData(dialogData);
