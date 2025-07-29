@@ -28,10 +28,10 @@ public class GameBoostersButtons : MonoBehaviour {
     private Button _rotatePieceButton;
 
     [SerializeField]
-    private Image _dynamiteImageButton;
+    public Image _dynamiteImageButton;
 
     [SerializeField]
-    private Image _hummerImageButton;
+    public Image _hummerImageButton;
 
     [SerializeField]
     private Image _randomImageButton;
