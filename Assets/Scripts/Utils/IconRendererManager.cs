@@ -3,36 +3,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
 
-public class IconRendererManager : MonoBehaviour
-{
+public class IconRendererManager : MonoBehaviour {
     [Header("Settings")]
-    [SerializeField] private int _textureSize = 64;
-    [SerializeField] private LayerMask _renderLayer;
-    [SerializeField] private float _renderDelay = 0.1f;
-    [SerializeField] private Vector3 _spawnRotation = new Vector3(-90, -90, 90);
+    [SerializeField]
+    private int _textureSize = 64;
+
+    [SerializeField]
+    private LayerMask _renderLayer;
+
+    [SerializeField]
+    private float _renderDelay = 0.1f;
+
+    [SerializeField]
+    private Vector3 _spawnRotation = new Vector3(-90, -90, 90);
+
     [Header("References")]
-    [SerializeField] private Camera _renderCamera;
-    [SerializeField] private Light _renderLight;
-    
+    [SerializeField]
+    private Camera _renderCamera;
+
+    [SerializeField]
+    private Light _renderLight;
+
     [SerializeField]
     private Material _unlitMaterial;
+
     public static IconRendererManager Instance;
+
     [SerializeField]
     private RenderTexture _renderTexture;
+
     private readonly Dictionary<string, Texture2D> _iconCache = new Dictionary<string, Texture2D>();
     private bool _isRendering;
     private float _lastRenderTime;
-    
+
     private TextureFormat format;
 
-    private void Awake()
-    {
+    private void Awake() {
         Instance = this;
         InitializeRenderSystem();
     }
 
     private void InitializeRenderSystem() {
-
         // Настраиваем камеру
         _renderCamera.orthographic = true;
         _renderCamera.orthographicSize = 1;
@@ -48,10 +59,9 @@ public class IconRendererManager : MonoBehaviour
         _renderLight.intensity = 1f;
 
         format = GetMobileTextureFormat();
-
     }
-    TextureFormat GetMobileTextureFormat()
-    {
+
+    TextureFormat GetMobileTextureFormat() {
 #if UNITY_EDITOR
         return TextureFormat.RGBA32;
 #elif UNITY_IOS
@@ -63,66 +73,53 @@ public class IconRendererManager : MonoBehaviour
 #endif
     }
 
-   
-    
-    public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback)
-    {
+    public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
         GetIcon(prefab, (texture) => {
-            if (texture == null)
-            {
+            if (texture == null) {
                 callback?.Invoke(null);
                 return;
             }
-        
+
             // Создаем спрайт из текстуры
-            Sprite sprite = Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f), // Pivot по центру
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), // Pivot по центру
                 100, // Pixels per unit
-                0,
-                SpriteMeshType.Tight
-            );
-    
+                0, SpriteMeshType.Tight);
+
             callback?.Invoke(sprite);
         });
     }
 
-    private void GetIcon(GameObject prefab, System.Action<Texture2D> callback)
-    {
-        if (prefab == null)
-        {
+    private void GetIcon(GameObject prefab, System.Action<Texture2D> callback) {
+        if (prefab == null) {
             callback?.Invoke(null);
             return;
         }
 
-       /* string itemId = prefab.name;
+        /* string itemId = prefab.name;
 
-        // Проверяем кэш
-        if (_iconCache.TryGetValue(itemId, out Texture2D cachedIcon))
-        {
-            callback?.Invoke(cachedIcon);
-            return;
-        }*/
+         // Проверяем кэш
+         if (_iconCache.TryGetValue(itemId, out Texture2D cachedIcon))
+         {
+             callback?.Invoke(cachedIcon);
+             return;
+         }*/
 
         StartCoroutine(RenderIconCoroutine(prefab, callback));
     }
-    private void SetLayerRecursively(GameObject obj, int layer)
-    {
+
+    private void SetLayerRecursively(GameObject obj, int layer) {
         if (obj == null) return;
-    
+
         obj.layer = layer;
-    
-        foreach (Transform child in obj.transform)
-        {
-            if (child != null)
-            {
+
+        foreach (Transform child in obj.transform) {
+            if (child != null) {
                 SetLayerRecursively(child.gameObject, layer);
             }
         }
     }
-    private IEnumerator RenderIconCoroutine(GameObject prefab, System.Action<Texture2D> callback)
-    {
+
+    private IEnumerator RenderIconCoroutine(GameObject prefab, System.Action<Texture2D> callback) {
         while (Time.time - _lastRenderTime < _renderDelay)
             yield return null;
 
@@ -132,28 +129,25 @@ public class IconRendererManager : MonoBehaviour
         _isRendering = true;
         _lastRenderTime = Time.time;
 
-      SetLayerRecursively(prefab, (int)Mathf.Log(_renderLayer.value, 2));
+        SetLayerRecursively(prefab, (int)Mathf.Log(_renderLayer.value, 2));
 
         SimplifyObjectMaterials(prefab);
 
         PositionObjectForRendering(prefab);
 
         yield return RenderIconTexture(prefab, prefab.name, callback);
-       Destroy(prefab.gameObject); 
-       
+        Destroy(prefab.gameObject);
+
         _isRendering = false;
     }
 
-    private void SimplifyObjectMaterials(GameObject obj)
-    {
+    private void SimplifyObjectMaterials(GameObject obj) {
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-        foreach (Renderer renderer in renderers)
-        {
+        foreach (Renderer renderer in renderers) {
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
 
-            if (renderer.material != null)
-            {
+            if (renderer.material != null) {
                 var mat = _unlitMaterial;
                 if (renderer.material.mainTexture != null)
                     mat.mainTexture = renderer.material.mainTexture;
@@ -162,20 +156,17 @@ public class IconRendererManager : MonoBehaviour
         }
     }
 
-    private void PositionObjectForRendering(GameObject obj)
-    {
+    private void PositionObjectForRendering(GameObject obj) {
         obj.transform.localRotation = Quaternion.Euler(_spawnRotation);
         Bounds bounds = CalculateObjectBounds(obj);
         float maxExtent = bounds.extents.magnitude;
         Vector3 center = bounds.center;
 
-        obj.transform.position = _renderCamera.transform.position + 
-                               _renderCamera.transform.forward * (maxExtent + 0.5f);
+        obj.transform.position = _renderCamera.transform.position + _renderCamera.transform.forward * (maxExtent + 0.5f);
         _renderCamera.orthographicSize = maxExtent * 1.2f;
     }
 
-    private Bounds CalculateObjectBounds(GameObject obj)
-    {
+    private Bounds CalculateObjectBounds(GameObject obj) {
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
         if (renderers.Length == 0) return new Bounds(obj.transform.position, Vector3.one);
 
@@ -186,20 +177,14 @@ public class IconRendererManager : MonoBehaviour
         return bounds;
     }
 
-    private IEnumerator RenderIconTexture(GameObject target, string itemId, System.Action<Texture2D> callback)
-    {
+    private IEnumerator RenderIconTexture(GameObject target, string itemId, System.Action<Texture2D> callback) {
         yield return new WaitForEndOfFrame();
         _renderCamera.enabled = true;
         _renderCamera.Render();
-       
+
         Debug.Log(format);
         _renderCamera.enabled = false;
-        Texture2D icon = new Texture2D(
-            _renderTexture.width,
-            _renderTexture.height,
-            format,
-            false
-        );
+        Texture2D icon = new Texture2D(_renderTexture.width, _renderTexture.height, format, false);
 
         RenderTexture.active = _renderTexture;
         icon.ReadPixels(new Rect(0, 0, _renderTexture.width, _renderTexture.height), 0, 0);
@@ -208,19 +193,17 @@ public class IconRendererManager : MonoBehaviour
 
         if (!_iconCache.ContainsKey(itemId))
             _iconCache.Add(itemId, icon);
-       
+
         callback?.Invoke(icon);
     }
 
-    public void ClearCache()
-    {
+    public void ClearCache() {
         foreach (var texture in _iconCache.Values)
             Destroy(texture);
         _iconCache.Clear();
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (_renderTexture != null)
             _renderTexture.Release();
 
