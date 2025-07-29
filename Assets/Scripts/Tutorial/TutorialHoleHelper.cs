@@ -19,7 +19,9 @@ public class TutorialHoleHelper : MonoBehaviour {
         }
 
         Camera mainCamera = Camera.main!;
-        foreach (var pos in cells) {
+        HighlightObjectsHelper.Instance.SpawnCells(cells);
+       /* foreach (var pos in cells) {
+            
             Image image = Instantiate(_holeImagePrefab, _holesContainer);
             _curHoles.Add(image.gameObject);
             image.transform.position = mainCamera.WorldToScreenPoint(pos);
@@ -27,18 +29,22 @@ public class TutorialHoleHelper : MonoBehaviour {
             Vector2 min = mainCamera.WorldToScreenPoint(pos - new Vector3(0.5f, 0, 0.5f));
             Vector2 max = mainCamera.WorldToScreenPoint(pos + new Vector3(0.5f, 0, 0.5f));
             image.rectTransform.sizeDelta = (max - min);
-        }
+        }*/
 
         if (withHiglight) {
             _highlightHelper.HighlightObjectsInCells(cells);
         }
     }
 
+    public void HighlightObjects(List<GameObject> objs) {
+        _highlightHelper.HighlightObjects(objs);
+    }
+
     public void DestroyHoles() {
         foreach (GameObject hole in _curHoles) {
             Destroy(hole);
         }
-
+        HighlightObjectsHelper.Instance.ClearCells();
         _highlightHelper.ClearHighlights();
         _curHoles.Clear();
     }

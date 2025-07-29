@@ -40,6 +40,9 @@ public class TutorialHighlightHelper {
 
     public void ClearHighlights() {
         foreach (var kvp in _highlitedLayers) {
+            if (kvp.Key == null) {
+                continue;
+            }
             kvp.Key.layer = kvp.Value;
         }
 
