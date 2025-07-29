@@ -2459,6 +2459,7 @@ MonoBehaviour:
   TaskImage: {fileID: 1341077613}
   TaskSubImage: {fileID: 1642920932}
   TaskInfoTextHelper: {fileID: 1300683503}
+  _checkmark: {fileID: 0}
 --- !u!224 &657515628
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4085,10 +4086,13 @@ MonoBehaviour:
   _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
   _mmfPlayer: {fileID: 966513695}
   _gameAudio: {fileID: 71659430}
-  <MainGameConfig>k__BackingField: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
-  <_additionalPieceContainer>k__BackingField: {fileID: 559030668}
-  _normal: {fileID: 2100000, guid: 76c95ddac2e11714eab30a017e11182a, type: 2}
-  _priorityMaterial: {fileID: 2100000, guid: 782522b7ead25ef408c35b7dfce74d3b, type: 2}
+  _pieceMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  <AdditionalPieceContainer>k__BackingField: {fileID: 0}
 --- !u!1 &1147642551
 GameObject:
   m_ObjectHideFlags: 0
@@ -4465,11 +4469,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7af282bb09df0634d8e440d25ff1e708, type: 3}
---- !u!4 &1158764638 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6791167422762559277, guid: 7af282bb09df0634d8e440d25ff1e708, type: 3}
-  m_PrefabInstance: {fileID: 1158764637}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1160371793
 GameObject:
   m_ObjectHideFlags: 0
@@ -5310,6 +5309,7 @@ MonoBehaviour:
   TaskImage: {fileID: 1823837985}
   TaskSubImage: {fileID: 1513082972}
   TaskInfoTextHelper: {fileID: 1545210825}
+  _checkmark: {fileID: 0}
 --- !u!224 &1283859800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6070,9 +6070,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a03d903fd343d2428090444d2490f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ultimateProgressBar: {fileID: 1368070234}
-  _ultimateButton: {fileID: 1732974540}
   _starPrefab: {fileID: 4463649562921649525, guid: 6a6ac8a28a935fd40bdef3f362c4f4be, type: 3}
+  _starsParticles: {fileID: 0}
+  _starDropDuration: 0.25
+  _startSpawnXPos: 15
+  _startDropStartPos: {x: 0, y: 0, z: 0}
+  _animationCurveX:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _animationCurveY:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _animationCurveZ:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _isRandomPos: 0
 --- !u!1001 &1437739729
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6792,12 +6813,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67dd6e9d8fff4da4a70dff9b8f32b1bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _taskText: {fileID: 0}
-  _sliderText: {fileID: 0}
-  _slider: {fileID: 0}
+  _movesCountText: {fileID: 0}
   _taskState: {fileID: 799732845}
-  _winState: {fileID: 1839247140}
-  _loseState: {fileID: 806458792}
+  <TaskUIViews>k__BackingField: []
+  <UltimateProgressBar>k__BackingField: {fileID: 0}
+  <UltimateButton>k__BackingField: {fileID: 0}
+  <UseUltimateMenu>k__BackingField: {fileID: 0}
+  _ultimateAnimationUI: {fileID: 0}
+  _hideUiClip: {fileID: 0}
 --- !u!222 &1537598680
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7106,10 +7129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d88b2db005784d91a05e82c2d96bfbd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _piecesContainers:
-  - {fileID: 2121908790}
-  - {fileID: 430295772}
-  - {fileID: 515911923}
+  <_piecesContainers>k__BackingField: []
   _piecesScale: 0.7
   _creatingInterval: 0.75
   _creatingDelay: 0.1
@@ -8464,6 +8484,7 @@ MonoBehaviour:
   TaskImage: {fileID: 1891353303}
   TaskSubImage: {fileID: 728819412}
   TaskInfoTextHelper: {fileID: 1202675452}
+  _checkmark: {fileID: 0}
 --- !u!224 &1893927569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8959,18 +8980,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _holesForBgContainer: {fileID: 1522362760}
   _blackBgContainer: {fileID: 1227428682}
-  _bgTasksImage: {fileID: 799732845}
-  _openedDoorEndGame: {fileID: 1158764638}
-  _mainTextUp: {fileID: 195317910}
-  _currentMovesCountText: {fileID: 1087251270}
-  _taskUIViews:
-  - {fileID: 1283859799}
-  - {fileID: 657515627}
-  - {fileID: 1893927568}
-  _downUITransform: {fileID: 1882066643}
   _floatingTextPrefab: {fileID: -52307583430235026, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
   _floatingTextContainer: {fileID: 636545010}
-  _characterInfoTextHelper: {fileID: 33523055}
+  <GameBoostersButtons>k__BackingField: {fileID: 0}
+  <BoostersPanels>k__BackingField: {fileID: 0}
+  <_tasksContainer>k__BackingField: {fileID: 0}
+  _boostersContainer: {fileID: 0}
+  <_movesContainer>k__BackingField: {fileID: 0}
+  _ultimateContainer: {fileID: 0}
+  <GoalView>k__BackingField: {fileID: 0}
 --- !u!114 &2073227649
 MonoBehaviour:
   m_ObjectHideFlags: 0

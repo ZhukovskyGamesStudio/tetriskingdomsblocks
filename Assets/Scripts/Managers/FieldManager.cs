@@ -40,6 +40,10 @@ public class FieldManager : MonoBehaviour {
 
     public CellType[,] _field { get; protected set; }
     protected CellView[,] _cells;
+
+    public CellView GetCellInCoord(Vector3Int coord) {
+        return _cells[coord.x, coord.z];
+    }
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;

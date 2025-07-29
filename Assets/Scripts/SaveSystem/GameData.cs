@@ -14,6 +14,7 @@ public class GameDataForSave {
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
+    public int ProfileAvatar;
     
     public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
     public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};
@@ -53,6 +54,7 @@ public class GameDataForSave {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
         };
         CreatedVersion = Application.version;
+        ProfileAvatar = 0;
     }
 }
 
