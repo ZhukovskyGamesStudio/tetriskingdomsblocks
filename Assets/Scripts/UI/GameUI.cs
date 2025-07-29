@@ -30,8 +30,8 @@ public class GameUI : MonoBehaviour {
     private Transform _boostersContainer;
     [field:SerializeField]
     public Transform _movesContainer{ get; private set; }
-    [SerializeField]
-    private Transform _ultimateContainer;
+    [field:SerializeField]
+    public Transform _ultimateContainer{ get; private set; }
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
 

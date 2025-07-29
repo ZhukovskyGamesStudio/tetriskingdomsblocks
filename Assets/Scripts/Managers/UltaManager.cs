@@ -16,7 +16,8 @@ public class UltaManager : MonoBehaviour {
     [SerializeField]
     private ParticleSystem _starsParticles;
 
-    private int _currentPoints;
+    
+    public int _currentPoints{ get; private set; }
 
     [SerializeField]
     private float _starDropDuration = 0.25f, _startSpawnXPos = 15;

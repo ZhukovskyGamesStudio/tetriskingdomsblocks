@@ -21,11 +21,7 @@ public class GameEntryPoint : MonoBehaviour {
     private UltaManager _ultaManager;
 
     private GameData _gameData;
-    public static GameEntryPoint Instance;
 
-    private void Awake() {
-        Instance = this;//need for Tutorial win state set
-    }
 
     private void Start() {
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
@@ -151,14 +147,16 @@ public class GameEntryPoint : MonoBehaviour {
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
 
     private bool CheckLose() {
-        if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves) {
+        if(UltaManager.Instance._currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
+            return false;
+        if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves ) {
             return true;
         }
 
         return !_gameFieldManager.CanPlaceAnyPiece();
     }
 
-    public void Win() {
+    private void Win() {
         SaveWinGame();
 
         GameFieldManager.Instance.SetWinState();
