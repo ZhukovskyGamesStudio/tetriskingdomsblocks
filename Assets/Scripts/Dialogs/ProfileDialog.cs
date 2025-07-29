@@ -1,12 +1,17 @@
 using System;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ProfileDialog : DialogBase {
     [SerializeField]
     private TextMeshProUGUI _winsText, _levelsText, _bestText, _builtText, _playerNameText;
 
-    private Action _clickEditPic;
+    [SerializeField]
+    private Image _avatarImage;
+
+    private Action _clickEditAvatar;
     
     public override void SetData(object data) {
         Data dialogData = data as Data;
@@ -17,12 +22,14 @@ public class ProfileDialog : DialogBase {
         _builtText.text = dialogData.BuiltCells.ToString();
 
         _playerNameText.text = dialogData.PlayerName;
+        _avatarImage.sprite = dialogData.AvatarSprite;
 
-        _clickEditPic = dialogData.ClickEditPic;
+        _clickEditAvatar = dialogData.ClickEditAvatar;
     }
 
-    public void ClickEditPic() {
-        _clickEditPic.Invoke();
+    public void ClickEditAvatar() {
+        Hide().Forget();
+        _clickEditAvatar.Invoke();
     }
 
     [Serializable]
@@ -32,6 +39,7 @@ public class ProfileDialog : DialogBase {
         public int WeeksBest;
         public int BuiltCells;
         public string PlayerName;
-        public Action ClickEditPic;
+        public Sprite AvatarSprite;
+        public Action ClickEditAvatar;
     }
 }
