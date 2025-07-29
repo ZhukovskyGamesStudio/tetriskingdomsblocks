@@ -26,7 +26,7 @@ public class HighlightsTextureHelper : MonoBehaviour {
             Destroy(_renderTexture);
         }
 
-        _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.R8);
+        _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
         _renderTexture.Create();
         _rawImage.texture = _renderTexture;
         var res = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);

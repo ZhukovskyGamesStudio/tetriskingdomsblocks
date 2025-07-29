@@ -75,9 +75,13 @@ public class TutorialUIElementsView : MonoBehaviour {
         var posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(NextPiecesView.Instance._piecesContainers[0].transform.position);
         // Присваиваем позицию UI-элементу
         var posHoleFirst = GameUI.Instance._tasksContainer.position;
-        _holeImages[1].transform.parent = _holeHelper._holesContainer;
-        _holeImages[0].transform.parent = _holeHelper._holesContainer;
-        _holeImages[2].transform.parent = _holeHelper._holesContainer;
+        
+   
+        
+        _holeImages[1].transform.SetParent(_holeHelper._holesContainer);
+        _holeImages[0].transform.SetParent(_holeHelper._holesContainer);
+        _holeImages[2].transform.SetParent(_holeHelper._holesContainer);
+        
         _holeImages[1].position = posHoleFirst;
         _holeImages[0].transform.position = posHoleSecond;
         _holeImages[2].transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 3.5f));

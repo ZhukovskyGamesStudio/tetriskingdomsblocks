@@ -8,9 +8,6 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
     private RectTransform rectTransformBoxMark;
 
     [SerializeField]
-    private TMP_Text _tutorialText;
-
-    [SerializeField]
     private TutorialHoleHelper _holeHelper;
 
     protected void Start() {
@@ -47,9 +44,14 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
         PlayAnimationText();
     }
 
+    protected override void HideAndDestroy() {
+        _holeHelper.DestroyHoles();
+        base.HideAndDestroy();
+    }
+
     public void PlayAnimationText() {
         DOTween.Kill(_tutorialText.transform);
-
+        _holeHelper.DestroyHoles();
         _tutorialText.transform.localScale = Vector3.one;
 
         _tutorialText.transform.DOScale(Vector3.one * 1.2f, 0.4f).SetEase(Ease.OutBack).OnComplete(() => {

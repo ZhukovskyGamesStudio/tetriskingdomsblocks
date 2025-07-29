@@ -13,7 +13,7 @@ public class TutorialHoleHelper : MonoBehaviour {
 
     private TutorialHighlightHelper _highlightHelper = new TutorialHighlightHelper();
 
-    public void SpawnHoles(List<Vector3Int> cells, bool withHiglight = true) {
+    public void SpawnHoles(List<Vector3Int> cells, bool withHighlight = true) {
         if (_holesContainer == null) {
             _holesContainer = GameObject.FindGameObjectWithTag("TutorialHoleContainer").transform;
         }
@@ -31,7 +31,7 @@ public class TutorialHoleHelper : MonoBehaviour {
             image.rectTransform.sizeDelta = (max - min);
         }*/
 
-        if (withHiglight) {
+        if (withHighlight) {
             _highlightHelper.HighlightObjectsInCells(cells);
         }
     }

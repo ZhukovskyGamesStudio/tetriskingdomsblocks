@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TutorialObjectHidedAfterTap : MonoBehaviour {
     [SerializeField]
-    private TMP_Text _tutorialText;
+    protected TMP_Text _tutorialText;
 
     [SerializeField]
     private Transform _tutorialHole;
@@ -33,7 +33,7 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour {
 #endif
     }
 
-    private void HideAndDestroy() {
+    protected virtual void HideAndDestroy() {
         Destroy(gameObject);
 
         //GameEntryPoint.Instance.Win();
