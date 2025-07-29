@@ -11,8 +11,8 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour {
     private void Start() {
         var moveCounterPos = GameUI.Instance._movesContainer.transform.position;
         _tutorialHole.transform.SetParent(GameUI.Instance.HolesForBgContainer);
-        _tutorialHole.transform.position = moveCounterPos;
-        _tutorialText.transform.position = new Vector3(moveCounterPos.x, moveCounterPos.y - 250, moveCounterPos.z);
+        //_tutorialHole.transform.position = moveCounterPos;
+        //_tutorialText.transform.position = new Vector3(moveCounterPos.x, moveCounterPos.y - 250, moveCounterPos.z);
     }
 
     void Update() {
