@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialFifthUIElementsView : MonoBehaviour {
+public class TutorialTenthUIElementsView : MonoBehaviour {
     [SerializeField]
     private RectTransform[] _holeImages;
 
@@ -28,14 +28,14 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
     private List<Vector3Int> _firstStepCells;
 
     void Start() {
-        GameFieldManager.Instance.OnPieceDestroyedByHammer += HideFirstStepTutorial;
+        GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
 
         SpawnAllTutorialObjects();
         SetHolesPositions();
 
         ShowFirstStepTutorial();
         
-        StorageManager.GameDataMain.HummerCount=5;
+        StorageManager.GameDataMain.DynamiteCount=5;
         
         if(BoostersManager.Instance != null) {
             GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
@@ -57,7 +57,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
     }*/
   // private GameObject _pieceCellsContainer;
     public void SetHolesPositions() {
-        var boosterContainer = GameUI.Instance.GameBoostersButtons._hummerImageButton.transform;
+        var boosterContainer = GameUI.Instance.GameBoostersButtons._dynamiteImageButton.transform;
         _holeImages[0].transform.SetParent(boosterContainer);
         //_holeImages[0].transform.localPosition = Vector3.zero;
         //_holeImages[0].transform.position = posHole;
@@ -89,8 +89,9 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
         gameObject.GetComponent<Image>().enabled = true;
     }
 
-    public void HideFirstStepTutorial() { 
-        GameFieldManager.Instance.OnPieceDestroyedByHammer -= HideFirstStepTutorial;
+    public void HideFirstStepTutorial(Vector2Int pos, bool[,] form) { 
+        
+        GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
         _canSkipTutorial = true;
