@@ -57,7 +57,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
     }*/
   // private GameObject _pieceCellsContainer;
     public void SetHolesPositions() {
-        var boosterContainer = GameUI.Instance.GameBoostersButtons._hummerImageButton.transform;
+        var boosterContainer = GameUI.Instance.GameBoostersButtons._hummerButton.transform;
         _holeImages[0].transform.SetParent(boosterContainer);
         //_holeImages[0].transform.localPosition = Vector3.zero;
         //_holeImages[0].transform.position = posHole;

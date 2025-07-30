@@ -57,7 +57,8 @@ public class TutorialTenthUIElementsView : MonoBehaviour {
     }*/
   // private GameObject _pieceCellsContainer;
     public void SetHolesPositions() {
-        var boosterContainer = GameUI.Instance.GameBoostersButtons._dynamiteImageButton.transform;
+        var boosterContainer = GameUI.Instance.GameBoostersButtons._dinamyteButton.transform;
+        GameUI.Instance.GameBoostersButtons._hummerButton.enabled = false;
         _holeImages[0].transform.SetParent(boosterContainer);
         //_holeImages[0].transform.localPosition = Vector3.zero;
         //_holeImages[0].transform.position = posHole;
@@ -73,7 +74,7 @@ public class TutorialTenthUIElementsView : MonoBehaviour {
             }
         }
      
-        _tutorialText.transform.position = new Vector3(boosterContainer.position.x+200, boosterContainer.position.y + 300, 0);
+        _tutorialText.transform.position = new Vector3(boosterContainer.position.x+350, boosterContainer.position.y + 400, 0);
         _holeImages[0].transform.position = boosterContainer.position;
     }
 
@@ -97,6 +98,7 @@ public class TutorialTenthUIElementsView : MonoBehaviour {
         _canSkipTutorial = true;
         _holeImages[0].gameObject.SetActive(false);
         _holeHelper.DestroyHoles();
+        GameUI.Instance.GameBoostersButtons._hummerButton.enabled = true;
         DestroyTutorial();
     }
 

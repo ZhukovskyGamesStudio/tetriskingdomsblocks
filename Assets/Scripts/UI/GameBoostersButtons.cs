@@ -19,19 +19,19 @@ public class GameBoostersButtons : MonoBehaviour {
     private Button _randomFieldButton;
 
     [SerializeField]
-    private Button _dinamyteButton;
+    public Button _dinamyteButton;
 
     [SerializeField]
-    private Button _hummerButton;
+    public Button _hummerButton;
 
     [SerializeField]
     private Button _rotatePieceButton;
 
     [SerializeField]
-    public Image _dynamiteImageButton;
+    private Image _dynamiteImageButton;
 
     [SerializeField]
-    public Image _hummerImageButton;
+    private Image _hummerImageButton;
 
     [SerializeField]
     private Image _randomImageButton;
