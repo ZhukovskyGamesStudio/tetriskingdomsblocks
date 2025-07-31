@@ -3,25 +3,21 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class ExitGameDialog : DialogBase {
-    private Action _clickYes;
+    private Action _clickExit;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
-        _clickYes = dialogData.СlickYes;
+        _clickExit = dialogData.ClickExit;
     }
 
-    public void ClickYes() {
-        _clickYes?.Invoke();
-        Hide().Forget();
-    }
-
-    public void ClickNo() {
+    public void ClickExit() {
+        _clickExit.Invoke();
         Hide().Forget();
     }
 
     [Serializable]
     public class Data {
-        public Action СlickYes;
+        public Action ClickExit;
     }
 }

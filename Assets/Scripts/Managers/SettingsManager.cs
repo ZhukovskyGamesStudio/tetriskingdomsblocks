@@ -60,10 +60,10 @@ public class SettingsManager : MonoBehaviour {
     }
 
     private void AskGoToMeta() {
-        DialogsManager.Instance.ShowDialogWithData(new DialogWithData() {
+        DialogsManager.Instance.ShowDialogWithData(new DialogWithData {
             DialogType = typeof(ExitGameDialog),
             Data = new ExitGameDialog.Data {
-                СlickYes = MainManager.Instance.GoToMeta
+                ClickExit = MainManager.Instance.GoToMeta
             }
         });
     }

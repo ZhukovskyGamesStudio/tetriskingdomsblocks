@@ -174,6 +174,12 @@ public class GameEntryPoint : MonoBehaviour {
         _gameAudio.PlayNextSound(_gameAudio.Win);
     }
 
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.E)) {
+            Lose();
+        }
+    }
+
     private void SaveWinGame() {
         StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
         // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
