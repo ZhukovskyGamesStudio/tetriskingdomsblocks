@@ -118,14 +118,18 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenResources() {
+        Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
+        resourcesInfo.TryAdd(ResourceType.Wood,  0);
+        resourcesInfo.TryAdd(ResourceType.Rocks,  0);
+        resourcesInfo.TryAdd(ResourceType.Food,  0);
         var dialog = new DialogWithData {
             DialogType = typeof(OverviewDialog),
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64)
+                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.ResourcesCount[0], (int)resourcesInfo[ResourceType.Wood], 0),
+                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.ResourcesCount[1], (int)resourcesInfo[ResourceType.Rocks], 0),
+                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.ResourcesCount[2], (int)resourcesInfo[ResourceType.Food], 0)
+                   // new OverviewResourceInfo(ResourceType.Rocks, 12345, resourcesInfo[ResourceType.Wood].income, 0)
                 }
             }
         };

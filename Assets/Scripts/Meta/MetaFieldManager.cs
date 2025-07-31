@@ -248,7 +248,7 @@ public class MetaFieldManager : FieldManager {
                 _mainCamera.WorldToScreenPoint(finalUiNeedPos));
         }
       
-        
+        CollectResourcesFromMark(_groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]-1,1);
         var dragConfig = ConfigsManager.Instance.DragConfig;
         var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y - 0.3f;
         var upgradedPrefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellConfig.UpgradeCellType);
@@ -573,8 +573,29 @@ public class MetaFieldManager : FieldManager {
         
         base.SetupGame();
     }
-    public void MoveBuildCameraToFixedPosition(Vector3 needPosition) { }
 
+    public Dictionary<ResourceType,float> GetAllResourceInfoForDialog() {
+        Dictionary<ResourceType,float> infoForDialog = new Dictionary<ResourceType, float>();
+        for (int i = 0; i < _connectedGroups.Count; i++) {
+            if (_connectedGroups[i].ResourceMarkView == null) continue;
+            float collectedResouces = 0;
+            int maxCollectedResouces = 0;
+            ResourceType curResource = ResourceType.None;
+            foreach (var (row, col) in _connectedGroups[i].Pieces) {
+                if (_field[row, col] == CellType.Empty) continue;
+                var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
+                if (curResource == ResourceType.None)
+                    curResource = cellConfig.AfkResourceType;
+                if (cellConfig.AfkResourceType != ResourceType.None) {
+                    float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[_connectedGroups[i].Pieces.Count];
+                    if(!infoForDialog.TryAdd(curResource, cellConfig.AfkProduceCountPerSecond * resourceMultiplayer));
+                    infoForDialog[curResource] += cellConfig.AfkProduceCountPerSecond * resourceMultiplayer;
+                }
+            }
+        }
+
+        return infoForDialog;
+    }
     private void SetFigureFormsInfoFromData() {
         _formGroupCellIndex = new int[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         if (StorageManager.GameDataMain.FigureFormsData.Count == 0) return;
@@ -809,7 +830,7 @@ public class MetaFieldManager : FieldManager {
 
                     maxCollectedResouces += (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer);
                     var currentCellCollectedResources = StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount +
-                                                        (int)(cellConfig.AfkProduceCountPerSecond * resourceMultiplayer *
+                                                        (cellConfig.AfkProduceCountPerSecond * resourceMultiplayer *
                                                               MainMetaConfig.resourceMarksUpdateCouldown);
                     currentCellCollectedResources = Mathf.Min(currentCellCollectedResources,
                         (int)(cellConfig.MaxAfkCapacity * resourceMultiplayer));
