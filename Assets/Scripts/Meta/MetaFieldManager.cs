@@ -570,7 +570,7 @@ public class MetaFieldManager : FieldManager {
             MainManager.Instance.SetupGetPieceTimer();
             MainManager.Instance.SetupHealth();
         }
-        
+        if(LoadingManager.Instance.FirstLoad) MetaUI.Instance.ShowRetentionDialog();
         base.SetupGame();
     }
     public Dictionary<ResourceType,float> GetAllAfkResourceInfoForDialog(){
@@ -677,6 +677,14 @@ public class MetaFieldManager : FieldManager {
         foreach (var resourceMarkGroup in _connectedGroups) {
             resourceMarkGroup.ResourceMarkView.CollectAnimation();
             CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer);
+        }
+    }
+
+    public void CollectDoubleResourcesFromAllMarks() {
+        foreach (var resourceMarkGroup in _connectedGroups) {
+            if (resourceMarkGroup.ResourceMarkView != null)
+                resourceMarkGroup.ResourceMarkView.CollectAnimation();
+            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, 2);
         }
     }
 

@@ -58,7 +58,6 @@ public class MetaUI : MonoBehaviour {
         Instance = this;
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         InitBuildCameras();
-        if(LoadingManager.Instance.FirstLoad) ShowRetentionDialog();
     }
     
     public TMP_Text ShowFloatingText() {
@@ -72,7 +71,8 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool.Release(needTextObject);
     }
 
-    private void ShowRetentionDialog() {
+    public void ShowRetentionDialog() {
+        if(!MainManager.Instance._hasInternetConnection)return;
         LoadingManager.Instance.FirstLoad = false;
         var afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
         afkResources.TryAdd(ResourceType.Wood, 0);
@@ -82,12 +82,14 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
+                ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
                 OfflineResources = new List<RetentionDialog.RetentionResource> {
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
                 }
+                
             }
         };
         
