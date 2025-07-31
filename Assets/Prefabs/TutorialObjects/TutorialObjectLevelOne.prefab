@@ -635,14 +635,14 @@ GameObject:
   - component: {fileID: 5147915648785181050}
   - component: {fileID: 2701953381308440394}
   - component: {fileID: 3143786046904077559}
-  - component: {fileID: 1192974832085394782}
+  - component: {fileID: 6109659876977751255}
   m_Layer: 5
   m_Name: HighlightsTexture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5147915648785181050
 RectTransform:
   m_ObjectHideFlags: 0
@@ -697,7 +697,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &1192974832085394782
+--- !u!114 &6109659876977751255
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -706,12 +706,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6530360549678149458}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rect: {fileID: 5147915648785181050}
   _rawImage: {fileID: 3143786046904077559}
-  _cameraName: HighlightsCamera
 --- !u!1 &7150913742466174133
 GameObject:
   m_ObjectHideFlags: 0

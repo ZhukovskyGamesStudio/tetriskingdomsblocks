@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
@@ -38,13 +39,26 @@ public class DragManager : MonoBehaviour {
         markedCellsContainer.gameObject.SetActive(canPlace);
         finalPos = targetMousePos;
     }
-    public static void ReplaceMaterialInChildren(Transform parent, Material newMaterial) {
+    
+    private static Dictionary<MeshRenderer, int> _layerCache = new Dictionary<MeshRenderer, int>();
+    public static void ReplaceMaterialInChildren(Transform parent, Material newMaterial, bool isHighlighting ) {
+        bool isHighlighted = ConfigsManager.Instance.DragConfig;
+        int highlightedLayer = LayerMask.NameToLayer("Highlighted");
         foreach (var meshRenderer in parent.GetComponentsInChildren<MeshRenderer>()) {
             if (meshRenderer.CompareTag("Marked")) {
                 continue;
             }
 
             meshRenderer.material = newMaterial;
+            if (isHighlighted) {
+                if (isHighlighting) {
+                    _layerCache.Add(meshRenderer, meshRenderer.gameObject.layer);
+                    meshRenderer.gameObject.layer = highlightedLayer;
+                } else {
+                    meshRenderer.gameObject.layer = _layerCache[meshRenderer];
+                    _layerCache.Remove(meshRenderer);
+                }
+            }
         }
     }
 
@@ -68,9 +82,14 @@ public class DragManager : MonoBehaviour {
         finalScale = Vector3.one;
         markedCellsContainer.localScale = Vector3.one;
 
-        ReplaceMaterialInChildren(_pieceGameObject.transform, MainManager.Instance._mainConfig._priorityMaterial);
 
-        FieldManager.PieceVerticalShift = Mathf.Abs(DragManager.CalculateShift(_data).z);
+        var cnfg = MainManager.Instance._mainConfig;
+       
+        bool isHighlighted = _pieceGameObject.transform.GetComponentInChildren<MeshRenderer>().gameObject.layer == LayerMask.NameToLayer("Highlighted");
+        var priorityMaterial = isHighlighted ?  cnfg.PriorityHighlightedMaterial : cnfg._priorityMaterial;
+        ReplaceMaterialInChildren(_pieceGameObject.transform, priorityMaterial, true );
+
+        FieldManager.PieceVerticalShift = Mathf.Abs(CalculateShift(_data).z);
         CurrentPieceMaxSize = new Vector2Int(_data.Cells.GetLength(0), _data.Cells.GetLength(1));
     }
 
@@ -112,6 +131,6 @@ public class DragManager : MonoBehaviour {
             markedCellsContainer.gameObject.SetActive(false);
         }
 
-        ReplaceMaterialInChildren(_pieceGameObject.transform, MainManager.Instance._mainConfig._normal);
+        ReplaceMaterialInChildren(_pieceGameObject.transform, MainManager.Instance._mainConfig._normal, false);
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class HighlightsTextureHelper : MonoBehaviour {
     private RenderTexture _renderTexture;
+    public static RenderTexture RenderTexture { get; private set; }
 
     [SerializeField]
     private RectTransform _rect;
@@ -29,6 +30,7 @@ public class HighlightsTextureHelper : MonoBehaviour {
         _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
         _renderTexture.Create();
         _rawImage.texture = _renderTexture;
+        RenderTexture = _renderTexture;
         var res = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         res.First(o => o.gameObject.name == _cameraName).targetTexture = _renderTexture;
     }

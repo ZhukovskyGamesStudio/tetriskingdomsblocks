@@ -105,8 +105,8 @@ public class TutorialUIElementsView : MonoBehaviour {
     }
 
     private void ShowFirstStepTutorial() {
-        _holeHelper.DestroyHoles();
-        _holeHelper.SpawnHoles(_firstStepCells);
+        TutorialHoleHelper.DestroyHoles();
+        TutorialHoleHelper.SpawnHoles(_firstStepCells);
         _tutorialText.text = _firstTutorialText;
         HighlightCurrentPiece();
     }
@@ -116,11 +116,11 @@ public class TutorialUIElementsView : MonoBehaviour {
     private void HighlightCurrentPiece() {
         PieceView piece = FindAnyObjectByType<PieceView>();
         _pieceCellsContainer = piece._cellsContainer.gameObject;
-        _holeHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
     }
 
     public void HideFirstStepTutorial(Vector2Int pos, bool[,] cells) {
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
         GameFieldManager.Instance.ClearAllLockedCells();
        // ShowSecondStepTutorial();
@@ -131,9 +131,9 @@ public class TutorialUIElementsView : MonoBehaviour {
         Invoke(nameof(ShowThirdStepTutorial), 1f);
     }
 
-    /*public void ShowSecondStepTutorial() {
-        _holeHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
-        _holeHelper.SpawnHoles(_secondStepCells);
+    public void ShowSecondStepTutorial() {
+        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+        TutorialHoleHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
         Time.timeScale = 0;
         _tutorialText.text = _secondTutorialText;
@@ -141,7 +141,7 @@ public class TutorialUIElementsView : MonoBehaviour {
     }
 
     public void HideSecondStepTutorial() {
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         _holeImages[2].gameObject.SetActive(false);
         Time.timeScale = 1;
         _canSkipTutorial = false;
@@ -162,7 +162,7 @@ public class TutorialUIElementsView : MonoBehaviour {
     }
 
     public void HideThirdStepTutorial() {
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         Time.timeScale = 1;
         _holeImages[1].gameObject.SetActive(false);
         DestroyTutorial();

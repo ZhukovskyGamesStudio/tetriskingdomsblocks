@@ -5,5 +5,5 @@ public class MainManagerConfig : ScriptableObject
 {
     public LevelConfig[] Levels;
 
-    public Material _normal, _priorityMaterial;
+    public Material _normal, _priorityMaterial, PriorityHighlightedMaterial;
 }
