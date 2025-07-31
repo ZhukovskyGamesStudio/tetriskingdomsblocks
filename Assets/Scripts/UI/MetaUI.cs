@@ -74,15 +74,19 @@ public class MetaUI : MonoBehaviour {
 
     private void ShowRetentionDialog() {
         LoadingManager.Instance.FirstLoad = false;
-        
+        var afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
+        afkResources.TryAdd(ResourceType.Wood, 0);
+        afkResources.TryAdd(ResourceType.Rocks, 0);
+        afkResources.TryAdd(ResourceType.Food, 0);
+        afkResources.TryAdd(ResourceType.Metal, 0);
         var dialog = new DialogWithData {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
                 OfflineResources = new List<RetentionDialog.RetentionResource> {
-                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
-                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
-                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
-                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood }
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
                 }
             }
         };

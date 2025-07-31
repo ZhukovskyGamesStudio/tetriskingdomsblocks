@@ -6,8 +6,6 @@ public class IceTutorial : MonoBehaviour {
     [SerializeField]
     private RectTransform rectTransformIceMark;
 
-    [SerializeField]
-    private TutorialHoleHelper _holeHelper;
 
     private void Start() {
         //  base.Start();
@@ -25,13 +23,13 @@ public class IceTutorial : MonoBehaviour {
             _pieceCellsContainer.Add(piece._cellsContainer.gameObject);
         }
        
-        _holeHelper.HighlightObjects(_pieceCellsContainer);
-        _holeHelper.SpawnHoles(icePoses);
+        TutorialHoleHelper.HighlightObjects(_pieceCellsContainer);
+        TutorialHoleHelper.SpawnHoles(icePoses);
     }
 
     private void HideAndDestroy(Vector2Int coord, bool[,] needCells) {
         GameFieldManager.Instance.OnCellPlaced -= HideAndDestroy;
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         Destroy(gameObject);
     }
 }

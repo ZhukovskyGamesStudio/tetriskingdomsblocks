@@ -149,10 +149,9 @@ public class TutorialUIElementsView : MonoBehaviour {
        
       
     }
-*/
     public void ShowThirdStepTutorial() {
         _tutorialText.transform.position = new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
-        _holeHelper.SpawnHoles(_thirdStepCells);
+        TutorialHoleHelper.SpawnHoles(_thirdStepCells);
         _tutorialStep = 3;
         Time.timeScale = 0;
         _canSkipTutorial = true;

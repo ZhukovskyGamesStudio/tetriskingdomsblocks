@@ -573,7 +573,22 @@ public class MetaFieldManager : FieldManager {
         
         base.SetupGame();
     }
+    public Dictionary<ResourceType,float> GetAllAfkResourceInfoForDialog(){
+        Dictionary<ResourceType,float> infoForDialog = new Dictionary<ResourceType, float>();
 
+        for (int i = 0; i < StorageManager.GameDataMain.FieldRows.Length; i++) {
+            for (int j = 0; j < StorageManager.GameDataMain.FieldRows[i].RowCells.Length; j++) {
+                var cellType = StorageManager.GameDataMain.FieldRows[i].RowCells[j].CellType;
+                if(cellType == CellType.Empty || cellType == CellType.LockedMetaCell)continue;
+                float resourceCount = StorageManager.GameDataMain.FieldRows[i].RowCells[j].ResourceCount;
+                ResourceType resourceType =PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType ==cellType).AfkResourceType;
+                if(!infoForDialog.TryAdd(resourceType, resourceCount))
+                    infoForDialog[resourceType] += resourceCount;
+            }
+        }
+
+        return infoForDialog;
+    }
     public Dictionary<ResourceType,float> GetAllResourceInfoForDialog() {
         Dictionary<ResourceType,float> infoForDialog = new Dictionary<ResourceType, float>();
         for (int i = 0; i < _connectedGroups.Count; i++) {
