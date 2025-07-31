@@ -2,57 +2,36 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class IceTutorial : TutorialObjectHidedAfterTap {
+public class IceTutorial : MonoBehaviour {
     [SerializeField]
     private RectTransform rectTransformIceMark;
 
     [SerializeField]
     private TutorialHoleHelper _holeHelper;
 
-    protected void Start() {
+    private void Start() {
         //  base.Start();
-        GameFieldManager.Instance.OnCellPlaced += CheckIceCells;
+        GameFieldManager.Instance.OnCellPlaced += HideAndDestroy;
         List<Vector3Int> icePoses = new();
 
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
             for (int j = 0; j < GameFieldManager.Instance._field.GetLength(1); j++) {
-                if (GameFieldManager.Instance._field[i, j] == CellType.Ice) {
-                    icePoses.Add(new Vector3Int(i, 0, j));
-                }
+                icePoses.Add(new Vector3Int(i, 0, j));
             }
         }
-
+        PieceView[] pieces = FindObjectsByType<PieceView>(FindObjectsSortMode.None); 
+        List<GameObject> _pieceCellsContainer = new List<GameObject>();
+        foreach (var piece in pieces) {
+            _pieceCellsContainer.Add(piece._cellsContainer.gameObject);
+        }
+       
+        _holeHelper.HighlightObjects(_pieceCellsContainer);
         _holeHelper.SpawnHoles(icePoses);
     }
 
-    private void CheckIceCells(Vector2Int coord, bool[,] needCells) {
-        for (int x = 0; x < needCells.GetLength(0); x++) {
-            for (int y = 0; y < needCells.GetLength(1); y++) {
-                Vector2Int place = new(coord.x + x, coord.y + y);
-                if (needCells[x, y] && GameFieldManager.Instance._field[place.x, place.y] == CellType.Ice) {
-                    _holeHelper.DestroyHoles();
-                    // Destroy(_rectTransform.gameObject);
-                    GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
-                    return;
-                }
-            }
-        }
-
-        PlayAnimationText();
-    }
-
-    protected override void HideAndDestroy() {
+    private void HideAndDestroy(Vector2Int coord, bool[,] needCells) {
+        GameFieldManager.Instance.OnCellPlaced -= HideAndDestroy;
         _holeHelper.DestroyHoles();
-        base.HideAndDestroy();
-    }
-
-    public void PlayAnimationText() {
-        DOTween.Kill(_tutorialText.transform);
-        _holeHelper.DestroyHoles();
-        _tutorialText.transform.localScale = Vector3.one;
-
-        _tutorialText.transform.DOScale(Vector3.one * 1.2f, 0.4f).SetEase(Ease.OutBack).OnComplete(() => {
-            _tutorialText.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.InOutQuad);
-        });
+        Destroy(gameObject);
     }
 }

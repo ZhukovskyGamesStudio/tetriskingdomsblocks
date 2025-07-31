@@ -64,8 +64,8 @@ public class TutorialUIElementsView : MonoBehaviour {
 
     private void TrySkipStep() {
         if (_canSkipTutorial) {
-            if (_tutorialStep == 2)
-                HideSecondStepTutorial();
+          /*  if (_tutorialStep == 2)
+                HideSecondStepTutorial();*/
             if (_tutorialStep == 3)
                 HideThirdStepTutorial();
         }
@@ -123,14 +123,15 @@ public class TutorialUIElementsView : MonoBehaviour {
         _holeHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
         GameFieldManager.Instance.ClearAllLockedCells();
-        ShowSecondStepTutorial();
+       // ShowSecondStepTutorial();
         _currentTween.Kill();
         _canSkipTutorial = true;
         _holeImages[0].gameObject.SetActive(false);
-        _fingerImage.gameObject.SetActive(false);
+        _fingerImage.gameObject.SetActive(false);  
+        Invoke(nameof(ShowThirdStepTutorial), 1f);
     }
 
-    public void ShowSecondStepTutorial() {
+    /*public void ShowSecondStepTutorial() {
         _holeHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         _holeHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
@@ -145,12 +146,12 @@ public class TutorialUIElementsView : MonoBehaviour {
         Time.timeScale = 1;
         _canSkipTutorial = false;
         _tutorialText.gameObject.SetActive(false);
-        _tutorialText.transform.position =
-            new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
-        Invoke(nameof(ShowThirdStepTutorial), 0.5f);
+       
+      
     }
-
+*/
     public void ShowThirdStepTutorial() {
+        _tutorialText.transform.position = new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
         _holeHelper.SpawnHoles(_thirdStepCells);
         _tutorialStep = 3;
         Time.timeScale = 0;
