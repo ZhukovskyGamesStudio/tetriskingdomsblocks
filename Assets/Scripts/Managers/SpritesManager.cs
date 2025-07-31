@@ -6,6 +6,9 @@ public class SpritesManager : MonoBehaviour {
 
     [SerializedDictionary("Resource Type", "Sprite")]
     public SerializedDictionary<ResourceType, Sprite> ResourcesSprites;
+
+    [field: SerializeField]
+    public Sprite LineSprite;
     
     private void Awake() {
         Instance = this;
