@@ -187,12 +187,12 @@ public class MetaFieldManager : FieldManager {
 
         float resourceMultiplier = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
         
-        ShowUpgradeTileDialog(cellConfig, resourceMultiplier);
+        ShowUpgradeTileDialog(cellPos, cellConfig, resourceMultiplier);
     }
     
-    private void ShowUpgradeTileDialog(MetaCellTypeInfo cell, float multiplier) {
-        float production = cell.AfkProduceCountPerSecond * multiplier;
-        float capacity = cell.MaxAfkCapacity * multiplier;
+    private void ShowUpgradeTileDialog(Vector2Int cellPos, MetaCellTypeInfo cell, float multiplier) {
+        float production = cell.AfkProduceCountPerSecond * multiplier * _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Count ;
+        float capacity = cell.MaxAfkCapacity * multiplier* _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Count;
         
         var dialogData = new DialogWithData {
             DialogType = typeof(UpgradeTileDialog),
