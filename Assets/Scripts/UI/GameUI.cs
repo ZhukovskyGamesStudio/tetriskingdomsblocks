@@ -55,9 +55,6 @@ public class GameUI : MonoBehaviour {
                      _movesContainer.gameObject.SetActive(false);
             }
         }
-       
-        
-      
     } 
     public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
         var floatingText = _floatingTextsPool.Get();
@@ -90,7 +87,8 @@ public class GameUI : MonoBehaviour {
         var loseData = new DialogWithData {
             DialogType = typeof(LoseDialog),
             Data = new LoseDialog.Data {
-                ClickContinue = MainManager.Instance.GoToMeta,
+                ClickExit = MainManager.Instance.GoToMeta,
+                ClickRetry = MainManager.Instance.Restart,
                 Hp = StorageManager.GameDataMain.HealthCount
             }
         };

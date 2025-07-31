@@ -13,8 +13,8 @@ public class WinDialog : DialogBase {
         Data dialogData = data as Data;
 
         _clickClaim = dialogData.ClickClaim;
-        _coinsText.text = _coinsText.text.Replace("{coins}", dialogData.Coins.ToString());
-        _cubesText.text = _cubesText.text.Replace("{cubes}", dialogData.Cubes.ToString());
+        _coinsText.text = dialogData.Coins.ToString();
+        _cubesText.text = dialogData.Cubes.ToString();
     }
 
     public void ClickClaim() {

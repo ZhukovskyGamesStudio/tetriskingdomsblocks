@@ -25,7 +25,7 @@ public class GameFieldManager : FieldManager {
     private MainGameConfig _mainGameConfig;
 
     private List<CellTypeInfo> _currentGuaranteedFirstCells;
-
+    
     protected override void Awake() {
         base.Awake();
         Instance = this;
