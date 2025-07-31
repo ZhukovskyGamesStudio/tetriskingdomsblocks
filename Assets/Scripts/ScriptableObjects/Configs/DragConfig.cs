@@ -8,6 +8,9 @@ namespace ScriptableObjects.Configs {
         public float HigherFieldShift = 0.5f;
 
         public float HeightUnderField;
+
+        public bool IsHighlightedLayer;
+        
         
         [Header("Drop animation")]
         public bool IsSquishingOnDrop = false;
