@@ -44,6 +44,7 @@ public class FieldManager : MonoBehaviour {
     public CellView GetCellInCoord(Vector3Int coord) {
         return _cells[coord.x, coord.z];
     }
+
     private static readonly Vector3 HalfCoord = new Vector3(0.5f, 0, 0.5f);
 
     private ObjectPool<ParticleSystem> _placeCellEffectsPool;
@@ -163,7 +164,23 @@ public class FieldManager : MonoBehaviour {
 
     public bool CanPlace(PieceData data, Vector2Int pos) => FieldUtils.CanPlacePiece(_field, data, pos);
 
-    public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
+    private static List<Vector3Int> AllField;
+    public static List<Vector3Int> AllFieldCells() {
+        if (AllField != null) {
+            return AllField;
+        }
+        AllField = new List<Vector3Int>();
+        int size = 8;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                AllField.Add(new Vector3Int(i, 0, j));
+            }
+        }
+
+        return AllField;
+    }
+
+public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
         OnCellPlaced?.Invoke(pos, pieceData.Cells);
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);

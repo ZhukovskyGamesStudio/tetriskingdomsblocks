@@ -16,9 +16,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
 
     [SerializeField]
     private Tween _currentTween;
-
-    [SerializeField]
-    private TutorialHoleHelper _holeHelper;
+    
     
     [SerializeField]
     private bool _canSkipTutorial;
@@ -65,7 +63,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
         
         PieceView piece = FindAnyObjectByType<PieceView>();
        // _pieceCellsContainer = piece._cellsContainer.gameObject;
-      //  _holeHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+      //  TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -82,10 +80,10 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
     }
 
     private void ShowFirstStepTutorial() {
-     //   _holeHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+     //   TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         _tutorialText.gameObject.SetActive(true);
         _tutorialStep = 1;
-        _holeHelper.SpawnHoles(_firstStepCells);
+        TutorialHoleHelper.SpawnHoles(_firstStepCells);
         gameObject.GetComponent<Image>().enabled = true;
     }
 
@@ -95,7 +93,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
         _currentTween.Kill();
         _canSkipTutorial = true;
         _holeImages[0].gameObject.SetActive(false);
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         DestroyTutorial();
     }
 

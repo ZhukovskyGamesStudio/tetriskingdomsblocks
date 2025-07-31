@@ -21,7 +21,7 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
             }
         }
 
-        _holeHelper.SpawnHoles(boxPoses);
+        TutorialHoleHelper.SpawnHoles(boxPoses);
     }
 
     private void CheckIceCells(Vector2Int coord, bool[,] needCells) {
@@ -31,7 +31,7 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
                 if (needCells[x, y]) {
                     foreach (var checkedCell in FieldUtils.GetCellsAround(GameFieldManager.Instance._field, place)) {
                         if (GameFieldManager.Instance._field[checkedCell.x, checkedCell.y] == CellType.Box) {
-                            _holeHelper.DestroyHoles();
+                            TutorialHoleHelper.DestroyHoles();
                             //Destroy(_rectTransform.gameObject);
                             GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
                             return;
@@ -45,13 +45,13 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
     }
 
     protected override void HideAndDestroy() {
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         base.HideAndDestroy();
     }
 
     public void PlayAnimationText() {
         DOTween.Kill(_tutorialText.transform);
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         _tutorialText.transform.localScale = Vector3.one;
 
         _tutorialText.transform.DOScale(Vector3.one * 1.2f, 0.4f).SetEase(Ease.OutBack).OnComplete(() => {

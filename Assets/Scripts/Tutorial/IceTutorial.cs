@@ -5,10 +5,7 @@ using UnityEngine;
 public class IceTutorial : TutorialObjectHidedAfterTap {
     [SerializeField]
     private RectTransform rectTransformIceMark;
-
-    [SerializeField]
-    private TutorialHoleHelper _holeHelper;
-
+    
     protected void Start() {
         //  base.Start();
         GameFieldManager.Instance.OnCellPlaced += CheckIceCells;
@@ -22,7 +19,7 @@ public class IceTutorial : TutorialObjectHidedAfterTap {
             }
         }
 
-        _holeHelper.SpawnHoles(icePoses);
+        TutorialHoleHelper.SpawnHoles(icePoses);
     }
 
     private void CheckIceCells(Vector2Int coord, bool[,] needCells) {
@@ -30,7 +27,7 @@ public class IceTutorial : TutorialObjectHidedAfterTap {
             for (int y = 0; y < needCells.GetLength(1); y++) {
                 Vector2Int place = new(coord.x + x, coord.y + y);
                 if (needCells[x, y] && GameFieldManager.Instance._field[place.x, place.y] == CellType.Ice) {
-                    _holeHelper.DestroyHoles();
+                    TutorialHoleHelper.DestroyHoles();
                     // Destroy(_rectTransform.gameObject);
                     GameFieldManager.Instance.OnCellPlaced -= CheckIceCells;
                     return;
@@ -42,13 +39,13 @@ public class IceTutorial : TutorialObjectHidedAfterTap {
     }
 
     protected override void HideAndDestroy() {
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         base.HideAndDestroy();
     }
 
     public void PlayAnimationText() {
         DOTween.Kill(_tutorialText.transform);
-        _holeHelper.DestroyHoles();
+        TutorialHoleHelper.DestroyHoles();
         _tutorialText.transform.localScale = Vector3.one;
 
         _tutorialText.transform.DOScale(Vector3.one * 1.2f, 0.4f).SetEase(Ease.OutBack).OnComplete(() => {
