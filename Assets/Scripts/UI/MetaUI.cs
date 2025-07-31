@@ -58,6 +58,7 @@ public class MetaUI : MonoBehaviour {
         Instance = this;
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         InitBuildCameras();
+        if(LoadingManager.Instance.FirstLoad) ShowRetentionDialog();
     }
     
     public TMP_Text ShowFloatingText() {
@@ -69,6 +70,24 @@ public class MetaUI : MonoBehaviour {
     public void ReleaseFloatingText(TMP_Text needTextObject) {
         needTextObject.gameObject.SetActive(false);
         _floatingTextsPool.Release(needTextObject);
+    }
+
+    private void ShowRetentionDialog() {
+        LoadingManager.Instance.FirstLoad = false;
+        
+        var dialog = new DialogWithData {
+            DialogType = typeof(RetentionDialog),
+            Data = new RetentionDialog.Data {
+                OfflineResources = new List<RetentionDialog.RetentionResource> {
+                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
+                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
+                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood },
+                    new RetentionDialog.RetentionResource { Count = 1, Resource = ResourceType.Wood }
+                }
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
     private void InitBuildCameras() {
