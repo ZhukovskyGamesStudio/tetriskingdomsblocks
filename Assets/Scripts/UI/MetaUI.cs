@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
@@ -44,7 +45,13 @@ public class MetaUI : MonoBehaviour {
     
     [SerializeField]
     private Transform _floatingTextContainer;
-    
+
+    [SerializeField]
+    private Image _ruleAvatarImage;
+
+    [SerializeField]
+    private AvatarsConfig _avatarsConfig;
+
     private ObjectPool<TMP_Text> _floatingTextsPool;
 
     private void Awake() {
@@ -81,11 +88,33 @@ public class MetaUI : MonoBehaviour {
                 Levels = 123,
                 WeeksBest = 123, // TODO: убрать заглушки
                 Wins = 123,
-                PlayerName = "PlayerName12345"
+                PlayerName = "PlayerName12345",
+                ClickEditAvatar = OpenEditAvatar,
+                AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
             }
         };
         
         DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
+    public void OpenEditAvatar() {
+        var dialog = new DialogWithData {
+            DialogType = typeof(EditAvatarDialog),
+            Data = new EditAvatarDialog.Data {
+                PlayerName = "PlayerName12345",
+                ClickClose = OpenProfile,
+                ClickChangeAvatar = SetAvatar,
+                PossibleAvatars = _avatarsConfig.PossibleAvatars,
+                CurrentAvatar = StorageManager.GameDataMain.ProfileAvatar
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
+    public void SetAvatar(int avatarId) {
+        StorageManager.GameDataMain.ProfileAvatar = avatarId;
+        _ruleAvatarImage.sprite = _avatarsConfig.PossibleAvatars[avatarId];
     }
 
     public void OpenResources() {
