@@ -33,10 +33,10 @@ public class LoadingManager : MonoBehaviour {
         IsLoaded = true;
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
-        if (isNewGame) {
+        /*if (isNewGame) {
             await SceneManager.LoadSceneAsync("MetaScene");
             return;
-        }
+        }*/
 
         StorageManager.LoadGame();
         if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
