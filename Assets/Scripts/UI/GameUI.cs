@@ -56,9 +56,9 @@ public class GameUI : MonoBehaviour {
             }
         }
     } 
-    public void ShowFloatingText(string needText, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
+    public void ShowFloatingText(Sprite needSprite, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
         var floatingText = _floatingTextsPool.Get();
-        floatingText.SetText(newPosition, needText, textSize, showTime, finalposition);
+        floatingText.SetText(newPosition, needSprite, textSize, showTime, finalposition);
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
