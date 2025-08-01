@@ -18,21 +18,16 @@ public class TaskUIView : MonoBehaviour
 
    public void SetData(TaskInfoSubClass task) {
       gameObject.SetActive(true);
-      string needSpiteName = "";
       switch (task.TaskType) {
          case TaskInfo.TaskType.getResource:
-
-            needSpiteName = task.NeedResource.ToString();
             break;
 
          case TaskInfo.TaskType.placeMonoLine:
-
-            needSpiteName = task.NeedResource.ToString();
-            TaskSubImage.sprite = ConfigsManager.Instance.SpritesForTasksConfig.LineSprite;
+            TaskSubImage.sprite = SpritesManager.Instance.LineSprite;
             break;
       }
 
-      TaskImage.sprite = ConfigsManager.Instance.SpritesForTasks[needSpiteName];
+      TaskImage.sprite = SpritesManager.Instance.GetSprite(task.NeedResource);
       TaskInfoTextHelper.SetText(task.Count.ToString());
       
    }
