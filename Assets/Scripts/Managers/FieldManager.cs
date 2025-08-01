@@ -79,38 +79,50 @@ public class FieldManager : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             if (_isDestroyPieceMode) {
                 TryDestroyPiece();
+                BoostersManager.Instance.CancelHammer();
             } else if (_placeDynamiteMode) {
                 TryPlaceDynamite();
+                BoostersManager.Instance.CancelDynamite();
             }
         }
     }
 
-    protected virtual void TryDestroyPiece() { }
+    protected virtual bool TryDestroyPiece() {
+        return false;
+    }
 
     private async void TryPlaceDynamite() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _groundMask);
 
-        if (hit.collider != null && StorageManager.GameDataMain.DynamiteCount > 0) {
-            Vector2Int coord = FieldUtils.ClampToCoord(hit.point);
-
-            if (!FieldUtils.IsInsideField(_field, coord)) {
-                return;
-            }
-
-            if (!FieldUtils.CanPlaceOnCell(_field[coord.x, coord.y])) {
-                return;
-            }
-
-            var pos = new Vector3(coord.x, 1f, coord.y);
-            _placeDynamiteMode = false;
-            var p = await NextPiecesView.Instance.CreateDynamitePieceView(pos);
-            PlacePiece(p.Data, coord, p._cells, p._cellsContainer);
-            Destroy(p.gameObject);
+        if (hit.collider == null || StorageManager.GameDataMain.DynamiteCount <= 0) {
+            return;
         }
+
+        Vector2Int coord = FieldUtils.ClampToCoord(hit.point);
+
+        if (!FieldUtils.IsInsideField(_field, coord)) {
+            return;
+        }
+
+        //динамит можно применить на любую клетку 
+        if (false) {
+            //!FieldUtils.CanPlaceOnCell(_field[coord.x, coord.y])) {
+            return;
+        }
+
+        var pos = new Vector3(coord.x, 1f, coord.y);
+        _placeDynamiteMode = false;
+        var p = await NextPiecesView.Instance.CreateDynamitePieceView(pos);
+        PlacePiece(p.Data, coord, p._cells, p._cellsContainer);
+        Destroy(p.gameObject);
     }
 
     public virtual void ToggleDestroyPieceMode() {
         _isDestroyPieceMode = !_isDestroyPieceMode;
+    }
+
+    public void SetDestroyPieceMode(bool isOn) {
+        _isDestroyPieceMode = isOn;
     }
 
     public virtual void TogglePlaceDynamiteMode() {
@@ -122,7 +134,7 @@ public class FieldManager : MonoBehaviour {
     }
 
     protected async void HummerDestoyPieceAnimation(CellView[] cells) {
-        Vector3 hummerNeedPos = Vector3.zero;
+        Vector3 hummerNeedPos = Vector3.up;
         foreach (var cell in cells) {
             cell.OffCollider();
             hummerNeedPos += cell.transform.position;
@@ -166,10 +178,12 @@ public class FieldManager : MonoBehaviour {
     public bool CanPlace(PieceData data, Vector2Int pos) => FieldUtils.CanPlacePiece(_field, data, pos);
 
     private static List<Vector3Int> AllField;
+
     public static List<Vector3Int> AllFieldCells() {
         if (AllField != null) {
             return AllField;
         }
+
         AllField = new List<Vector3Int>();
         int size = 8;
         for (int i = 0; i < size; i++) {
@@ -181,20 +195,24 @@ public class FieldManager : MonoBehaviour {
         return AllField;
     }
 
-public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
+    public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
         OnCellPlaced?.Invoke(pos, pieceData.Cells);
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
+
+        if (pieceData.Type.CellType == CellType.Dynamite) {
+            if (!FieldUtils.CanPlaceOnCell(_field[pos.x, pos.y])) {
+                cellsContainer.transform.position += Vector3.up;
+            }
+            BoostersManager.Instance.AnimateDynamite(cellsContainer, pos);
+            //destroy dinamyte
+            return;
+        }
+
         for (int x = 0; x < pieceData.Cells.GetLength(0); x++) {
             for (int y = 0; y < pieceData.Cells.GetLength(1); y++) {
                 if (!pieceData.Cells[x, y]) {
                     continue;
-                }
-
-                if (pieceData.Type.CellType == CellType.Dynamite) {
-                    BoostersManager.Instance.AnimateDynamite(cellsContainer, pos);
-                    //destroy dinamyte
-                    return;
                 }
 
                 Vector2Int place = new(pos.x + x, pos.y + y);
@@ -202,7 +220,7 @@ public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] 
 
                 CellView go = cells[x, y];
 
-                _field[place.x, place.y] = cells[x, y].CellType;//fix if has problem
+                _field[place.x, place.y] = cells[x, y].CellType; //fix if has problem
                 _cells[place.x, place.y] = go;
 
                 SpawnResourceFxForCell(place, go);

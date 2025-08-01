@@ -52,25 +52,28 @@ public class GameFieldManager : FieldManager {
         NextPiecesView.Instance.SetData(_nextBlocks);
     }
 
-    protected override void TryDestroyPiece() {
+    protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null && StorageManager.GameDataMain.HummerCount > 0) {
-            Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            if (FieldUtils.CantDestroyInRow(_field[(int)cellPos.x, (int)cellPos.z])) return;
-            BoostersManager.Instance.BreackCellWithHummer();
-
-            if (StorageManager.GameDataMain.HummerCount <= 0)
-                _isDestroyPieceMode = false;
-            HummerDestoyPieceAnimation(new CellView[] { _cells[(int)cellPos.x, (int)cellPos.z] });
-
-            var configSlime =
-                PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
-            TryAddResourceForCell(configSlime, new Vector2Int((int)cellPos.x, (int)cellPos.z));
-
-            _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
-            OnPieceDestroyedByHammer?.Invoke();
+        if (hit.collider == null || StorageManager.GameDataMain.HummerCount <= 0) {
+            return false;
         }
+
+        Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
+            Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+        if (FieldUtils.CantDestroyInRow(_field[(int)cellPos.x, (int)cellPos.z])) {
+            return false;
+        }
+        BoostersManager.Instance.BreakCellWithHammer();
+        HummerDestoyPieceAnimation(new CellView[] { _cells[(int)cellPos.x, (int)cellPos.z] });
+
+        var configSlime =
+            PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
+        TryAddResourceForCell(configSlime, new Vector2Int((int)cellPos.x, (int)cellPos.z));
+
+        _field[(int)cellPos.x, (int)cellPos.z] = CellType.Empty;
+        OnPieceDestroyedByHammer?.Invoke();
+        return true;
+
     }
 
     public bool AdditionalPieceContainerUnderPiece() =>
@@ -174,6 +177,35 @@ public class GameFieldManager : FieldManager {
         cellContainer.localScale = Vector3.zero;
         cellContainer.position = startPosition;
         DOTween.Sequence().Append(cellContainer.DOScale(Vector3.one, 0.5f)).Join(cellContainer.DOMove(endPosition, 0.5f));
+    }
+
+    public List<Vector3Int> AllHammerableCells() {
+        var res = new List<Vector3Int>();
+        var r = FieldManager.AllFieldCells();
+        foreach (Vector3Int pos in r) {
+            if (_cells[pos.x, pos.z] == null) {
+                continue;
+            }
+
+            if (FieldUtils.CantDestroyInRow(_field[pos.x, pos.z])) {
+                continue;
+            }
+
+            res.Add(pos);
+        }
+
+        return res;
+    }
+    public List<Vector3Int> AllEmptyCells() {
+        var res = new List<Vector3Int>();
+        var r = AllFieldCells();
+        foreach (Vector3Int pos in r) {
+            if (_cells[pos.x, pos.z] == null) {
+                res.Add(pos);
+            }
+        }
+
+        return res;
     }
 
     public override void CheckCellTypesBeforePlacePiece(Vector2Int coord) {
