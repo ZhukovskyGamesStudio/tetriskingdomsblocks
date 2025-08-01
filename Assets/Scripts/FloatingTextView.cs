@@ -4,22 +4,22 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class FloatingTextView : MonoBehaviour
 {
-    [FormerlySerializedAs("floatingText")] [SerializeField] private TMP_Text _floatingText;
+    [FormerlySerializedAs("floatingText")] [SerializeField] private Image _floatingImage;
     [FormerlySerializedAs("floatingTextAnimator")] [SerializeField] private Animator _floatingTextAnimator;
     private Tween _currentTween;
 
-    public void SetText(Vector2 newPosition, string newText, float textSize, float showTime, Vector2 finalPosition)
+    public void SetText(Vector2 newPosition, Sprite newSprite, float spriteSize, float showTime, Vector2 finalPosition)
     {
         transform.localScale = Vector3.one;
         gameObject.SetActive(true);
-        _floatingText.transform.position = newPosition;
-        _floatingText.color = Color.white;
-        _floatingText.fontSize = textSize;
-        _floatingText.text = newText;
+        _floatingImage.transform.position = newPosition;
+        _floatingImage.sprite = newSprite;
+        _floatingImage.rectTransform.sizeDelta = new Vector2(spriteSize, spriteSize);
         MoveUpText(showTime, finalPosition);
         if (finalPosition != Vector2.zero)
             Invoke(nameof(HideText), showTime + 1.5f);
