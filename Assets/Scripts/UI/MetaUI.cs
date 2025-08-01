@@ -55,6 +55,7 @@ public class MetaUI : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
+        SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
     }
     
