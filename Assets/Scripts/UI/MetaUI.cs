@@ -116,10 +116,10 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(ProfileDialog),
             Data = new ProfileDialog.Data {
-                BuiltCells = 123,
-                Levels = 123,
+                BuiltCells = StorageManager.GameDataMain.PlacedInMetaPiecesCount,
+                Levels = StorageManager.GameDataMain.CurMaxLevel,
                 WeeksBest = 123, // TODO: убрать заглушки
-                Wins = 123,
+                Wins = StorageManager.GameDataMain.FirstAttemptWinLevelsCount,
                 PlayerName = "PlayerName12345",
                 ClickEditAvatar = OpenEditAvatar,
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
