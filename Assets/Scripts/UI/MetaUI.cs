@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
@@ -12,12 +14,6 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public CountersPanelView CountersPanelView { get; private set; }
-
-    [SerializeField]
-    private GameObject _getPieceTimer;
-    
-    [SerializeField]
-    private TMP_Text _getPieceTimerText;
 
     [SerializeField]
     private TMP_Text _destroyPieceText;
@@ -32,7 +28,7 @@ public class MetaUI : MonoBehaviour {
     private GameObject _ruleCamera, _buildCamera;
 
     [SerializeField]
-    private GameObject _getPieceButton, _buyPieceButton;
+    private GameObject _buyPieceButton;
 
     [field: SerializeField]
     public RectTransform _mainCanvas { get;set; }
@@ -44,7 +40,16 @@ public class MetaUI : MonoBehaviour {
     
     [SerializeField]
     private Transform _floatingTextContainer;
+
+    [SerializeField]
+    private Image _ruleAvatarImage;
+
+    [SerializeField]
+    private AvatarsConfig _avatarsConfig;
     
+    [SerializeField]
+    private GetPieceButtonView  _getPieceButtonView;
+
     private ObjectPool<TMP_Text> _floatingTextsPool;
 
     private void Awake() {
@@ -64,6 +69,39 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool.Release(needTextObject);
     }
 
+    public void ShowRetentionDialog() {
+        if (!MainManager.Instance._hasInternetConnection) {
+            return;
+        }
+
+        LoadingManager.Instance.FirstLoad = false;
+        var afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
+        afkResources.TryAdd(ResourceType.Wood, 0);
+        afkResources.TryAdd(ResourceType.Rocks, 0);
+        afkResources.TryAdd(ResourceType.Food, 0);
+        afkResources.TryAdd(ResourceType.Metal, 0);
+
+        if (afkResources.All(kvp => kvp.Value == 0)) {
+            return;
+        }
+
+        var dialog = new DialogWithData {
+            DialogType = typeof(RetentionDialog),
+            Data = new RetentionDialog.Data {
+                ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
+                OfflineResources = new List<RetentionDialog.RetentionResource> {
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
+                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
+                }
+                
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
     private void InitBuildCameras() {
         var ray = new Ray(_buildCamera.transform.position, _buildCamera.transform.forward);
         var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
@@ -81,22 +119,48 @@ public class MetaUI : MonoBehaviour {
                 Levels = 123,
                 WeeksBest = 123, // TODO: убрать заглушки
                 Wins = 123,
-                PlayerName = "PlayerName12345"
+                PlayerName = "PlayerName12345",
+                ClickEditAvatar = OpenEditAvatar,
+                AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
             }
         };
         
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
+    public void OpenEditAvatar() {
+        var dialog = new DialogWithData {
+            DialogType = typeof(EditAvatarDialog),
+            Data = new EditAvatarDialog.Data {
+                PlayerName = "PlayerName12345",
+                ClickClose = OpenProfile,
+                ClickChangeAvatar = SetAvatar,
+                PossibleAvatars = _avatarsConfig.PossibleAvatars,
+                CurrentAvatar = StorageManager.GameDataMain.ProfileAvatar
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
+    public void SetAvatar(int avatarId) {
+        StorageManager.GameDataMain.ProfileAvatar = avatarId;
+        _ruleAvatarImage.sprite = _avatarsConfig.PossibleAvatars[avatarId];
+    }
+
     public void OpenResources() {
+        Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
+        resourcesInfo.TryAdd(ResourceType.Wood,  0);
+        resourcesInfo.TryAdd(ResourceType.Rocks,  0);
+        resourcesInfo.TryAdd(ResourceType.Food,  0);
         var dialog = new DialogWithData {
             DialogType = typeof(OverviewDialog),
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64),
-                    new OverviewResourceInfo(ResourceType.Rocks, 12345, 123, 64)
+                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.ResourcesCount[0], (int)resourcesInfo[ResourceType.Wood], 0),
+                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.ResourcesCount[1], (int)resourcesInfo[ResourceType.Rocks], 0),
+                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.ResourcesCount[2], (int)resourcesInfo[ResourceType.Food], 0)
+                   // new OverviewResourceInfo(ResourceType.Rocks, 12345, resourcesInfo[ResourceType.Wood].income, 0)
                 }
             }
         };
@@ -108,20 +172,8 @@ public class MetaUI : MonoBehaviour {
         _playText.text = text;
     }
 
-    public void SetGetPieceButtonActive(bool isActive) {
-        _getPieceTimer.SetActive(!isActive);
-        _buyPieceButton.SetActive(!isActive);
-        
-        _getPieceButton.SetActive(isActive);
-    }
-
     public void UpdateGetPieceTimer(TimeSpan timeLeft) {
-        if (timeLeft.TotalSeconds > 0) {
-            _getPieceTimerText.text = TimeConverter.ConvertToTimeString(timeLeft);
-        }
-        else if (_getPieceTimer.activeSelf) {
-            SetGetPieceButtonActive(true);
-        }
+        _getPieceButtonView.UpdateGetPieceTimer(timeLeft);
     }
 
     public void OpenBuildState() {

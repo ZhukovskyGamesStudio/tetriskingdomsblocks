@@ -82,7 +82,8 @@ public class UltaManager : MonoBehaviour {
         _starsParticles.gameObject.SetActive(true);
         _starsParticles.Play();
 
-        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field, _mainGameConfig.MaxUltimateCells);
+        int maxStars = StorageManager.GameDataMain.CurMaxLevel == 2 ? 100 : _mainGameConfig.MaxUltimateCells;
+        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field, maxStars);
         var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
@@ -100,7 +101,7 @@ public class UltaManager : MonoBehaviour {
     public async void UltimateActionEndRound(Action onUltimateEnded) {
         GameUI.Instance.GoalView.HideUltimateUI();
         _ultimateIsActive = true;
-        var needField = GameFieldManager.Instance != null ? GameFieldManager.Instance._field : TutorialFieldManager.Instance._field;
+        var needField =  GameFieldManager.Instance._field ;
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(needField, 0);
         foreach (var pos in coordsToSpawn) {
             SpawnNewCellFromUltimate(pos, true).Forget();
@@ -116,9 +117,7 @@ public class UltaManager : MonoBehaviour {
         var pieceData = GetRandomCellType();
 
         var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
-        var cellView = GameFieldManager.Instance != null
-            ? GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false)
-            : TutorialFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
+        var cellView =  GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
         var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
         cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
@@ -152,12 +151,8 @@ public class UltaManager : MonoBehaviour {
     }
 
     private PieceData GetRandomCellType() {
-        var cellsToSpawn = GameFieldManager.Instance != null
-            ? GameFieldManager.Instance._currentCellsToSpawn
-            : TutorialFieldManager.Instance._currentCellsToSpawn;
-        var chancesToSpawn = GameFieldManager.Instance != null
-            ? GameFieldManager.Instance.CellsChanceToSpawn
-            : TutorialFieldManager.Instance.CellsChanceToSpawn;
+        var cellsToSpawn =  GameFieldManager.Instance._currentCellsToSpawn;
+        var chancesToSpawn =  GameFieldManager.Instance.CellsChanceToSpawn;
         CellTypeInfo cellInfo = null;
         float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
         for (int j = 0; j < chancesToSpawn.Length; j++) {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
@@ -85,6 +86,14 @@ public class GameBoostersPanels : MonoBehaviour {
         if (booster == BoosterType.Rotate && isActive) {
             RotateSelect.SetActive(true);
             RotateUse.SetActive(false);
+        }
+
+        if (booster == BoosterType.Shuffle) {
+            if (isActive) {
+                TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
+            } else {
+                TutorialHoleHelper.DestroyHoles();
+            }
         }
 
         foreach (var boosterWindow in BoostersWindows) {

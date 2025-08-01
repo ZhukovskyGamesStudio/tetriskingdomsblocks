@@ -22,16 +22,13 @@ public class FloatingTextView : MonoBehaviour
         _floatingText.text = newText;
         MoveUpText(showTime, finalPosition);
         if (finalPosition != Vector2.zero)
-            Invoke("HideText", showTime + 1.5f);
+            Invoke(nameof(HideText), showTime + 1.5f);
         else
-            Invoke("HideText", showTime);
+            Invoke(nameof(HideText), showTime);
     }
 
     public void HideText() {
-        if (GameFieldManager.Instance != null)
-            GameFieldManager.Instance.ReleaseFloatingText(this);
-        else
-            TutorialFieldManager.Instance.ReleaseFloatingText(this);
+        GameFieldManager.Instance.ReleaseFloatingText(this);
     } 
 
     public void MoveUpText(float showTime, Vector2 finalPosition)
