@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Pool;
@@ -15,12 +16,6 @@ public class MetaUI : MonoBehaviour {
     public CountersPanelView CountersPanelView { get; private set; }
 
     [SerializeField]
-    private GameObject _getPieceTimer;
-    
-    [SerializeField]
-    private TMP_Text _getPieceTimerText;
-
-    [SerializeField]
     private TMP_Text _destroyPieceText;
 
     [SerializeField]
@@ -33,7 +28,7 @@ public class MetaUI : MonoBehaviour {
     private GameObject _ruleCamera, _buildCamera;
 
     [SerializeField]
-    private GameObject _getPieceButton, _buyPieceButton;
+    private GameObject _buyPieceButton;
 
     [field: SerializeField]
     public RectTransform _mainCanvas { get;set; }
@@ -51,6 +46,9 @@ public class MetaUI : MonoBehaviour {
 
     [SerializeField]
     private AvatarsConfig _avatarsConfig;
+    
+    [SerializeField]
+    private GetPieceButtonView  _getPieceButtonView;
 
     private ObjectPool<TMP_Text> _floatingTextsPool;
 
@@ -72,13 +70,21 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void ShowRetentionDialog() {
-        if(!MainManager.Instance._hasInternetConnection)return;
+        if (!MainManager.Instance._hasInternetConnection) {
+            return;
+        }
+
         LoadingManager.Instance.FirstLoad = false;
         var afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
         afkResources.TryAdd(ResourceType.Wood, 0);
         afkResources.TryAdd(ResourceType.Rocks, 0);
         afkResources.TryAdd(ResourceType.Food, 0);
         afkResources.TryAdd(ResourceType.Metal, 0);
+
+        if (afkResources.All(kvp => kvp.Value == 0)) {
+            return;
+        }
+
         var dialog = new DialogWithData {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
@@ -166,20 +172,8 @@ public class MetaUI : MonoBehaviour {
         _playText.text = text;
     }
 
-    public void SetGetPieceButtonActive(bool isActive) {
-        _getPieceTimer.SetActive(!isActive);
-        _buyPieceButton.SetActive(!isActive);
-        
-        _getPieceButton.SetActive(isActive);
-    }
-
     public void UpdateGetPieceTimer(TimeSpan timeLeft) {
-        if (timeLeft.TotalSeconds > 0) {
-            _getPieceTimerText.text = TimeConverter.ConvertToTimeString(timeLeft);
-        }
-        else if (_getPieceTimer.activeSelf) {
-            SetGetPieceButtonActive(true);
-        }
+        _getPieceButtonView.UpdateGetPieceTimer(timeLeft);
     }
 
     public void OpenBuildState() {

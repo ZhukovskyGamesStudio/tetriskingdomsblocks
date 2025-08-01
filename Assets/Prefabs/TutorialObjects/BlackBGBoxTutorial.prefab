@@ -92,7 +92,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rectTransformIceMark: {fileID: 3148124847049427393, guid: a06f6adb4afb3dc49bb91622954d0e6d, type: 3}
-  _holeHelper: {fileID: 4294304321796745659}
 --- !u!1 &6175275394775751784
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,8 +126,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 73.10499}
-  m_SizeDelta: {x: 784.8398, y: 196.21}
+  m_AnchoredPosition: {x: 0, y: 509}
+  m_SizeDelta: {x: 784.8398, y: 196.20996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6367500273732289148
 CanvasRenderer:
@@ -379,14 +378,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
   m_PrefabInstance: {fileID: 2854126845865168641}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4294304321796745659 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2018609039129028282, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-  m_PrefabInstance: {fileID: 2854126845865168641}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f2ed1c0dbc545d3babaaab78642fdfa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

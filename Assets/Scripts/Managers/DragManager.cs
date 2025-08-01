@@ -18,9 +18,7 @@ public class DragManager : MonoBehaviour {
     }
 
     private static FieldManager GetCurrentFieldManager() {
-        if (GameFieldManager.Instance != null) return GameFieldManager.Instance;
-        else if (MetaFieldManager.Instance != null) return MetaFieldManager.Instance;
-        else return TutorialFieldManager.Instance;
+        return GameFieldManager.Instance != null ? GameFieldManager.Instance : MetaFieldManager.Instance;
     }
     public static void OnDragPiece(ref Vector2Int currentCoord, ref Vector3 finalPos, PieceData data, Transform markedCellsContainer) {
         FieldManager cellManager = GetCurrentFieldManager();

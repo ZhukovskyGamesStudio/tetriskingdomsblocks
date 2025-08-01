@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialUIElementsView : MonoBehaviour {
+public class LevelOneTutorial : MonoBehaviour {
     [SerializeField]
     private RectTransform[] _holeImages;
 
@@ -17,6 +17,9 @@ public class TutorialUIElementsView : MonoBehaviour {
 
     [SerializeField]
     private Image _fingerImage;
+
+    [SerializeField]
+    private Transform _fingerImageContainer;
 
     [SerializeField]
     private string _firstTutorialText;
@@ -78,9 +81,9 @@ public class TutorialUIElementsView : MonoBehaviour {
         
    
         
-        _holeImages[1].transform.SetParent(_holeHelper._holesContainer,true);
-        _holeImages[0].transform.SetParent(_holeHelper._holesContainer,true);
-        _holeImages[2].transform.SetParent(_holeHelper._holesContainer,true);
+        //_holeImages[1].transform.SetParent(_holeHelper._holesContainer,true);
+        //_holeImages[0].transform.SetParent(_holeHelper._holesContainer,true);
+        //_holeImages[2].transform.SetParent(_holeHelper._holesContainer,true);
         
         //_holeImages[1].position = posHoleFirst;
         _holeImages[0].transform.position = posHoleSecond;
@@ -93,15 +96,16 @@ public class TutorialUIElementsView : MonoBehaviour {
     }
 
     public void StartAnimation() {
-        _fingerImage.rectTransform.localScale = Vector3.one;
+        _fingerImageContainer.localScale = Vector3.one;
         var color = _fingerImage.color;
         color.a = 0;
         _fingerImage.color = color;
-        _currentTween = DOTween.Sequence().Append(_fingerImage.DOFade(1, 0.8f))
-            .Join(_fingerImage.rectTransform.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImage.rectTransform.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 3)), 2.5f))
-            .Append(_fingerImage.rectTransform.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
-            .Append(_fingerImage.rectTransform.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);
+        _currentTween = DOTween.Sequence()
+            .Append(_fingerImage.DOFade(1, 0.8f))
+            .Join(_fingerImageContainer.DOScale(Vector3.one * 0.75f, 0.8f))
+            .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(3f, 0, 3.5f)), 2.5f))
+            .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
+            .Append(_fingerImageContainer.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);
     }
 
     private void ShowFirstStepTutorial() {
@@ -123,12 +127,13 @@ public class TutorialUIElementsView : MonoBehaviour {
         TutorialHoleHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
         GameFieldManager.Instance.ClearAllLockedCells();
-       // ShowSecondStepTutorial();
         _currentTween.Kill();
         _canSkipTutorial = true;
         _holeImages[0].gameObject.SetActive(false);
         _fingerImage.gameObject.SetActive(false);  
-        Invoke(nameof(ShowThirdStepTutorial), 1f);
+        _blackBGImage.gameObject.SetActive(false);
+        _tutorialText.gameObject.SetActive(false);
+        Invoke(nameof(ShowThirdStepTutorial), 2f);
     }
 
     public void ShowSecondStepTutorial() {
@@ -150,6 +155,7 @@ public class TutorialUIElementsView : MonoBehaviour {
       
     }
     public void ShowThirdStepTutorial() {
+        _blackBGImage.gameObject.SetActive(true);
         _tutorialText.transform.position = new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
         TutorialHoleHelper.SpawnHoles(_thirdStepCells);
         _tutorialStep = 3;
