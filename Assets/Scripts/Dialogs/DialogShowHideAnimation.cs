@@ -15,6 +15,8 @@ public class DialogShowHideAnimation : MonoBehaviour {
         }
 
         _isShown = true;
+        if (_showClip == null) return;
+        
         EnsureAnimationComponent();
         _animation.Play(_showClip.name);
 
@@ -27,6 +29,8 @@ public class DialogShowHideAnimation : MonoBehaviour {
         }
 
         _isShown = false;
+        if (_hideClip == null) return;
+        
         EnsureAnimationComponent();
         _animation.Play(_hideClip.name);
 

@@ -55,6 +55,7 @@ public class MetaUI : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
+        SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
     }
     
@@ -109,6 +110,17 @@ public class MetaUI : MonoBehaviour {
         if (hit) {
             _buildCameraShift =  _buildCamera.transform.position - hitinfo.point;
         }
+    }
+
+    public void OpenLootboxDialog(PieceData rewardingPiece) {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(LootboxDialog),
+            Data = new LootboxDialog.Data {
+                RewardingPiece = rewardingPiece,
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
     public void OpenProfile() {
