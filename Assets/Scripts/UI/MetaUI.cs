@@ -112,6 +112,17 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
+    public void OpenLootboxDialog(PieceData rewardingPiece) {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(LootboxDialog),
+            Data = new LootboxDialog.Data {
+                RewardingPiece = rewardingPiece,
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
+    }
+
     public void OpenProfile() {
         var dialog = new DialogWithData {
             DialogType = typeof(ProfileDialog),

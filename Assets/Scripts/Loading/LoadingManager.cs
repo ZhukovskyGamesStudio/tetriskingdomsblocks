@@ -40,7 +40,7 @@ public class LoadingManager : MonoBehaviour {
         }*/
 
         StorageManager.LoadGame();
-        if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
+        if (StorageManager.GameDataMain.CurMaxLevel >= 3 || true) {
             FirstLoad = true;
             await SceneManager.LoadSceneAsync("MetaScene");
         } else {
