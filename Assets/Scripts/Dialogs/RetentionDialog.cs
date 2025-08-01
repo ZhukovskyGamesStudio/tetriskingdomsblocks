@@ -11,11 +11,13 @@ public class RetentionDialog : DialogBase {
     private Transform _resourcesContainer;
 
     private Action _clickDoubleClaim;
+    private Action _clickDefaultClaim;
     
     public override void SetData(object data) {
         Data dialogData = data as Data;
         
         _clickDoubleClaim = dialogData.ClickDoubleClaim;
+        _clickDefaultClaim = dialogData.ClickDefaultClaim;
 
         foreach (RetentionResource resource in dialogData.OfflineResources) {
             ResourceCount newResource = Instantiate(_resourcePrefab, _resourcesContainer);
@@ -25,12 +27,19 @@ public class RetentionDialog : DialogBase {
 
     public void ClickDoubleClaim() {
         Hide().Forget();
+        //show ad
         _clickDoubleClaim.Invoke();
+    }
+    
+    public void ClickDefaultClaim() {
+        Hide().Forget();
+        _clickDefaultClaim.Invoke();
     }
 
     [Serializable]
     public class Data {
         public Action ClickDoubleClaim;
+        public Action ClickDefaultClaim;
         public List<RetentionResource> OfflineResources;
     }
     

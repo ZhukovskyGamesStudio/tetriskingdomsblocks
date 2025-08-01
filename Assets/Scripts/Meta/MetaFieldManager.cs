@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Pool;
@@ -48,9 +49,22 @@ public class MetaFieldManager : FieldManager {
     [SerializeField]
     private Transform _cameraMax;
 
+    [SerializedDictionary]
+    public SerializedDictionary<CellType, ResourceType> _cellsResources;
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
+    }
+
+    public void FilterInventoryPieces(int filterResourceId) {
+        ResourceType filterResource = (ResourceType)filterResourceId;
+        foreach (Transform child in _inventoryCellsContainer) {
+            InventoryCellView cell = child.GetComponent<InventoryCellView>();
+            CellType cellType = cell.Data.Type.CellType;
+            ResourceType cellResource = _cellsResources.ContainsKey(cellType) ? _cellsResources[cellType] : ResourceType.None;
+            child.gameObject.SetActive(filterResource == ResourceType.None || cellResource == filterResource);
+        }
     }
 
     public void SetCurrentPiece(PieceView pieceView = null, InventoryCellView inventoryCellView = null) {
@@ -122,13 +136,15 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    protected override void TryDestroyPiece() {
+    protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             var cellType = _field[(int)cellPos.x, (int)cellPos.z];
-            if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) return;
+            if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) {
+                return false;
+            }
             StorageManager.GameDataMain.MetaHummerCount--;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
@@ -154,7 +170,10 @@ public class MetaFieldManager : FieldManager {
             DeleteFigureFormFromList(figureIndex);
             HummerDestoyPieceAnimation(destroyedCells);
             RecalculateCellGroupAfterDeletePiece(groupIndex);
+            return true;
         }
+
+        return false;
     }
 
     private void TryCastLockCell() {
@@ -479,7 +498,8 @@ public class MetaFieldManager : FieldManager {
             MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
-            GenerateNewPiece();
+            var pieceData = GenerateNewPiece();
+            MetaUI.Instance.OpenLootboxDialog(pieceData);
         }
     }
 
@@ -487,13 +507,13 @@ public class MetaFieldManager : FieldManager {
         DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
     }
 
-    public void GenerateNewPiece() {
-        Debug.Log(StorageManager.GameDataMain.PlacedInMetaPiecesCount);
+    public PieceData GenerateNewPiece() {
         CellTypeInfo cellTypeInfo = StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
         var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
         AddPieceToInventory(pieceData);
         StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
         SaveInventory();
+        return pieceData;
     }
 
     public void AddPieceToInventory(PieceData pieceView) {
@@ -677,19 +697,23 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromAllMarks(float multiplayer) {
-        foreach (var resourceMarkGroup in _connectedGroups) {
+        foreach (var resourceMarkGroup in _connectedGroups) { 
+            if (resourceMarkGroup.ResourceMarkView != null)
             resourceMarkGroup.ResourceMarkView.CollectAnimation();
             CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer);
         }
     }
 
     public void CollectDoubleResourcesFromAllMarks() {
-        foreach (var resourceMarkGroup in _connectedGroups) {
-            if (resourceMarkGroup.ResourceMarkView != null)
-                resourceMarkGroup.ResourceMarkView.CollectAnimation();
-            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, 2);
-        }
+      CollectResourcesFromAllMarks(2);
     }
+    
+    public void CollectDefaultResourcesFromAllMarks() {
+        CollectResourcesFromAllMarks(1);
+    }
+
+    
+    
 
     private void CalculateCellSpawnChances() {
         float lastChance = 0;

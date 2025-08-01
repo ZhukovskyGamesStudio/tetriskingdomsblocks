@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using JetBrains.Annotations;
 using ScriptableObjects.Configs;
@@ -64,12 +65,13 @@ public class CellView : MonoBehaviour {
 
     public void OffCollider() => _cellCollider.enabled = false;
 
-    public void DestroyCell() {
+    public async UniTask DestroyCell() {
         Destroy(gameObject, 0.8f);
         _currentTween.Kill();
         var animSpeedMultiplayer = ConfigsManager.Instance.DragConfig.DestroyPieceAnimationMultiplayer;
         _currentTween = DOTween.Sequence().Append(transform.DOScale(transform.localScale * 1.2f, 0.2f * animSpeedMultiplayer))
             .Append(transform.DOScale(transform.localScale * 0f, 0.4f * animSpeedMultiplayer));
+        await _currentTween.AsyncWaitForCompletion();
     }
 
 

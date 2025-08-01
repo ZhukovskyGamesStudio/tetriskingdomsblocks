@@ -55,6 +55,7 @@ public class MetaUI : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
+        SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
     }
     
@@ -75,7 +76,7 @@ public class MetaUI : MonoBehaviour {
         }
 
         LoadingManager.Instance.FirstLoad = false;
-        var afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
+        Dictionary<ResourceType, float> afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
         afkResources.TryAdd(ResourceType.Wood, 0);
         afkResources.TryAdd(ResourceType.Rocks, 0);
         afkResources.TryAdd(ResourceType.Food, 0);
@@ -89,11 +90,12 @@ public class MetaUI : MonoBehaviour {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
                 ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
+                ClickDefaultClaim = MetaFieldManager.Instance.CollectDefaultResourcesFromAllMarks,
                 OfflineResources = new List<RetentionDialog.RetentionResource> {
-                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
-                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
-                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
-                    new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
+                    new() { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
+                    new() { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
+                    new() { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
+                    new() { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
                 }
                 
             }
@@ -111,14 +113,25 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
+    public void OpenLootboxDialog(PieceData rewardingPiece) {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(LootboxDialog),
+            Data = new LootboxDialog.Data {
+                RewardingPiece = rewardingPiece,
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
+    }
+
     public void OpenProfile() {
         var dialog = new DialogWithData {
             DialogType = typeof(ProfileDialog),
             Data = new ProfileDialog.Data {
-                BuiltCells = 123,
-                Levels = 123,
+                BuiltCells = StorageManager.GameDataMain.PlacedInMetaPiecesCount,
+                Levels = StorageManager.GameDataMain.CurMaxLevel,
                 WeeksBest = 123, // TODO: убрать заглушки
-                Wins = 123,
+                Wins = StorageManager.GameDataMain.FirstAttemptWinLevelsCount,
                 PlayerName = "PlayerName12345",
                 ClickEditAvatar = OpenEditAvatar,
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
