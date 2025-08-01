@@ -227,9 +227,9 @@ public class GameFieldManager : FieldManager {
                 continue;
             }
 
-            string text = $" +{resource.ResourceCount} <sprite name={resource.ResourceType}> ";
+            //string text = $" +{resource.ResourceCount} <sprite name={resource.ResourceType}> ";
             Vector2 pos = new(onCanvasPosition.x, onCanvasPosition.y + index * 15);
-            GameUI.Instance.ShowFloatingText(text, pos, 20, 1, taskUIView.CurrentTaskInfo.transform.position);
+            GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[resource.ResourceType],pos, 40, 1, taskUIView.CurrentTaskInfo.transform.position);
         }
     }
 
@@ -280,8 +280,8 @@ public class GameFieldManager : FieldManager {
             _gameAudio.PlayNextSound(_gameAudio.RowCollected);
 
             if (unlockedCellText != "") {
-                GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f,
-                    Vector2.zero);
+         //       GameUI.Instance.ShowFloatingText(unlockedCellText + " is unlocked!", GameUI.Instance.transform.position, 40, 2.5f,
+          //          Vector2.zero);
             }
 
             DestroyAllMarkedCells(isDestroyingLinesCount);
@@ -363,8 +363,8 @@ public class GameFieldManager : FieldManager {
             return;
         }
 
-        string text = $"<sprite name={resourceType}> +{bonusResourcesOnDestroyLine} ";
-        GameUI.Instance.ShowFloatingText(text, needPosition, 30, 1.5f, Vector2.zero);
+       // string text = $"<sprite name={resourceType}> +{bonusResourcesOnDestroyLine} ";
+        GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[resourceType], needPosition, 60, 1.5f, Vector2.zero);
     }
 
     private int CheckLineAndDestroyNeededCells(int mainAxisCurrentValue, bool isRow, int secondAxis, Dictionary<CellType, int> cellTypesInLine,
@@ -502,8 +502,8 @@ public class GameFieldManager : FieldManager {
             }
 
             Vector3 canvasPosition = _mainCamera.WorldToScreenPoint(_cells[coord.x, coord.y].transform.position);
-            GameUI.Instance.ShowFloatingText($" + <sprite name={gotResource.ResourceType}> " + " ",
-                new Vector2(canvasPosition.x, canvasPosition.y + 15), 20, 1, infoAndUI.TaskUIView.CurrentTaskInfo.transform.position);
+            GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[gotResource.ResourceType],
+                new Vector2(canvasPosition.x, canvasPosition.y + 15), 40, 1, infoAndUI.TaskUIView.CurrentTaskInfo.transform.position);
         }
     }
 
