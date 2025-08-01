@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
@@ -12,40 +11,55 @@ public class GameBoostersPanels : MonoBehaviour {
     [SerializedDictionary]
     public SerializedDictionary<BoosterType, GameObject> BoostersWindows;
 
-
-    public void ConfirmShuffle() {
-        BoostersManager.Instance.UseRandomField();
-    }
-    
-    public void SwitchShuffleWindowActive() {
+    public void OpenShuffle() {
         if (!BoostersManager.Instance.CanShuffle()) {
             return;
         }
 
-        ToggleBoosterPanelActive(BoosterType.Shuffle);
+        SetBoosterActive(BoosterType.Shuffle, true);
     }
-    
-    public void ConfirmDynamite() {
-        BoostersManager.Instance.UseDynamite();
+
+    public void ConfirmShuffle() {
+        BoostersManager.Instance.UseRandomField();
     }
-    public void SwitchBombWindowActive() {
+
+    public void CancelShuffle() {
+        SetBoosterActive(BoosterType.Shuffle, false);
+    }
+
+    public void OpenBomb() {
         if (!BoostersManager.Instance.CanDynamite()) {
             return;
         }
 
-        ToggleBoosterPanelActive(BoosterType.Bomb);
+        BoostersManager.Instance.UseDynamite();
+        SetBoosterActive(BoosterType.Bomb, true);
     }
 
-    
-    public void ConfirmHammer() {
-        BoostersManager.Instance.UseHummer();
+    public void ConfirmDynamite() {
+        BoostersManager.Instance.UseDynamite();
+        SetBoosterActive(BoosterType.Bomb, false);
     }
-    public void SwitchHammerWindowActive() {
+
+    public void CancelBomb() {
+        SetBoosterActive(BoosterType.Bomb, false);
+    }
+
+    public void OpenHammer() {
         if (!BoostersManager.Instance.CanHammer()) {
             return;
         }
 
-        ToggleBoosterPanelActive(BoosterType.Hammer);
+        BoostersManager.Instance.UseHammer();
+        SetBoosterActive(BoosterType.Hammer, true);
+    }
+
+    public void ConfirmHammer() {
+        SetBoosterActive(BoosterType.Hammer, false);
+    }
+
+    public void CancelHammer() {
+        SetBoosterActive(BoosterType.Hammer, false);
     }
 
     public void ConfirmRotate() {
@@ -59,11 +73,11 @@ public class GameBoostersPanels : MonoBehaviour {
     public void RotateLeft() {
         BoostersManager.Instance.RotatePieceLeft();
     }
-    
+
     public void RotateRight() {
         BoostersManager.Instance.RotatePieceRight();
     }
-    
+
     public void SwitchRotateWindowActive() {
         if (!BoostersManager.Instance.CanRotate()) {
             return;
@@ -82,18 +96,31 @@ public class GameBoostersPanels : MonoBehaviour {
     }
 
     public void SetBoosterActive(BoosterType booster, bool isActive) {
-        if (booster != BoosterType.Bomb || !isActive) BoostersManager.Instance.CancelDynamite();
+        if (booster != BoosterType.Bomb || !isActive) {
+            //BoostersManager.Instance.CancelDynamite();
+        }
+
         if (booster == BoosterType.Rotate && isActive) {
             RotateSelect.SetActive(true);
             RotateUse.SetActive(false);
         }
 
-        if (booster == BoosterType.Shuffle) {
-            if (isActive) {
-                TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
-            } else {
-                TutorialHoleHelper.DestroyHoles();
-            }
+        if (booster == BoosterType.Shuffle && isActive) {
+            TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
+        }
+
+        if (booster == BoosterType.Hammer && isActive) {
+            TutorialHoleHelper.SpawnHoles(GameFieldManager.Instance.AllHammerableCells());
+        }
+
+        if (booster == BoosterType.Bomb && isActive) {
+            TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
+        }
+
+        GameUI.Instance.GoalView.gameObject.SetActive(!isActive);
+
+        if (isActive) { } else {
+            TutorialHoleHelper.DestroyHoles();
         }
 
         foreach (var boosterWindow in BoostersWindows) {

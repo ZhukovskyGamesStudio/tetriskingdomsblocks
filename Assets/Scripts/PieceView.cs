@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PieceView : MonoBehaviour {
     [SerializeField]
@@ -143,6 +144,9 @@ public class PieceView : MonoBehaviour {
     }
 
     private void OnMouseDown() {
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            return;
+        }
         OnStartDrag();
     }
 

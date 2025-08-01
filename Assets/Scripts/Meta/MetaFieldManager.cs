@@ -122,13 +122,15 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    protected override void TryDestroyPiece() {
+    protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             var cellType = _field[(int)cellPos.x, (int)cellPos.z];
-            if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) return;
+            if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) {
+                return false;
+            }
             StorageManager.GameDataMain.MetaHummerCount--;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
@@ -154,7 +156,10 @@ public class MetaFieldManager : FieldManager {
             DeleteFigureFormFromList(figureIndex);
             HummerDestoyPieceAnimation(destroyedCells);
             RecalculateCellGroupAfterDeletePiece(groupIndex);
+            return true;
         }
+
+        return false;
     }
 
     private void TryCastLockCell() {

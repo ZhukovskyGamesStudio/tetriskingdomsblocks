@@ -29,9 +29,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3174000815938162332}
-  - {fileID: 6869075744226883522}
   - {fileID: 2943837982435929772}
+  - {fileID: 6869075744226883522}
+  - {fileID: 3174000815938162332}
   - {fileID: 8975273576288472170}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -75,6 +75,10 @@ PrefabInstance:
     - target: {fileID: 598363617784447953, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
       propertyPath: m_Name
       value: Shuffle
+      objectReference: {fileID: 0}
+    - target: {fileID: 598363617784447953, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2792422288835033298, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
       propertyPath: m_Pivot.x
@@ -160,22 +164,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 4712638150934789838, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ConfirmShuffle
-      objectReference: {fileID: 0}
-    - target: {fileID: 8017342840708155830, guid: 80edb8a9797d4ad418b7d2853314eb41, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -508,6 +500,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3388995914012006682, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3642484944591153402, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
       propertyPath: m_Name
       value: Bomb
@@ -516,30 +512,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: ConfirmDynamite
-      objectReference: {fileID: 0}
-    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 5086911615852311986, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 6019916033572882982, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.0014648438
-      objectReference: {fileID: 0}
-    - target: {fileID: 6019916033572882982, guid: 51fbf55e1b80ef64d8ac20c58acd31dd, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -174.10742
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -563,13 +535,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5228042560409129107}
     m_Modifications:
-    - target: {fileID: 628120482584183503, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.0014648438
-      objectReference: {fileID: 0}
-    - target: {fileID: 628120482584183503, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -174.10742
+    - target: {fileID: 4599967156873915576, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5621495105497867637, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
       propertyPath: m_Pivot.x
@@ -652,32 +620,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_TargetGraphic
+      value: 
+      objectReference: {fileID: 2235745937009767795}
+    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 7896990296216829672}
-    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchHammerWindowActive
-      objectReference: {fileID: 0}
-    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: ConfirmHammer
-      objectReference: {fileID: 0}
-    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 8030112349376937055, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: GameBoostersPanels, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 8412768290314256052, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
       propertyPath: m_Name
       value: Hammer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8412768290314256052, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -689,6 +645,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8412768290314256052, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
   m_PrefabInstance: {fileID: 7410969024028822489}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2235745937009767795 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8782012790015803050, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}
+  m_PrefabInstance: {fileID: 7410969024028822489}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2943837982435929772 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5621495105497867637, guid: 9e48be6e24fbbb648a89bceb8401c3a4, type: 3}

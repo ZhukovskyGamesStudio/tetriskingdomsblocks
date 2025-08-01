@@ -8,11 +8,12 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BoostersManager : MonoBehaviour {
-   
-
     [SerializeField]
     private ParticleSystem _dynamiteBoomFx;
 
+    [SerializeField]
+    private GameBoostersPanels _gameBoostersPanels;
+    
     public static BoostersManager Instance;
     public Action OnBoosterEndedWorking;
     private GameData _gameData;
@@ -28,12 +29,10 @@ public class BoostersManager : MonoBehaviour {
         SelectPiece,
         RotatePiece
     }
-    
 
     private void Awake() {
         Instance = this;
     }
-
 
     public void Init(GameData gameData) {
         _gameData = gameData;
@@ -114,6 +113,7 @@ public class BoostersManager : MonoBehaviour {
         if (!CanRotate()) {
             return;
         }
+
         if (RotationState == RotateBoosterStates.LockRotate) {
             RotationState = RotateBoosterStates.SelectPiece;
         } else {
@@ -123,17 +123,19 @@ public class BoostersManager : MonoBehaviour {
         }
     }
 
-    public void UseHummer() {
+    public void UseHammer() {
         if (!CanHammer()) {
             return;
         }
 
-        GameFieldManager.Instance.ToggleDestroyPieceMode();
+        GameFieldManager.Instance.SetDestroyPieceMode(true);
     }
 
-    public void BreackCellWithHummer() {
+    public void BreakCellWithHammer() {
         StorageManager.GameDataMain.HummerCount--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
+        GameFieldManager.Instance.SetDestroyPieceMode(false);
+        _gameBoostersPanels.CancelHammer();
     }
 
     public void UseRandomField() {
@@ -196,9 +198,17 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void CancelDynamite() {
-        if (_dynamiteExploding) return;
+        if (_dynamiteExploding) {
+            return;
+        }
 
         GameFieldManager.Instance.DisablePlaceDynamiteMode();
+        _gameBoostersPanels.CancelBomb();
+    }
+
+    public void CancelHammer() {
+        GameFieldManager.Instance.SetDestroyPieceMode(false);
+        _gameBoostersPanels.CancelHammer();
     }
 
     private void ExplodeDynamite(Transform dynamite, Vector2Int position) {
@@ -226,7 +236,7 @@ public class BoostersManager : MonoBehaviour {
 
         StorageManager.GameDataMain.DynamiteCount--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
-      
+
         OnBoosterEndedWorking?.Invoke();
     }
 
@@ -235,15 +245,20 @@ public class BoostersManager : MonoBehaviour {
         GameUI.Instance.BoostersPanels.SetBoosterActive(BoosterType.Bomb, false);
         // Запоминаем исходный масштаб
         Vector3 originalScale = dynamite.transform.localScale;
-
+        Vector3 finPos = dynamite.position;
+        dynamite.position += Vector3.up;
         // Создаем последовательность анимаций
-        DOTween.Sequence().Append(
-            dynamite.transform.DOScale(originalScale * 1.3f, 0.4f).SetEase(Ease.OutBack) // Добавляем "пружинность" для эффекта раздувания
-        ).Append(dynamite.transform.DOScale(Vector3.zero, 0.6f).SetEase(Ease.InBack) // Эффект "втягивания"
-                .OnComplete(() => { ExplodeDynamite(dynamite, position); }) // Удаляем объект после анимации
+        DOTween.Sequence()
+            // Добавляем "пружинность" для эффекта раздувания
+            .Append(dynamite.transform.DOScale(originalScale * 1.3f, 0.4f).SetEase(Ease.OutBack))
+            .Join(dynamite.transform.DOMove(finPos,0.4f))
+            // Эффект "втягивания"
+            .Append(dynamite.transform.DOScale(Vector3.zero, 0.6f).SetEase(Ease.InBack)
+            // Удаляем объект после анимации
+            .OnComplete(() => { ExplodeDynamite(dynamite, position); }) 
         );
     }
-    
+
     public bool CanShuffle() {
         return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel, StorageManager.GameDataMain.RandomFieldCount);
     }
@@ -269,9 +284,8 @@ public class BoostersManager : MonoBehaviour {
             return false;
         }
 
-        return hasAmount > 0 || AdminManager.Instance.IsInfiniteBoosters;
+        return hasAmount > 0;
     }
-    
 }
 
 public enum BoosterType {
