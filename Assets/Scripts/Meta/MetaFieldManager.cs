@@ -677,19 +677,23 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromAllMarks(float multiplayer) {
-        foreach (var resourceMarkGroup in _connectedGroups) {
+        foreach (var resourceMarkGroup in _connectedGroups) { 
+            if (resourceMarkGroup.ResourceMarkView != null)
             resourceMarkGroup.ResourceMarkView.CollectAnimation();
             CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer);
         }
     }
 
     public void CollectDoubleResourcesFromAllMarks() {
-        foreach (var resourceMarkGroup in _connectedGroups) {
-            if (resourceMarkGroup.ResourceMarkView != null)
-                resourceMarkGroup.ResourceMarkView.CollectAnimation();
-            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, 2);
-        }
+      CollectResourcesFromAllMarks(2);
     }
+    
+    public void CollectDefaultResourcesFromAllMarks() {
+        CollectResourcesFromAllMarks(1);
+    }
+
+    
+    
 
     private void CalculateCellSpawnChances() {
         float lastChance = 0;

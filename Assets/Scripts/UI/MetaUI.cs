@@ -89,6 +89,7 @@ public class MetaUI : MonoBehaviour {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
                 ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
+                ClickDefaultClaim = MetaFieldManager.Instance.CollectDefaultResourcesFromAllMarks,
                 OfflineResources = new List<RetentionDialog.RetentionResource> {
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
                     new RetentionDialog.RetentionResource { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
