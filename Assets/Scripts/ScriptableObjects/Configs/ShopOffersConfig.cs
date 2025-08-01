@@ -5,21 +5,23 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "ShopOffersConfig", menuName = "Scriptable Objects/ShopOffersConfig")]
 public class ShopOffersConfig : ScriptableObject {
-    public List<OffersGroupData> OffersGroups;
+    public List<SpecialOfferData> SpecialOffers;
+    public List<ResourceOfferData> ResourceOffers;
 }
 
 [Serializable]
-public class OfferData {
-    public string Title;
-    public string Id;
+public class SpecialOfferData {
     public float Price;
+    public Sprite Icon;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> Resources;
 }
 
 [Serializable]
-public class OffersGroupData {
-    public string Title;
-    public OfferData[] Offers;
+public class ResourceOfferData {
+    public Sprite Icon;
+    public float Price;
+    public ResourceType Resource;
+    public int ResourceCount;
 }
 
