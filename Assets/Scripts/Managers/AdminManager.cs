@@ -31,6 +31,10 @@ public class AdminManager : MonoBehaviour {
         SetupLevelButtons();
     }
 
+    public void ResetFreeCellTime() {
+        StorageManager.GameDataMain.LastGetPieceTime = DateTime.MinValue.ToString();
+    }
+
     public void ChangeAdminPanelState(bool isOn) {
         AdminPanelContainer.gameObject.SetActive(isOn);
     }
