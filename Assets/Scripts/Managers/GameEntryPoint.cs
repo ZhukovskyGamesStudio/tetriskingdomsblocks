@@ -176,6 +176,9 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void SaveWinGame() {
         StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+        if (StorageManager.GameDataMain.IsFirstAttemptWin)
+            StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
+        StorageManager.GameDataMain.IsFirstAttemptWin = true;
         // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
         StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
@@ -184,6 +187,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void Lose() {
         _gameData.IsGameEnded = true;
+        StorageManager.GameDataMain.IsFirstAttemptWin = false;
         MainManager.Instance.RemoveHealthAfterLose();
         GameUI.Instance.GoalView.SetTasksActive(false);
         VibrationsManager.Instance.SpawnContinuous(0.46f, 0.24f, 0.4f);

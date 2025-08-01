@@ -9,11 +9,16 @@ public class TutorialHighlightHelper {
     public void HighlightObjectsInCells(List<Vector3Int> cells) {
         List<GameObject> list = new List<GameObject>();
         foreach (var pos in cells) {
-            
             if (GameFieldManager.Instance) {
-                list.Add(GameFieldManager.Instance.GetCellInCoord(pos)?.gameObject);
+                var cell = GameFieldManager.Instance.GetCellInCoord(pos);
+                if (cell != null) {
+                    list.Add(cell.gameObject);
+                }
             } else {
-                list.Add(MetaFieldManager.Instance.GetCellInCoord(pos)?.gameObject);
+                var cell = MetaFieldManager.Instance.GetCellInCoord(pos);
+                if (cell != null) {
+                    list.Add(cell.gameObject);
+                }
             }
         }
 
@@ -26,6 +31,7 @@ public class TutorialHighlightHelper {
             if (obj == null) {
                 continue;
             }
+
             var renders = obj.GetComponentsInChildren<MeshRenderer>();
             foreach (var render in renders) {
                 if (_highlitedLayers.ContainsKey(render.gameObject)) {
@@ -43,6 +49,7 @@ public class TutorialHighlightHelper {
             if (kvp.Key == null) {
                 continue;
             }
+
             kvp.Key.layer = kvp.Value;
         }
 
