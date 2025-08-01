@@ -21,6 +21,7 @@ public class GameBoostersPanels : MonoBehaviour {
 
     public void ConfirmShuffle() {
         BoostersManager.Instance.UseRandomField();
+        CancelShuffle();
     }
 
     public void CancelShuffle() {
@@ -65,6 +66,10 @@ public class GameBoostersPanels : MonoBehaviour {
     public void ConfirmRotate() {
         BoostersManager.Instance.UseRotatePiece();
     }
+    
+    public void CancelRotate() {
+        SetBoosterActive(BoosterType.Rotate, false);
+    }
 
     public void ApplyRotate() {
         BoostersManager.Instance.ApplyRotation();
@@ -78,12 +83,12 @@ public class GameBoostersPanels : MonoBehaviour {
         BoostersManager.Instance.RotatePieceRight();
     }
 
-    public void SwitchRotateWindowActive() {
+    public void OpenRotate() {
         if (!BoostersManager.Instance.CanRotate()) {
             return;
         }
 
-        ToggleBoosterPanelActive(BoosterType.Rotate);
+        SetBoosterActive(BoosterType.Rotate, true);
     }
 
     private void ToggleBoosterPanelActive(BoosterType booster) {
@@ -106,7 +111,7 @@ public class GameBoostersPanels : MonoBehaviour {
         }
 
         if (booster == BoosterType.Shuffle && isActive) {
-            TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
+            //TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
         }
 
         if (booster == BoosterType.Hammer && isActive) {

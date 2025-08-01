@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -539,9 +540,9 @@ public class GameFieldManager : FieldManager {
         }
     }
 
-    public void DestroyCell(Vector2Int coord) {
+    public async UniTask DestroyCell(Vector2Int coord) {
         _field[coord.x, coord.y] = CellType.Empty;
-        _cells[coord.x, coord.y].DestroyCell();
+        await _cells[coord.x, coord.y].DestroyCell();
     }
 
     public bool CanPlaceAnyPiece() {

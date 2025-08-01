@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -138,25 +139,30 @@ public class BoostersManager : MonoBehaviour {
         _gameBoostersPanels.CancelHammer();
     }
 
-    public void UseRandomField() {
+    public async UniTask UseRandomField() {
         if (!CanShuffle()) {
             return;
         }
 
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
+        List<UniTask> _destroyTasks = new List<UniTask>();
         int cellsCount = 0;
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
             for (int j = 0; j < GameFieldManager.Instance._field.GetLength(1); j++) {
                 if (FieldUtils.IsResourceCell(GameFieldManager.Instance._field[i, j])) {
                     if (!cellsToPlace.TryAdd(GameFieldManager.Instance._field[i, j], 1))
                         cellsToPlace[GameFieldManager.Instance._field[i, j]]++;
-                    GameFieldManager.Instance.DestroyCell(new Vector2Int(i, j));
+                    _destroyTasks.Add(GameFieldManager.Instance.DestroyCell(new Vector2Int(i, j)));
                     cellsCount++;
                 }
             }
         }
 
-        if (cellsToPlace.Count == 0) return;
+        await UniTask.WhenAll(_destroyTasks);
+        
+        if (cellsToPlace.Count == 0) {
+            return;
+        }
         StorageManager.GameDataMain.RandomFieldCount--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         List<Vector2Int> emptyCells = new List<Vector2Int>();
@@ -247,6 +253,7 @@ public class BoostersManager : MonoBehaviour {
         Vector3 originalScale = dynamite.transform.localScale;
         Vector3 finPos = dynamite.position;
         dynamite.position += Vector3.up;
+        dynamite.localScale = Vector3.zero;
         // Создаем последовательность анимаций
         DOTween.Sequence()
             // Добавляем "пружинность" для эффекта раздувания

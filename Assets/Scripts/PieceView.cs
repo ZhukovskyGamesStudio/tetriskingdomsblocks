@@ -84,6 +84,10 @@ public class PieceView : MonoBehaviour {
         _isLerpingDisabled = false;
     }
 
+    public void AppearInstant() {
+        
+    }
+
     public async UniTask AppearFromInventoryAsync() {
         Vector3 finScale = _cellsContainer.localScale;
         _cellsContainer.localScale = Vector3.zero;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Pool;
@@ -48,9 +49,22 @@ public class MetaFieldManager : FieldManager {
     [SerializeField]
     private Transform _cameraMax;
 
+    [SerializedDictionary]
+    public SerializedDictionary<CellType, ResourceType> _cellsResources;
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
+    }
+
+    public void FilterInventoryPieces(int filterResourceId) {
+        ResourceType filterResource = (ResourceType)filterResourceId;
+        foreach (Transform child in _inventoryCellsContainer) {
+            InventoryCellView cell = child.GetComponent<InventoryCellView>();
+            CellType cellType = cell.Data.Type.CellType;
+            ResourceType cellResource = _cellsResources.ContainsKey(cellType) ? _cellsResources[cellType] : ResourceType.None;
+            child.gameObject.SetActive(filterResource == ResourceType.None || cellResource == filterResource);
+        }
     }
 
     public void SetCurrentPiece(PieceView pieceView = null, InventoryCellView inventoryCellView = null) {

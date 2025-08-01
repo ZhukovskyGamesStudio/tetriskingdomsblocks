@@ -19,14 +19,14 @@ public class GameData {
 [Serializable]
 public enum ResourceType {
     None = 0,
-    Wood,
-    Rocks,
-    Food,
-    Metal,
-    TetrisPieces,
-    Box,
-    Ice,
-    Gold,
-    Crystal,
-    Slime
+    Wood = 1,
+    Rocks = 2,
+    Food = 3,
+    Metal = 4,
+    TetrisPieces = 5,
+    Box = 6,
+    Ice = 7,
+    Gold = 8,
+    Crystal = 9,
+    Slime = 10
 }
