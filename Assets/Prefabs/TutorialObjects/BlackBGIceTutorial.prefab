@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: e0a36adc1672f3f47b0a654fa00d1ab0, type: 2}
   m_Color: {r: 0, g: 0, b: 0, a: 0.69803923}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -91,11 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c3d7d6faa891744bf4a36e12a3b847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tutorialText: {fileID: 6329055918457302631}
-  _tutorialHole: {fileID: 0}
   rectTransformIceMark: {fileID: 3148124847049427393, guid: a06f6adb4afb3dc49bb91622954d0e6d, type: 3}
-  _tutorialText: {fileID: 6329055918457302631}
-  _holeHelper: {fileID: 4294304321796745659}
 --- !u!1 &6175275394775751784
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,7 +288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -382,14 +378,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
   m_PrefabInstance: {fileID: 2854126845865168641}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4294304321796745659 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2018609039129028282, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-  m_PrefabInstance: {fileID: 2854126845865168641}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f2ed1c0dbc545d3babaaab78642fdfa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
