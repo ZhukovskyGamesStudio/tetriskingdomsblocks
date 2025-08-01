@@ -6,6 +6,8 @@ public class IceTutorial : MonoBehaviour {
     [SerializeField]
     private RectTransform rectTransformIceMark;
 
+    [SerializeField]
+    private bool isHighlightUnplacedCells = true;
 
     private void Start() {
         //  base.Start();
@@ -14,15 +16,17 @@ public class IceTutorial : MonoBehaviour {
 
         for (int i = 0; i < GameFieldManager.Instance._field.GetLength(0); i++) {
             for (int j = 0; j < GameFieldManager.Instance._field.GetLength(1); j++) {
-                icePoses.Add(new Vector3Int(i, 0, j));
+                if (isHighlightUnplacedCells || FieldUtils.CanPlaceOnCell(GameFieldManager.Instance._field[i, j]))
+                    icePoses.Add(new Vector3Int(i, 0, j));
             }
         }
-        PieceView[] pieces = FindObjectsByType<PieceView>(FindObjectsSortMode.None); 
+
+        PieceView[] pieces = FindObjectsByType<PieceView>(FindObjectsSortMode.None);
         List<GameObject> _pieceCellsContainer = new List<GameObject>();
         foreach (var piece in pieces) {
             _pieceCellsContainer.Add(piece._cellsContainer.gameObject);
         }
-       
+
         TutorialHoleHelper.HighlightObjects(_pieceCellsContainer);
         TutorialHoleHelper.SpawnHoles(icePoses);
     }

@@ -30,5 +30,5 @@ public class LevelConfig : ScriptableObject {
 
     public int MovesCount { get; private set; }
     [field: SerializeField]
-    public int FirstFiguresCount { get; private set; }
+    public int[] FirstFiguresCount { get; private set; }
 }
