@@ -3727,6 +3727,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 5010224016518838487}
+    - target: {fileID: 6542932270160186311, guid: f7abe8f50222bce4abff01e9ac554d80, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenRotate
+      objectReference: {fileID: 0}
     - target: {fileID: 6986484957330812777, guid: f7abe8f50222bce4abff01e9ac554d80, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4251,6 +4255,14 @@ PrefabInstance:
     - target: {fileID: 180475077524010399, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2522175610890502688, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5010224016518838487}
+    - target: {fileID: 2522175610890502688, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelRotate
       objectReference: {fileID: 0}
     - target: {fileID: 4890335658195972056, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
       propertyPath: m_Name

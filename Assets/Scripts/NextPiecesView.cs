@@ -51,14 +51,16 @@ public class NextPiecesView : MonoBehaviour, IResetable {
         GameObject container = new GameObject("Dynamite Container");
         container.transform.position = pos;
         PieceView pieceView = await CreatePiecesAsync(new List<PieceData>() { dynamiteCellInfo }, _cts.Token,
-            new List<Transform>() { container.transform });
+            new List<Transform>() { container.transform }, true);
         pieceView.transform.SetParent(null);
         Destroy(container);
         return pieceView;
     }
 
-    private async UniTask<PieceView> CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token, List<Transform> containers) {
+    private async UniTask<PieceView> CreatePiecesAsync(List<PieceData> nextPieces, CancellationToken token, List<Transform> containers,
+        bool isInstant = false) {
         PieceView pieceView = null;
+        List<UniTask> appearTasks = new List<UniTask>();
         for (int i = 0; i < nextPieces.Count; i++) {
             token.ThrowIfCancellationRequested();
 
@@ -70,17 +72,20 @@ public class NextPiecesView : MonoBehaviour, IResetable {
             PieceView go = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, containers[i]);
             pieceView = go;
             go.SetData(nextPieces[i], _piecesScale);
-            go.AppearAsync().Forget();
+            if (isInstant) {
+                go.AppearInstant();
+            } else {
+                appearTasks.Add(go.AppearAsync());
+            }
+
             _spawnParticles[i].gameObject.SetActive(true);
             _spawnParticles[i].Play();
- Debug.Log($"piece number {i}");
-            //await UniTask.WaitWhile(()=>    _appearAudioSource[i].isPlaying, cancellationToken: token);
         }
 
         _createParticleSystem.Play();
         _gameAudio.PlayNextSound(_gameAudio.PiecesAppear);
-        await UniTask.Delay(TimeSpan.FromSeconds(_creatingInterval), cancellationToken: token);
-       
+        await UniTask.WhenAll(appearTasks);
+
         return pieceView;
     }
 
