@@ -15,6 +15,8 @@ public class GameDataForSave {
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
     public int ProfileAvatar;
+    public bool IsFirstAttemptWin;
+    public int FirstAttemptWinLevelsCount;
     
     public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
     public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};

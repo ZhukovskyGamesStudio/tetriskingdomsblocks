@@ -90,6 +90,7 @@ public class MetaUI : MonoBehaviour {
             DialogType = typeof(RetentionDialog),
             Data = new RetentionDialog.Data {
                 ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
+                ClickDefaultClaim = MetaFieldManager.Instance.CollectDefaultResourcesFromAllMarks,
                 OfflineResources = new List<RetentionDialog.RetentionResource> {
                     new() { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
                     new() { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
@@ -127,10 +128,10 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(ProfileDialog),
             Data = new ProfileDialog.Data {
-                BuiltCells = 123,
-                Levels = 123,
+                BuiltCells = StorageManager.GameDataMain.PlacedInMetaPiecesCount,
+                Levels = StorageManager.GameDataMain.CurMaxLevel,
                 WeeksBest = 123, // TODO: убрать заглушки
-                Wins = 123,
+                Wins = StorageManager.GameDataMain.FirstAttemptWinLevelsCount,
                 PlayerName = "PlayerName12345",
                 ClickEditAvatar = OpenEditAvatar,
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
