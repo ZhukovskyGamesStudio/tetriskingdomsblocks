@@ -479,7 +479,8 @@ public class MetaFieldManager : FieldManager {
             MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
-            GenerateNewPiece();
+            var pieceData = GenerateNewPiece();
+            MetaUI.Instance.OpenLootboxDialog(pieceData);
         }
     }
 
@@ -487,13 +488,13 @@ public class MetaFieldManager : FieldManager {
         DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
     }
 
-    public void GenerateNewPiece() {
-        Debug.Log(StorageManager.GameDataMain.PlacedInMetaPiecesCount);
+    public PieceData GenerateNewPiece() {
         CellTypeInfo cellTypeInfo = StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
         var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
         AddPieceToInventory(pieceData);
         StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
         SaveInventory();
+        return pieceData;
     }
 
     public void AddPieceToInventory(PieceData pieceView) {
