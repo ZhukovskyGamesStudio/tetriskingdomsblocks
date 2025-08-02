@@ -163,6 +163,7 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenResources() {
         Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
+        if(resourcesInfo.Count == 0)return;
         resourcesInfo.TryAdd(ResourceType.Wood,  0);
         resourcesInfo.TryAdd(ResourceType.Rocks,  0);
         resourcesInfo.TryAdd(ResourceType.Food,  0);
