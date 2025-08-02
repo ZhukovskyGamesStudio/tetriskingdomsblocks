@@ -149,10 +149,6 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
-
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.E)) _gameData.MovesLeft = 1;
-    }
     
     private bool CheckLose() {
         if(UltaManager.Instance._currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)

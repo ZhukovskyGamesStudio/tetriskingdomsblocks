@@ -95,6 +95,7 @@ public class MainManager : MonoBehaviour {
                 StorageManager.GameDataMain.MagicCubesAmount += count;
                 break;
             case ResourceType.MetaPiece:
+                MetaFieldManager.Instance.GenerateNewPiece();
                 break;
             default:
                 break;
