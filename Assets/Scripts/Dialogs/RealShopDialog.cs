@@ -5,16 +5,19 @@ using UnityEngine;
 
 public class RealShopDialog : DialogBase {
     [SerializeField]
-    private TextMeshProUGUI _balanceText, _titlePrefab;
+    private TextMeshProUGUI _balanceText;
 
     [SerializeField]
-    private Transform _offersContainer;
+    private Transform _specialOffersContainer, _resourceOffersContainer;
 
     [SerializeField]
-    private RealShopOffer _offerPrefab;
+    private RealShopOffer _specialOfferPrefab;
+    
+    [SerializeField]
+    private RealShopResourceOffer _resourceOfferPrefab;
 
     [SerializeField]
-    private GameObject _balancePanel;
+    private GameObject _coreState;
 
     [SerializeField]
     private ShopOffersConfig _offersConfig;
@@ -24,26 +27,32 @@ public class RealShopDialog : DialogBase {
     public override void SetData(object data) {
         Data dialogData = data as Data;
         
-        if(dialogData.Balance != null) _balanceText.text = dialogData.Balance.ToString();
-        else _balancePanel.SetActive(false);
+        if (dialogData.IsCore) {
+            _balanceText.text = dialogData.Balance.ToString();
+        } else _coreState.SetActive(false);
         
         _clickClose = dialogData.ClickClose;
-        foreach (OffersGroupData offersGroup in _offersConfig.OffersGroups) {
-            Instantiate(_titlePrefab, _offersContainer).text = offersGroup.Title;
-            foreach (OfferData offerData in offersGroup.Offers) {
-                Instantiate(_offerPrefab, _offersContainer).SetData(offerData);
-            }
+
+        foreach (SpecialOfferData specialOffer in _offersConfig.SpecialOffers) {
+            RealShopOffer newOffer = Instantiate(_specialOfferPrefab, _specialOffersContainer);
+            newOffer.SetData(specialOffer);
+        }
+        
+        foreach (ResourceOfferData resourceOffer in _offersConfig.ResourceOffers) {
+            RealShopResourceOffer newOffer = Instantiate(_resourceOfferPrefab, _resourceOffersContainer);
+            newOffer.SetData(resourceOffer);
         }
     }
 
     public void ClickClose() {
         Hide().Forget();
-        _clickClose.Invoke();
+        _clickClose?.Invoke();
     }
 
     [Serializable]
     public class Data {
         public Action ClickClose;
-        public int? Balance = null;
+        public int Balance;
+        public bool IsCore;
     }
 }
