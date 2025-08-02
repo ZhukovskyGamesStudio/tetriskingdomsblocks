@@ -219,7 +219,8 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
-                ClickClose = MetaTabsPanel.Instance.OpenRule
+                ClickClose = MetaTabsPanel.Instance.OpenRule,
+                BuyResource = MainManager.Instance.BuyMetaResource
             }
         };
         

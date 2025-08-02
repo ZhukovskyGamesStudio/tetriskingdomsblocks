@@ -70,13 +70,26 @@ public class GameUI : MonoBehaviour {
         SettingsManager.Instance.ShowGameSettingsDialog();
     }
 
-    public void ShowOutOfMovesDialog(Action tryBuyMoves, Action rejectMoves) {
+    public void ShowShopDialog() {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(RealShopDialog),
+            Data = new RealShopDialog.Data {
+                Balance = Mathf.FloorToInt(StorageManager.GameDataMain.GoldAmount),
+                ClickClose = ShowOutOfMovesDialog,
+                BuyResource = MainManager.Instance.BuyMetaResource,
+                IsCore = true
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
+    }
+
+    public void ShowOutOfMovesDialog() {
         var outOfMovesData = new DialogWithData {
             DialogType = typeof(OutOfMovesDialog),
             Data = new OutOfMovesDialog.Data {
-                ClickAdd = tryBuyMoves,
-                ClickClose = rejectMoves,
-                Balance = Mathf.FloorToInt(StorageManager.GameDataMain.GoldAmount) ,
+                BuyMoves = GameEntryPoint.Instance.TryBuyMoves,
+                ClickClose = GameEntryPoint.Instance.RejectMoves,
                 Cost = 900
             }
         };

@@ -28,5 +28,9 @@ public enum ResourceType {
     Ice = 7,
     Gold = 8,
     Crystal = 9,
-    Slime = 10
+    Slime = 10,
+    MetaPiece = 11,
+    Health = 12,
+    MetaGold = 13,
+    MagicCube = 14
 }

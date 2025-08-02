@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameEntryPoint : MonoBehaviour {
+    public static GameEntryPoint Instance;
+    
     [SerializeField]
     private GameFieldManager _gameFieldManager;
 
@@ -24,6 +26,7 @@ public class GameEntryPoint : MonoBehaviour {
 
 
     private void Start() {
+        Instance = this;
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
         _gameData = new GameData {
             MovesLeft = levelConfig.MovesCount
@@ -122,12 +125,13 @@ public class GameEntryPoint : MonoBehaviour {
         }
 
         if (_gameData.MovesLeft <= 0 && !_gameData.RejectedBuyMoves) {
-            GameUI.Instance.ShowOutOfMovesDialog(TryBuyMoves, RejectMoves);
+            GameUI.Instance.ShowOutOfMovesDialog();
         }
     }
 
-    private void TryBuyMoves() {
+    public void TryBuyMoves() {
         if (StorageManager.GameDataMain.GoldAmount < 900) {
+            GameUI.Instance.ShowShopDialog();
             return;
         }
 
@@ -139,13 +143,17 @@ public class GameEntryPoint : MonoBehaviour {
         _gameData.MovesLeft += 5;
     }
 
-    private void RejectMoves() {
+    public void RejectMoves() {
         _gameData.RejectedBuyMoves = true;
         Lose();
     }
 
     private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
 
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.E)) _gameData.MovesLeft = 1;
+    }
+    
     private bool CheckLose() {
         if(UltaManager.Instance._currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
             return false;
