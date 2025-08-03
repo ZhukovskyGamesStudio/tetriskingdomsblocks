@@ -50,6 +50,8 @@ public class MetaUI : MonoBehaviour {
     
     [field:SerializeField]
     public GetPieceButtonView  _getPieceButtonView{ get; private set; }
+    [field:SerializeField]
+    public Button  _playButton{ get; private set; }
     [SerializeField]
     private MetaTutorial  _metaTutorial;
     [SerializeField]

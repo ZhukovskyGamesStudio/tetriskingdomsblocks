@@ -74,6 +74,7 @@ public class MetaTutorial : MonoBehaviour
         ShowFirstStepTutorial();
         SetHolesPositions();
       //  StartAnimation();
+      MetaUI.Instance._playButton.enabled = false;
     }
 
     private void Update() {
@@ -95,8 +96,8 @@ public class MetaTutorial : MonoBehaviour
         // Присваиваем позицию UI-элементу
         //ar posHoleFirst = GameUI.Instance._tasksContainer.position;
        // MetaUI.Instance.
-   
-        
+       MetaUI.Instance._buildButton.GetComponent<Button>().enabled = false;
+       MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
         //_holeImages[1].transform.SetParent(_holeHelper._holesContainer,true);
         //_holeImages[0].transform.SetParent(_holeHelper._holesContainer,true);
         //_holeImages[2].transform.SetParent(_holeHelper._holesContainer,true);
@@ -186,6 +187,8 @@ public class MetaTutorial : MonoBehaviour
      _tutorialText.text = _thirdTutorialText;
      _tutorialText.transform.position =
          new Vector2(_holeImageGetFreeTetramineButton.position.x, _holeImageGetFreeTetramineButton.position.y + 200);
+     
+     MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
     }
 
     public void HideThirdStepTutorial() {
@@ -209,11 +212,12 @@ public class MetaTutorial : MonoBehaviour
       _holeImageBuildButton.gameObject.SetActive(true);
       _tutorialText.transform.position = new Vector2(MetaUI.Instance._buildButton.transform.position.x, MetaUI.Instance._buildButton.transform.position.y + 200) ;
       MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.AddListener(ShowFifthStepTutorial);
+      MetaUI.Instance._buildButton.GetComponent<Button>().enabled = true;
         _tutorialStep = 4;
         _tutorialText.text = _fourthTutorialText;
     }
 
-    private void ShowFifthStepTutorial() {
+    private void ShowFifthStepTutorial() { 
         _holeImageBuildButton.gameObject.SetActive(true);
         MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.RemoveListener(ShowFifthStepTutorial);
         _tutorialStep = 5;
@@ -254,6 +258,7 @@ public class MetaTutorial : MonoBehaviour
     }
 
     public void DestroyTutorial() {
+        MetaUI.Instance._playButton.enabled = true;
         _currentTween.Kill();
       //  foreach (var hole in _holeImages) {
     //        Destroy(hole.gameObject);
