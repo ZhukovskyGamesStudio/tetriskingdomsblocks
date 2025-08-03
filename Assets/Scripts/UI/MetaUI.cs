@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
-
+    [field: SerializeField]
+    public Transform _buildButton { get;private set; }
     [field: SerializeField]
     public HealthView HealthView { get; private set; }
 
@@ -47,8 +48,12 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private AvatarsConfig _avatarsConfig;
     
+    [field:SerializeField]
+    public GetPieceButtonView  _getPieceButtonView{ get; private set; }
     [SerializeField]
-    private GetPieceButtonView  _getPieceButtonView;
+    private MetaTutorial  _metaTutorial;
+    [SerializeField]
+    private Transform  _metaTutorialContainer;
 
     private ObjectPool<TMP_Text> _floatingTextsPool;
 
@@ -57,6 +62,8 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
+       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0)
+            Instantiate(_metaTutorial,_metaTutorialContainer);
     }
     
     public TMP_Text ShowFloatingText() {

@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GetPieceButtonView : MonoBehaviour {
     [SerializeField]
@@ -11,6 +12,8 @@ public class GetPieceButtonView : MonoBehaviour {
 
     [SerializeField]
     private TextMeshProUGUI _timerText;
+
+    public Button GetPieceButton;
 
     public void GetPiece() {
         _metaManager.GetPiece();

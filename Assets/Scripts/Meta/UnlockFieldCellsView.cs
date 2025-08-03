@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnlockFieldCellsView : MonoBehaviour {
     [SerializeField]
@@ -7,6 +8,8 @@ public class UnlockFieldCellsView : MonoBehaviour {
 
     [SerializeField]
     private TMP_Text _unlockCellText;
+    [field:SerializeField]
+    public Button UnlockButton { get; private set; }
 
     public void SetActiveUnlockUI(bool active) => _unlockCellUIContainer.gameObject.SetActive(active);
 
