@@ -21,6 +21,7 @@ public class SpecialOfferData {
 public class ResourceOfferData {
     public Sprite Icon;
     public float Price;
+    public float ImageScale = 1;
     public ResourceType Resource;
     public int ResourceCount;
 }

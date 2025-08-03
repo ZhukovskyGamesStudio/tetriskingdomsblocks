@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpecialOffers:
   - Price: 100
-    Icon: {fileID: 21300000, guid: 549402b90ccc08647ad76d4d55857e80, type: 3}
+    Icon: {fileID: 21300000, guid: 2d22c73bb7ee0d74eb3898bef6dced8d, type: 3}
     Resources:
       _serializedList:
       - Key: 1
@@ -24,7 +24,23 @@ MonoBehaviour:
       - Key: 10
         Value: 100
   ResourceOffers:
-  - Icon: {fileID: 21300000, guid: 549402b90ccc08647ad76d4d55857e80, type: 3}
+  - Icon: {fileID: 21300000, guid: bbaa93b594cd8f74bbcef1a032c7edfc, type: 3}
+    Price: 200
+    ImageScale: 1
+    Resource: 12
+    ResourceCount: 10
+  - Icon: {fileID: 21300000, guid: a4e7b91a2c0508a4cbf1a29c26366db1, type: 3}
+    Price: 200
+    ImageScale: 0.9
+    Resource: 14
+    ResourceCount: 50
+  - Icon: {fileID: 21300000, guid: aa04871d55ad4478a99ba540017e88c0, type: 3}
+    Price: 200
+    ImageScale: 0.7
+    Resource: 13
+    ResourceCount: 50
+  - Icon: {fileID: 21300000, guid: 5129e0a181b07d848b1aac36ff102ae5, type: 3}
     Price: 100
-    Resource: 2
-    ResourceCount: 100
+    ImageScale: 0.9
+    Resource: 11
+    ResourceCount: 1
