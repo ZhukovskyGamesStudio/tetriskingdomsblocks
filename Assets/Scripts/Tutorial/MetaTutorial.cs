@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Events; 
 
 public class MetaTutorial : MonoBehaviour
 {
@@ -65,7 +67,7 @@ public class MetaTutorial : MonoBehaviour
 
     private Vector3 _cameraPosition = new Vector3(-7.5f, 0, -2);
 
-    private Button _invCell;
+    private EventTrigger _invCell;
 
     void Start() {
        // GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
@@ -92,7 +94,7 @@ public class MetaTutorial : MonoBehaviour
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
         // Присваиваем позицию UI-элементу
         //ar posHoleFirst = GameUI.Instance._tasksContainer.position;
-        
+       // MetaUI.Instance.
    
         
         //_holeImages[1].transform.SetParent(_holeHelper._holesContainer,true);
@@ -102,7 +104,7 @@ public class MetaTutorial : MonoBehaviour
         //_holeImages[1].position = posHoleFirst;
       //  _holeImages[0].transform.position = posHoleSecond;
         //_holeImages[2].transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 3.5f));
-        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(3, 0, 6));
+        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 4));
         _fingerImage.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 2));
       //  _holeImages[0].gameObject.SetActive(true);
       //  _holeImages[1].gameObject.SetActive(false);
@@ -126,7 +128,7 @@ public class MetaTutorial : MonoBehaviour
        Invoke("MoveCameraToNeedPosition", 1.5f);
         TutorialHoleHelper.DestroyHoles();
 //        _fingerImage.transform.position =  (Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 5f));
-        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 7f));
+        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 4f));
       //  List<GameObject> highlihtObjects = new List<GameObject>();
        // foreach (var needPos in _openedCloudCells) {
        //     highlihtObjects.Add(MetaFieldManager.Instance._cells[needPos.x, needPos.y].Children.gameObject);    
@@ -182,10 +184,13 @@ public class MetaTutorial : MonoBehaviour
      _holeImageGetFreeTetramineButton.gameObject.SetActive(true);
      MetaUI.Instance._getPieceButtonView.GetPieceButton.onClick.AddListener(HideThirdStepTutorial);
      _tutorialText.text = _thirdTutorialText;
+     _tutorialText.transform.position =
+         new Vector2(_holeImageGetFreeTetramineButton.position.x, _holeImageGetFreeTetramineButton.position.y + 200);
     }
 
     public void HideThirdStepTutorial() {
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
+        _tutorialText.gameObject.SetActive(false);
        Invoke("FindContinueButton", 1f);
     }
 
@@ -200,7 +205,9 @@ public class MetaTutorial : MonoBehaviour
     }
     private void ShowFourthStepTutorial() {
       //  continueButton.onClick.AddListener(ShowFourthStepTutorial);
+      _tutorialText.gameObject.SetActive(true);
       _holeImageBuildButton.gameObject.SetActive(true);
+      _tutorialText.transform.position = new Vector2(MetaUI.Instance._buildButton.transform.position.x, MetaUI.Instance._buildButton.transform.position.y + 200) ;
       MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.AddListener(ShowFifthStepTutorial);
         _tutorialStep = 4;
         _tutorialText.text = _fourthTutorialText;
@@ -210,17 +217,31 @@ public class MetaTutorial : MonoBehaviour
         _holeImageBuildButton.gameObject.SetActive(true);
         MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.RemoveListener(ShowFifthStepTutorial);
         _tutorialStep = 5;
-        _holeTetraminesToBuild.gameObject.SetActive(true);
-        _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<Button>();
-        _invCell.onClick.AddListener(ShowSixthStepTutorial);
+       
+       
         _tutorialText.text = _fifethTutorialText;
+        Invoke("SetupInventoryCell", 0.3f);
     }
 
-    private void ShowSixthStepTutorial() {
+    private void SetupInventoryCell() {
+        _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<EventTrigger>();
+        _holeTetraminesToBuild.gameObject.SetActive(true);
+        _holeTetraminesToBuild.position = _invCell.transform.position;
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.BeginDrag;
+        _tutorialText.transform.position = new Vector2(_invCell.transform.position.x, _invCell.transform.position.y + 250);
+        UnityAction<BaseEventData> callback = new UnityAction<BaseEventData>(ShowSixthStepTutorial);
+        entry.callback.AddListener(callback);
+
+        _invCell.triggers.Add(entry);
+    }
+    
+
+    private void ShowSixthStepTutorial(BaseEventData eventData) {
         _tutorialText.text = _sixthTutorialText;
         _tutorialStep = 5;
+        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 5f));
         _holeImageBuildButton.gameObject.SetActive(false);
-        _invCell.onClick.RemoveListener(ShowSixthStepTutorial);
         MetaFieldManager.Instance.OnCellPlaced += (i, bools) =>  HideSixthStepTutorial();
         //highlight field
     }
@@ -238,7 +259,6 @@ public class MetaTutorial : MonoBehaviour
     //        Destroy(hole.gameObject);
    //     }
 
-        Destroy(_blackBGImage.gameObject);
         Destroy(_fingerImage.gameObject);
 
         Destroy(gameObject);
