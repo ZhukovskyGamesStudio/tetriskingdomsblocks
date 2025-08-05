@@ -135,7 +135,7 @@ public class MetaTutorial : MonoBehaviour
        //     highlihtObjects.Add(MetaFieldManager.Instance._cells[needPos.x, needPos.y].Children.gameObject);    
       //  }
         //TutorialHoleHelper.HighlightObjects(highlihtObjects);
-        TutorialHoleHelper.SpawnHoles(_openedCloudCells);
+        
         _tutorialText.text = _openCloudsText;
        // HighlightCurrentPiece();
     }
@@ -143,6 +143,7 @@ public class MetaTutorial : MonoBehaviour
     private void MoveCameraToNeedPosition() {
          MetaFieldManager.Instance.CanDragCamera = false;
               MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
+              TutorialHoleHelper.SpawnHoles(_openedCloudCells);
     }
     private GameObject _pieceCellsContainer;
 
@@ -199,9 +200,12 @@ public class MetaTutorial : MonoBehaviour
 
     private void FindContinueButton() {
          var continueButton = GameObject.Find("OpenState")?.GetComponent<Button>();
-                continueButton.onClick.AddListener(FindNextButton);
+                continueButton.onClick.AddListener(FindNextButtonInvoke);
     }
 
+    private void FindNextButtonInvoke() {
+        Invoke("FindNextButton", 0.5f);
+    }
     private void FindNextButton() {
         var continueButton = GameObject.Find("ContinueState")?.GetComponent<Button>();
         continueButton.onClick.AddListener(ShowFourthStepTutorial);

@@ -68,7 +68,7 @@ public class FieldManager : MonoBehaviour {
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
-        _mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Highlighted"));
+       // _mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Highlighted"));
     }
 
     protected virtual void Start() {
