@@ -39,7 +39,7 @@ public class FieldManager : MonoBehaviour {
     //  protected DateTime _currentGameTime;
 
     public CellType[,] _field { get; protected set; }
-    protected CellView[,] _cells;
+    public CellView[,] _cells{ get; protected set; }
 
     public CellView GetCellInCoord(Vector3Int coord) {
         return _cells[coord.x, coord.z];
@@ -68,7 +68,7 @@ public class FieldManager : MonoBehaviour {
 
     protected virtual void Awake() {
         _inputRaycaster = new InputRaycaster(_mainCamera, _targetMasks, _additionalContainerMask);
-        _mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Highlighted"));
+       // _mainCamera.cullingMask |= (1 << LayerMask.NameToLayer("Highlighted"));
     }
 
     protected virtual void Start() {

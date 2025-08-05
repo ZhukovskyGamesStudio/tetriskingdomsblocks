@@ -5,48 +5,31 @@ using UnityEngine;
 
 public class OutOfMovesDialog : DialogBase {
     [SerializeField]
-    private TextMeshProUGUI _balanceText, _costText;
+    private TextMeshProUGUI _costText;
 
-    private Action _clickAdd, _clickClose;
+    private Action _buyMoves, _clickClose;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
-        _clickAdd = dialogData.ClickAdd;
+        _buyMoves = dialogData.BuyMoves;
         _clickClose = dialogData.ClickClose;
-        _balanceText.text = dialogData.Balance.ToString();
-        _costText.text = _costText.text.Replace("{cost}", dialogData.Cost.ToString());
+        _costText.text = dialogData.Cost.ToString();
     }
 
-    public void ClickAdd() {
-        _clickAdd.Invoke();
+    public void ClickBuy() {
         Hide().Forget();
+        _buyMoves.Invoke();
     }
 
-    public void ClickClose() {
+    public void ClickCLose() {
         Hide().Forget();
         _clickClose.Invoke();
     }
 
-    public void ClickBalance() {
-        Hide().Forget();
-        
-        var dialog = new DialogWithData {
-            DialogType = typeof(RealShopDialog),
-            Data = new RealShopDialog.Data {
-                Balance = 1000
-            }
-        };
-        
-        DialogsManager.Instance.ShowDialogWithData(dialog);
-        DialogsManager.Instance.ShowDialogWithData(dialog);
-    }
-
     [Serializable]
     public class Data {
-        public Action ClickAdd;
-        public Action ClickClose;
-        public int Balance;
         public int Cost;
+        public Action BuyMoves, ClickClose;
     }
 }

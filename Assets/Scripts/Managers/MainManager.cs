@@ -83,7 +83,24 @@ public class MainManager : MonoBehaviour {
                 .AddMinutes(healthToAdd * MINUTES_TO_HEALTH_RECOVERY).ToString(CultureInfo.InvariantCulture);
     }
 
-   
+    public void BuyMetaResource(ResourceType resource, int count) {
+        switch (resource) {
+            case ResourceType.MetaGold:
+                StorageManager.GameDataMain.GoldAmount += count;
+                break;
+            case ResourceType.Health:
+                StorageManager.GameDataMain.HealthCount += count;
+                break;
+            case ResourceType.MagicCube:
+                StorageManager.GameDataMain.MagicCubesAmount += count;
+                break;
+            case ResourceType.MetaPiece:
+                MetaFieldManager.Instance.GenerateNewPiece();
+                break;
+            default:
+                break;
+        }
+    }
 
     private void UpdateTimerAndHealth() {
         if (MetaUI.Instance == null && !_hasInternetConnection) return;

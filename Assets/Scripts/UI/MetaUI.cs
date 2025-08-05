@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
-
+    [field: SerializeField]
+    public Transform _buildButton { get;private set; }
     [field: SerializeField]
     public HealthView HealthView { get; private set; }
 
@@ -47,8 +48,14 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private AvatarsConfig _avatarsConfig;
     
+    [field:SerializeField]
+    public GetPieceButtonView  _getPieceButtonView{ get; private set; }
+    [field:SerializeField]
+    public Button  _playButton{ get; private set; }
     [SerializeField]
-    private GetPieceButtonView  _getPieceButtonView;
+    private MetaTutorial  _metaTutorial;
+    [SerializeField]
+    private Transform  _metaTutorialContainer;
 
     private ObjectPool<TMP_Text> _floatingTextsPool;
 
@@ -57,6 +64,8 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
+       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0)
+            Instantiate(_metaTutorial,_metaTutorialContainer);
     }
     
     public TMP_Text ShowFloatingText() {
@@ -163,6 +172,7 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenResources() {
         Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
+        if(resourcesInfo.Count == 0)return;
         resourcesInfo.TryAdd(ResourceType.Wood,  0);
         resourcesInfo.TryAdd(ResourceType.Rocks,  0);
         resourcesInfo.TryAdd(ResourceType.Food,  0);
@@ -219,7 +229,8 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
-                ClickClose = MetaTabsPanel.Instance.OpenRule
+                ClickClose = MetaTabsPanel.Instance.OpenRule,
+                BuyResource = MainManager.Instance.BuyMetaResource
             }
         };
         

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Pool;
@@ -51,6 +52,8 @@ public class MetaFieldManager : FieldManager {
 
     [SerializedDictionary]
     public SerializedDictionary<CellType, ResourceType> _cellsResources;
+    
+    public bool CanDragCamera = true;
 
     protected override void Awake() {
         base.Awake();
@@ -93,6 +96,7 @@ public class MetaFieldManager : FieldManager {
     private bool _isDragging;
 
     private void CheckDragCamera() {
+       
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
@@ -113,8 +117,7 @@ public class MetaFieldManager : FieldManager {
 
             _nowCellUnlockUIWasClose = false;
         }
-
-        if (Input.GetMouseButton(0) && _isDragging && _currentDraggedPieceButton == null) {
+        if (Input.GetMouseButton(0) && CanDragCamera && _isDragging && _currentDraggedPieceButton == null) {
             DragCamera();
         }
     }

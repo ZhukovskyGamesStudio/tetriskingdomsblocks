@@ -20,7 +20,7 @@ public class DialogShowHideAnimation : MonoBehaviour {
         EnsureAnimationComponent();
         _animation.Play(_showClip.name);
 
-        await UniTask.WaitWhile(() => _animation.isPlaying);
+        await UniTask.WaitWhile(() => _animation != null && _animation.isPlaying);
     }
 
     public async UniTask Hide() {
@@ -34,7 +34,7 @@ public class DialogShowHideAnimation : MonoBehaviour {
         EnsureAnimationComponent();
         _animation.Play(_hideClip.name);
 
-        await UniTask.WaitWhile(() => _animation.isPlaying);
+        await UniTask.WaitWhile(() => _animation != null && _animation.isPlaying);
     }
 
     private void EnsureAnimationComponent() {

@@ -20,6 +20,7 @@ public class GameFieldManager : FieldManager {
 
     private List<Vector2Int> _cellsToDestroy = new List<Vector2Int>();
 
+    private List<int> _firstPiecesCounts = new List<int>();
     private int _placedPiecesAmount;
     private bool _isSlimeExist;
     private GameData _gameData;
@@ -36,15 +37,17 @@ public class GameFieldManager : FieldManager {
         _nextBlocks = new List<PieceData>() {
             PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells)
         };
-        if (_placedPiecesAmount == 0 && MainManager.Instance.CurrentLevelConfig.FirstFiguresCount == 1) {
-            _placedPiecesAmount = 2;
+        if (_firstPiecesCounts.Count != 0 && _firstPiecesCounts[0] == 1) {
+            _placedPiecesAmount += 2;
+            _firstPiecesCounts.RemoveAt(0);
             NextPiecesView.Instance.SetData(_nextBlocks);
             return;
         }
 
         _nextBlocks.Add(PieceUtils.GetNewCorePiece(_currentGuaranteedFirstCells));
-        if (_placedPiecesAmount == 0 && MainManager.Instance.CurrentLevelConfig.FirstFiguresCount == 2) {
-            _placedPiecesAmount = 1;
+        if (_firstPiecesCounts.Count != 0 && _firstPiecesCounts[0] == 2) {
+            _placedPiecesAmount ++;
+            _firstPiecesCounts.RemoveAt(0);
             NextPiecesView.Instance.SetData(_nextBlocks);
             return;
         }
@@ -590,6 +593,13 @@ public class GameFieldManager : FieldManager {
     }
 
     public override void SetupGame() {
+        _firstPiecesCounts = new List<int>();
+        foreach (var count in  MainManager.Instance.CurrentLevelConfig.FirstFiguresCount) {
+             _firstPiecesCounts.Add(count);
+        }
+
+       
+       
         GenerateNewPieces();
 
         base.SetupGame();

@@ -23,9 +23,12 @@ public class RealShopDialog : DialogBase {
     private ShopOffersConfig _offersConfig;
 
     private Action _clickClose;
+    private Action<ResourceType, int> _buyResource;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
+
+        _buyResource = dialogData.BuyResource;
         
         if (dialogData.IsCore) {
             _balanceText.text = dialogData.Balance.ToString();
@@ -40,8 +43,12 @@ public class RealShopDialog : DialogBase {
         
         foreach (ResourceOfferData resourceOffer in _offersConfig.ResourceOffers) {
             RealShopResourceOffer newOffer = Instantiate(_resourceOfferPrefab, _resourceOffersContainer);
-            newOffer.SetData(resourceOffer);
+            newOffer.SetData(resourceOffer, BuyResource);
         }
+    }
+
+    public void BuyResource(ResourceType resource, int count) {
+        _buyResource.Invoke(resource, count);
     }
 
     public void ClickClose() {
@@ -54,5 +61,6 @@ public class RealShopDialog : DialogBase {
         public Action ClickClose;
         public int Balance;
         public bool IsCore;
+        public Action<ResourceType, int> BuyResource;
     }
 }
