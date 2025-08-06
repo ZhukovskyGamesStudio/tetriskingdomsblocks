@@ -88,13 +88,14 @@ public class MetaUI : MonoBehaviour {
 
         LoadingManager.Instance.FirstLoad = false;
         Dictionary<ResourceType, float> afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
-        afkResources.TryAdd(ResourceType.Wood, 0);
-        afkResources.TryAdd(ResourceType.Rocks, 0);
-        afkResources.TryAdd(ResourceType.Food, 0);
-        afkResources.TryAdd(ResourceType.Metal, 0);
-
+    
         if (afkResources.All(kvp => kvp.Value == 0)) {
             return;
+        }
+        
+        List<RetentionDialog.RetentionResource> resourcesToDialog = new List<RetentionDialog.RetentionResource>();
+        foreach (var resource in afkResources) {
+            resourcesToDialog.Add(new(){ Count = (int)resource.Value, Resource = resource.Key});
         }
 
         var dialog = new DialogWithData {
@@ -102,12 +103,7 @@ public class MetaUI : MonoBehaviour {
             Data = new RetentionDialog.Data {
                 ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
                 ClickDefaultClaim = MetaFieldManager.Instance.CollectDefaultResourcesFromAllMarks,
-                OfflineResources = new List<RetentionDialog.RetentionResource> {
-                    new() { Count = (int)afkResources[ResourceType.Wood], Resource = ResourceType.Wood },
-                    new() { Count = (int)afkResources[ResourceType.Rocks], Resource = ResourceType.Rocks },
-                    new() { Count = (int)afkResources[ResourceType.Food], Resource = ResourceType.Food },
-                    new() { Count = (int)afkResources[ResourceType.Metal], Resource = ResourceType.Metal }
-                }
+                OfflineResources = resourcesToDialog
                 
             }
         };
