@@ -24,6 +24,7 @@ public class LoadingManager : MonoBehaviour {
 
     private void InitManagers() {
         if (!StorageManager.IsTutorialCompleted()) {
+            Debug.Log("Tutorial is not completed, recreating save");
             StorageManager.CreateNewSaveData();
         }
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();

@@ -52,7 +52,7 @@ public class MetaFieldManager : FieldManager {
 
     [SerializedDictionary]
     public SerializedDictionary<CellType, ResourceType> _cellsResources;
-    
+
     public bool CanDragCamera = true;
 
     protected override void Awake() {
@@ -96,7 +96,6 @@ public class MetaFieldManager : FieldManager {
     private bool _isDragging;
 
     private void CheckDragCamera() {
-       
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
@@ -117,6 +116,7 @@ public class MetaFieldManager : FieldManager {
 
             _nowCellUnlockUIWasClose = false;
         }
+
         if (Input.GetMouseButton(0) && CanDragCamera && _isDragging && _currentDraggedPieceButton == null) {
             DragCamera();
         }
@@ -148,6 +148,7 @@ public class MetaFieldManager : FieldManager {
             if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) {
                 return false;
             }
+
             StorageManager.GameDataMain.MetaHummerCount--;
 
             int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
@@ -497,8 +498,11 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void GetPiece() {
-        if (MainManager.Instance._hasInternetConnection &&
-            MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
+        if (!MainManager.Instance._hasInternetConnection) {
+            return;
+        }
+
+        if (MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
             var pieceData = GenerateNewPiece();
@@ -700,23 +704,20 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromAllMarks(float multiplayer) {
-        foreach (var resourceMarkGroup in _connectedGroups) { 
+        foreach (var resourceMarkGroup in _connectedGroups) {
             if (resourceMarkGroup.ResourceMarkView != null)
-            resourceMarkGroup.ResourceMarkView.CollectAnimation();
+                resourceMarkGroup.ResourceMarkView.CollectAnimation();
             CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer);
         }
     }
 
     public void CollectDoubleResourcesFromAllMarks() {
-      CollectResourcesFromAllMarks(2);
+        CollectResourcesFromAllMarks(2);
     }
-    
+
     public void CollectDefaultResourcesFromAllMarks() {
         CollectResourcesFromAllMarks(1);
     }
-
-    
-    
 
     private void CalculateCellSpawnChances() {
         float lastChance = 0;

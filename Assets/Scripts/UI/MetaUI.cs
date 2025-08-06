@@ -64,8 +64,10 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
-       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0)
-            Instantiate(_metaTutorial,_metaTutorialContainer);
+        //TODO Skipped for testing purposes
+       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && false) {
+           Instantiate(_metaTutorial, _metaTutorialContainer);
+       }
     }
     
     public TMP_Text ShowFloatingText() {
