@@ -17,6 +17,8 @@ public class DialogsManager : MonoBehaviour {
     private Canvas _dialogsCanvas;
 
     private DialogBase _currentDialog;
+    
+    public bool IsDialogActive => _currentDialog != null;
 
     private int _dialogsCanvasSortingOrder;
 

@@ -12,6 +12,9 @@ public class LootboxDialog : DialogBase {
     [SerializeField]
     private Animator _chestAnimator;
 
+    [SerializeField]
+    private Transform _pieceContainer;
+
     [Header("Animation parameters")]
     [SerializeField]
     private Vector3 _finalRotation;
@@ -45,7 +48,7 @@ public class LootboxDialog : DialogBase {
     }
 
     private PieceView CreatePiece(PieceData nextPiece) {
-        _piece = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _chestAnimator.transform.parent, true);
+        _piece = Instantiate(PiecesViewTable.Instance.PieceViewPrefab, _pieceContainer);
         _piece.SetData(nextPiece);
         _piece.enabled = false;
         MeshRenderer[] renderers = _piece.GetComponentsInChildren<MeshRenderer>();

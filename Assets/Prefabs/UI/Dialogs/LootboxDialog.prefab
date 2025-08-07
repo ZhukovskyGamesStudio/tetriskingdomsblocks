@@ -32,10 +32,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7547629097696236067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 330}
+  m_SizeDelta: {x: 735.92, y: 118.37598}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2558424896582474696
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Continue
+  m_text: Tap to Claim
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 3154116607
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0.73333335}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -245,7 +245,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 9106508573297120689}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -336,7 +336,7 @@ Camera:
   far clip plane: 2500
   field of view: 38
   orthographic: 1
-  orthographic size: 700
+  orthographic size: 1440
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -385,10 +385,10 @@ RectTransform:
   - {fileID: 469609165009451105}
   m_Father: {fileID: 4407912742773344138}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000015259, y: -570}
-  m_SizeDelta: {x: 631.34, y: 118.376}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 390}
+  m_SizeDelta: {x: 631.34, y: 118.37598}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &915409394534621634
 CanvasRenderer:
@@ -498,7 +498,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1080, y: 1440}
+  m_SizeDelta: {x: 1440, y: 2960}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2841108989002985550
 CanvasRenderer:
@@ -738,10 +738,10 @@ RectTransform:
   - {fileID: 2930517282223242759}
   m_Father: {fileID: 7079032554964311677}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000015259, y: -570}
-  m_SizeDelta: {x: 631.34, y: 118.376}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5523475660288009443
 CanvasRenderer:
@@ -764,7 +764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -954,7 +954,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1026,10 +1026,10 @@ RectTransform:
   m_Children:
   - {fileID: 4216578747144353732}
   - {fileID: 427989612081673855}
-  - {fileID: 4407912742773344138}
-  - {fileID: 7079032554964311677}
   - {fileID: 1680229476037094743}
   - {fileID: 3783909945741937569}
+  - {fileID: 4407912742773344138}
+  - {fileID: 7079032554964311677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1061,11 +1061,9 @@ MonoBehaviour:
   ForceOverlay: 1
   _openState: {fileID: 4736004258637782123}
   _continueState: {fileID: 840407738850722905}
-  _chestAnimation: {fileID: 4871429510330139964}
   _chestAnimator: {fileID: 5107142999884264702}
-  _show: {fileID: 7400000, guid: 48d01a87a908d82478e60b8a7e1854c1, type: 2}
-  _idle: {fileID: 7400000, guid: 7a8b92a13f11c934ab2036671d446bd7, type: 2}
-  _open: {fileID: 7400000, guid: 0d7fba8f4b9bf78479a211e514bbb167, type: 2}
+  _pieceContainer: {fileID: 3130373094563735590}
+  _finalRotation: {x: -30, y: 0, z: -15}
   _fromScale: 30
   _toScale: 270
   _startYPos: 150
@@ -1073,7 +1071,6 @@ MonoBehaviour:
   _appearDelay: 1.25
   _appearDuration: 0.6
   _rotationSpeed: 15
-  _finalRotation: {x: -30, y: 0, z: -15}
 --- !u!114 &5923831264010438647
 MonoBehaviour:
   m_ObjectHideFlags: 0
