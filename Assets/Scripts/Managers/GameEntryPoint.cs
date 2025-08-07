@@ -130,12 +130,12 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     public void TryBuyMoves() {
-        if (StorageManager.GameDataMain.GoldAmount < 900) {
+        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] < 900) {
             GameUI.Instance.ShowShopDialog();
             return;
         }
 
-        StorageManager.GameDataMain.GoldAmount -= 900;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] -= 900;
         AddMoves();
     }
 
@@ -179,7 +179,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SaveWinGame() {
-        StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
         if (StorageManager.GameDataMain.IsFirstAttemptWin)
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
         StorageManager.GameDataMain.IsFirstAttemptWin = true;

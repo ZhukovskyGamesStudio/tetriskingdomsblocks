@@ -74,7 +74,7 @@ public class GameUI : MonoBehaviour {
         var dialogData = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
-                Balance = Mathf.FloorToInt(StorageManager.GameDataMain.GoldAmount),
+                Balance = Mathf.FloorToInt(StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold]),
                 ClickClose = ShowOutOfMovesDialog,
                 BuyResource = MainManager.Instance.BuyMetaResource,
                 IsCore = true

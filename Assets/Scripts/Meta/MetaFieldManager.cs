@@ -255,12 +255,12 @@ public class MetaFieldManager : FieldManager {
             MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType,
                 StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType]);
         } else {
-            if (StorageManager.GameDataMain.GoldAmount < cellConfig.UpgradeCost) {
+            if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] < cellConfig.UpgradeCost) {
                 return;
             }
 
-            StorageManager.GameDataMain.GoldAmount -= cellConfig.UpgradeCost;
-            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType, StorageManager.GameDataMain.GoldAmount);
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] -= cellConfig.UpgradeCost;
+            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType, StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold]);
             Vector3 finalUiNeedPos = Vector3.zero;
             foreach (var cellPos in cellsToUpgrade)
                 finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
@@ -717,8 +717,8 @@ public class MetaFieldManager : FieldManager {
             StorageManager.GameDataMain.ResourcesCount[curResource] += finalResourceCount;
             UpdateResourcesCountUIText();
         } else {
-            StorageManager.GameDataMain.GoldAmount += finalResourceCount;
-            MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] += finalResourceCount;
+            MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold]);
             UIAnimationsUtils.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Gold, Input.mousePosition,
                 MetaUI.Instance.CountersPanelView.GetGoldPosition);
         }

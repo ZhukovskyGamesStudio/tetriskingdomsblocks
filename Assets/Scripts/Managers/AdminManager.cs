@@ -1,5 +1,5 @@
 using System;
-using System.Globalization;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,14 +40,17 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddResources() {
-        foreach (var kvp in StorageManager.GameDataMain.ResourcesCount) {
-            StorageManager.GameDataMain.ResourcesCount[kvp.Key] += 100;
+        var keys = StorageManager.GameDataMain.ResourcesCount.Keys.ToList();
+
+        foreach (var key in keys) {
+            StorageManager.GameDataMain.ResourcesCount[key] += 100;
         }
 
         StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 20;
-        StorageManager.GameDataMain.GoldAmount += 100;
-        if (MetaUI.Instance != null)
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.MetaGold] += 100;
+        if (MetaUI.Instance != null) {
             MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
+        }
 
         MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }

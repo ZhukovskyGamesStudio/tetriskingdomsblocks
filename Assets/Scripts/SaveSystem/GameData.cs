@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using MoreMountains.Tools;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 [Serializable]
 public class GameDataForSave {
     public string CreatedVersion;
     public int CurMaxLevel;
-    public MMSerializableDictionary<ResourceType, float> ResourcesCount;
+    public SerializedDictionary<ResourceType, float> ResourcesCount;
     public List<int> RemainedLockedZones;
-    public float GoldAmount;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
@@ -43,7 +42,7 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        ResourcesCount = new MMSerializableDictionary<ResourceType, float>() {
+        ResourcesCount = new SerializedDictionary<ResourceType, float>() {
             { ResourceType.Wood, 3000 },
             { ResourceType.Rocks, 3000 },
             { ResourceType.Food, 3000 },
