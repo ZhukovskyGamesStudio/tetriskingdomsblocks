@@ -9,12 +9,14 @@ public class AdminManager : MonoBehaviour {
     public static AdminManager Instance { get; private set; }
     public Button LevelButton;
     public Transform LevelButtonsContainer;
-    public int LevelsCount;
     public Transform AdminPanelContainer;
     public Toggle AdminToggle;
 
     [SerializeField]
     private Toggle _infiniteHpToggle;
+    
+    [SerializeField]
+    private MainManagerConfig _mainManagerConfig;
 
     public static bool IsInfiniteHealth = true;
 
@@ -90,7 +92,7 @@ public class AdminManager : MonoBehaviour {
     }
 
     private void SetupLevelButtons() {
-        for (int i = 0; i < LevelsCount; i++) {
+        for (int i = 0; i < _mainManagerConfig.Levels.Length; i++) {
             int needLevel = i;
             var levelButton = Instantiate(LevelButton, LevelButtonsContainer);
             levelButton.onClick.AddListener(() => ChangeLevelToNeeded(needLevel));
