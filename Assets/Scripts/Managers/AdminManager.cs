@@ -47,7 +47,7 @@ public class AdminManager : MonoBehaviour {
         }
 
         StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 20;
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.MetaGold] += 100;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += 100;
         if (MetaUI.Instance != null) {
             MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
         }

@@ -246,7 +246,7 @@ public class MetaFieldManager : FieldManager {
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
 
-        if (cellConfig.AfkResourceType != ResourceType.Gold) {
+        if (cellConfig.AfkResourceType != ResourceType.Coins) {
             if (StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType] < cellConfig.UpgradeCost) {
                 return;
             }
@@ -255,20 +255,20 @@ public class MetaFieldManager : FieldManager {
             MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType,
                 StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType]);
         } else {
-            if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] < cellConfig.UpgradeCost) {
+            if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] < cellConfig.UpgradeCost) {
                 return;
             }
 
-            StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] -= cellConfig.UpgradeCost;
-            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType, StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold]);
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] -= cellConfig.UpgradeCost;
+            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType, StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins]);
             Vector3 finalUiNeedPos = Vector3.zero;
             foreach (var cellPos in cellsToUpgrade)
                 finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
 
             finalUiNeedPos /= cellsToUpgrade.Count;
 
-            UIAnimationsUtils.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Gold,
-                MetaUI.Instance.CountersPanelView.GetGoldPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos));
+            UIAnimationsUtils.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Coins,
+                MetaUI.Instance.CountersPanelView.GetCoinsPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos));
         }
 
         CollectResourcesFromMark(_groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1, 1);
@@ -591,7 +591,7 @@ public class MetaFieldManager : FieldManager {
         InvokeRepeating(nameof(UpdateResourceMarks), MainMetaConfig.resourceMarksUpdateCouldown, MainMetaConfig.resourceMarksUpdateCouldown);
         GetInventoryFromSave();
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
-        MetaUI.Instance.CountersPanelView.SetGold((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MetaGold]);
+        MetaUI.Instance.CountersPanelView.SetGold((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins]);
         MetaUI.Instance.SetPlayText("Lv. " + (StorageManager.GameDataMain.CurMaxLevel + 1));
 
         if (MainManager.Instance._hasInternetConnection) {
@@ -713,14 +713,14 @@ public class MetaFieldManager : FieldManager {
 
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
         var finalResourceCount = collectedResouces * multiplayerResources;
-        if (curResource != ResourceType.Gold) {
+        if (curResource != ResourceType.Coins) {
             StorageManager.GameDataMain.ResourcesCount[curResource] += finalResourceCount;
             UpdateResourcesCountUIText();
         } else {
-            StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] += finalResourceCount;
-            MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold]);
-            UIAnimationsUtils.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Gold, Input.mousePosition,
-                MetaUI.Instance.CountersPanelView.GetGoldPosition);
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += finalResourceCount;
+            MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins]);
+            UIAnimationsUtils.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Coins, Input.mousePosition,
+                MetaUI.Instance.CountersPanelView.GetCoinsPosition);
         }
     }
 

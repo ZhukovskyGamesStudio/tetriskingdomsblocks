@@ -85,8 +85,8 @@ public class MainManager : MonoBehaviour {
 
     public void BuyMetaResource(ResourceType resource, int count) {
         switch (resource) {
-            case ResourceType.MetaGold:
-                StorageManager.GameDataMain.ResourcesCount[ResourceType.Gold] += count;
+            case ResourceType.Coins:
+                StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += count;
                 break;
             case ResourceType.Health:
                 StorageManager.GameDataMain.HealthCount += count;

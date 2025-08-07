@@ -12,7 +12,7 @@ public class CountersPanelView : MonoBehaviour {
     [SerializeField]
     private SerializedDictionary<ResourceType, TMP_Text> _resourcesCountersTexts;
 
-    public Vector3 GetGoldPosition => _goldCounterText.transform.position;
+    public Vector3 GetCoinsPosition => _goldCounterText.transform.position;
     public Vector3 GetMagicCubesPosition => _magicCubeCounterText.transform.position;
 
     public void SetMagicCubes(int value) {

@@ -31,6 +31,6 @@ public enum ResourceType {
     Slime = 10,
     MetaPiece = 11,
     Health = 12,
-    MetaGold = 13,
+    Coins = 13,
     MagicCube = 14
 }

@@ -47,7 +47,7 @@ public class GameDataForSave {
             { ResourceType.Rocks, 3000 },
             { ResourceType.Food, 3000 },
             { ResourceType.MagicCube, 0 },
-            { ResourceType.MetaGold, 0 }
+            { ResourceType.Coins, 0 }
         };
         SettingsData = new SettingsData {
             IsSoundOn = true,
