@@ -92,7 +92,7 @@ public class MainManager : MonoBehaviour {
                 StorageManager.GameDataMain.HealthCount += count;
                 break;
             case ResourceType.MagicCube:
-                StorageManager.GameDataMain.MagicCubesAmount += count;
+                StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += count;
                 break;
             case ResourceType.MetaPiece:
                 MetaFieldManager.Instance.GenerateNewPiece();

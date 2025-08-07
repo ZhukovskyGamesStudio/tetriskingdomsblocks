@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using MoreMountains.Tools;
 using UnityEngine;
 
 [Serializable]
 public class GameDataForSave {
     public string CreatedVersion;
     public int CurMaxLevel;
-    public float[] ResourcesCount;
+    public MMSerializableDictionary<ResourceType, float> ResourcesCount;
     public List<int> RemainedLockedZones;
     public float GoldAmount;
-    public int MagicCubesAmount;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
@@ -43,10 +43,13 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        ResourcesCount = new float[4];
-        ResourcesCount[0] = 3000;
-        ResourcesCount[1] = 3000;
-        ResourcesCount[2] = 3000;
+        ResourcesCount = new MMSerializableDictionary<ResourceType, float>() {
+            { ResourceType.Wood, 3000 },
+            { ResourceType.Rocks, 3000 },
+            { ResourceType.Food, 3000 },
+            { ResourceType.MagicCube, 0 },
+            { ResourceType.MetaGold, 0 }
+        };
         SettingsData = new SettingsData {
             IsSoundOn = true,
             IsMusicOn = true,

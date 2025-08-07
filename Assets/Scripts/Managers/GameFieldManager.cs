@@ -679,8 +679,8 @@ public class GameFieldManager : FieldManager {
 
     private void SaveWinGame() {
         StorageManager.GameDataMain.GoldAmount += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
-        // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
+        // StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

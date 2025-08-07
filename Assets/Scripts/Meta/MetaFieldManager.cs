@@ -247,27 +247,27 @@ public class MetaFieldManager : FieldManager {
         //  Vector3 uiPos = Vector3.zero;
 
         if (cellConfig.AfkResourceType != ResourceType.Gold) {
-            if (StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] < cellConfig.UpgradeCost) {
+            if (StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType] < cellConfig.UpgradeCost) {
                 return;
             }
 
-            StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1] -= cellConfig.UpgradeCost;
-            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1,
-                StorageManager.GameDataMain.ResourcesCount[(int)cellConfig.AfkResourceType - 1]);
+            StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType] -= cellConfig.UpgradeCost;
+            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType,
+                StorageManager.GameDataMain.ResourcesCount[cellConfig.AfkResourceType]);
         } else {
             if (StorageManager.GameDataMain.GoldAmount < cellConfig.UpgradeCost) {
                 return;
             }
 
             StorageManager.GameDataMain.GoldAmount -= cellConfig.UpgradeCost;
-            MetaUI.Instance.CountersPanelView.SetResourceCount((int)cellConfig.AfkResourceType - 1, StorageManager.GameDataMain.GoldAmount);
+            MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType, StorageManager.GameDataMain.GoldAmount);
             Vector3 finalUiNeedPos = Vector3.zero;
             foreach (var cellPos in cellsToUpgrade)
                 finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
 
             finalUiNeedPos /= cellsToUpgrade.Count;
 
-            UIAnimationsUtils.FromPointToPointAnimation((cellConfig.UpgradeCost), ResourceType.Gold,
+            UIAnimationsUtils.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Gold,
                 MetaUI.Instance.CountersPanelView.GetGoldPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos));
         }
 
@@ -338,10 +338,10 @@ public class MetaFieldManager : FieldManager {
         var lockedCellGroup = LockedCellGroups[groupIndex];
         Vector3 uiPos = Vector3.zero;
 
-        if (StorageManager.GameDataMain.MagicCubesAmount <= lockedCellGroup.Count - 1) return;
+        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] <= lockedCellGroup.Count - 1) return;
 
-        StorageManager.GameDataMain.MagicCubesAmount -= lockedCellGroup.Count;
-        MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] -= lockedCellGroup.Count;
+        MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
             _cells[lockCellPos.x, lockCellPos.y] = null;
@@ -481,20 +481,21 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void BuyPiece() {
-        if (StorageManager.GameDataMain.ResourcesCount[0] >= 100 && StorageManager.GameDataMain.ResourcesCount[1] >= 100 &&
-            StorageManager.GameDataMain.ResourcesCount[2] >= 100) {
+        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Wood] >= 100 && StorageManager.GameDataMain.ResourcesCount[ResourceType.Rocks] >= 100 &&
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Food] >= 100) {
             // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
-            StorageManager.GameDataMain.ResourcesCount[0] -= 100;
-            StorageManager.GameDataMain.ResourcesCount[1] -= 100;
-            StorageManager.GameDataMain.ResourcesCount[2] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Wood] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Rocks] -= 100;
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.Food] -= 100;
             UpdateResourcesCountUIText();
             GenerateNewPiece();
         }
     }
 
     public void UpdateResourcesCountUIText() {
-        for (int i = 0; i < StorageManager.GameDataMain.ResourcesCount.Length; i++)
-            MetaUI.Instance.CountersPanelView.SetResourceCount(i, StorageManager.GameDataMain.ResourcesCount[i]);
+        foreach (var kvp in StorageManager.GameDataMain.ResourcesCount) {
+            MetaUI.Instance.CountersPanelView.SetResourceCount(kvp.Key, kvp.Value);
+        }
     }
 
     public void GetPiece() {
@@ -589,8 +590,8 @@ public class MetaFieldManager : FieldManager {
 
         InvokeRepeating(nameof(UpdateResourceMarks), MainMetaConfig.resourceMarksUpdateCouldown, MainMetaConfig.resourceMarksUpdateCouldown);
         GetInventoryFromSave();
-        MetaUI.Instance.CountersPanelView.SetMagicCubes(StorageManager.GameDataMain.MagicCubesAmount);
-        MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GoldAmount);
+        MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
+        MetaUI.Instance.CountersPanelView.SetGold((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MetaGold]);
         MetaUI.Instance.SetPlayText("Lv. " + (StorageManager.GameDataMain.CurMaxLevel + 1));
 
         if (MainManager.Instance._hasInternetConnection) {
@@ -598,11 +599,38 @@ public class MetaFieldManager : FieldManager {
             MainManager.Instance.SetupHealth();
         }
 
-        if (LoadingManager.Instance.FirstLoad) MetaUI.Instance.ShowRetentionDialog();
+        if (LoadingManager.Instance.FirstLoad && MainManager.Instance._hasInternetConnection) {
+            TryShowRetentionDialog();
+        }
         base.SetupGame();
     }
+    
+    private void TryShowRetentionDialog() {
+        LoadingManager.Instance.FirstLoad = false;
+        Dictionary<ResourceType, float> afkResources = GetAllAfkResourceInfoForDialog();
 
-    public Dictionary<ResourceType, float> GetAllAfkResourceInfoForDialog() {
+        if (afkResources.All(kvp => kvp.Value == 0)) {
+            return;
+        }
+
+        List<RetentionDialog.RetentionResource> resourcesToDialog = new List<RetentionDialog.RetentionResource>();
+        foreach (var resource in afkResources) {
+            resourcesToDialog.Add(new() { Count = (int)resource.Value, Resource = resource.Key });
+        }
+
+        var dialog = new DialogWithData {
+            DialogType = typeof(RetentionDialog),
+            Data = new RetentionDialog.Data {
+                ClickDoubleClaim = CollectDoubleResourcesFromAllMarks,
+                ClickDefaultClaim = CollectDefaultResourcesFromAllMarks,
+                OfflineResources = resourcesToDialog
+            }
+        };
+
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
+    private Dictionary<ResourceType, float> GetAllAfkResourceInfoForDialog() {
         Dictionary<ResourceType, float> infoForDialog = new Dictionary<ResourceType, float>();
 
         for (int i = 0; i < StorageManager.GameDataMain.FieldRows.Length; i++) {
@@ -612,12 +640,15 @@ public class MetaFieldManager : FieldManager {
                 float resourceCount = StorageManager.GameDataMain.FieldRows[i].RowCells[j].ResourceCount;
                 ResourceType resourceType =
                     PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == cellType).AfkResourceType;
+                if (resourceType == ResourceType.None) {
+                    continue;
+                }
                 if (!infoForDialog.TryAdd(resourceType, resourceCount))
                     infoForDialog[resourceType] += resourceCount;
             }
         }
 
-        return infoForDialog;
+        return infoForDialog.Where(kvp => kvp.Value >= 1).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
     public Dictionary<ResourceType, float> GetAllResourceInfoForDialog() {
@@ -683,7 +714,7 @@ public class MetaFieldManager : FieldManager {
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
         var finalResourceCount = collectedResouces * multiplayerResources;
         if (curResource != ResourceType.Gold) {
-            StorageManager.GameDataMain.ResourcesCount[(int)curResource - 1] += finalResourceCount;
+            StorageManager.GameDataMain.ResourcesCount[curResource] += finalResourceCount;
             UpdateResourcesCountUIText();
         } else {
             StorageManager.GameDataMain.GoldAmount += finalResourceCount;

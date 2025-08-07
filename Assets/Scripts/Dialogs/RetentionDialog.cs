@@ -28,12 +28,12 @@ public class RetentionDialog : DialogBase {
     public void ClickDoubleClaim() {
         Hide().Forget();
         //show ad
-        _clickDoubleClaim.Invoke();
+        _clickDoubleClaim?.Invoke();
     }
     
     public void ClickDefaultClaim() {
         Hide().Forget();
-        _clickDefaultClaim.Invoke();
+        _clickDefaultClaim?.Invoke();
     }
 
     [Serializable]

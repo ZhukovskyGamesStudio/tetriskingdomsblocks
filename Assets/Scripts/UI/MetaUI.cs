@@ -81,36 +81,6 @@ public class MetaUI : MonoBehaviour {
         _floatingTextsPool.Release(needTextObject);
     }
 
-    public void ShowRetentionDialog() {
-        if (!MainManager.Instance._hasInternetConnection) {
-            return;
-        }
-
-        LoadingManager.Instance.FirstLoad = false;
-        Dictionary<ResourceType, float> afkResources = MetaFieldManager.Instance.GetAllAfkResourceInfoForDialog();
-    
-        if (afkResources.All(kvp => kvp.Value == 0)) {
-            return;
-        }
-        
-        List<RetentionDialog.RetentionResource> resourcesToDialog = new List<RetentionDialog.RetentionResource>();
-        foreach (var resource in afkResources) {
-            resourcesToDialog.Add(new(){ Count = (int)resource.Value, Resource = resource.Key});
-        }
-
-        var dialog = new DialogWithData {
-            DialogType = typeof(RetentionDialog),
-            Data = new RetentionDialog.Data {
-                ClickDoubleClaim = MetaFieldManager.Instance.CollectDoubleResourcesFromAllMarks,
-                ClickDefaultClaim = MetaFieldManager.Instance.CollectDefaultResourcesFromAllMarks,
-                OfflineResources = resourcesToDialog
-                
-            }
-        };
-        
-        DialogsManager.Instance.ShowDialogWithData(dialog);
-    }
-
     private void InitBuildCameras() {
         var ray = new Ray(_buildCamera.transform.position, _buildCamera.transform.forward);
         var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
@@ -170,7 +140,9 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenResources() {
         Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
-        if(resourcesInfo.Count == 0)return;
+        if(resourcesInfo.Count == 0) {
+            return;
+        }
         resourcesInfo.TryAdd(ResourceType.Wood,  0);
         resourcesInfo.TryAdd(ResourceType.Rocks,  0);
         resourcesInfo.TryAdd(ResourceType.Food,  0);
@@ -178,9 +150,9 @@ public class MetaUI : MonoBehaviour {
             DialogType = typeof(OverviewDialog),
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
-                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.ResourcesCount[0], (int)resourcesInfo[ResourceType.Wood], 0),
-                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.ResourcesCount[1], (int)resourcesInfo[ResourceType.Rocks], 0),
-                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.ResourcesCount[2], (int)resourcesInfo[ResourceType.Food], 0)
+                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.ResourcesCount[ResourceType.Wood], (int)resourcesInfo[ResourceType.Wood], 0),
+                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.ResourcesCount[ResourceType.Rocks], (int)resourcesInfo[ResourceType.Rocks], 0),
+                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.ResourcesCount[ResourceType.Food], (int)resourcesInfo[ResourceType.Food], 0)
                    // new OverviewResourceInfo(ResourceType.Rocks, 12345, resourcesInfo[ResourceType.Wood].income, 0)
                 }
             }

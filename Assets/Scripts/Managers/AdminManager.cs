@@ -21,7 +21,7 @@ public class AdminManager : MonoBehaviour {
     [SerializeField]
     private Toggle _infiniteBoostersToggle;
 
-    public bool IsInfiniteBoosters = true;  
+    public bool IsInfiniteBoosters = true;
 
     private void Awake() {
         Instance = this;
@@ -40,29 +40,27 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddResources() {
-        
-        for (int i = 0; i <  StorageManager.GameDataMain.ResourcesCount.Length; i++) {
-            StorageManager.GameDataMain.ResourcesCount[i] += 100;
+        foreach (var kvp in StorageManager.GameDataMain.ResourcesCount) {
+            StorageManager.GameDataMain.ResourcesCount[kvp.Key] += 100;
         }
 
-        StorageManager.GameDataMain.MagicCubesAmount += 20;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 20;
         StorageManager.GameDataMain.GoldAmount += 100;
-        if(MetaUI.Instance != null)
-            MetaUI.Instance.CountersPanelView.SetMagicCubes( StorageManager.GameDataMain.MagicCubesAmount );
-        
+        if (MetaUI.Instance != null)
+            MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
+
         MetaFieldManager.Instance.UpdateResourcesCountUIText();
     }
 
     public void RestoreAllHPForAdminButton() {
         StorageManager.GameDataMain.HealthCount = 5;
-        if(MetaUI.Instance == null )return;
+        if (MetaUI.Instance == null) return;
         MetaUI.Instance.HealthView.SetHealthCountText(5);
     }
 
-    public void RemoveOneHealthAdminButton() {  
-     
-        if(StorageManager.GameDataMain.HealthCount <= 0)return;
-         MainManager.Instance.RemoveHealthAfterLose();
+    public void RemoveOneHealthAdminButton() {
+        if (StorageManager.GameDataMain.HealthCount <= 0) return;
+        MainManager.Instance.RemoveHealthAfterLose();
     }
 
     public void GenerateNewPiecesForButton() {
@@ -70,16 +68,15 @@ public class AdminManager : MonoBehaviour {
             GameFieldManager.Instance.GenerateNewPieces();
     }
 
-    public void AddBoosters()
-    {
-        StorageManager.GameDataMain.RandomFieldCount+=5;
-        StorageManager.GameDataMain.HummerCount+=5;
-        StorageManager.GameDataMain.RotatePieceCount+=5;
-        StorageManager.GameDataMain.DynamiteCount+=5;
-        
-        StorageManager.GameDataMain.MetaHummerCount+=5;
-        
-        if(BoostersManager.Instance != null) {
+    public void AddBoosters() {
+        StorageManager.GameDataMain.RandomFieldCount += 5;
+        StorageManager.GameDataMain.HummerCount += 5;
+        StorageManager.GameDataMain.RotatePieceCount += 5;
+        StorageManager.GameDataMain.DynamiteCount += 5;
+
+        StorageManager.GameDataMain.MetaHummerCount += 5;
+
+        if (BoostersManager.Instance != null) {
             GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         }
     }
@@ -107,7 +104,7 @@ public class AdminManager : MonoBehaviour {
     public void SetInfinite(bool isInfinite) {
         IsInfiniteHealth = isInfinite;
     }
-    
+
     public void SetInfiniteBoosters(bool isInfiniteBoosters) {
         IsInfiniteBoosters = isInfiniteBoosters;
     }

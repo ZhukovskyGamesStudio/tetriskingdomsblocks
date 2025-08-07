@@ -1570,7 +1570,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _magicCubeCounterText: {fileID: 1037602572}
   _goldCounterText: {fileID: 507737370}
-  _resourcesCountText: []
+  _resourcesCountersTexts:
+    _serializedList:
+    - Key: 13
+      Value: {fileID: 507737370}
+    - Key: 14
+      Value: {fileID: 1037602572}
 --- !u!1 &287902616
 GameObject:
   m_ObjectHideFlags: 0

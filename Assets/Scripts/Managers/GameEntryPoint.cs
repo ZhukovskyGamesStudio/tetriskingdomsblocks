@@ -183,8 +183,8 @@ public class GameEntryPoint : MonoBehaviour {
         if (StorageManager.GameDataMain.IsFirstAttemptWin)
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
         StorageManager.GameDataMain.IsFirstAttemptWin = true;
-        // StorageManager.GameDataMain.MagicCubesAmount += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.MagicCubesAmount += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
+        // StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

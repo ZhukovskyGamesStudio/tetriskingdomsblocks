@@ -77,8 +77,8 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void TryAddMissingResources() {
-        if (StorageManager.GameDataMain.MagicCubesAmount <= 25) {
-            StorageManager.GameDataMain.MagicCubesAmount = 25;
+        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] <= 25) {
+            StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] = 25;
             Debug.LogWarning("Missing cubes in tutorial!");
         }
     }
