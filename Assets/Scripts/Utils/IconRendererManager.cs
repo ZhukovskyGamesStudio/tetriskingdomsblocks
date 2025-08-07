@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine.Rendering;
 
 public class IconRendererManager : MonoBehaviour {
@@ -58,41 +59,28 @@ public class IconRendererManager : MonoBehaviour {
         _renderLight.cullingMask = _renderLayer;
         _renderLight.intensity = 1f;
 
-        format = GetMobileTextureFormat();
+        format = TextureFormat.RGBA32;
     }
 
-    TextureFormat GetMobileTextureFormat() {
-#if UNITY_EDITOR
-        return TextureFormat.RGBA32;
-#elif UNITY_IOS
-    return TextureFormat.ASTC_4x4;
-#elif UNITY_ANDROID
-        if (SystemInfo.SupportsTextureFormat(TextureFormat.ETC2_RGBA8))
-            return TextureFormat.ETC2_RGBA8;
-        return TextureFormat.RGBA32;
-#endif
-    }
+    public async void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
+        var texture = await GetIcon(prefab);
 
-    public void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
-        GetIcon(prefab, (texture) => {
-            if (texture == null) {
-                callback?.Invoke(null);
-                return;
-            }
-
-            // Создаем спрайт из текстуры
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), // Pivot по центру
-                100, // Pixels per unit
-                0, SpriteMeshType.Tight);
-
-            callback?.Invoke(sprite);
-        });
-    }
-
-    private void GetIcon(GameObject prefab, System.Action<Texture2D> callback) {
-        if (prefab == null) {
+        if (texture == null) {
             callback?.Invoke(null);
             return;
+        }
+
+        // Создаем спрайт из текстуры
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), // Pivot по центру
+            100, // Pixels per unit
+            0, SpriteMeshType.Tight);
+
+        callback?.Invoke(sprite);
+    }
+
+    private async UniTask<Texture2D> GetIcon(GameObject prefab) {
+        if (prefab == null) {
+            return null;
         }
 
         /* string itemId = prefab.name;
@@ -104,7 +92,7 @@ public class IconRendererManager : MonoBehaviour {
              return;
          }*/
 
-        StartCoroutine(RenderIconCoroutine(prefab, callback));
+        return await RenderIconAsync(prefab);
     }
 
     private void SetLayerRecursively(GameObject obj, int layer) {
@@ -119,26 +107,29 @@ public class IconRendererManager : MonoBehaviour {
         }
     }
 
-    private IEnumerator RenderIconCoroutine(GameObject prefab, System.Action<Texture2D> callback) {
-        while (Time.time - _lastRenderTime < _renderDelay)
-            yield return null;
+    private async UniTask<Texture2D> RenderIconAsync(GameObject prefab) {
+        while (Time.time - _lastRenderTime < _renderDelay) {
+            await UniTask.WaitForEndOfFrame();
+        }
 
-        while (_isRendering)
-            yield return null;
+        while (_isRendering) {
+            await UniTask.WaitForEndOfFrame();
+        }
 
         _isRendering = true;
         _lastRenderTime = Time.time;
 
         SetLayerRecursively(prefab, (int)Mathf.Log(_renderLayer.value, 2));
 
-        SimplifyObjectMaterials(prefab);
+        //SimplifyObjectMaterials(prefab);
 
         PositionObjectForRendering(prefab);
 
-        yield return RenderIconTexture(prefab, prefab.name, callback);
+        var res = await RenderIconTexture(prefab, prefab.name);
         Destroy(prefab.gameObject);
 
         _isRendering = false;
+        return res;
     }
 
     private void SimplifyObjectMaterials(GameObject obj) {
@@ -177,8 +168,8 @@ public class IconRendererManager : MonoBehaviour {
         return bounds;
     }
 
-    private IEnumerator RenderIconTexture(GameObject target, string itemId, System.Action<Texture2D> callback) {
-        yield return new WaitForEndOfFrame();
+    private async UniTask<Texture2D> RenderIconTexture(GameObject target, string itemId) {
+        await UniTask.WaitForEndOfFrame();
         _renderCamera.enabled = true;
         _renderCamera.Render();
 
@@ -194,7 +185,7 @@ public class IconRendererManager : MonoBehaviour {
         if (!_iconCache.ContainsKey(itemId))
             _iconCache.Add(itemId, icon);
 
-        callback?.Invoke(icon);
+        return icon;
     }
 
     public void ClearCache() {
