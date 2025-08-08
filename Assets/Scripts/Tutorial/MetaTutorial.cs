@@ -251,12 +251,12 @@ public class MetaTutorial : MonoBehaviour {
         _tutorialStep = 5;
         _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 5f));
         _holeImageBuildButton.gameObject.SetActive(false);
-        MetaFieldManager.Instance.OnCellPlaced += (i, bools) => HideSixthStepTutorial();
+        MetaFieldManager.Instance.OnCellPlaced += HideSixthStepTutorial;
         //highlight field
     }
 
-    private void HideSixthStepTutorial() {
-        MetaFieldManager.Instance.OnCellPlaced -= (i, bools) => HideSixthStepTutorial();
+    private void HideSixthStepTutorial(Vector2Int pos,bool[,] form) {
+        MetaFieldManager.Instance.OnCellPlaced -= HideSixthStepTutorial;
         MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
         DestroyTutorial();
@@ -269,7 +269,7 @@ public class MetaTutorial : MonoBehaviour {
         //        Destroy(hole.gameObject);
         //     }
 
-        Destroy(_fingerImage.gameObject);
+    //    Destroy(_fingerImage.gameObject);
 
         Destroy(gameObject);
     }

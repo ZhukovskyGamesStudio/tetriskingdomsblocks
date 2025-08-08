@@ -693,7 +693,6 @@ public class MetaFieldManager : FieldManager {
     private void SetFigureFormsInfoToData() {
         List<FormPositionsData> forms = _formGroupCellPositions.Select(cells => cells.Value.ToArray())
             .Select(cellArray => new FormPositionsData(cellArray)).ToList();
-
         StorageManager.GameDataMain.FigureFormsData = forms;
     }
 
@@ -725,6 +724,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     public override void SaveEnergyData() {
+        Debug.Log("save");
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
         SetFigureFormsInfoToData();
         base.SaveEnergyData();
@@ -770,6 +770,8 @@ public class MetaFieldManager : FieldManager {
         Destroy(_currentDraggedPiece.gameObject);
         SetCurrentPiece();
         SaveInventory();
+        
+        SetFigureFormsInfoToData();
     }
 
     private void AddFigureFormToList(List<(int, int)> placedCells) {
@@ -946,7 +948,6 @@ public class MetaFieldManager : FieldManager {
                     resourceColor = cellConfig.MarkCellColor;
                     resourceColor.a = 1;
                 }
-
                 if (cellConfig.AfkResourceType != ResourceType.None) {
                     float resourceMultiplayer = MainMetaConfig.ResourceMultipliers[connectedGroupsPieces[i].Count];
                     if (StorageManager.GameDataMain.FieldRows[row].RowCells[col].ResourceCount < 0)
@@ -965,9 +966,10 @@ public class MetaFieldManager : FieldManager {
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
             var resourceMark = SpawnResourceMark(collectResourceMarkPosition, maxCollectedResouces, collectedResouces, curResource,
                 resourceColor);
-            Debug.Log($"{collectedResouces} / {maxCollectedResouces}");
+         
             resourceMark.gameObject.SetActive(collectedResouces / maxCollectedResouces > 0.1f);
-            _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));
+            _connectedGroups.Add(new ResourceMarkAndPieces(resourceMark, connectedGroupsPieces[i]));  
+            Debug.Log($"{collectedResouces} / {maxCollectedResouces} type {curResource} index {_connectedGroups.Count}");
         }
 
         LockedCellGroups = new Dictionary<int, List<Vector2Int>>();

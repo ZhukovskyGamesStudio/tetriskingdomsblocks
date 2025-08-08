@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class SameCellsGroupCalculater {
     private static readonly (int row, int col)[] directions = {
@@ -31,6 +32,7 @@ public class SameCellsGroupCalculater {
                     result.Add(group);
                     foreach (var (row, col) in group)
                         cellsIndex[row, col] = result.Count;
+                    Debug.Log(result.Count);
                 }
             }
         }
