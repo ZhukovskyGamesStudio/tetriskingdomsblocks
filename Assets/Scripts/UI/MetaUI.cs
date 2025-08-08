@@ -65,7 +65,7 @@ public class MetaUI : MonoBehaviour {
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
         //TODO Skipped for testing purposes
-       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0) {
+       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
            Instantiate(_metaTutorial, _metaTutorialContainer);
        }
     }

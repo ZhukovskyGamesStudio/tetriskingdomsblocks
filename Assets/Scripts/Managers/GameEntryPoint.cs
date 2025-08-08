@@ -50,7 +50,7 @@ public class GameEntryPoint : MonoBehaviour {
         
       
 
-        if (levelConfig.TutorialObject != null) {
+        if (levelConfig.TutorialObject != null && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(levelConfig.TutorialObject, GameUI.Instance.BlackBgContainer);
         }
 

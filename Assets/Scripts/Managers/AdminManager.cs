@@ -24,11 +24,17 @@ public class AdminManager : MonoBehaviour {
     private Toggle _infiniteBoostersToggle;
 
     public bool IsInfiniteBoosters = true;
+    
+    [SerializeField]
+    private Toggle _skipTutorialsToggle;
+
+    public bool IsSkipTutorials = false;
 
     private void Awake() {
         Instance = this;
         _infiniteHpToggle.SetIsOnWithoutNotify(IsInfiniteHealth);
         _infiniteBoostersToggle.SetIsOnWithoutNotify(IsInfiniteBoosters);
+        //_skipTutorialsToggle.SetIsOnWithoutNotify(IsSkipTutorials);
         DontDestroyOnLoad(this);
         SetupLevelButtons();
     }
@@ -63,6 +69,9 @@ public class AdminManager : MonoBehaviour {
         MetaUI.Instance.HealthView.SetHealthCountText(5);
     }
 
+    public void GoToMetaAdminButton() {
+        SceneManager.LoadScene("MetaScene");
+    }
     public void RemoveOneHealthAdminButton() {
         if (StorageManager.GameDataMain.HealthCount <= 0) return;
         MainManager.Instance.RemoveHealthAfterLose();
@@ -112,5 +121,9 @@ public class AdminManager : MonoBehaviour {
 
     public void SetInfiniteBoosters(bool isInfiniteBoosters) {
         IsInfiniteBoosters = isInfiniteBoosters;
+    }
+    
+    public void SetTutorialSkip(bool isSkipTutorialsBoosters) {
+        IsSkipTutorials = !IsSkipTutorials;
     }
 }
