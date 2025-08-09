@@ -52,7 +52,7 @@ public class GameDataForSave {
             { ResourceType.Metal, 0 }
         };
         SeenResource = new Dictionary<ResourceType, bool> {
-            { ResourceType.Wood, true },
+            { ResourceType.Wood, false },
             { ResourceType.Rocks, false },
             { ResourceType.Food, false },
             { ResourceType.MagicCube, false },
