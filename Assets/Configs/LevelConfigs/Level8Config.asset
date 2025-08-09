@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level8Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: c12eddc85e3f6a542ae75c59eb2a45a7, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 1
+      Value: 20
   <GuideForLevelText>k__BackingField: Unlock farm. Get one line with village + field
     of wheat
   <CurrentGuaranteedFirstCells>k__BackingField: []
@@ -23,4 +25,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 0}
   <StartFieldConfig>k__BackingField: {fileID: 11400000, guid: 6fac1a16478a8b347aa2fd0fa8f18266, type: 2}
   <MovesCount>k__BackingField: 20
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 

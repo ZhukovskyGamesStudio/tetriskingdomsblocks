@@ -161,7 +161,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     }
 
     public void ClearField() {
-        if (_isMetaFieldToggle)
+        if (_isMetaFieldToggle.isOn)
         {
             for (int i = 0; i < GameFieldSize; i++)
             {
@@ -187,6 +187,32 @@ public class StartFieldCustomRedactor : MonoBehaviour {
 
 #if UNITY_EDITOR
 
+    public void LoadConfigButton() {
+        if (FieldInput.text == "") return;
+        
+        string assetPath = _filePath + "/" + FieldInput.text + ".asset";
+        print(assetPath);
+        
+        if (_isMetaFieldToggle.isOn)
+        {
+            MetaStartLockedCellsFieldConfig config = AssetDatabase.LoadAssetAtPath<MetaStartLockedCellsFieldConfig>(assetPath);
+            foreach (IntAndVector2Int cell in config.LockedCellsGroups) {
+                _metaFieldLockedCellTypes[cell.position.x, cell.position.y] = cell.index;
+                _metaFieldButtons[cell.position.x, cell.position.y].SetType(cell.index);
+            }
+        }
+        else
+        {
+            StartFieldConfig config = AssetDatabase.LoadAssetAtPath<StartFieldConfig>(assetPath);
+            for (int i = 0; i < config.Grid.Count; i++) {
+                for (int j = 0; j < config.Grid[i].row.Count; j++) {
+                    _fieldCellTypes[i, j] = config.Grid[i].row[j];
+                    _fieldButtons[i, j].SetType(config.Grid[i].row[j]);
+                }
+            }
+        }
+    }
+    
     public void SaveConfigButton()
     {
         if (_isMetaFieldToggle.isOn)
@@ -194,6 +220,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
         else
             SaveStartGameFieldToConfig();
     }
+    
     private void SaveStartMetaFieldToConfig() {
         if (FieldInput.text == "") return;
         MetaStartLockedCellsFieldConfig config = ScriptableObject.CreateInstance<MetaStartLockedCellsFieldConfig>();

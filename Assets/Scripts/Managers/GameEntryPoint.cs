@@ -64,10 +64,11 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void CreateTasksForLevel(LevelConfig levelConfig) {
-        for (int i = 0; i < levelConfig.Tasks.Length; i++) {
-            var task = levelConfig.Tasks[i];
-            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(task.taskType, task.NeedResource, task.Count);
-            SetTaskUI(i, newTaskInfo, newTaskInfo);
+        int taskId = 0;
+        foreach (var task in levelConfig.Tasks) {
+            TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(TaskInfo.TaskType.getResource, task.Key, task.Value);
+            SetTaskUI(taskId, newTaskInfo, newTaskInfo);
+            taskId++;
         }
 
         if (levelConfig.StartFieldConfig != null) {
@@ -90,7 +91,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SetTaskDescriptionsFromStartField(LevelConfig levelConfig, Dictionary<ResourceType, int> startTasks) {
-        int i = levelConfig.Tasks.Length;
+        int i = levelConfig.Tasks.Count;
         foreach (var (resourceType, count) in startTasks) {
             if((int)resourceType > 0 &&  (int)resourceType < 5)continue;
             TaskInfoSubClass newTaskInfo = new TaskInfoSubClass(TaskInfo.TaskType.getResource, resourceType, count);

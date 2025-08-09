@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level26Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: 5cf5466bbc02bd344891395413971ec5, type: 2}
-  - {fileID: 11400000, guid: 82438fb1ae29a3f4c9451acb9fbe5e7a, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 9
+      Value: 20
+    - Key: 4
+      Value: 20
   <GuideForLevelText>k__BackingField: 
   <CurrentGuaranteedFirstCells>k__BackingField: []
   <CellTypesTableConfig>k__BackingField: {fileID: 11400000, guid: d9eb674750ade55429e2b8af78abc691, type: 2}
@@ -23,4 +26,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 0}
   <StartFieldConfig>k__BackingField: {fileID: 11400000, guid: b608e2b227a377c489108027db071549, type: 2}
   <MovesCount>k__BackingField: 25
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 

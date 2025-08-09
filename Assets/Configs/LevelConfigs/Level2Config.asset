@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level2Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: 43f387905ed9fed44a6cddb3310705da, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 1
+      Value: 40
   <GuideForLevelText>k__BackingField: Place mountains to get rocks
   <CurrentGuaranteedFirstCells>k__BackingField: []
   <CellTypesTableConfig>k__BackingField: {fileID: 11400000, guid: 8dc01eb0bd785c9419cd2f1358fcef25, type: 2}
@@ -22,4 +24,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 3660662623909494065, guid: 28a284396abe5544db43f91670c337ae, type: 3}
   <StartFieldConfig>k__BackingField: {fileID: 0}
   <MovesCount>k__BackingField: 20
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 

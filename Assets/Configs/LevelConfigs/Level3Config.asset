@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level3Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: fd593b3980bdefa4787ebf761a490a7e, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 1
+      Value: 100
   <GuideForLevelText>k__BackingField: Place cells and get both resources
   <CurrentGuaranteedFirstCells>k__BackingField:
   - {fileID: 11400000, guid: 33dae545d939d414d8931aeb55f84f8c, type: 2}

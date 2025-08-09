@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level19Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: d223542d1598deb4088d44877e759baf, type: 2}
-  - {fileID: 11400000, guid: 0a42b64157c602748bb2c5f41b196b79, type: 2}
-  - {fileID: 11400000, guid: 89950e801bfd44a42b6cbee22d405989, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 8
+      Value: 20
+    - Key: 2
+      Value: 20
+    - Key: 3
+      Value: 20
   <GuideForLevelText>k__BackingField: Get monolines with all basic resources
   <CurrentGuaranteedFirstCells>k__BackingField: []
   <CellTypesTableConfig>k__BackingField: {fileID: 11400000, guid: 9397f6f55361f314badd491dd1baff4f, type: 2}
@@ -24,4 +28,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 0}
   <StartFieldConfig>k__BackingField: {fileID: 11400000, guid: bba07e5dbfa90d440aa1ce36cdfa33d6, type: 2}
   <MovesCount>k__BackingField: 25
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 
