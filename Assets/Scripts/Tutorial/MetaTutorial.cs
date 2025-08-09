@@ -77,8 +77,8 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void TryAddMissingResources() {
-        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] <= 25) {
-            StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] = 25;
+        if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= 25) {
+            StorageManager.GameDataMain.SetResource(ResourceType.MagicCube, 25);
             Debug.LogWarning("Missing cubes in tutorial!");
         }
     }
@@ -269,6 +269,7 @@ public class MetaTutorial : MonoBehaviour {
         //        Destroy(hole.gameObject);
         //     }
 
+        if (_fingerImage == null) return;
         Destroy(_fingerImage.gameObject);
 
         Destroy(gameObject);

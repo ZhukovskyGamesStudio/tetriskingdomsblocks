@@ -13,6 +13,8 @@ public class OverviewDialog : DialogBase {
         Data dialogData = data as Data;
 
         foreach (OverviewResourceInfo resource in dialogData.Resources) {
+            if (!dialogData.ShowResource[resource.ResourceType]) continue;
+            
             OverviewResource newResource = Instantiate(_resourcePrefab, _resourcesParent);
             newResource.SetData(resource);
         }
@@ -21,6 +23,7 @@ public class OverviewDialog : DialogBase {
     [Serializable]
     public class Data {
         public List<OverviewResourceInfo> Resources;
+        public Dictionary<ResourceType, bool> ShowResource;
     }
 }
 
@@ -28,12 +31,10 @@ public class OverviewResourceInfo {
     public ResourceType ResourceType;
     public int Count;
     public int Income;
-    public int Consumption;
 
-    public OverviewResourceInfo(ResourceType type, int count, int income, int consumption) {
+    public OverviewResourceInfo(ResourceType type, int count, int income) {
         ResourceType = type;
         Count = count;
         Income = income;
-        Consumption = consumption;
     }
 }

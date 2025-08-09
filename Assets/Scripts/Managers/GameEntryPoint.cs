@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -130,12 +129,12 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     public void TryBuyMoves() {
-        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] < 900) {
+        if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < 900) {
             GameUI.Instance.ShowShopDialog();
             return;
         }
 
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] -= 900;
+        StorageManager.GameDataMain.AddResource(ResourceType.Coins, -900);
         AddMoves();
     }
 
@@ -179,12 +178,12 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SaveWinGame() {
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += 100 /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+        StorageManager.GameDataMain.AddResource(ResourceType.Coins, 100); /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
         if (StorageManager.GameDataMain.IsFirstAttemptWin)
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
         StorageManager.GameDataMain.IsFirstAttemptWin = true;
         // StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += MainManager.Instance.CurrentLevelConfig.MagicCubesCount;
+        StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, MainManager.Instance.CurrentLevelConfig.MagicCubesCount);
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

@@ -42,16 +42,16 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddResources() {
-        var keys = StorageManager.GameDataMain.ResourcesCount.Keys.ToList();
+        var keys = StorageManager.GameDataMain.GetAllResources().Keys.ToList();
 
         foreach (var key in keys) {
-            StorageManager.GameDataMain.ResourcesCount[key] += 100;
+            StorageManager.GameDataMain.AddResource(key, 100);
         }
 
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 20;
-        StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += 100;
+        StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, 20);
+        StorageManager.GameDataMain.AddResource(ResourceType.Coins, 100);
         if (MetaUI.Instance != null) {
-            MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube]);
+            MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
         }
 
         MetaFieldManager.Instance.UpdateResourcesCountUIText();

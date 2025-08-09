@@ -8,7 +8,8 @@ using UnityEngine;
 public class GameDataForSave {
     public string CreatedVersion;
     public int CurMaxLevel;
-    public SerializedDictionary<ResourceType, float> ResourcesCount;
+    private SerializedDictionary<ResourceType, float> _resourcesCount;
+    public Dictionary<ResourceType, bool> SeenResource;
     public List<int> RemainedLockedZones;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
@@ -42,12 +43,21 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        ResourcesCount = new SerializedDictionary<ResourceType, float>() {
-            { ResourceType.Wood, 3000 },
-            { ResourceType.Rocks, 3000 },
-            { ResourceType.Food, 3000 },
+        _resourcesCount = new SerializedDictionary<ResourceType, float>() {
+            { ResourceType.Wood, 0 },
+            { ResourceType.Rocks, 0 },
+            { ResourceType.Food, 0 },
             { ResourceType.MagicCube, 0 },
-            { ResourceType.Coins, 0 }
+            { ResourceType.Coins, 0 },
+            { ResourceType.Metal, 0 }
+        };
+        SeenResource = new Dictionary<ResourceType, bool> {
+            { ResourceType.Wood, true },
+            { ResourceType.Rocks, false },
+            { ResourceType.Food, false },
+            { ResourceType.MagicCube, false },
+            { ResourceType.Coins, true },
+            { ResourceType.Metal, false }
         };
         SettingsData = new SettingsData {
             IsSoundOn = true,
@@ -60,6 +70,19 @@ public class GameDataForSave {
         CreatedVersion = Application.version;
         ProfileAvatar = 0;
     }
+
+    public void AddResource(ResourceType resource, float count) {
+        if (!SeenResource[resource]) SeenResource[resource] = true;
+        _resourcesCount[resource] += count;
+    }
+
+    public void SetResource(ResourceType resource, float count) {
+        AddResource(resource, count - _resourcesCount[resource]);
+    }
+    
+    public float GetResource(ResourceType resource) => _resourcesCount[resource];
+
+    public Dictionary<ResourceType, float> GetAllResources() => _resourcesCount;
 }
 
 [Serializable]

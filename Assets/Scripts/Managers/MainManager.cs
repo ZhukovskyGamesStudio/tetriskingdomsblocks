@@ -86,13 +86,13 @@ public class MainManager : MonoBehaviour {
     public void BuyMetaResource(ResourceType resource, int count) {
         switch (resource) {
             case ResourceType.Coins:
-                StorageManager.GameDataMain.ResourcesCount[ResourceType.Coins] += count;
+                StorageManager.GameDataMain.AddResource(ResourceType.Coins, count);
                 break;
             case ResourceType.Health:
                 StorageManager.GameDataMain.HealthCount += count;
                 break;
             case ResourceType.MagicCube:
-                StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += count;
+                StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, count);
                 break;
             case ResourceType.MetaPiece:
                 MetaFieldManager.Instance.GenerateNewPiece();
