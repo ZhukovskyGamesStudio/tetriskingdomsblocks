@@ -1,9 +1,10 @@
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LevelConfig", menuName = "Scriptable Objects/LevelConfig")]
 public class LevelConfig : ScriptableObject {
-    [field: SerializeField]
-    public TaskInfo[] Tasks { get; private set; }
+    [SerializedDictionary]
+    public SerializedDictionary<ResourceType, int> Tasks;
 
     [field: SerializeField]
     public string GuideForLevelText { get; private set; }

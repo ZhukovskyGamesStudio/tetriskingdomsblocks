@@ -77,8 +77,8 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void TryAddMissingResources() {
-        if (StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] <= 25) {
-            StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] = 25;
+        if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= 25) {
+            StorageManager.GameDataMain.SetResource(ResourceType.MagicCube, 25);
             Debug.LogWarning("Missing cubes in tutorial!");
         }
     }
@@ -251,12 +251,12 @@ public class MetaTutorial : MonoBehaviour {
         _tutorialStep = 5;
         _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 5f));
         _holeImageBuildButton.gameObject.SetActive(false);
-        MetaFieldManager.Instance.OnCellPlaced += HideSixthStepTutorial;
+        MetaFieldManager.Instance.OnCellPlaced += (i, bools) => HideSixthStepTutorial();
         //highlight field
     }
 
-    private void HideSixthStepTutorial(Vector2Int pos,bool[,] form) {
-        MetaFieldManager.Instance.OnCellPlaced -= HideSixthStepTutorial;
+    private void HideSixthStepTutorial() {
+        MetaFieldManager.Instance.OnCellPlaced -= (i, bools) => HideSixthStepTutorial();
         MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
         DestroyTutorial();
@@ -269,7 +269,8 @@ public class MetaTutorial : MonoBehaviour {
         //        Destroy(hole.gameObject);
         //     }
 
-    //    Destroy(_fingerImage.gameObject);
+        if (_fingerImage == null) return;
+        Destroy(_fingerImage.gameObject);
 
         Destroy(gameObject);
     }

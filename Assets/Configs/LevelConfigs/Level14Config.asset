@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level14Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: 89950e801bfd44a42b6cbee22d405989, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 3
+      Value: 20
   <GuideForLevelText>k__BackingField: Unlock smythy to get more iron.Place iron ore
     and village in one line.
   <CurrentGuaranteedFirstCells>k__BackingField: []
@@ -23,4 +25,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 0}
   <StartFieldConfig>k__BackingField: {fileID: 0}
   <MovesCount>k__BackingField: 25
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 

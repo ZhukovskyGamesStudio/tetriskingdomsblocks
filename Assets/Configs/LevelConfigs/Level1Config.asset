@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level1Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: cc95a31ff3f4ce9459b49460e4d40ada, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 1
+      Value: 70
   <GuideForLevelText>k__BackingField: Place forest to the field and try fill all
     line
   <CurrentGuaranteedFirstCells>k__BackingField:

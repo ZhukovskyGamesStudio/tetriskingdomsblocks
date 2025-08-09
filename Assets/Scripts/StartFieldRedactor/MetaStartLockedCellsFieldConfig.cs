@@ -21,21 +21,6 @@ public class MetaStartLockedCellsFieldConfig : ScriptableObject
             }
             
         }
-        
-        /*
-        LockedCellGroups = new Dictionary<int, List<Vector2Int>>();
-        int rows = inputGrid.GetLength(0);
-        int cols = inputGrid.GetLength(1);
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                LockedCellGroups.TryAdd(inputGrid[i, j], new List<Vector2Int>()); 
-                LockedCellGroups[inputGrid[i, j]].Add(new Vector2Int(i, j));
-            }
-            
-        }*/
     }
 }
 [System.Serializable]

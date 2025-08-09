@@ -12,10 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb989afc1efc3e439d906653fe94262, type: 3}
   m_Name: Level15Config
   m_EditorClassIdentifier: 
-  <Tasks>k__BackingField:
-  - {fileID: 11400000, guid: e94b7d2140c2fe64da5102fda8a11b69, type: 2}
-  - {fileID: 11400000, guid: 0a42b64157c602748bb2c5f41b196b79, type: 2}
-  - {fileID: 11400000, guid: c12eddc85e3f6a542ae75c59eb2a45a7, type: 2}
+  Tasks:
+    _serializedList:
+    - Key: 3
+      Value: 40
+    - Key: 2
+      Value: 20
+    - Key: 1
+      Value: 20
   <GuideForLevelText>k__BackingField: 'Use all your knowledges and cells for achive
     goals '
   <CurrentGuaranteedFirstCells>k__BackingField: []
@@ -25,4 +29,4 @@ MonoBehaviour:
   <TutorialObject>k__BackingField: {fileID: 0}
   <StartFieldConfig>k__BackingField: {fileID: 0}
   <MovesCount>k__BackingField: 25
-  <FirstFiguresCount>k__BackingField: 3
+  <FirstFiguresCount>k__BackingField: 
