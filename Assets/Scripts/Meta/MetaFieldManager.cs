@@ -520,7 +520,6 @@ public class MetaFieldManager : FieldManager {
         var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
         AddPieceToInventory(pieceData);
         StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
-        SaveInventory();
         return pieceData;
     }
 
@@ -529,6 +528,7 @@ public class MetaFieldManager : FieldManager {
         inventoryCell.SetPieceInfo(pieceView);
         MetaBuildManager.Instance.SetInventoryCellIcon(inventoryCell);
         _currentPiecesInInventory.Add(inventoryCell);
+        SaveInventory();
     }
 
     public override void SetupGame() {
@@ -1014,6 +1014,7 @@ public class MetaFieldManager : FieldManager {
           return TimeSpan.FromMinutes(minutesUntilNext);
       }*/
     public void GetInventoryFromSave() {
+       Debug.Log(StorageManager.GameDataMain.InventoryFigures.Count); 
         if (StorageManager.GameDataMain.InventoryFigures == null) return;
         var inventoryFigures = StorageManager.GameDataMain.InventoryFigures;
         foreach (var figure in inventoryFigures) {
@@ -1048,8 +1049,8 @@ public class MetaFieldManager : FieldManager {
             var pieceData = _currentPiecesInInventory[i].Data;
             StorageManager.GameDataMain.InventoryFigures.Add(new FormAndCellTypeData(pieceData.FormName, pieceData.Type.CellType));
         }
-
         StorageManager.SaveGame();
+        //
     }
 }
 

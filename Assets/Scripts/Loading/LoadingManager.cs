@@ -19,11 +19,11 @@ public class LoadingManager : MonoBehaviour {
     private void Start() {
         bool isNewGame = !StorageManager.IsTutorialCompleted();
         InitManagers();
-        LoadAndChangeScene(isNewGame);
+        LoadAndChangeScene();
     }
 
     private void InitManagers() {
-        if (!StorageManager.IsTutorialCompleted()) {
+        if (StorageManager.IsNewPlayer()) {
             Debug.Log("Tutorial is not completed, recreating save");
             StorageManager.CreateNewSaveData();
         }
@@ -31,14 +31,10 @@ public class LoadingManager : MonoBehaviour {
         SettingsManager.Instance.SetSettings();
     }
 
-    private async void LoadAndChangeScene(bool isNewGame) {
+    private async void LoadAndChangeScene() {
         IsLoaded = true;
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
-        /*if (isNewGame) {
-            await SceneManager.LoadSceneAsync("MetaScene");
-            return;
-        }*/
 
         StorageManager.LoadGame();
         if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
