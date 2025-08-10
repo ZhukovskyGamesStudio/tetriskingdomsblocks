@@ -103,7 +103,7 @@ public class LevelOneTutorial : MonoBehaviour {
         _currentTween = DOTween.Sequence()
             .Append(_fingerImage.DOFade(1, 0.8f))
             .Join(_fingerImageContainer.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(3f, 0, 3.5f)), 2.5f))
+            .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4.5f, 0, 3f)), 2.5f))
             .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
             .Append(_fingerImageContainer.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);
     }
