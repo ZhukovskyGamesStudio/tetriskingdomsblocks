@@ -16,6 +16,8 @@ public class MainManager : MonoBehaviour {
     private const float MINUTES_TO_HEALTH_RECOVERY = 5;
     private float timerNowTimeSecondCounter;
 
+    private int _currentRewardedCubes;
+    private int _currentRewardedCoins;
     public LevelConfig CurrentLevelConfig =>
         _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
 
@@ -42,6 +44,17 @@ public class MainManager : MonoBehaviour {
         UpdateTimerAndHealth();
     }
 
+    public (int cubes, int coins) GetRewardToMeta() {
+        int cubes = _currentRewardedCubes;
+        int coins = _currentRewardedCoins;
+        _currentRewardedCoins = 0;
+        _currentRewardedCubes = 0;
+        return (cubes, coins);
+    }
+    public void AddRewardToMeta() {
+        _currentRewardedCubes += CurrentLevelConfig.MagicCubesCount;
+        _currentRewardedCoins += CurrentLevelConfig.GoldAmount;
+    }
     public void SetupGetPieceTimer() {
         if (StorageManager.GameDataMain.LastGetPieceTime == DateTime.MinValue.ToString(CultureInfo.InvariantCulture)) {
             StorageManager.GameDataMain.LastGetPieceTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);

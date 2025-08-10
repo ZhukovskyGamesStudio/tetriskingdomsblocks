@@ -19,6 +19,9 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private TMP_Text _destroyPieceText;
 
+    [field:SerializeField]
+    public Transform _openResourceTabButtonTransform{ get; private set; }
+    
     [SerializeField]
     private TMP_Text _playText;
 
@@ -37,7 +40,7 @@ public class MetaUI : MonoBehaviour {
     private Vector3 _buildCameraShift;
 
     [SerializeField]
-    private TMP_Text _floatingTextPrefab;
+    private Image _floatingImagePrefab;
     
     [SerializeField]
     private Transform _floatingTextContainer;
@@ -57,11 +60,11 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private Transform  _metaTutorialContainer;
 
-    private ObjectPool<TMP_Text> _floatingTextsPool;
+    private ObjectPool<Image> _floatingImagePool;
 
     private void Awake() {
         Instance = this;
-        _floatingTextsPool = new ObjectPool<TMP_Text>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
+        _floatingImagePool = new ObjectPool<Image>(() => Instantiate(_floatingImagePrefab, _floatingTextContainer));
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
         //TODO Skipped for testing purposes
@@ -70,15 +73,15 @@ public class MetaUI : MonoBehaviour {
        }
     }
     
-    public TMP_Text ShowFloatingText() {
-        var floatingText = _floatingTextsPool.Get();
-        floatingText.gameObject.SetActive(true);
-        return floatingText;
+    public Image ShowFloatingImage() {
+        var floatingImage = _floatingImagePool.Get();
+        floatingImage.gameObject.SetActive(true);
+        return floatingImage;
     }
 
-    public void ReleaseFloatingText(TMP_Text needTextObject) {
+    public void ReleaseFloatingImage(Image needTextObject) {
         needTextObject.gameObject.SetActive(false);
-        _floatingTextsPool.Release(needTextObject);
+        _floatingImagePool.Release(needTextObject);
     }
 
     private void InitBuildCameras() {

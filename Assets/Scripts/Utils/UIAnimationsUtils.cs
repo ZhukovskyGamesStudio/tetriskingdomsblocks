@@ -7,12 +7,13 @@ public static class UIAnimationsUtils
 {
     public static void FromPointToPointAnimation(int needCount, ResourceType resourceType,Vector2 startWorldPos,
         Vector2 endWorldPos) {
-
+if(needCount > 30)
+    needCount = 30;
         Debug.Log($"{needCount} count {startWorldPos} to {endWorldPos}");
         float angleStep = 70f / needCount;
         for (int i = 0; i < needCount; i++) {
-            var uiElement = MetaUI.Instance.ShowFloatingText();
-            uiElement.text = $"<sprite name={resourceType}>";
+            var uiElement = MetaUI.Instance.ShowFloatingImage();
+            uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
             uiElement.transform.position = startWorldPos;
             float randomAngle =  (i - (float)needCount / 2)*angleStep * Mathf.Deg2Rad;
             //UnityEngine.Random.Range(-30f, 30f)
@@ -30,7 +31,7 @@ public static class UIAnimationsUtils
 
             sequence.Append(uiElement.transform.DOMove(endWorldPos, 0.5f).SetEase(Ease.InQuad));
 
-            sequence.OnComplete(() => MetaUI.Instance.ReleaseFloatingText(uiElement));
+            sequence.OnComplete(() => MetaUI.Instance.ReleaseFloatingImage(uiElement));
         }
     }
 }
