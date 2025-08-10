@@ -133,6 +133,21 @@ public class MetaTutorial : MonoBehaviour {
               .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
               .Append(_fingerImageContainer.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);*/
     }
+    
+    public void FingerAnimation(Vector2 startPos) {
+        _fingerImageContainer.localScale = Vector3.one;
+        _fingerImage.transform.localPosition = Vector3.zero;
+        _fingerImageContainer.transform.position = startPos;
+        var color = _fingerImage.color;
+        color.a = 0;
+        _fingerImage.color = color;
+        _currentTween = DOTween.Sequence()
+            .Append(_fingerImage.DOFade(1, 0.8f))
+            .Join(_fingerImageContainer.DOScale(Vector3.one * 0.75f, 0.8f))
+            .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)), 2.5f))
+            .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
+            .Append(_fingerImageContainer.DOMove(startPos, 1)).SetLoops(-1, LoopType.Restart);
+    }
 
     private void ShowFirstStepTutorial() {
         //MoveCameraToNeedPosition();
@@ -228,6 +243,8 @@ public class MetaTutorial : MonoBehaviour {
         _holeImageBuildButton.gameObject.SetActive(true);
         MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.RemoveListener(ShowFifthStepTutorial);
         _tutorialStep = 5;
+        _fingerImage.gameObject.SetActive(true);
+       
 
         _tutorialText.text = _fifethTutorialText;
         Invoke("SetupInventoryCell", 0.3f);
@@ -235,6 +252,7 @@ public class MetaTutorial : MonoBehaviour {
 
     private void SetupInventoryCell() {
         _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<EventTrigger>();
+        FingerAnimation(_invCell.transform.position);
         _holeTetraminesToBuild.gameObject.SetActive(true);
         _holeTetraminesToBuild.position = _invCell.transform.position;
         EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -250,7 +268,7 @@ public class MetaTutorial : MonoBehaviour {
         _tutorialText.text = _sixthTutorialText;
         _tutorialStep = 5;
         _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 5f));
-        _holeImageBuildButton.gameObject.SetActive(false);
+        
         MetaFieldManager.Instance.OnCellPlaced += (i, bools) => HideSixthStepTutorial();
         //highlight field
     }
@@ -259,6 +277,7 @@ public class MetaTutorial : MonoBehaviour {
         MetaFieldManager.Instance.OnCellPlaced -= (i, bools) => HideSixthStepTutorial();
         MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
+        _holeImageBuildButton.gameObject.SetActive(false);
         DestroyTutorial();
     }
 
