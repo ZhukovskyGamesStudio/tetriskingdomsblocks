@@ -52,11 +52,12 @@ namespace UI {
             _isHidingAfter = isHidingAfter;
             gameObject.SetActive(true);
 
-            if (_isShown) {
+            /*if (_isShown) {
                 JumpSpotlight(target.transform.position, animDataConfig);
             } else {
                 ShowSpotlight(target.transform.position, animDataConfig);
-            }
+            }*/
+            ShowSpotlight(target.transform.position, animDataConfig);
 
             OnAnimationEnded = onHideEnded;
             _isHidingByAnyTap = isHidingByAnyTap;
@@ -125,7 +126,7 @@ namespace UI {
             TypeText(_hintText, config.GetLocalizedText, _cts.Token).Forget();
             _animation.Play(SHOW);
             _isShown = true;
-        }
+        }   
 
         private void ChangeCenterBlockRaycast(bool isBlock) {
             _centerImageCanvasGroup.blocksRaycasts = isBlock;
@@ -153,9 +154,9 @@ namespace UI {
             }
         }
 
-        public void HideSpotlight() {
+        public async UniTask HideSpotlight() {
             _animation.Play(HIDE);
-            WaitForAnimationEnded(_cts.Token).Forget();
+            await WaitForAnimationEnded(_cts.Token);
             _isShown = false;
         }
 

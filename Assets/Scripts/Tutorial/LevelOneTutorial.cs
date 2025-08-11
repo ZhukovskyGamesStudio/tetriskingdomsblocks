@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using ScriptableObjects;
 using TMPro;
@@ -50,7 +51,7 @@ public class LevelOneTutorial : MonoBehaviour {
         ShowFirstStepTutorial();
         SetHolesPositions();
 
-        StartAnimation(_holeImages[0].transform.position, (Vector2)Camera.main!.WorldToScreenPoint(new Vector3(3.5f, 0, 3.5f)));
+        SpotlightsManager.Instance.StartFingerAnimation(_holeImages[0].transform.position, (Vector2)Camera.main!.WorldToScreenPoint(new Vector3(3.5f, 0, 3.5f)));
     }
 
     private void Update() {
@@ -95,20 +96,8 @@ public class LevelOneTutorial : MonoBehaviour {
         _holeImages[2].gameObject.SetActive(false);
     }
 
-    public Tween StartAnimation(Vector3 startPos, Vector3 endPos) {
-        var finger = SpotlightsManager.Instance.FingerTransform;
-        finger.position = startPos;
-        finger.localScale = Vector3.one;
-        var color = _fingerImage.color;
-        color.a = 0;
-        _fingerImage.color = color;
-        _currentTween = DOTween.Sequence().Append(_fingerImage.DOFade(1, 0.8f)).Join(finger.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(finger.DOMove(endPos, 2.5f)).Append(finger.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
-            .Append(finger.DOMove(startPos, 1)).SetLoops(-1, LoopType.Restart);
-        return _currentTween;
-    }
-
     private void ShowFirstStepTutorial() {
+        GameUI.Instance.GoalView.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _step1Config);
         TutorialHoleHelper.DestroyHoles();
         TutorialHoleHelper.SpawnHoles(_firstStepCells);
@@ -125,6 +114,12 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     public void HideFirstStepTutorial(Vector2Int pos, bool[,] cells) {
+        HideFirstStepTutorialAsync().Forget();
+    }
+
+    public async UniTask HideFirstStepTutorialAsync() {
+        SpotlightsManager.Instance.HideFinger();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         TutorialHoleHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
         GameFieldManager.Instance.ClearAllLockedCells();
@@ -134,7 +129,8 @@ public class LevelOneTutorial : MonoBehaviour {
         _fingerImage.gameObject.SetActive(false);
         _blackBGImage.gameObject.SetActive(false);
         _tutorialText.gameObject.SetActive(false);
-        Invoke(nameof(ShowThirdStepTutorial), 2f);
+        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        ShowThirdStepTutorial();
     }
 
     public void ShowSecondStepTutorial() {
@@ -155,23 +151,32 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     public void ShowThirdStepTutorial() {
-        _blackBGImage.gameObject.SetActive(true);
-        _tutorialText.transform.position =
-            new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
+        GameUI.Instance.GoalView.gameObject.SetActive(true);
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight( GameUI.Instance.GoalView.transform, _step2Config);
+        //_blackBGImage.gameObject.SetActive(true);
+        //_tutorialText.transform.position =
+        //    new Vector3(GameUI.Instance._tasksContainer.position.x, GameUI.Instance._tasksContainer.position.y - 100f, 0);
         TutorialHoleHelper.SpawnHoles(_thirdStepCells);
         _tutorialStep = 3;
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
         _canSkipTutorial = true;
-        _tutorialText.text = _thirdTutorialText;
-        _tutorialText.gameObject.SetActive(true);
+        //_tutorialText.text = _thirdTutorialText;
+        //_tutorialText.gameObject.SetActive(true);
         _holeImages[1].gameObject.SetActive(true);
     }
 
-    public void HideThirdStepTutorial() {
+    public async UniTask HideThirdStepTutorial() {
         TutorialHoleHelper.DestroyHoles();
         Time.timeScale = 1;
         _holeImages[1].gameObject.SetActive(false);
         DestroyTutorial();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        ShowWitch();
+    }
+
+    private static void ShowWitch() {
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(true);
     }
 
     public void DestroyTutorial() {

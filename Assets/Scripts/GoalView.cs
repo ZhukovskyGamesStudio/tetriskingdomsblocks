@@ -30,6 +30,9 @@ public class GoalView : MonoBehaviour {
     [SerializeField]
     private AnimationClip _hideUiClip;
     
+    [field: SerializeField]
+    public GameObject Witch { get; private set; }
+    
     
     private Tween _currentTween;
 
