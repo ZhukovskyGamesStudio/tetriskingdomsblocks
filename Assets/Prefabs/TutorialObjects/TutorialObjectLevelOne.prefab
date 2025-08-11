@@ -138,7 +138,6 @@ MonoBehaviour:
   _blackBGImage: {fileID: 8949534852482157660}
   _tutorialText: {fileID: 6475316602422765880}
   _fingerImage: {fileID: 548077610239395724}
-  _fingerImageContainer: {fileID: 1548115510299337527}
   _firstTutorialText: Place cell on the hole
   _secondTutorialText: Destroy line
   _thirdTutorialText: Collect remaining wood
@@ -178,6 +177,9 @@ MonoBehaviour:
   - {x: 6, y: 0, z: 4}
   - {x: 7, y: 0, z: 4}
   _thirdStepCells: []
+  _step1Config: {fileID: 11400000, guid: c3e487ff7442c9c448a1c16fa1660c7a, type: 2}
+  _step2Config: {fileID: 11400000, guid: c3e487ff7442c9c448a1c16fa1660c7a, type: 2}
+  _step3Config: {fileID: 11400000, guid: c3e487ff7442c9c448a1c16fa1660c7a, type: 2}
   _canSkipTutorial: 0
 --- !u!222 &1662422011621164366
 CanvasRenderer:
@@ -204,7 +206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3515882351884749708
 RectTransform:
   m_ObjectHideFlags: 0
@@ -798,7 +800,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8949534852482157660
 RectTransform:
   m_ObjectHideFlags: 0
@@ -874,7 +876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1548115510299337527
 RectTransform:
   m_ObjectHideFlags: 0

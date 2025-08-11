@@ -32,7 +32,10 @@ public class HighlightsTextureHelper : MonoBehaviour {
         _rawImage.texture = _renderTexture;
         RenderTexture = _renderTexture;
         var res = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        res.First(o => o.gameObject.name == _cameraName).targetTexture = _renderTexture;
+        var cam = res.First(o => o.gameObject.name == _cameraName);
+        if (cam != null) {
+            cam.targetTexture = _renderTexture;
+        }
     }
 
     private void Update() {
