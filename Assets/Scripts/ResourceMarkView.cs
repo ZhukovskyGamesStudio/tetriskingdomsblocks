@@ -6,8 +6,12 @@ using UnityEngine.UI;
 
 public class ResourceMarkView : MonoBehaviour
 {
-    [SerializeField] private TMP_Text _resourceMarkText;
-    [SerializeField] private Image _resourceFillImage;
+    [SerializeField]
+    private Image _resourceFillImage, _iconImage;
+
+    [SerializeField]
+    private TextMeshProUGUI _countText;
+    
     public int markIndex { get;set; }
     [SerializeField] private Button _buttonMark;
     private Tween _floatTween;
@@ -24,8 +28,9 @@ public class ResourceMarkView : MonoBehaviour
         if (currentResource / maxResource > 0.1f)
         {
             gameObject.SetActive(true);
-        _resourceMarkText.text = Mathf.FloorToInt(currentResource) + "\n <sprite name=" + resourceType + ">";
-        _resourceFillImage.fillAmount = currentResource / maxResource;
+            _resourceFillImage.fillAmount = currentResource / maxResource;
+            _iconImage.sprite = SpritesManager.Instance.GetSprite(resourceType);
+            _countText.text = Mathf.FloorToInt(currentResource).ToString();
         }
 
         if (gameObject.activeInHierarchy && !_isAnimate)

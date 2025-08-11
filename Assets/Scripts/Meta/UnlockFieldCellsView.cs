@@ -15,6 +15,6 @@ public class UnlockFieldCellsView : MonoBehaviour {
 
     public void SetData(Vector3 pos, int cost) {
         _unlockCellUIContainer.transform.position = pos;
-        _unlockCellText.text = $"Unlock\n{cost} cubes";
+        _unlockCellText.text = cost.ToString();
     }
 }
