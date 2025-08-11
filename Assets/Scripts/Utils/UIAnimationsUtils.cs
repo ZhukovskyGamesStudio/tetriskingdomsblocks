@@ -1,14 +1,20 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 
 public static class UIAnimationsUtils
 {
-    public static void FromPointToPointAnimation(int needCount, ResourceType resourceType,Vector2 startWorldPos,
-        Vector2 endWorldPos) {
+    public static async void FromPointToPointAnimation(int needCount, ResourceType resourceType,Vector2 startWorldPos,
+        Vector2 endWorldPos, Action<ResourceType, float> changeTextAction,  float startCount, bool isRemoveResources, float interval = 0.1f)
+    {
+        float currentCount = needCount;
+       
 if(needCount > 30)
     needCount = 30;
+
+float addedCountToText = currentCount / needCount;
         Debug.Log($"{needCount} count {startWorldPos} to {endWorldPos}");
         float angleStep = 70f / needCount;
         for (int i = 0; i < needCount; i++) {
@@ -31,7 +37,28 @@ if(needCount > 30)
 
             sequence.Append(uiElement.transform.DOMove(endWorldPos, 0.5f).SetEase(Ease.InQuad));
 
-            sequence.OnComplete(() => MetaUI.Instance.ReleaseFloatingImage(uiElement));
+            if (isRemoveResources)
+            {
+              
+                 startCount -= addedCountToText;
+              
+            }
+
+            else
+            {
+                startCount += addedCountToText;  
+                float newCount = startCount;
+                                                                changeTextAction?.Invoke(resourceType, newCount);
+            }
+            
+            sequence.OnComplete(() =>
+            {
+                float newStartCount = startCount;
+                MetaUI.Instance.ReleaseFloatingImage(uiElement);
+                if(isRemoveResources)
+                changeTextAction?.Invoke(resourceType, newStartCount);
+            });
+            await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
     }
 }
