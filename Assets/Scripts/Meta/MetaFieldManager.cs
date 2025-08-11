@@ -318,8 +318,11 @@ public class MetaFieldManager : FieldManager {
                 if (hasEmptyCellAround) break;
             }
 
-            if (!hasEmptyCellAround)
+            if (!hasEmptyCellAround) {
+                int groupParent = MainMetaConfig.LockedCellsFieldConfig.GroupsParents[groupIndex - 1];
+                CastLockedCell(LockedCellGroups[groupParent][0]);
                 return;
+            }
             //check for empty cells
         }
 
