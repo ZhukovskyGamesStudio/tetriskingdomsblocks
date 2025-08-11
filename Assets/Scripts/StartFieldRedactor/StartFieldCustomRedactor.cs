@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using TMPro;
@@ -29,13 +30,34 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     public TMP_InputField FieldInput;
     private string _filePath = "Assets/Configs/StartMapConfigs";
 
+    private List<TMP_InputField> _metaCellsParents = new();
+
     [SerializeField]
     private Toggle _isMetaFieldToggle;
+
+    [SerializeField]
+    private Transform _metaCellsParentsContainer;
+    
+    [SerializeField]
+    private TMP_InputField _metaCellsInputPrefab;
 
     public void Start() {
         SetRedactButtons();
         SetFieldButtons();
+        SetMetaCellsParents();
         _isMetaFieldToggle.onValueChanged.AddListener(ChangeFieldRedactorState);
+    }
+
+    private void SetMetaCellsParents() {
+        foreach (TMP_InputField input in _metaCellsParents) {
+            Destroy(input.gameObject);
+        }
+        _metaCellsParents.Clear();
+        
+        for (int i = 0; i < MetaCellTypesToRedactor.Length; i++) {
+            _metaCellsParents.Add(Instantiate(_metaCellsInputPrefab, _metaCellsParentsContainer));
+            _metaCellsParents[i].text = "1";
+        }
     }
 
     private void SetRedactButtons()
@@ -79,7 +101,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     
     public void SetFieldButtons()
     {
-        
+        _metaCellsParentsContainer.gameObject.SetActive(_isMetaFieldToggle.isOn);
         foreach (Transform child in FieldRect)
         {
             Destroy(child.gameObject);
@@ -174,6 +196,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
         }
         else
         {
+            SetMetaCellsParents();
             for (int i = 0; i < GameFieldSize; i++)
             {
                 for (int j = 0; j < GameFieldSize; j++)
@@ -193,12 +216,16 @@ public class StartFieldCustomRedactor : MonoBehaviour {
         string assetPath = _filePath + "/" + FieldInput.text + ".asset";
         print(assetPath);
         
-        if (_isMetaFieldToggle.isOn)
-        {
+        if (_isMetaFieldToggle.isOn) {
+            SetMetaCellsParents();
             MetaStartLockedCellsFieldConfig config = AssetDatabase.LoadAssetAtPath<MetaStartLockedCellsFieldConfig>(assetPath);
             foreach (IntAndVector2Int cell in config.LockedCellsGroups) {
                 _metaFieldLockedCellTypes[cell.position.x, cell.position.y] = cell.index;
                 _metaFieldButtons[cell.position.x, cell.position.y].SetType(cell.index);
+            }
+
+            for (int i = 0; i < config.GroupsParents.Count; i++) {
+                _metaCellsParents[i].text = config.GroupsParents[i].ToString();
             }
         }
         else
@@ -225,6 +252,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
         if (FieldInput.text == "") return;
         MetaStartLockedCellsFieldConfig config = ScriptableObject.CreateInstance<MetaStartLockedCellsFieldConfig>();
         config.CreateGrid(_metaFieldLockedCellTypes);
+        config.SaveParents(_metaCellsParents);
 
         string assetPath = _filePath + "/" + FieldInput.text + ".asset";
 
@@ -232,6 +260,7 @@ public class StartFieldCustomRedactor : MonoBehaviour {
 
         if (existingConfig != null) {
             existingConfig.CreateGrid(_metaFieldLockedCellTypes);
+            existingConfig.SaveParents(_metaCellsParents);
             EditorUtility.SetDirty(existingConfig);
         } else
             AssetDatabase.CreateAsset(config, assetPath);

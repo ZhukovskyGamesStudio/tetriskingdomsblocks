@@ -633,11 +633,7 @@ public class GameFieldManager : FieldManager {
             _currentGuaranteedFirstCells.Add(cellInfo);
         }
 
-        var startCells = config.CellTypesTableConfig;
-        _currentCellsToSpawn = new List<CellType>();
-        for (int i = 0; i < startCells.CellsToSpawn.Length; i++) {
-            _currentCellsToSpawn.Add(startCells.CellsToSpawn[i]);
-        }
+        _currentCellsToSpawn = config.CellsToSpawn;
 
         CalculateCellSpawnChances();
     }
