@@ -13080,7 +13080,7 @@ MonoBehaviour:
   _buildCamera: {fileID: 35854985}
   _buyPieceButton: {fileID: 653479981}
   <_mainCanvas>k__BackingField: {fileID: 1212849847}
-  _floatingImagePrefab: {fileID: 0}
+  _floatingImagePrefab: {fileID: 5610715855005416635, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
   _floatingTextContainer: {fileID: 762985106}
   _ruleAvatarImage: {fileID: 1064158838}
   _avatarsConfig: {fileID: 11400000, guid: 51490cb783028be4687c1b361d51b38e, type: 2}
@@ -13088,6 +13088,7 @@ MonoBehaviour:
   <_playButton>k__BackingField: {fileID: 14316283}
   _metaTutorial: {fileID: 7871448783657793599, guid: 38bd702994ac15a4d91b7be99ace4f27, type: 3}
   _metaTutorialContainer: {fileID: 59809318}
+  IsBuildState: 0
 --- !u!1 &1222653061
 GameObject:
   m_ObjectHideFlags: 0
@@ -16218,6 +16219,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1853937550}
   m_CullTransparentMesh: 1
+--- !u!1 &1861212461
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1861212462}
+  m_Layer: 0
+  m_Name: MarkedLockedCellsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1861212462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861212461}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 1, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1903646005
 GameObject:
   m_ObjectHideFlags: 0
@@ -16741,6 +16773,8 @@ MonoBehaviour:
       Value: 3
     - Key: 104
       Value: 4
+  _markedCellPrefab: {fileID: 8098495716344652187, guid: 1c004dc16d1148847a1bacc2c1d19371, type: 3}
+  _markedLockedCellsContainer: {fileID: 1861212462}
   CanDragCamera: 1
 --- !u!4 &1910540965
 Transform:
@@ -17810,7 +17844,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2040960725}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17820,7 +17854,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2}
+  m_AnchoredPosition: {x: 1.5, y: 1.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2040960730
@@ -19028,6 +19062,7 @@ SceneRoots:
   - {fileID: 1212849847}
   - {fileID: 942450214}
   - {fileID: 91059900}
+  - {fileID: 1861212462}
   - {fileID: 7588746973966123701}
   - {fileID: 3878155705633847446}
   - {fileID: 2040960729}

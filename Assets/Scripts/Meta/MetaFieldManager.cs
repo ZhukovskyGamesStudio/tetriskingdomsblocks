@@ -53,6 +53,14 @@ public class MetaFieldManager : FieldManager {
     [SerializedDictionary]
     public SerializedDictionary<CellType, ResourceType> _cellsResources;
 
+    [SerializeField]
+    private GameObject _markedCellPrefab;
+
+    [SerializeField]
+    private Transform _markedLockedCellsContainer;
+
+    private List<GameObject> _markedLockedCells = new();
+    
     public bool CanDragCamera = true;
 
     protected override void Awake() {
@@ -326,6 +334,7 @@ public class MetaFieldManager : FieldManager {
             //check for empty cells
         }
 
+        MarkLockedGroup(groupIndex);
         var lockedCellGroup = LockedCellGroups[groupIndex];
         Vector3 uiPos = Vector3.zero;
 
@@ -336,8 +345,36 @@ public class MetaFieldManager : FieldManager {
         uiPos /= lockedCellGroup.Count;
         _currentMarkedFieldCell = new Vector2Int(cellPos.x, cellPos.y);
 
-        MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetData(uiPos, LockedCellGroups[groupIndex].Count);
+        MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetData(uiPos, LockedCellGroups[groupIndex].Count, GetGroupSize(groupIndex));
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(true);
+    }
+
+    private void MarkLockedGroup(int groupIndex) {
+        UnmarkLockedGroup();
+
+        foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
+            GameObject newCell = Instantiate(_markedCellPrefab, _markedLockedCellsContainer);
+            newCell.transform.localPosition = _cells[cell.x, cell.y].transform.position;
+            _markedLockedCells.Add(newCell);
+        }
+    }
+
+    private Vector2Int GetGroupSize(int groupIndex) {
+        Vector2Int min = LockedCellGroups[groupIndex][0], max = min;
+        
+        foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
+            min = new Vector2Int(Mathf.Min(cell.x, min.x), Mathf.Min(cell.y, min.y));
+            max = new Vector2Int(Mathf.Max(cell.x, max.x), Mathf.Max(cell.y, max.y));
+        }
+
+        return max - min + Vector2Int.one;
+    }
+
+    private void UnmarkLockedGroup() {
+        foreach (GameObject markedCell in _markedLockedCells) {
+            Destroy(markedCell);
+        }
+        _markedLockedCells = new List<GameObject>();
     }
 
     public void UnlockCell() {
@@ -347,6 +384,7 @@ public class MetaFieldManager : FieldManager {
 
         if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) return;
 
+        UnmarkLockedGroup();
         StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, -lockedCellGroup.Count);
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
         foreach (var lockCellPos in lockedCellGroup) {
@@ -367,7 +405,8 @@ public class MetaFieldManager : FieldManager {
 
     public void CloseCellUI() {
         if (_currentMarkedFieldCell == -Vector2Int.one) return;
-
+        
+        UnmarkLockedGroup();
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(false);
         DialogsManager.Instance.CloseDialog(typeof(UpgradeTileDialog));
         _currentMarkedFieldCell = -Vector2Int.one;
@@ -863,8 +902,8 @@ public class MetaFieldManager : FieldManager {
             _connectedGroups[curIndex - 1].ResourceMarkView.CollectAnimation();
         }
 
-        List<(int, int)> cellsInNewGroup = new List<(int, int)>();
-        Vector3 newResourceMarkPosition = new Vector3();
+        List<(int, int)> cellsInNewGroup = new ();
+        Vector3 newResourceMarkPosition = new ();
         int curGroupIndex = 0;
         if (connectedCellGroups.Count == 0)
             curGroupIndex = _connectedGroups.Count + 1;
