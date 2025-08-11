@@ -7,6 +7,9 @@ public class UnlockFieldCellsView : MonoBehaviour {
     private Transform _unlockCellUIContainer;
 
     [SerializeField]
+    private Animator _animator;
+
+    [SerializeField]
     private TMP_Text _unlockCellText;
     [field:SerializeField]
     public Button UnlockButton { get; private set; }
@@ -15,6 +18,7 @@ public class UnlockFieldCellsView : MonoBehaviour {
 
     public void SetData(Vector3 pos, int cost) {
         _unlockCellUIContainer.transform.position = pos;
-        _unlockCellText.text = $"Unlock\n{cost} cubes";
+        _unlockCellText.text = cost.ToString();
+        _animator.Play("RemoveLockedCellUIContainer");
     }
 }
