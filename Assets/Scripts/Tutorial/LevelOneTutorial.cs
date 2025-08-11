@@ -119,6 +119,9 @@ public class LevelOneTutorial : MonoBehaviour {
 
     public async UniTask HideFirstStepTutorialAsync() {
         SpotlightsManager.Instance.HideFinger();
+        GameUI.Instance.GoalView.gameObject.SetActive(true);
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(false);
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         TutorialHoleHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;
@@ -151,8 +154,6 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     public void ShowThirdStepTutorial() {
-        GameUI.Instance.GoalView.gameObject.SetActive(true);
-        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight( GameUI.Instance.GoalView.transform, _step2Config);
         //_blackBGImage.gameObject.SetActive(true);
         //_tutorialText.transform.position =
@@ -173,10 +174,11 @@ public class LevelOneTutorial : MonoBehaviour {
         DestroyTutorial();
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         ShowWitch();
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(true);
     }
 
     private static void ShowWitch() {
-        GameUI.Instance.GoalView.Witch.gameObject.SetActive(true);
+        GameUI.Instance.ShowWitch();
     }
 
     public void DestroyTutorial() {

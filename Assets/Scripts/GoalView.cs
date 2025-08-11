@@ -32,6 +32,8 @@ public class GoalView : MonoBehaviour {
     
     [field: SerializeField]
     public GameObject Witch { get; private set; }
+    [field: SerializeField]
+    public GameObject SettingsButton { get; private set; }
     
     
     private Tween _currentTween;
