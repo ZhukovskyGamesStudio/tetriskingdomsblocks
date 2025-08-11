@@ -15,9 +15,6 @@ public class GameUI : MonoBehaviour {
     [SerializeField]
     private FloatingTextView _floatingTextPrefab;
 
-    [SerializeField]
-    private Transform _floatingTextContainer;
-
     [field: SerializeField]
     public GameBoostersButtons GameBoostersButtons { get; private set; }
 
@@ -35,11 +32,8 @@ public class GameUI : MonoBehaviour {
     [field: SerializeField]
     public GoalView GoalView { get; private set; }
 
-    private ObjectPool<FloatingTextView> _floatingTextsPool;
-
     private void Awake() {
         Instance = this;
-        _floatingTextsPool = new ObjectPool<FloatingTextView>(() => Instantiate(_floatingTextPrefab, _floatingTextContainer));
     }
 
     public Transform HolesForBgContainer => _holesForBgContainer;
@@ -56,15 +50,6 @@ public class GameUI : MonoBehaviour {
             }
         }
     } 
-    public void ShowFloatingText(Sprite needSprite, Vector2 newPosition, float textSize, float showTime, Vector2 finalposition) {
-        var floatingText = _floatingTextsPool.Get();
-        floatingText.SetText(newPosition, needSprite, textSize, showTime, finalposition);
-    }
-
-    public void ReleaseFloatingText(FloatingTextView needTextObject) {
-        needTextObject.gameObject.SetActive(false);
-        _floatingTextsPool.Release(needTextObject);
-    }
 
     public void ShowSettings() {
         SettingsManager.Instance.ShowGameSettingsDialog();

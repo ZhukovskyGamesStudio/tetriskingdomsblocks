@@ -12,8 +12,14 @@ public class CountersPanelView : MonoBehaviour {
     [SerializeField]
     private SerializedDictionary<ResourceType, TMP_Text> _resourcesCountersTexts;
 
-    public Vector3 GetCoinsPosition => _goldCounterText.transform.position;
-    public Vector3 GetMagicCubesPosition => _magicCubeCounterText.transform.position;
+    [SerializeField]
+    private Transform _cubesIcon;
+    
+    [SerializeField]
+    private Transform _goldIcon;
+
+    public Vector3 GetCoinsIconPosition => _goldIcon.position;
+    public Vector3 GetMagicCubesIconPosition => _cubesIcon.position;
 
     public void SetMagicCubes(int value) {
         if (_magicCubeCounterText != null)

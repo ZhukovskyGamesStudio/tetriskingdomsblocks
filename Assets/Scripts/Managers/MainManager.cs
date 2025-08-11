@@ -51,9 +51,9 @@ public class MainManager : MonoBehaviour {
         _currentRewardedCubes = 0;
         return (cubes, coins);
     }
-    public void AddRewardToMeta() {
-        _currentRewardedCubes += CurrentLevelConfig.MagicCubesCount;
-        _currentRewardedCoins += CurrentLevelConfig.GoldAmount;
+    public void AddRewardToMeta(int cubes, int coins) {
+        _currentRewardedCubes += cubes;
+        _currentRewardedCoins += coins;
     }
     public void SetupGetPieceTimer() {
         if (StorageManager.GameDataMain.LastGetPieceTime == DateTime.MinValue.ToString(CultureInfo.InvariantCulture)) {
