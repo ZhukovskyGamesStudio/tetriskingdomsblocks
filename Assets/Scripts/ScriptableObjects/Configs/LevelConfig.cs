@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public class LevelConfig : ScriptableObject {
     public CellTypeInfo[] CurrentGuaranteedFirstCells { get; private set; }
 
     [field: SerializeField]
-    public CellsAndResourceTypesTableConfig CellTypesTableConfig { get; private set; }
+    public List<CellType> CellsToSpawn { get; private set; }
 
     [field: SerializeField]
     public int GoldAmount { get; private set; } = 100;

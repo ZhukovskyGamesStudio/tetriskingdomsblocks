@@ -62,6 +62,8 @@ public class MetaUI : MonoBehaviour {
 
     private ObjectPool<Image> _floatingImagePool;
 
+    public bool IsBuildState;
+
     private void Awake() {
         Instance = this;
         _floatingImagePool = new ObjectPool<Image>(() => Instantiate(_floatingImagePrefab, _floatingTextContainer));
@@ -176,6 +178,7 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenBuildState() {
+        IsBuildState = true;
         _buildState.SetActive(true);
         _ruleState.SetActive(false);
         _ruleCamera.SetActive(false);
@@ -192,6 +195,7 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenRuleState() {
+        IsBuildState = false;
         DialogsManager.Instance.CloseAllDialogs();
         _buildState.SetActive(false);
         _ruleState.SetActive(true);

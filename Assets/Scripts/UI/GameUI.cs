@@ -136,4 +136,8 @@ public class GameUI : MonoBehaviour {
     public void SwitchRotateWindowActive() {
       
     }
+
+    public void ShowWitch() {
+       GoalView.Witch.gameObject.SetActive(true);
+    }
 }

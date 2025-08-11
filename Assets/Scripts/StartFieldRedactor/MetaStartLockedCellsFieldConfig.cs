@@ -1,10 +1,20 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MetaStartLockedCellsFieldConfig", menuName = "Scriptable Objects/MetaStartLockedCellsFieldConfig")]
 public class MetaStartLockedCellsFieldConfig : ScriptableObject
 {
     public IntAndVector2Int[] LockedCellsGroups ;
+    public List<int> GroupsParents;
+
+    public void SaveParents(List<TMP_InputField> inputs) {
+        GroupsParents = new List<int>();
+        foreach (TMP_InputField input in inputs) {
+            GroupsParents.Add(int.Parse(input.text));
+        }
+    }
     
     public void CreateGrid(int[,] inputGrid)
     {
