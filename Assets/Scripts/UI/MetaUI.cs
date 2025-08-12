@@ -77,6 +77,17 @@ public class MetaUI : MonoBehaviour {
         }
     }
 
+    public void OpenCraftsDialog() {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(MetaCraftDialog),
+            Data = new MetaCraftDialog.Data {
+                Crafts = ConfigsManager.Instance.MetaCraftsConfig.Crafts
+            }
+        };
+        
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
+    }
+
     public void OpenLootboxDialog(PieceData rewardingPiece) {
         var dialogData = new DialogWithData {
             DialogType = typeof(LootboxDialog),
