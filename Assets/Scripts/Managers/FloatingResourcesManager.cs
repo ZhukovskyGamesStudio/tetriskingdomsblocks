@@ -56,7 +56,7 @@ public class FloatingResourcesManager : MonoBehaviour {
 
         for (int i = 0; i < needCount; i++) {
             var uiElement = ShowFloatingImage();
-            uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
+            uiElement.sprite = SpritesManager.Instance.GetSprite(resourceType);
             uiElement.transform.position = startWorldPos;
 
             if (isRemoveResources) {
@@ -98,7 +98,7 @@ public class FloatingResourcesManager : MonoBehaviour {
             Vector3[] path = { startWorldPos[i], controlPoint, endWorldPos };
 
             var uiElement = ShowFloatingImage();
-            uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
+            uiElement.sprite = SpritesManager.Instance.GetSprite(resourceType);
             uiElement.transform.position = startWorldPos[i];
 
             if (isRemoveResources) {
