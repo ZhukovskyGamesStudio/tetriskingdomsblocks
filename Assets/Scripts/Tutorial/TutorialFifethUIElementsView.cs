@@ -46,7 +46,7 @@ public class TutorialFifthUIElementsView : MonoBehaviour {
         GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(GameUI.Instance.GameBoostersButtons._hummerButton, _stepConfig,
             () => { HideBoosterStepTutorial().Forget(); });
-        SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GoalView.UltimateButton.transform.position);
+        SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GameBoostersButtons._hummerButton.transform.position);
         TutorialHoleHelper.SpawnHoles(_firstStepCells);
     }
 

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StartFieldCustomRedactor : MonoBehaviour {
@@ -246,6 +249,66 @@ public class StartFieldCustomRedactor : MonoBehaviour {
             SaveStartMetaFieldToConfig();
         else
             SaveStartGameFieldToConfig();
+    }
+
+    public void PlayButton() {
+        SceneManager.LoadScene("LoadingScene");
+    }
+    
+    public void AutofillLevels() {
+        AutoFillLevelConfigs();
+    }
+    
+    [MenuItem("Tools/Configs/Auto-Fill Levels in MainManagerConfig")]
+    public static void AutoFillLevelConfigs()
+    {
+        // Находим MainManagerConfig в проекте
+        var mainManagerConfigs = AssetDatabase.FindAssets("t:MainManagerConfig");
+        if (mainManagerConfigs.Length == 0)
+        {
+            Debug.LogError("MainManagerConfig not found in project!");
+            return;
+        }
+
+        var mainManagerConfig = AssetDatabase.LoadAssetAtPath<MainManagerConfig>(
+            AssetDatabase.GUIDToAssetPath(mainManagerConfigs[0]));
+
+        // Находим все LevelConfig в проекте
+        var levelConfigs = AssetDatabase.FindAssets("t:LevelConfig")
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelConfig>(
+                AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(config => config != null)
+            .ToList();
+
+        // Сортируем по имени (Level33Config, Level34Config и т.д.)
+        // Сортируем по номеру уровня, извлекая число из имени
+        levelConfigs.Sort((a, b) => 
+        {
+            int aNumber = ExtractNumber(a.name);
+            int bNumber = ExtractNumber(b.name);
+            return aNumber.CompareTo(bNumber);
+        });
+
+        // Присваиваем отсортированный массив
+        mainManagerConfig.Levels = levelConfigs.ToArray();
+
+        // Помечаем объект как измененный, чтобы сохранить изменения
+        EditorUtility.SetDirty(mainManagerConfig);
+        AssetDatabase.SaveAssets();
+
+        Debug.Log($"Successfully assigned {levelConfigs.Count} level configs to MainManagerConfig in order: " +
+                  string.Join(", ", levelConfigs.Select(c => c.name)));
+    }
+    
+    private static int ExtractNumber(string name)
+    {
+        // Ищем последовательность цифр в имени
+        Match match = Regex.Match(name, @"\d+");
+        if (match.Success && int.TryParse(match.Value, out int number))
+        {
+            return number;
+        }
+        return 0; // Если числа не найдены, возвращаем 0
     }
     
     private void SaveStartMetaFieldToConfig() {
