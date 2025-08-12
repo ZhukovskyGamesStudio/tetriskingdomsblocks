@@ -13083,8 +13083,6 @@ MonoBehaviour:
   _buildCamera: {fileID: 35854985}
   _buyPieceButton: {fileID: 653479981}
   <_mainCanvas>k__BackingField: {fileID: 1212849847}
-  _floatingImagePrefab: {fileID: 5610715855005416635, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
-  _floatingTextContainer: {fileID: 762985106}
   _ruleAvatarImage: {fileID: 1064158838}
   _avatarsConfig: {fileID: 11400000, guid: 51490cb783028be4687c1b361d51b38e, type: 2}
   <_getPieceButtonView>k__BackingField: {fileID: 2008138992}
@@ -14517,7 +14515,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1910540964}
         m_TargetAssemblyTypeName: MetaFieldManager, Assembly-CSharp
-        m_MethodName: UnlockCell
+        m_MethodName: UnlockCellForButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

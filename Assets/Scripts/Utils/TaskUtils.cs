@@ -33,6 +33,8 @@ public static class TaskUtils {
         gameData.ResourceTypesForTasks.Remove(gameData.CurrentTasks[i].TaskInfo.NeedResource);
         gameData.CurrentTasks[i].TaskUIView.CompleteTask();
         gameData.CurrentTasks.RemoveAt(i);
+
+        GameEntryPoint.Instance.CheckWin();
     }
 
     public static bool IsResourceNeededForTasks(GameData gameData, ResourceType resourceType) {

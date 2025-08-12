@@ -6,6 +6,7 @@ using AYellowpaper.SerializedCollections;
 using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Cysharp.Threading.Tasks;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
@@ -263,24 +264,18 @@ public class MetaFieldManager : FieldManager {
                 return;
             }
 
-        
-           // MetaUI.Instance.CountersPanelView.SetResourceCount(cellConfig.AfkResourceType,
-           // StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType));
-            
-         
-            
            FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, cellConfig.AfkResourceType,
                 MetaUI.Instance._openResourceTabButtonTransform.position, _mainCamera.WorldToScreenPoint(finalUiNeedPos),
-                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType),true);   
-            StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
+                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType),true,false);   
+       //     StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
         } else {
             if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost) 
                 return;
             
             FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Coins,
                 MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos),
-                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true);
-             StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
+                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false);
+          //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
         }
 
         CollectResourcesFromMark(_groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1, 1);
@@ -308,12 +303,8 @@ public class MetaFieldManager : FieldManager {
 
     public void ChangeResorceText(ResourceType resourceType ,float needCount)
     {
-        if(resourceType == ResourceType.Coins)
-            MetaUI.Instance.CountersPanelView.SetGold(needCount);
-       else if(resourceType == ResourceType.MagicCube)
-            MetaUI.Instance.CountersPanelView.SetMagicCubes((int)needCount);
-        else
-        MetaUI.Instance.CountersPanelView.SetResourceCount(resourceType, needCount);
+        StorageManager.GameDataMain.AddResource(resourceType, needCount);
+        MetaUI.Instance.CountersPanelView.SetResourceCount(resourceType, StorageManager.GameDataMain.GetResource(resourceType));
     }
     
     private void CastLockedCell(Vector2Int cellPos) {
@@ -387,7 +378,13 @@ public class MetaFieldManager : FieldManager {
         _markedLockedCells = new List<GameObject>();
     }
 
-    public void UnlockCell() {
+    public void UnlockCellForButton()
+    {
+        UnlockCell();
+    }
+    
+
+    public async UniTask UnlockCell() {
         int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1000;
         var lockedCellGroup = LockedCellGroups[groupIndex];
         Vector3 uiPos = Vector3.zero;
@@ -396,7 +393,12 @@ public class MetaFieldManager : FieldManager {
 
         UnmarkLockedGroup();
       
-        MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
+        MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube)); 
+        FloatingResourcesManager.Instance.FromPointToPointAnimation(lockedCellGroup.Count, ResourceType.MagicCube, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
+                                                                                                                                         Input.mousePosition, ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true, false );
+                                                                                                                               // StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, -lockedCellGroup.Count);
+                                                                                                                                      StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
+                                                                                                                                      CloseCellUI();
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
             _cells[lockCellPos.x, lockCellPos.y] = null;
@@ -404,13 +406,10 @@ public class MetaFieldManager : FieldManager {
             _groupCellIndex[lockCellPos.x, lockCellPos.y] = 0;
             StorageManager.GameDataMain.FieldRows[lockCellPos.x].RowCells[lockCellPos.y] =
                 new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
+            await UniTask.Delay(TimeSpan.FromSeconds(1.5f/lockedCellGroup.Count));
         }
         
-        FloatingResourcesManager.Instance.FromPointToPointAnimation(lockedCellGroup.Count, ResourceType.MagicCube, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
-           Input.mousePosition, ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true );
-  StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, -lockedCellGroup.Count);
-        StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
-        CloseCellUI();
+      
     }
 
     public void CloseCellUI() {
@@ -773,16 +772,16 @@ public class MetaFieldManager : FieldManager {
          
             FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), curResource, Input.mousePosition,
                 MetaUI.Instance._openResourceTabButtonTransform.position,
-            ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false); 
-            StorageManager.GameDataMain.AddResource(curResource, finalResourceCount);
+            ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false,true); 
+           // StorageManager.GameDataMain.AddResource(curResource, finalResourceCount);
             UpdateResourcesCountUIText();
         } else {
            
           //  MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GetResource(ResourceType.Coins));
           FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Coins, Input.mousePosition,
                 MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
-            ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false); 
-            StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
+            ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false, true); 
+         //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
         }
     }
 
@@ -1079,7 +1078,6 @@ public class MetaFieldManager : FieldManager {
           return TimeSpan.FromMinutes(minutesUntilNext);
       }*/
     public void GetInventoryFromSave() {
-       Debug.Log(StorageManager.GameDataMain.InventoryFigures.Count); 
         if (StorageManager.GameDataMain.InventoryFigures == null) return;
         var inventoryFigures = StorageManager.GameDataMain.InventoryFigures;
         foreach (var figure in inventoryFigures) {
