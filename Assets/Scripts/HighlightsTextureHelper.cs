@@ -15,7 +15,7 @@ public class HighlightsTextureHelper : MonoBehaviour {
 
     [SerializeField]
     private string _cameraName = "FieldHighlightsCamera";
-
+    private Camera _currentCamera;
     private float _width, _height;
 
     private void UpdateTextureSize() {
@@ -27,19 +27,29 @@ public class HighlightsTextureHelper : MonoBehaviour {
             Destroy(_renderTexture);
         }
 
-        _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
-        _renderTexture.Create();
-        _rawImage.texture = _renderTexture;
-        RenderTexture = _renderTexture;
-        var res = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        var cam = res.First(o => o.gameObject.name == _cameraName);
+      
+        var cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var cam = cameras.First(o => o.gameObject.name == _cameraName);
         if (cam != null) {
+            _currentCamera = cam;
+            _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
+            _renderTexture.Create();
+            _rawImage.texture = _renderTexture;
+            RenderTexture = _renderTexture;
+            
             cam.targetTexture = _renderTexture;
+        } else {
+            _currentCamera = null;
+            _width = 0;
+            _height = 0;
         }
     }
 
     private void Update() {
-        if (!Mathf.Approximately(_width, _rect.rect.width) || !Mathf.Approximately(_height, _rect.rect.height)) {
+        Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Camera cam = cameras.First(o => o.gameObject.name == _cameraName);
+       
+        if (!Mathf.Approximately(_width, _rect.rect.width) || !Mathf.Approximately(_height, _rect.rect.height) || cam != _currentCamera) {
             UpdateTextureSize();
         }
     }

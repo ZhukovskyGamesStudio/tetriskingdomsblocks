@@ -1576,8 +1576,8 @@ MonoBehaviour:
       Value: {fileID: 507737370}
     - Key: 14
       Value: {fileID: 1037602572}
-  _cubesIcon: {fileID: 0}
-  _goldIcon: {fileID: 0}
+  _cubesIcon: {fileID: 1572093860}
+  _goldIcon: {fileID: 1269222538}
 --- !u!1 &287902616
 GameObject:
   m_ObjectHideFlags: 0
@@ -12812,6 +12812,7 @@ RectTransform:
   m_Children:
   - {fileID: 237102792}
   - {fileID: 2123130225}
+  - {fileID: 1294333760}
   m_Father: {fileID: 1212849847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13320,7 +13321,6 @@ RectTransform:
   - {fileID: 1281305442}
   - {fileID: 1145724119}
   - {fileID: 59809318}
-  - {fileID: 1294333760}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13887,7 +13887,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1294333760
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13900,7 +13900,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1212849847}
+  m_Father: {fileID: 1145724119}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -14785,7 +14785,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1910540964}
         m_TargetAssemblyTypeName: MetaFieldManager, Assembly-CSharp
-        m_MethodName: UnlockCell
+        m_MethodName: UnlockCellForButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

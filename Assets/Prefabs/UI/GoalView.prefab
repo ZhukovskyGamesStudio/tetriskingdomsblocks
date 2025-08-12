@@ -626,6 +626,8 @@ GameObject:
   - component: {fileID: 2836767397388553074}
   - component: {fileID: 158245669993028778}
   - component: {fileID: 7305510693199379969}
+  - component: {fileID: 2328352597821757200}
+  - component: {fileID: 6965446602871051500}
   m_Layer: 5
   m_Name: Witch
   m_TagString: Untagged
@@ -690,6 +692,35 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!111 &2328352597821757200
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2325166228544762212}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: f0b40b064564531418b57eb7db7eb6d9, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
+--- !u!225 &6965446602871051500
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2325166228544762212}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &2349306003807857812
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,6 +1572,8 @@ MonoBehaviour:
   _hideUiClip: {fileID: 7400000, guid: f05442d027603ee4d86e6800c1f487cb, type: 2}
   <Witch>k__BackingField: {fileID: 2325166228544762212}
   <SettingsButton>k__BackingField: {fileID: 7307734979784840175}
+  _witchAnimation: {fileID: 2328352597821757200}
+  _witchShowClip: {fileID: 7400000, guid: f0b40b064564531418b57eb7db7eb6d9, type: 2}
 --- !u!1 &4316645212130731811
 GameObject:
   m_ObjectHideFlags: 0

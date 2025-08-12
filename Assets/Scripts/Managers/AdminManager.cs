@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -110,6 +111,9 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void ChangeLevelToNeeded(int needLevelNumber) {
+        SpotlightsManager.Instance.HideFinger();
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
+        SpotlightsManager.Instance.ShadowWithText.HideSpeak();
         StorageManager.GameDataMain.CurMaxLevel = needLevelNumber;
         StorageManager.SaveGame();
         SceneManager.LoadScene("GameScene");

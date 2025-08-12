@@ -1,81 +1,54 @@
-using System;
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using TMPro;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TutorialThirdUIElementsView : MonoBehaviour {
     [SerializeField]
-    private RectTransform[] _holeImages;
-
-    private RectTransform _blackBGImage;
-
-    [SerializeField]
-    private TMP_Text _tutorialText;
+    private RectTransform _goalViewContainer;
 
     [SerializeField]
     private Tween _currentTween;
 
     [SerializeField]
-    private bool _canSkipTutorial;
-
-    private int _tutorialStep = 0;
+    private SpotlightAnimConfig _step1Config;
 
     void Start() {
-        GameFieldManager.Instance.OnCellPlaced += ShowFirstStepTutorial;
-
-        SpawnAllTutorialObjects();
+        GameFieldManager.Instance.OnCellPlaced += ShowUltimateStepTutorial;
         SetHolesPositions();
-    }
-
-    private void Update() {
-        if (Input.touchCount > 0 && _tutorialStep == 1) {
-            Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
-                HideFirstStepTutorial();
-        }
-
-#if UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0) && _tutorialStep == 1)
-            HideFirstStepTutorial();
-#endif
+        NextPiecesView.Instance.SetTinyPortalActive(false);
     }
 
     public void SetHolesPositions() {
         var ultimateContainer = GameUI.Instance._ultimateContainer;
-        _holeImages[0].transform.SetParent(ultimateContainer);
-        //_holeImages[0].transform.position = posHole;
-        _tutorialText.transform.position = new Vector3(ultimateContainer.position.x, ultimateContainer.position.y - 200, 0);
+        _goalViewContainer.transform.SetParent(ultimateContainer);
     }
 
-    private void SpawnAllTutorialObjects() {
-        _blackBGImage = gameObject.GetComponent<RectTransform>();
+    private void ShowUltimateStepTutorial(Vector2Int pos, bool[,] cells) {
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(GameUI.Instance.GoalView.UltimateButton, _step1Config,
+            () => { HideUltimateStepTutorial().Forget(); });
+        SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GoalView.UltimateButton.transform.position);
+
+        GameFieldManager.Instance.OnCellPlaced -= ShowUltimateStepTutorial;
     }
 
-    private void ShowFirstStepTutorial(Vector2Int pos, bool[,] cells) {
-        _tutorialText.gameObject.SetActive(true);
-        _tutorialStep = 1;
-        GameFieldManager.Instance.OnCellPlaced -= ShowFirstStepTutorial;
-        gameObject.GetComponent<Image>().enabled = true;
-    }
-
-    public void HideFirstStepTutorial() {
+    public async UniTask HideUltimateStepTutorial() {
+        SpotlightsManager.Instance.HideFinger();
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
-        _canSkipTutorial = true;
-        _holeImages[0].gameObject.SetActive(false);
+        _goalViewContainer.gameObject.SetActive(false);
         DestroyTutorial();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
     }
 
     public void DestroyTutorial() {
+        NextPiecesView.Instance.SetTinyPortalActive(true);
         _currentTween.Kill();
-        foreach (var hole in _holeImages) {
-            Destroy(hole.gameObject);
-        }
 
-        Destroy(_blackBGImage.gameObject);
+        Destroy(_goalViewContainer.gameObject);
         Destroy(gameObject);
     }
 }
