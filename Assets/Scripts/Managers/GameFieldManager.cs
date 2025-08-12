@@ -124,7 +124,14 @@ public class GameFieldManager : FieldManager {
         }
 
         if (_mainGameConfig.resourceOnPlaceCell) {
-            CollectResourcesOnPlace(pieceData);
+            var cellArray = new CellView[cells.GetLength(0)* cells.GetLength(1)];
+            int i = 0;
+            foreach (var cell in cells) {
+                cellArray[i] = cell;
+                    i++;
+            }
+               
+            CollectResourcesOnPlace(pieceData, cellArray);
         }
 
         if (_isSlimeExist)
@@ -258,38 +265,69 @@ public class GameFieldManager : FieldManager {
 
         for (int index = 0; index < resourcesForPlace.Length; index++) {
             ResourceTypeAndCountSubClass resource = resourcesForPlace[index];
-            var taskUIView = TaskUtils.GetUIForResourceTask(_gameData, resource);
+            var taskUIView = TaskUtils.GetUIForResourceTask(_gameData, resource.ResourceType);
             if (taskUIView == null) {
                 continue;
             }
 
             //string text = $" +{resource.ResourceCount} <sprite name={resource.ResourceType}> ";
             Vector2 pos = new(onCanvasPosition.x, onCanvasPosition.y + index * 15);
-            GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[resource.ResourceType],pos, 40, 1, taskUIView.CurrentTaskInfo.transform.position);
+           // FloatingResourcesManager.Instance.FromPointToPointAnimation(SpritesManager.Instance.ResourcesSprites[resource.ResourceType], pos,
+           //     40, 1, taskUIView.TaskUIView.CurrentTaskInfo.transform.position);
         }
     }
 
-    public void CollectResourcesOnPlace(PieceData placedPiece) {
+    public void ChangeTaskResourceCount(ResourceType resource, float count) {
+        var taskUIView = TaskUtils.GetUIForResourceTask(_gameData, resource);
+        if (taskUIView == null) {
+            return;
+        }
+       // taskUIView.needCount += (int)count;
+        if(!_gameData.CollectedResources.TryAdd((resource), -(int)count))
+        _gameData.CollectedResources[resource] -= (int)count;
+        //taskUIView.TaskUIView.CurrentTaskInfo.text = taskUIView.needCount.ToString();
+        TaskUtils.CheckResourceCountForTasks(_gameData);
+    }
+
+    public void CollectResourcesOnPlace(PieceData placedPiece,CellView[] cells) {
+        int resourcesForTask = 0;
+        ResourceTypeAndCountSubClass resourceType = null;  
+        List<Vector2> placedCells = new List<Vector2>();
+        foreach (var cell in cells) {
+            if(cell == null)continue;
+            placedCells.Add(_mainCamera.WorldToScreenPoint(cell.transform.position));
+        }
+      var needResources = ((CoreCellTypeInfo)placedPiece.Type).ResourcesForPlace;
+        
         for (int x = 0; x < placedPiece.Cells.GetLength(0); x++) {
             for (int y = 0; y < placedPiece.Cells.GetLength(1); y++) {
                 if (!placedPiece.Cells[x, y]) {
                     continue;
                 }
 
-                var needResources = ((CoreCellTypeInfo)placedPiece.Type).ResourcesForPlace;
+            
                 for (int i = 0; i < needResources.Length; i++) {
-                    var resourceType = needResources[i];
+                    resourceType = needResources[i];
                     if (resourceType == null) {
                         continue;
                     }
 
-                    if (!_gameData.CollectedResources.TryAdd(resourceType.ResourceType, resourceType.ResourceCount))
-                        _gameData.CollectedResources[resourceType.ResourceType] += resourceType.ResourceCount;
+                  /*  if (!_gameData.CollectedResources.TryAdd(resourceType.ResourceType, resourceType.ResourceCount)) {
+                        resourcesForTask += resourceType.ResourceCount;
+                    }*/
                 }
             }
         }
 
-        TaskUtils.CheckResourceCountForTasks(_gameData);
+        if (TaskUtils.IsResourceNeededForTasks(_gameData,resourceType.ResourceType)) {
+            var taskInfoAndUI = TaskUtils.GetUIForResourceTask(_gameData, resourceType.ResourceType);
+            FloatingResourcesManager.Instance.FromSomePointsToPointAnimation(resourceType.ResourceType, placedCells,
+                taskInfoAndUI.TaskUIView.transform.position,
+                ChangeTaskResourceCount,taskInfoAndUI.needCount,true, true);
+          //  _gameData.CollectedResources[resourceType.ResourceType] += resourcesForTask;
+               //     TaskUtils.CheckResourceCountForTasks(_gameData);
+        }
+        
     }
 
     public void ExplodeCellsInRows() {
@@ -351,6 +389,9 @@ public class GameFieldManager : FieldManager {
         Dictionary<ResourceType, int> resourcesMultiplayers = new Dictionary<ResourceType, int>();
         Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
         ResourceType currentResourceType = ResourceType.None;
+        
+        List<ResourceType> resourceTypes = new List<ResourceType>();
+        List<Vector2> cellsPositionsInUI = new List<Vector2>();
         fullSameResourcesColumn = true;
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
@@ -372,6 +413,14 @@ public class GameFieldManager : FieldManager {
                 if (config.MultiplayerForSameResourceType < resourcesMultiplayers[config.ResourcesForDestroy[0].ResourceType])
                     resourcesMultiplayers[config.ResourcesForDestroy[0].ResourceType] = config.MultiplayerForSameResourceType;
             }
+
+            if (TaskUtils.IsResourceNeededForTasks(_gameData,config.ResourcesForDestroy[0].ResourceType))
+            {
+                resourceTypes.Add(config.ResourcesForDestroy[0].ResourceType);
+                cellsPositionsInUI.Add(_mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position));
+         //       _gameData.CollectedResources[ config.ResourcesForDestroy[0].ResourceType] += 1;
+            }
+       
         }
 
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
@@ -385,13 +434,25 @@ public class GameFieldManager : FieldManager {
             }
 
             TaskUtils.CheckMonoLinesForTasks(_gameData);
-            _gameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
+        //    _gameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-            SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
+            var taskInfo = TaskUtils.GetUIForResourceTask(_gameData, currentBonusResourceType);
+            if (TaskUtils.IsResourceNeededForTasks(_gameData, currentBonusResourceType))
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(8, currentBonusResourceType, needPosition,
+                    taskInfo.TaskUIView.transform.position,ChangeTaskResourceCount,taskInfo.needCount, true, true);
+           
+          //  SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
         }
-
-        TaskUtils.CheckResourceCountForTasks(_gameData);
+        if (resourceTypes.Count !=0&&TaskUtils.IsResourceNeededForTasks(_gameData,resourceTypes[0]))
+        {
+            var taskInfoAndUI = TaskUtils.GetUIForResourceTask(_gameData, resourceTypes[0]);
+            FloatingResourcesManager.Instance.FromSomePointsToPointMultiplyResourcesAnimation(resourceTypes
+                ,cellsPositionsInUI ,
+                taskInfoAndUI.TaskUIView.transform.position,
+                ChangeTaskResourceCount,taskInfoAndUI.needCount,true, true);
+          
+        }
     }
 
     private void SpawnResourceFxForLine(ResourceType resourceType, int bonusResourcesOnDestroyLine, Vector2 needPosition) {
@@ -400,7 +461,7 @@ public class GameFieldManager : FieldManager {
         }
 
        // string text = $"<sprite name={resourceType}> +{bonusResourcesOnDestroyLine} ";
-        GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[resourceType], needPosition, 60, 1.5f, Vector2.zero);
+       // GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[resourceType], needPosition, 60, 1.5f, Vector2.zero);
     }
 
     private int CheckLineAndDestroyNeededCells(int mainAxisCurrentValue, bool isRow, int secondAxis, Dictionary<CellType, int> cellTypesInLine,
@@ -422,9 +483,9 @@ public class GameFieldManager : FieldManager {
             }
 
             int count = config.ResourcesForDestroy[i].ResourceCount * resourceMultiplayer;
-            if (!_gameData.CollectedResources.TryAdd(resourceType, count)) {
-                _gameData.CollectedResources[resourceType] += count;
-            }
+        //    if (!_gameData.CollectedResources.TryAdd(resourceType, count)) {
+          //      _gameData.CollectedResources[resourceType] += count;
+          //  }
 
             if (fullSameResourcesColumn) {
                 //fix this if on destroy resources types be more than 1;
@@ -528,19 +589,18 @@ public class GameFieldManager : FieldManager {
 
         ResourceTypeAndCountSubClass gotResource = config.ResourcesForDestroy[0];
 
-        foreach (TaskInfoAndUI infoAndUI in _gameData.CurrentTasks) {
-            if (infoAndUI.TaskInfo.TaskType != TaskInfo.TaskType.getResource || infoAndUI.TaskInfo.NeedResource != gotResource.ResourceType) {
-                continue;
-            }
+        if(!TaskUtils.IsResourceNeededForTasks(_gameData,config.ResourcesForDestroy[0].ResourceType))return;
 
-            if (!_gameData.CollectedResources.TryAdd(gotResource.ResourceType, gotResource.ResourceCount)) {
+           /* if (!_gameData.CollectedResources.TryAdd(gotResource.ResourceType, gotResource.ResourceCount)) {
                 _gameData.CollectedResources[gotResource.ResourceType] += gotResource.ResourceCount;
-            }
-
+            }*/
+           var infoAndUI = TaskUtils.GetUIForResourceTask(_gameData,config.ResourcesForDestroy[0].ResourceType);
             Vector3 canvasPosition = _mainCamera.WorldToScreenPoint(_cells[coord.x, coord.y].transform.position);
-            GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[gotResource.ResourceType],
-                new Vector2(canvasPosition.x, canvasPosition.y + 15), 40, 1, infoAndUI.TaskUIView.CurrentTaskInfo.transform.position);
-        }
+            FloatingResourcesManager.Instance.FromPointToPointAnimation(1, gotResource.ResourceType, canvasPosition,
+                infoAndUI.TaskUIView.transform.position, ChangeTaskResourceCount, infoAndUI.needCount, true, true);
+            //   GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[gotResource.ResourceType],
+            //    new Vector2(canvasPosition.x, canvasPosition.y + 15), 40, 1, infoAndUI.TaskUIView.CurrentTaskInfo.transform.position);
+        
     }
 
     public async UniTask DestroyCell(Vector2Int coord) {
@@ -670,7 +730,7 @@ public class GameFieldManager : FieldManager {
     }
 
     public void ReleaseFloatingText(FloatingTextView needTextObject) {
-        GameUI.Instance.ReleaseFloatingText(needTextObject);
+       // GameUI.Instance.ReleaseFloatingText(needTextObject);
     }
 
     private void SaveWinGame() {

@@ -116,7 +116,7 @@ public class GameEntryPoint : MonoBehaviour {
 
         if (CheckWin() && !_gameData.IsGameEnded) {
             UltaManager.Instance.UltimateActionEndRound(Win);
-            MainManager.Instance.AddRewardToMeta();
+         
             return;
         }
 
@@ -149,7 +149,7 @@ public class GameEntryPoint : MonoBehaviour {
         Lose();
     }
 
-    private bool CheckWin() => _gameData.CurrentTasks.Count == 0;
+    public bool CheckWin() => _gameData.CurrentTasks.Count == 0;
     
     private bool CheckLose() {
         if(UltaManager.Instance._currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
@@ -180,12 +180,12 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SaveWinGame() {
-        StorageManager.GameDataMain.AddResource(ResourceType.Coins, 100); /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
+      //  StorageManager.GameDataMain.AddResource(ResourceType.Coins, 100); /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
         if (StorageManager.GameDataMain.IsFirstAttemptWin)
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
         StorageManager.GameDataMain.IsFirstAttemptWin = true;
         // StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-        StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, MainManager.Instance.CurrentLevelConfig.MagicCubesCount);
+      //  StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, MainManager.Instance.CurrentLevelConfig.MagicCubesCount);
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }
