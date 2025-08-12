@@ -26,7 +26,7 @@ public class LevelOneTutorial : MonoBehaviour {
 
         _pieceContainer.gameObject.SetActive(true);
         _goalViewContainer.gameObject.SetActive(false);
-        SpotlightsManager.Instance.StartFingerAnimation(_pieceContainer.transform.position,
+        SpotlightsManager.Instance.StartFingerDragAnimation(_pieceContainer.transform.position,
             (Vector2)Camera.main!.WorldToScreenPoint(new Vector3(3.5f, 0, 3.5f)));
     }
 

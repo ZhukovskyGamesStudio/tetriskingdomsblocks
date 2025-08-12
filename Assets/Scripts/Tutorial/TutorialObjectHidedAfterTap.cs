@@ -1,18 +1,18 @@
-using TMPro;
+using Cysharp.Threading.Tasks;
+using ScriptableObjects;
 using UnityEngine;
 
 public class TutorialObjectHidedAfterTap : MonoBehaviour {
     [SerializeField]
-    protected TMP_Text _tutorialText;
+    private SpotlightAnimConfig _step1Config;
 
     [SerializeField]
     private Transform _tutorialHole;
 
     private void Start() {
-        var moveCounterPos = GameUI.Instance._movesContainer.transform.position;
         _tutorialHole.transform.SetParent(GameUI.Instance.HolesForBgContainer);
-        //_tutorialHole.transform.position = moveCounterPos;
-        //_tutorialText.transform.position = new Vector3(moveCounterPos.x, moveCounterPos.y - 250, moveCounterPos.z);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(GameUI.Instance.GoalView.transform, _step1Config);
+        SpotlightsManager.Instance.HideFinger();
     }
 
     void Update() {
@@ -34,6 +34,7 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour {
     }
 
     protected virtual void HideAndDestroy() {
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
         Destroy(gameObject);
 
         //GameEntryPoint.Instance.Win();

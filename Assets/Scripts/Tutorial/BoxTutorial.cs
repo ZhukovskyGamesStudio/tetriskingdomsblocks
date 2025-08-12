@@ -50,12 +50,12 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
     }
 
     public void PlayAnimationText() {
-        DOTween.Kill(_tutorialText.transform);
+        //DOTween.Kill(_tutorialText.transform);
         TutorialHoleHelper.DestroyHoles();
-        _tutorialText.transform.localScale = Vector3.one;
+        /*_tutorialText.transform.localScale = Vector3.one;
 
         _tutorialText.transform.DOScale(Vector3.one * 1.2f, 0.4f).SetEase(Ease.OutBack).OnComplete(() => {
             _tutorialText.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.InOutQuad);
-        });
+        });*/
     }
 }
