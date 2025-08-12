@@ -114,11 +114,8 @@ public class GameEntryPoint : MonoBehaviour {
     private void CheckGameGoal() {
         TaskUtils.CheckResourceCountForTasks(_gameData);
 
-        if (CheckWin() && !_gameData.IsGameEnded) {
-            UltaManager.Instance.UltimateActionEndRound(Win);
-         
+        if(CheckWinWithAction())
             return;
-        }
 
         if (CheckLose() && !_gameData.IsGameEnded) {
             Lose();
@@ -138,6 +135,17 @@ public class GameEntryPoint : MonoBehaviour {
 
         StorageManager.GameDataMain.AddResource(ResourceType.Coins, -900);
         AddMoves();
+    }
+
+    public bool CheckWinWithAction()
+    {
+        if (CheckWin() && !_gameData.IsGameEnded) {
+            UltaManager.Instance.UltimateActionEndRound(Win);
+         
+            return true;
+        }
+
+        return false;
     }
 
     private void AddMoves() {
@@ -163,7 +171,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void Win() {
         SaveWinGame();
-
+        MainManager.Instance.AddRewardToMeta();
         GameFieldManager.Instance.SetWinState();
         GameUI.Instance.GoalView.SetTasksActive(false);
         NextPiecesView.Instance.DestroyPieces();

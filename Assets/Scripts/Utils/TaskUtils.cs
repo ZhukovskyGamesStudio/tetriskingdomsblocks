@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using UnityEngine;
 
 public static class TaskUtils {
     public static void CheckResourceCountForTasks(GameData gameData) {
@@ -33,8 +34,7 @@ public static class TaskUtils {
         gameData.ResourceTypesForTasks.Remove(gameData.CurrentTasks[i].TaskInfo.NeedResource);
         gameData.CurrentTasks[i].TaskUIView.CompleteTask();
         gameData.CurrentTasks.RemoveAt(i);
-
-        GameEntryPoint.Instance.CheckWin();
+        GameEntryPoint.Instance.CheckWinWithAction();
     }
 
     public static bool IsResourceNeededForTasks(GameData gameData, ResourceType resourceType) {

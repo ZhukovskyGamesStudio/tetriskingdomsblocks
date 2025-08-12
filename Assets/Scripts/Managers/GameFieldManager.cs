@@ -282,10 +282,8 @@ public class GameFieldManager : FieldManager {
         if (taskUIView == null) {
             return;
         }
-       // taskUIView.needCount += (int)count;
         if(!_gameData.CollectedResources.TryAdd((resource), -(int)count))
         _gameData.CollectedResources[resource] -= (int)count;
-        //taskUIView.TaskUIView.CurrentTaskInfo.text = taskUIView.needCount.ToString();
         TaskUtils.CheckResourceCountForTasks(_gameData);
     }
 
