@@ -51,9 +51,9 @@ public class MetaUI : MonoBehaviour {
     [field:SerializeField]
     public Button  _playButton{ get; private set; }
     [SerializeField]
-    private MetaTutorial  _metaTutorial;
+    public MetaTutorial  _metaTutorial;
     [SerializeField]
-    private Transform  _metaTutorialContainer;
+    public Transform  _metaTutorialContainer;
 
     public bool IsBuildState;
 
@@ -62,9 +62,7 @@ public class MetaUI : MonoBehaviour {
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
         //TODO Skipped for testing purposes
-       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
-           Instantiate(_metaTutorial, _metaTutorialContainer);
-       }
+      
     }
     
 
