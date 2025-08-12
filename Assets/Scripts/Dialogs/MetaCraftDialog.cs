@@ -14,12 +14,14 @@ public class MetaCraftDialog : DialogBase {
 
         foreach (MetaCraftInfo craft in dialogData.Crafts) {
             MetaCraft newCraft = Instantiate(_craftPrefab, _craftsContainer);
-            newCraft.SetData(craft);
+            MetaCraftInfo craftInfo = craft;
+            newCraft.SetData(craft, () => dialogData.Craft(craftInfo));
         }
     }
 
     [Serializable]
     public class Data {
         public List<MetaCraftInfo> Crafts;
+        public Action<MetaCraftInfo> Craft;
     }
 }

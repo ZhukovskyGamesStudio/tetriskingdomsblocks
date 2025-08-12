@@ -369,6 +369,11 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
+    public void Craft(MetaCraftInfo craftInfo) {
+        print(craftInfo.CraftName);
+        // TODO: реализовать
+    }
+
     private Vector2Int GetGroupSize(int groupIndex) {
         Vector2Int min = LockedCellGroups[groupIndex][0], max = min;
         
