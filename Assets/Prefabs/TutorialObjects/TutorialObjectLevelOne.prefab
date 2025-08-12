@@ -138,7 +138,6 @@ MonoBehaviour:
   _blackBGImage: {fileID: 8949534852482157660}
   _tutorialText: {fileID: 6475316602422765880}
   _fingerImage: {fileID: 548077610239395724}
-  _fingerImageContainer: {fileID: 1548115510299337527}
   _firstTutorialText: Place cell on the hole
   _secondTutorialText: Destroy line
   _thirdTutorialText: Collect remaining wood
@@ -178,6 +177,9 @@ MonoBehaviour:
   - {x: 6, y: 0, z: 4}
   - {x: 7, y: 0, z: 4}
   _thirdStepCells: []
+  _step1Config: {fileID: 11400000, guid: c3e487ff7442c9c448a1c16fa1660c7a, type: 2}
+  _step2Config: {fileID: 11400000, guid: 48a8279ed21bae9469eec4b46d361f74, type: 2}
+  _step3Config: {fileID: 11400000, guid: c3e487ff7442c9c448a1c16fa1660c7a, type: 2}
   _canSkipTutorial: 0
 --- !u!222 &1662422011621164366
 CanvasRenderer:
@@ -204,7 +206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3515882351884749708
 RectTransform:
   m_ObjectHideFlags: 0
@@ -239,7 +241,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442221572546260228}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -490,7 +492,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6106644499028722161
 RectTransform:
   m_ObjectHideFlags: 0
@@ -798,7 +800,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8949534852482157660
 RectTransform:
   m_ObjectHideFlags: 0
@@ -833,7 +835,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8320503969043592435}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -874,7 +876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1548115510299337527
 RectTransform:
   m_ObjectHideFlags: 0

@@ -39,11 +39,6 @@ public class MetaUI : MonoBehaviour {
 
     private Vector3 _buildCameraShift;
 
-    [SerializeField]
-    private Image _floatingImagePrefab;
-    
-    [SerializeField]
-    private Transform _floatingTextContainer;
 
     [SerializeField]
     private Image _ruleAvatarImage;
@@ -60,13 +55,10 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private Transform  _metaTutorialContainer;
 
-    private ObjectPool<Image> _floatingImagePool;
-
     public bool IsBuildState;
 
     private void Awake() {
         Instance = this;
-        _floatingImagePool = new ObjectPool<Image>(() => Instantiate(_floatingImagePrefab, _floatingTextContainer));
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
         //TODO Skipped for testing purposes
@@ -75,16 +67,6 @@ public class MetaUI : MonoBehaviour {
        }
     }
     
-    public Image ShowFloatingImage() {
-        var floatingImage = _floatingImagePool.Get();
-        floatingImage.gameObject.SetActive(true);
-        return floatingImage;
-    }
-
-    public void ReleaseFloatingImage(Image needTextObject) {
-        needTextObject.gameObject.SetActive(false);
-        _floatingImagePool.Release(needTextObject);
-    }
 
     private void InitBuildCameras() {
         var ray = new Ray(_buildCamera.transform.position, _buildCamera.transform.forward);

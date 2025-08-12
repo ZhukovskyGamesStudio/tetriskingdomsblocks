@@ -39,17 +39,17 @@ public static class TaskUtils {
         return gameData.CurrentTasks.Any(task => task.TaskInfo.IsResourceNeeded(resourceType));
     }
 
-    public static TaskUIView GetUIForResourceTask(GameData gameData, ResourceTypeAndCountSubClass resource) {
+    public static TaskInfoAndUI GetUIForResourceTask(GameData gameData, ResourceType resource) {
         foreach (TaskInfoAndUI taskInfoAndUI in gameData.CurrentTasks) {
             if (taskInfoAndUI.TaskInfo.TaskType != TaskInfo.TaskType.getResource) {
                 continue;
             }
 
-            if (taskInfoAndUI.TaskInfo.NeedResource != ResourceType.None && taskInfoAndUI.TaskInfo.NeedResource != resource.ResourceType) {
+            if (taskInfoAndUI.TaskInfo.NeedResource != ResourceType.None && taskInfoAndUI.TaskInfo.NeedResource != resource) {
                 continue;
             }
 
-            return taskInfoAndUI.TaskUIView;
+            return taskInfoAndUI;
         }
 
         return null;

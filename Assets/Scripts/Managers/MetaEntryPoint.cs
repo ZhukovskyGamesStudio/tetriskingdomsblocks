@@ -9,9 +9,12 @@ public class MetaEntryPoint : MonoBehaviour {
         _metaFieldManager.SetupGame();
 
        (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
-       UIAnimationsUtils.FromPointToPointAnimation(coins, ResourceType.Coins,
-           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetCoinsPosition );
-       UIAnimationsUtils.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
-           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetMagicCubesPosition );
+       FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins,
+           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
+      MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.Coins), false );
+       FloatingResourcesManager.Instance.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
+           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
+           MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false);
+       MainManager.Instance.AddRewardToMeta(cubes, coins);
     }
 }

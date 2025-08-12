@@ -145,7 +145,7 @@ public class UltaManager : MonoBehaviour {
             GameFieldManager.Instance.SetNeededCellTypeOnField(pieceData.Type.CellType, cellView, placedCellPosition, true);
         if (!isEndRoundUltimate) {
             GameFieldManager.Instance.CheckClosestCells(placedCellPosition);
-            GameFieldManager.Instance.CollectResourcesOnPlace(pieceData);
+            GameFieldManager.Instance.CollectResourcesOnPlace(pieceData, new []{ cellView});
             GameFieldManager.Instance.ExplodeCellsInRows();
         }
     }
