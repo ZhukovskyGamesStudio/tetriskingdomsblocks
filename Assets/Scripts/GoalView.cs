@@ -35,6 +35,11 @@ public class GoalView : MonoBehaviour {
     [field: SerializeField]
     public GameObject SettingsButton { get; private set; }
     
+    [SerializeField]
+    private Animation _witchAnimation;
+    
+    [SerializeField]
+    private AnimationClip _witchShowClip;
     
     private Tween _currentTween;
 
@@ -68,6 +73,11 @@ public class GoalView : MonoBehaviour {
         var animationObject = UltimateButton.gameObject.activeInHierarchy ? UltimateButton.transform : UltimateProgressBar.transform;
         DOTween.Sequence().Append(animationObject.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack))
             .Append(animationObject.DOScale(Vector3.zero, 0.7f).SetEase(Ease.InBack));
+    }
+
+    public void ShowWitchWithAnimation() {
+        Witch.SetActive(true);
+        _witchAnimation.Play(_witchShowClip.name);
     }
     
 }

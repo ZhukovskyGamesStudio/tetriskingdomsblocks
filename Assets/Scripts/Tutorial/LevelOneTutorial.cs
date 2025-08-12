@@ -88,7 +88,7 @@ public class LevelOneTutorial : MonoBehaviour {
         GameFieldManager.Instance.ClearAllLockedCells();
         _canSkipTutorial = true;
         _pieceContainer.gameObject.SetActive(false);
-        
+
         //TODO дождаться анимации перелёта ресурсов от клеток в счётчики
         await UniTask.Delay(TimeSpan.FromSeconds(1));
         ShowThirdStepTutorial();
@@ -113,7 +113,7 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     private static void ShowWitch() {
-        GameUI.Instance.ShowWitch();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
     }
 
     public void DestroyTutorial() {

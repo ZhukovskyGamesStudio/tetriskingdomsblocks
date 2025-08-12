@@ -45,6 +45,7 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
     }
 
     private void ShowUltimateStepTutorial(Vector2Int pos, bool[,] cells) {
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(GameUI.Instance.GoalView.UltimateButton, _step1Config,
             () => { HideUltimateStepTutorial().Forget(); });
         SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GoalView.UltimateButton.transform.position);
@@ -61,6 +62,7 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
         _goalViewContainer.gameObject.SetActive(false);
         DestroyTutorial();
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
     }
 
     public void DestroyTutorial() {
