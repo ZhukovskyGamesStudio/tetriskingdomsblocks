@@ -26,12 +26,26 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     [SerializeField]
     private GameAudio _gameAudio;
 
+    [SerializeField]
+    private MeshRenderer _tinyPortalContainer;
+
+    [SerializeField]
+    private Collider _tinyPortalCollider;
+    
+    [SerializeField]
+    private Material _tinyPortalActive, _tinyPortalInactive;
+    
     private CancellationTokenSource _cts;
 
     private void Awake() {
         Instance = this;
     }
 
+    public void SetTinyPortalActive(bool isActive) {
+        _tinyPortalContainer.material = isActive ? _tinyPortalActive : _tinyPortalInactive;
+        _tinyPortalCollider.enabled = isActive;
+    }
+    
     public async UniTask SetData(PieceData nextPiece) {
         MetaFieldManager.Instance.AddPieceToInventory(nextPiece);
     }

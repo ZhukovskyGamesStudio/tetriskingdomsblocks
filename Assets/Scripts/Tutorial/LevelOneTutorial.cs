@@ -97,6 +97,7 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     private void ShowFirstStepTutorial() {
+        NextPiecesView.Instance.SetTinyPortalActive(false);
         GameUI.Instance.GoalView.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _step1Config);
         TutorialHoleHelper.DestroyHoles();
@@ -175,6 +176,7 @@ public class LevelOneTutorial : MonoBehaviour {
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         ShowWitch();
         GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(true);
+        NextPiecesView.Instance.SetTinyPortalActive(true);
     }
 
     private static void ShowWitch() {
