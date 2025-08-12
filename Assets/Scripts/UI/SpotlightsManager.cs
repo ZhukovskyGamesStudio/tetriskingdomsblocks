@@ -63,6 +63,6 @@ public class SpotlightsManager : MonoBehaviour {
 
     public void HideFinger() {
         _fingerTween?.Kill();
-        _fingerImage.gameObject.SetActive(false);
+        _fingerTransform.gameObject.SetActive(false);
     }
 }

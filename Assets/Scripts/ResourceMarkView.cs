@@ -4,69 +4,58 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ResourceMarkView : MonoBehaviour
-{
+public class ResourceMarkView : MonoBehaviour {
     [SerializeField]
     private Image _resourceFillImage, _iconImage;
 
     [SerializeField]
     private TextMeshProUGUI _countText;
-    
-    public int markIndex { get;set; }
-    [SerializeField] private Button _buttonMark;
+
+    public int markIndex { get; set; }
+
+    [SerializeField]
+    private Button _buttonMark;
+
     private Tween _floatTween;
     private bool _isAnimate;
 
-    private void Start()
-    {
-        _buttonMark.onClick.AddListener(() =>CollectResources());
-    }
-
-    public void SetResourceMarkInfo(int maxResource, float currentResource, ResourceType resourceType, int index)
-    {
+    public void SetResourceMarkInfo(int maxResource, float currentResource, ResourceType resourceType, int index) {
         markIndex = index;
-        if (currentResource / maxResource > 0.1f)
-        {
+        if (currentResource / maxResource > 0.1f) {
             gameObject.SetActive(true);
             _resourceFillImage.fillAmount = currentResource / maxResource;
             _iconImage.sprite = SpritesManager.Instance.GetSprite(resourceType);
             _countText.text = Mathf.FloorToInt(currentResource).ToString();
         }
 
-        if (gameObject.activeInHierarchy && !_isAnimate)
-        {
+        if (gameObject.activeInHierarchy && !_isAnimate) {
             Sequence sequence = DOTween.Sequence();
             _isAnimate = true;
             sequence.Append(transform.DOScale(1f, 0.3f));
 
-            _floatTween = transform.DOScale(0.9f, 0.5f)
-                .SetLoops(1000, LoopType.Yoyo);
+            _floatTween = transform.DOScale(0.9f, 0.5f).SetLoops(1000, LoopType.Yoyo);
             sequence.Append(_floatTween);
         }
     }
 
-    public void SetColor(Color color)
-    {
+    public void SetColor(Color color) {
         _resourceFillImage.color = color;
     }
-    public void CollectResources()
-    {
-        MetaFieldManager.Instance.CollectResourcesFromMark(markIndex,1);
+
+    public void CollectResources() {
+        MetaFieldManager.Instance.CollectResourcesFromMark(markIndex, 1);
         CollectAnimation();
     }
 
-    public void CollectAnimation()
-    {
-        if(!_resourceFillImage.gameObject.activeInHierarchy)return;
+    public void CollectAnimation() {
+        if (!_resourceFillImage.gameObject.activeInHierarchy) return;
         _buttonMark.enabled = false;
         _isAnimate = false;
         _floatTween.Kill();
-        _floatTween = DOTween.Sequence().Append(transform.DOScale(1.1f, 0.3f))
-            .Append(transform.DOScale(0f, 0.7f)).OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-                _buttonMark.enabled = true;
-                _floatTween.Complete();
-            });
+        _floatTween = DOTween.Sequence().Append(transform.DOScale(1.1f, 0.3f)).Append(transform.DOScale(0f, 0.7f)).OnComplete(() => {
+            gameObject.SetActive(false);
+            _buttonMark.enabled = true;
+            _floatTween.Complete();
+        });
     }
 }
