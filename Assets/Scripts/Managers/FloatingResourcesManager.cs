@@ -68,6 +68,21 @@ public class FloatingResourcesManager : MonoBehaviour {
         }
     }
     
+    public async UniTask FromPointToSomePointsAnimation(ResourceType resourceType,Vector2 startWorldPos,  List<Vector2> endWorldPos,
+        Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool ActionAfterEndAnimaation, float interval = _interval) {
+        float currentCount = endWorldPos.Count;
+
+        float addedCountToText = currentCount / endWorldPos.Count;
+        if (isRemoveResources) 
+            addedCountToText= -addedCountToText;
+        for (int i = 0; i < endWorldPos.Count; i++)
+        {
+            startCount = ImageAnimation(resourceType, startWorldPos, endWorldPos[i], changeTextAction, startCount, isRemoveResources, i, addedCountToText,ActionAfterEndAnimaation);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(interval));
+        }
+    }
+    
     public async UniTask FromSomePointsToPointMultiplyResourcesAnimation(List<ResourceType> resourceType, List<Vector2> startWorldPos, Vector2 endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool ActionAfterEndAnimaation, float interval  = _interval) {
         float currentCount = startWorldPos.Count;
