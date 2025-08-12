@@ -392,13 +392,17 @@ public class MetaFieldManager : FieldManager {
         if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) return;
 
         UnmarkLockedGroup();
-      
+        List<Vector2> endPositions= new List<Vector2>();
+        foreach (var lockCell in lockedCellGroup)
+            endPositions .Add(_mainCamera.WorldToScreenPoint(_cells[lockCell.x, lockCell.y].transform.position)  );
+
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube)); 
-        FloatingResourcesManager.Instance.FromPointToPointAnimation(lockedCellGroup.Count, ResourceType.MagicCube, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
-                                                                                                                                         Input.mousePosition, ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true, false );
-                                                                                                                               // StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, -lockedCellGroup.Count);
-                                                                                                                                      StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
-                                                                                                                                      CloseCellUI();
+        FloatingResourcesManager.Instance.FromPointToSomePointsAnimation( ResourceType.MagicCube, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
+            endPositions, ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true, false );
+           
+        StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
+       CloseCellUI();
+       await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
             _cells[lockCellPos.x, lockCellPos.y] = null;
@@ -406,7 +410,7 @@ public class MetaFieldManager : FieldManager {
             _groupCellIndex[lockCellPos.x, lockCellPos.y] = 0;
             StorageManager.GameDataMain.FieldRows[lockCellPos.x].RowCells[lockCellPos.y] =
                 new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
-            await UniTask.Delay(TimeSpan.FromSeconds(1.5f/lockedCellGroup.Count));
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
         
       
@@ -754,9 +758,11 @@ public class MetaFieldManager : FieldManager {
 
     public void CollectResourcesFromMark(int index, float multiplayerResources) {
         float collectedResouces = 0;
+        Vector3 startPosition = new Vector3();
         ResourceType curResource = ResourceType.None;
         foreach (var (row, col) in _connectedGroups[index].Pieces) {
             var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[row, col]);
+            startPosition += _cells[row, col].transform.position;
             if (curResource == ResourceType.None)
                 curResource = cellConfig.AfkResourceType;
             if (cellConfig.AfkResourceType != ResourceType.None) {
@@ -766,11 +772,13 @@ public class MetaFieldManager : FieldManager {
             }
         }
 
+        startPosition /= _connectedGroups[index].Pieces.Count;
+        startPosition = _mainCamera.WorldToScreenPoint(startPosition);
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
         var finalResourceCount = collectedResouces * multiplayerResources;
         if (curResource != ResourceType.Coins) {
          
-            FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), curResource, Input.mousePosition,
+            FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), curResource, startPosition,
                 MetaUI.Instance._openResourceTabButtonTransform.position,
             ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false,true); 
            // StorageManager.GameDataMain.AddResource(curResource, finalResourceCount);
@@ -778,7 +786,7 @@ public class MetaFieldManager : FieldManager {
         } else {
            
           //  MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GetResource(ResourceType.Coins));
-          FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Coins, Input.mousePosition,
+          FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Coins, startPosition,
                 MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
             ChangeResorceText, StorageManager.GameDataMain.GetResource(curResource), false, true); 
          //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
