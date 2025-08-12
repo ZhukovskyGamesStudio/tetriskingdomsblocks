@@ -385,6 +385,9 @@ public class GameFieldManager : FieldManager {
         Dictionary<ResourceType, int> resourcesMultiplayers = new Dictionary<ResourceType, int>();
         Dictionary<CellType, int> cellTypesInLine = new Dictionary<CellType, int>();
         ResourceType currentResourceType = ResourceType.None;
+        
+        List<ResourceType> resourceTypes = new List<ResourceType>();
+        List<Vector2> cellsPositionsInUI = new List<Vector2>();
         fullSameResourcesColumn = true;
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, secondAxis) : new Vector2(secondAxis, mainAxisCurrentValue);
@@ -406,6 +409,14 @@ public class GameFieldManager : FieldManager {
                 if (config.MultiplayerForSameResourceType < resourcesMultiplayers[config.ResourcesForDestroy[0].ResourceType])
                     resourcesMultiplayers[config.ResourcesForDestroy[0].ResourceType] = config.MultiplayerForSameResourceType;
             }
+
+            if (TaskUtils.IsResourceNeededForTasks(_gameData,config.ResourcesForDestroy[0].ResourceType))
+            {
+                resourceTypes.Add(config.ResourcesForDestroy[0].ResourceType);
+                cellsPositionsInUI.Add(_mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position));
+                _gameData.CollectedResources[ config.ResourcesForDestroy[0].ResourceType] += 1;
+            }
+       
         }
 
         for (int secondAxis = 0; secondAxis < secondAxisLenght; secondAxis++) {
@@ -422,9 +433,22 @@ public class GameFieldManager : FieldManager {
             _gameData.CollectedResources[currentBonusResourceType] += bonusResourcesOnDestroyLine;
             Vector2 curPosition = !isRow ? new Vector2(mainAxisCurrentValue, 5) : new Vector2(5, mainAxisCurrentValue);
             var needPosition = _mainCamera.WorldToScreenPoint(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
-            SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
+            var taskInfo = TaskUtils.GetUIForResourceTask(_gameData, currentBonusResourceType);
+            if (TaskUtils.IsResourceNeededForTasks(_gameData, currentBonusResourceType))
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(8, currentBonusResourceType, needPosition,
+                    taskInfo.TaskUIView.transform.position,ChangeTaskResourceCount,taskInfo.needCount, true);
+           
+          //  SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
         }
-
+        if (resourceTypes.Count !=0&&TaskUtils.IsResourceNeededForTasks(_gameData,resourceTypes[0]))
+        {
+            var taskInfoAndUI = TaskUtils.GetUIForResourceTask(_gameData, resourceTypes[0]);
+            FloatingResourcesManager.Instance.FromSomePointsToPointMultiplyResourcesAnimation(resourceTypes
+                ,cellsPositionsInUI ,
+                taskInfoAndUI.TaskUIView.transform.position,
+                ChangeTaskResourceCount,taskInfoAndUI.needCount,true);
+          
+        }
         TaskUtils.CheckResourceCountForTasks(_gameData);
     }
 

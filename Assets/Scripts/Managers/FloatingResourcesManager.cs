@@ -42,37 +42,10 @@ public class FloatingResourcesManager : MonoBehaviour {
             needCount = 30;
 
         float addedCountToText = currentCount / needCount;
-        Vector2 midPoint = (startWorldPos + endWorldPos) / 2;
-
-        Vector2 direction = (endWorldPos - startWorldPos).normalized;
-        Vector2 perpendicular = new Vector2(-direction.y, direction.x);
-
-        float randomSign = Random.Range(0, 2) * 2 - 1;
-        float randomFactor = Random.Range(0.5f, 1f) * 0.5f * randomSign;
-
-        Vector2 controlPoint = midPoint + Vector2.up * 150 + perpendicular * randomFactor * (endWorldPos - startWorldPos).magnitude * 0.3f;
-
-        Vector3[] path = { startWorldPos, controlPoint, endWorldPos };
+    
 
         for (int i = 0; i < needCount; i++) {
-            var uiElement = ShowFloatingImage();
-            uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
-            uiElement.transform.position = startWorldPos;
-
-            if (isRemoveResources) {
-                startCount -= addedCountToText;
-                float newCount = startCount;
-                changeTextAction?.Invoke(resourceType, newCount);
-            } else
-                startCount += addedCountToText;
-
-            float newStartCount = startCount;
-
-            uiElement.rectTransform.DOPath(path, 0.8f, PathType.CatmullRom).SetEase(Ease.OutQuad).OnComplete(() => {
-                ReleaseFloatingImage(uiElement);
-                if (!isRemoveResources)
-                    changeTextAction?.Invoke(resourceType, newStartCount);
-            });
+            startCount = ImageAnimation(resourceType, startWorldPos, endWorldPos, changeTextAction, startCount, isRemoveResources, i, addedCountToText);
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
@@ -84,39 +57,61 @@ public class FloatingResourcesManager : MonoBehaviour {
 
         float addedCountToText = currentCount / startWorldPos.Count;
 
-        for (int i = 0; i < startWorldPos.Count; i++) {
-            Vector2 midPoint = (startWorldPos[0] + endWorldPos) / 2;
-
-            Vector2 direction = (endWorldPos - startWorldPos[0]).normalized;
-            Vector2 perpendicular = new Vector2(-direction.y, direction.x);
-
-            float randomSign = Random.Range(0, 2) * 2 - 1;
-            float randomFactor = Random.Range(0.5f, 1f) * 0.5f * randomSign;
-
-            Vector2 controlPoint = midPoint + Vector2.up * 150 +
-                                   perpendicular * randomFactor * (endWorldPos - startWorldPos[0]).magnitude * 0.3f;
-            Vector3[] path = { startWorldPos[i], controlPoint, endWorldPos };
-
-            var uiElement = ShowFloatingImage();
-            uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
-            uiElement.transform.position = startWorldPos[i];
-
-            if (isRemoveResources) {
-                startCount -= addedCountToText;
-                float newCount = startCount;
-                changeTextAction?.Invoke(resourceType, newCount);
-            } else
-                startCount += addedCountToText;
-
-            float newStartCount = startCount;
-
-            uiElement.rectTransform.DOPath(path, 0.8f, PathType.CatmullRom).SetEase(Ease.OutQuad).OnComplete(() => {
-                ReleaseFloatingImage(uiElement);
-                if (!isRemoveResources)
-                    changeTextAction?.Invoke(resourceType, newStartCount);
-            });
+        for (int i = 0; i < startWorldPos.Count; i++)
+        {
+            startCount = ImageAnimation(resourceType, startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i, addedCountToText);
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
+    }
+    
+    public async void FromSomePointsToPointMultiplyResourcesAnimation(List<ResourceType> resourceType, List<Vector2> startWorldPos, Vector2 endWorldPos,
+        Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, float interval = 0.1f) {
+        float currentCount = startWorldPos.Count;
+
+        float addedCountToText = currentCount / startWorldPos.Count;
+
+        for (int i = 0; i < startWorldPos.Count; i++)
+        {
+            startCount = ImageAnimation(resourceType[i], startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i, addedCountToText);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(interval));
+        }
+    }
+
+    private float ImageAnimation(ResourceType resourceType,Vector2 startWorldPos, Vector2 endWorldPos,
+        Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, int i, float addedCountToText)
+    {
+        Vector2 midPoint = (startWorldPos + endWorldPos) / 2;
+
+        Vector2 direction = (endWorldPos - startWorldPos).normalized;
+        Vector2 perpendicular = new Vector2(-direction.y, direction.x);
+
+        float randomSign = Random.Range(0, 2) * 2 - 1;
+        float randomFactor = Random.Range(0.5f, 1f) * 0.5f * randomSign;
+
+        Vector2 controlPoint = midPoint + Vector2.up * 150 +
+                               perpendicular * randomFactor * (endWorldPos - startWorldPos).magnitude * 0.3f;
+        Vector3[] path = { startWorldPos, controlPoint, endWorldPos };
+
+        var uiElement = ShowFloatingImage();
+        uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
+        uiElement.transform.position = startWorldPos;
+
+        if (isRemoveResources) {
+            startCount -= addedCountToText;
+            float newCount = startCount;
+            changeTextAction?.Invoke(resourceType, newCount);
+        } else
+            startCount += addedCountToText;
+
+        float newStartCount = startCount;
+
+        uiElement.rectTransform.DOPath(path, 0.8f, PathType.CatmullRom).SetEase(Ease.OutQuad).OnComplete(() => {
+            ReleaseFloatingImage(uiElement);
+            if (!isRemoveResources)
+                changeTextAction?.Invoke(resourceType, newStartCount);
+        });
+        return startCount;
     }
 }
