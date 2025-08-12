@@ -1,109 +1,72 @@
-using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using TMPro;
+using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TutorialFifthUIElementsView : MonoBehaviour {
     [SerializeField]
-    private RectTransform[] _holeImages;
+    private RectTransform _boosterContainer;
 
-    private RectTransform _blackBGImage;
-
-    [SerializeField]
-    private TMP_Text _tutorialText;
-
-    [SerializeField]
     private Tween _currentTween;
-    
-    
-    [SerializeField]
-    private bool _canSkipTutorial;
 
-    private int _tutorialStep = 0;
+    [SerializeField]
+    private SpotlightAnimConfig _stepConfig;
 
     private List<Vector3Int> _firstStepCells;
 
     void Start() {
-        GameFieldManager.Instance.OnPieceDestroyedByHammer += HideFirstStepTutorial;
+        GameFieldManager.Instance.OnPieceDestroyedByHammer += () => { HideBoosterStepTutorial().Forget(); };
 
-        SpawnAllTutorialObjects();
         SetHolesPositions();
+        ShowBoosterStepTutorial();
 
-        ShowFirstStepTutorial();
-        
-        StorageManager.GameDataMain.HummerCount=5;
-        
-        if(BoostersManager.Instance != null) {
+        StorageManager.GameDataMain.HummerCount = 5;
+
+        if (BoostersManager.Instance != null) {
             GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         }
     }
 
-   /* private void Update() {
-        if (Input.touchCount > 0 && _tutorialStep == 1) {
-            Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
-                HideFirstStepTutorial();
-        }
-
-#if UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0) && _tutorialStep == 1)
-            HideFirstStepTutorial();
-#endif
-    }*/
-  // private GameObject _pieceCellsContainer;
     public void SetHolesPositions() {
         var boosterContainer = GameUI.Instance.GameBoostersButtons._hummerButton.transform;
-        _holeImages[0].transform.SetParent(boosterContainer);
-        //_holeImages[0].transform.localPosition = Vector3.zero;
-        //_holeImages[0].transform.position = posHole;
+        _boosterContainer.transform.SetParent(boosterContainer);
+
         _firstStepCells = new List<Vector3Int>();
-        
-        PieceView piece = FindAnyObjectByType<PieceView>();
-       // _pieceCellsContainer = piece._cellsContainer.gameObject;
-      //  TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
-        
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                   _firstStepCells.Add(new Vector3Int(i, 0, j));
+                _firstStepCells.Add(new Vector3Int(i, 0, j));
             }
         }
-     
-        _tutorialText.transform.position = new Vector3(boosterContainer.position.x+200, boosterContainer.position.y + 300, 0);
-        _holeImages[0].transform.position = boosterContainer.position;
+
+        _boosterContainer.transform.position = boosterContainer.position;
     }
 
-    private void SpawnAllTutorialObjects() {
-        _blackBGImage = gameObject.GetComponent<RectTransform>();
-    }
-
-    private void ShowFirstStepTutorial() {
-     //   TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
-        _tutorialText.gameObject.SetActive(true);
-        _tutorialStep = 1;
+    private void ShowBoosterStepTutorial() {
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(GameUI.Instance.GameBoostersButtons._hummerButton, _stepConfig,
+            () => { HideBoosterStepTutorial().Forget(); });
+        SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GoalView.UltimateButton.transform.position);
         TutorialHoleHelper.SpawnHoles(_firstStepCells);
-        gameObject.GetComponent<Image>().enabled = true;
     }
 
-    public void HideFirstStepTutorial() { 
-        GameFieldManager.Instance.OnPieceDestroyedByHammer -= HideFirstStepTutorial;
+    private async UniTask HideBoosterStepTutorial() {
+        SpotlightsManager.Instance.HideFinger();
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
-        _canSkipTutorial = true;
-        _holeImages[0].gameObject.SetActive(false);
+        _boosterContainer.gameObject.SetActive(false);
+
         TutorialHoleHelper.DestroyHoles();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
         DestroyTutorial();
     }
 
-    public void DestroyTutorial() {
+    private void DestroyTutorial() {
+        NextPiecesView.Instance.SetTinyPortalActive(true);
         _currentTween.Kill();
-        foreach (var hole in _holeImages) {
-            Destroy(hole.gameObject);
-        }
 
-        Destroy(_blackBGImage.gameObject);
+        Destroy(_boosterContainer.gameObject);
         Destroy(gameObject);
     }
 }

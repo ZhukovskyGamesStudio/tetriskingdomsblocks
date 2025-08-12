@@ -12,31 +12,12 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
     private Tween _currentTween;
 
     [SerializeField]
-    private bool _canSkipTutorial;
-
-    private int _tutorialStep;
-
-    [SerializeField]
     private SpotlightAnimConfig _step1Config;
 
     void Start() {
         GameFieldManager.Instance.OnCellPlaced += ShowUltimateStepTutorial;
         SetHolesPositions();
         NextPiecesView.Instance.SetTinyPortalActive(false);
-    }
-
-    private void Update() {
-        if (Input.touchCount > 0 && _tutorialStep == 1) {
-            Touch touch = Input.GetTouch(0);
-
-            //if (touch.phase == TouchPhase.Began)
-            // HideUltimateStepTutorial();
-        }
-
-#if UNITY_EDITOR
-        //if (Input.GetMouseButtonDown(0) && _tutorialStep == 1)
-        //  HideUltimateStepTutorial();
-#endif
     }
 
     public void SetHolesPositions() {
@@ -50,7 +31,6 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
             () => { HideUltimateStepTutorial().Forget(); });
         SpotlightsManager.Instance.StartFingerClickAnimation(GameUI.Instance.GoalView.UltimateButton.transform.position);
 
-        _tutorialStep = 1;
         GameFieldManager.Instance.OnCellPlaced -= ShowUltimateStepTutorial;
     }
 
@@ -58,7 +38,6 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
         SpotlightsManager.Instance.HideFinger();
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
-        _canSkipTutorial = true;
         _goalViewContainer.gameObject.SetActive(false);
         DestroyTutorial();
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
