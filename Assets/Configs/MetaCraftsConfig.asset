@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: MetaCraftsConfig
   m_EditorClassIdentifier: 
   Crafts:
-  - NeededCell: 101
+  - CraftName: Sawmill
+    Description: Sawmill gives a bonus to nearby forest cells
+    NeededCell: 101
     NeededCellLevel: 1
     PieceSize: {x: 2, y: 3}
     ResultCell: 1000
@@ -25,3 +27,13 @@ MonoBehaviour:
         Value: 100
       - Key: 13
         Value: 100
+  - CraftName: eshe choto
+    Description: test
+    NeededCell: 2
+    NeededCellLevel: 1
+    PieceSize: {x: 1, y: 1}
+    ResultCell: 100
+    NeededResources:
+      _serializedList:
+      - Key: 14
+        Value: 42

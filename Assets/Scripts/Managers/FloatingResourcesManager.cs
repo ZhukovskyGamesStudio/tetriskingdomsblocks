@@ -114,7 +114,7 @@ public class FloatingResourcesManager : MonoBehaviour {
         Vector3[] path = { startWorldPos, controlPoint, endWorldPos };
 
         var uiElement = ShowFloatingImage();
-        uiElement.sprite = SpritesManager.Instance.ResourcesSprites[resourceType];
+        uiElement.sprite = SpritesManager.Instance.GetSprite(resourceType);
         uiElement.transform.position = startWorldPos;
         float newCount;
    
