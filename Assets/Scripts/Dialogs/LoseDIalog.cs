@@ -23,6 +23,7 @@ public class LoseDialog : DialogBase {
     }
 
     private void LessMusic() {
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.Lose);
         BackgroundMusicManager.Instance.SetMusicVolume(0f);
     }
 

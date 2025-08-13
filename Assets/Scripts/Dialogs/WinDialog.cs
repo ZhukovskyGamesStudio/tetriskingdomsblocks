@@ -23,6 +23,7 @@ public class WinDialog : DialogBase {
     }
 
     private void LessMusic() {
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.Win);
         BackgroundMusicManager.Instance.SetMusicVolume(0f);
     }
 
