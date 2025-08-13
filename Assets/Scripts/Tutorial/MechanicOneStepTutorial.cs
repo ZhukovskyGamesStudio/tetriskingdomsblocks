@@ -1,13 +1,17 @@
 using System.Collections.Generic;
-using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using ScriptableObjects;
 using UnityEngine;
 
-public class IceTutorial : MonoBehaviour {
+public class MechanicOneStepTutorial : MonoBehaviour {
     [SerializeField]
     private RectTransform rectTransformIceMark;
 
     [SerializeField]
     private bool isHighlightUnplacedCells = true;
+
+    [SerializeField]
+    private SpotlightAnimConfig _animConfig;
 
     private void Start() {
         //  base.Start();
@@ -26,12 +30,17 @@ public class IceTutorial : MonoBehaviour {
         foreach (var piece in pieces) {
             _pieceCellsContainer.Add(piece._cellsContainer.gameObject);
         }
-
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        GameUI.Instance.GoalView.gameObject.SetActive(false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _animConfig);
         TutorialHoleHelper.HighlightObjects(_pieceCellsContainer);
         TutorialHoleHelper.SpawnHoles(icePoses);
     }
 
     private void HideAndDestroy(Vector2Int coord, bool[,] needCells) {
+        GameUI.Instance.GoalView.gameObject.SetActive(true);
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
         GameFieldManager.Instance.OnCellPlaced -= HideAndDestroy;
         TutorialHoleHelper.DestroyHoles();
         Destroy(gameObject);

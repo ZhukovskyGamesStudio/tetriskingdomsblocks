@@ -7,7 +7,7 @@ namespace ScriptableObjects {
         //в тетрисе мы это не используем, т.к. у нас подсветки работают через слои, а не дырки
         public Vector2 SpotlightSize;
         public Vector2 HeadShift;
-        
+        [TextArea]
         public string HintText;
         
         //[LocalizationKey("Ftue")]
