@@ -32,10 +32,11 @@ public class CellView : MonoBehaviour {
 
     private void Awake() {
         if(CenterPivot == null) CenterPivot = transform;
-        else {
-            CenterPivot.SetParent(transform.parent);
-            transform.SetParent(CenterPivot);
-        }
+    }
+
+    public void ApplyCenterPivot() {
+        CenterPivot.SetParent(transform.parent);
+        transform.SetParent(CenterPivot);
     }
 
     public void SetSeed(Guid seed) {
