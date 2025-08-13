@@ -388,9 +388,22 @@ public class MetaFieldManager : FieldManager {
 
             if (formInfo.Value.Cells.Count == 4 && FieldUtils.IsSawmillCell(_field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y])) {
                 List<int> forestForms = new List<int>();
-                foreach (var cellSawmill in formInfo.Value.Cells) {
-                    foreach (var cellAround in FieldUtils.GetCellsAround(_field, cellSawmill)) {
-                        if (_field[cellAround.x, cellAround.y] == CellType.Empty ||
+                Vector2Int[] checkedCellsPositions = {
+                    new (-1,1),
+                    new (0,1),
+                    new (1,1),
+                    new (2,1),
+                    new (2,0),
+                    new (2,-1),
+                    new (2,-2),
+                    new (-1,-2),
+                    new (0,-2),
+                    new (1,-2),
+                    new (-1,-1),
+                    new (-1,0)
+                };
+                    foreach (var cellAround in checkedCellsPositions) {
+                        if (!FieldUtils.IsInsideField(_field, cellAround) || _field[cellAround.x, cellAround.y] == CellType.Empty ||
                             _field[cellAround.x, cellAround.y] == CellType.LockedMetaCell ||
                             FieldUtils.IsSawmillCell(_field[cellAround.x, cellAround.y])) continue;
                         if (PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[cellAround.x, cellAround.y])
@@ -400,7 +413,7 @@ public class MetaFieldManager : FieldManager {
                                 forestForms.Add(formIndex);
                         }
                     }
-                }
+                
 
                 foreach (var neededForm in forestForms) {
                     _formGroupCellPositions[neededForm].Multiplayer *= 1.3f;
