@@ -18,6 +18,10 @@ public class BackgroundMusicManager : MonoBehaviour {
         }
     }
 
+    public void SetMusicVolume(float multiplier) {
+        _audioQueueMixer.VolumeMultiplier = multiplier;
+    }
+
     public void ChangeIsPlayingMusic(bool isOn) {
         _audioQueueMixer.StopCurrentAudioSource(isOn);
     }

@@ -20,12 +20,20 @@ public class AudioQueueMixer : MonoBehaviour {
     private AudioSource _currentPlaying;
     private int _needVolume;
 
+    public float VolumeMultiplier = 1;
+
     private void Awake() {
         if (_sourcePoolCount > 0) {
             CreateSources();
         }
 
         _audioSourcesQ = new Queue<AudioSource>(_audioSources.OrderBy((_) => Random.Range(0, 1f)));
+    }
+
+    private void Update() {
+        if (_currentPlaying != null) {
+            _currentPlaying.volume = _needVolume * VolumeMultiplier;
+        }
     }
 
     public void StopCurrentAudioSource(bool isPlay) {
@@ -35,7 +43,7 @@ public class AudioQueueMixer : MonoBehaviour {
             _needVolume = 0;
 
         if (_currentPlaying) {
-            _currentPlaying.volume = _needVolume;
+            _currentPlaying.volume = _needVolume * VolumeMultiplier;
         }
     }
 
@@ -87,11 +95,11 @@ public class AudioQueueMixer : MonoBehaviour {
         float tIn = 0f;
         while (tIn < 0.5f) {
             tIn += Time.unscaledDeltaTime;
-            next.volume = Mathf.Lerp(0f, _needVolume, tIn / 0.5f);
+            next.volume = Mathf.Lerp(0f, _needVolume, tIn / 0.5f) * VolumeMultiplier;
             await UniTask.Yield(PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
         }
 
-        next.volume = _needVolume;
+        next.volume = _needVolume * VolumeMultiplier;
 
         await UniTask.WaitWhile(() => next.isPlaying, cancellationToken: this.GetCancellationTokenOnDestroy());
         next.Stop();

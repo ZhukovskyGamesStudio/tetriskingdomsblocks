@@ -6,6 +6,7 @@ using UnityEngine;
 public class CameraScaleToBounds : MonoBehaviour {
     [SerializeField]
     private CinemachineCamera _virtualCamera;
+
     [SerializeField]
     private CinemachinePositionComposer _framingComposer; // Optional, if you want to use a composer for camera framing
 
@@ -20,53 +21,59 @@ public class CameraScaleToBounds : MonoBehaviour {
     public static CameraScaleToBounds Instance;
     private Vector3 _startTargetPosition;
 
-    private void Awake()
-    {
+    public bool IsInited { get; private set; }
+
+    private void Awake() {
         Instance = this;
     }
 
     public void Init() {
-        if(_framingComposer == null)
-        _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
-         TryFitToBounds();
-         _startTargetPosition = _targetArea.position;
-        if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
-            Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
+        if (_framingComposer == null) {
+            _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
         }
-        else
-        {
-           Invoke( "MoveCameraToVillagePosition", 1.2f);
-            Debug.Log(" moveToVillage");
-        }
+
+        TryFitToBounds();
+        _startTargetPosition = _targetArea.position;
     }
 
     private void Update() {
-        TryFitToBounds();
+        if (IsInited) {
+            TryFitToBounds();
+        }
     }
 
-    private void MoveCameraToVillagePosition() {
-        if (MetaFieldManager.Instance != null) {
-            var metaField = MetaFieldManager.Instance._field;
+    public void MoveCameraToVillagePosition() {
+        if (MetaFieldManager.Instance == null) {
+            return;
+        }
 
-            for (int i = 0; i < metaField.GetLength(0); i++) {
-                for (int j = 0; j < metaField.GetLength(1); j++) {
-                    if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i, j])) {
-                        var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform.position + Vector3.one;
-                        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x-12.5f, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z-1.3f) ;
-                       
-                        return;
-                    }
+        var metaField = MetaFieldManager.Instance._field;
+
+        for (int i = 0; i < metaField.GetLength(0); i++) {
+            for (int j = 0; j < metaField.GetLength(1); j++) {
+                if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i, j])) {
+                    var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform.position + Vector3.one;
+                    MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x - 12.5f,
+                        MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z - 1.3f);
+
+                    return;
                 }
             }
         }
     }
+
+    public void MoveCameraToStartingPosition() {
+        var needCameraPos = MetaFieldManager.Instance._cells[4, 2].transform.position + Vector3.one;
+        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x - 12.5f,
+            MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z - 1.3f);
+    }
+
     private void TryFitToBounds() {
         float curAspect = (float)Screen.width / Screen.height;
         if (!Mathf.Approximately(curAspect, _aspectRatio)) {
             _aspectRatio = curAspect;
-           FitCameraToTarget(_aspectRatio);
+            FitCameraToTarget(_aspectRatio);
         }
-        
     }
 
     private void FitCameraToTarget(float aspectRatio) {
@@ -95,10 +102,12 @@ public class CameraScaleToBounds : MonoBehaviour {
     }
 
     private async UniTask DisableComposer() {
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));
         if (_framingComposer) {
             _framingComposer.enabled = false;
         }
+
+        IsInited = true;
     }
 
     private Bounds CalculateBounds(Transform root) {

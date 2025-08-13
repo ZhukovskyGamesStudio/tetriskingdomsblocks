@@ -1,21 +1,33 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class MetaEntryPoint : MonoBehaviour {
-
     [SerializeField]
     private MetaFieldManager _metaFieldManager;
+
     private void Start() {
+        InitScene().Forget();
+    }
+
+    private async UniTask InitScene() {
         _metaFieldManager.SetupGame();
         CameraScaleToBounds.Instance.Init();
-       (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
-       
-       FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins,
-           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
-      MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.Coins), false,true );
-       FloatingResourcesManager.Instance.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
-           MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
-           MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false, true);
-       
+        await UniTask.WaitWhile(() => CameraScaleToBounds.Instance.IsInited);
+        if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
+            CameraScaleToBounds.Instance.MoveCameraToStartingPosition();
+            Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
+        } else {
+            CameraScaleToBounds.Instance.MoveCameraToVillagePosition();
+        }
+
+        (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
+
+        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins, MetaUI.Instance._playButton.transform.position,
+            MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, MetaFieldManager.Instance.ChangeResorceText,
+            StorageManager.GameDataMain.GetResource(ResourceType.Coins), false, true);
+        FloatingResourcesManager.Instance.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
+            MetaUI.Instance._playButton.transform.position, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
+            MetaFieldManager.Instance.ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false, true);
     }
 }

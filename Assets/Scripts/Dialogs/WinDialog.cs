@@ -6,7 +6,7 @@ using UnityEngine;
 public class WinDialog : DialogBase {
     [SerializeField]
     private TextMeshProUGUI _coinsText, _cubesText;
-    
+
     private Action _clickClaim;
 
     public override void SetData(object data) {
@@ -17,9 +17,23 @@ public class WinDialog : DialogBase {
         _cubesText.text = dialogData.Cubes.ToString();
     }
 
+    public override UniTask Show(Action onClose) {
+        LessMusic();
+        return base.Show(onClose);
+    }
+
+    private void LessMusic() {
+        BackgroundMusicManager.Instance.SetMusicVolume(0f);
+    }
+
+    private void MoreMusic() {
+        BackgroundMusicManager.Instance.SetMusicVolume(1f);
+    }
+
     public void ClickClaim() {
         _clickClaim.Invoke();
         Hide().Forget();
+        MoreMusic();
     }
 
     [Serializable]

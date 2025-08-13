@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
-public class GameAudio : MonoBehaviour
-{
+public class GameAudio : MonoBehaviour {
+    public static GameAudio Instance { get; private set; }
     [Header("Piece Placement Sounds")]
     public AudioQueueMixer PlacePiece;
     public AudioQueueMixer PiecesAppear;
@@ -22,6 +23,10 @@ public class GameAudio : MonoBehaviour
     public AudioQueueMixer Lose;
     public AudioQueueMixer ResourceCollected;
     public AudioQueueMixer RowCollected;
+
+    private void Awake() {
+        Instance = this;
+    }
 
     public void PlayNextSound(AudioQueueMixer mixer)
     {
