@@ -12,10 +12,10 @@ public class MetaEntryPoint : MonoBehaviour {
        
        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins,
            MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
-      MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.Coins), false );
+      MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.Coins), false,true );
        FloatingResourcesManager.Instance.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
            MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
-           MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false);
+           MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false, true);
        
     }
 }

@@ -321,7 +321,7 @@ public class GameFieldManager : FieldManager {
             var taskInfoAndUI = TaskUtils.GetUIForResourceTask(_gameData, resourceType.ResourceType);
             FloatingResourcesManager.Instance.FromSomePointsToPointAnimation(resourceType.ResourceType, placedCells,
                 taskInfoAndUI.TaskUIView.transform.position,
-                ChangeTaskResourceCount,taskInfoAndUI.needCount,true);
+                ChangeTaskResourceCount,taskInfoAndUI.needCount,true,true);
           //  _gameData.CollectedResources[resourceType.ResourceType] += resourcesForTask;
                //     TaskUtils.CheckResourceCountForTasks(_gameData);
         }
@@ -438,7 +438,7 @@ public class GameFieldManager : FieldManager {
             var taskInfo = TaskUtils.GetUIForResourceTask(_gameData, currentBonusResourceType);
             if (TaskUtils.IsResourceNeededForTasks(_gameData, currentBonusResourceType))
                 FloatingResourcesManager.Instance.FromPointToPointAnimation(8, currentBonusResourceType, needPosition,
-                    taskInfo.TaskUIView.transform.position,ChangeTaskResourceCount,taskInfo.needCount, true);
+                    taskInfo.TaskUIView.transform.position,ChangeTaskResourceCount,taskInfo.needCount, true,true);
            
           //  SpawnResourceFxForLine(currentBonusResourceType, bonusResourcesOnDestroyLine, needPosition);
         }
@@ -448,7 +448,7 @@ public class GameFieldManager : FieldManager {
             FloatingResourcesManager.Instance.FromSomePointsToPointAnimation(resourceTypes[0]
                 ,cellsPositionsInUI ,
                 taskInfoAndUI.TaskUIView.transform.position,
-                ChangeTaskResourceCount,taskInfoAndUI.needCount,true);
+                ChangeTaskResourceCount,taskInfoAndUI.needCount,true, true);
           
         }
     }
@@ -595,7 +595,7 @@ public class GameFieldManager : FieldManager {
            var infoAndUI = TaskUtils.GetUIForResourceTask(_gameData,config.ResourcesForDestroy[0].ResourceType);
             Vector3 canvasPosition = _mainCamera.WorldToScreenPoint(_cells[coord.x, coord.y].transform.position);
             FloatingResourcesManager.Instance.FromPointToPointAnimation(1, gotResource.ResourceType, canvasPosition,
-                infoAndUI.TaskUIView.transform.position, ChangeTaskResourceCount, infoAndUI.needCount, true);
+                infoAndUI.TaskUIView.transform.position, ChangeTaskResourceCount, infoAndUI.needCount, true,true);
             //   GameUI.Instance.ShowFloatingText(SpritesManager.Instance.ResourcesSprites[gotResource.ResourceType],
             //    new Vector2(canvasPosition.x, canvasPosition.y + 15), 40, 1, infoAndUI.TaskUIView.CurrentTaskInfo.transform.position);
         
