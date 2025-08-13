@@ -200,6 +200,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void Lose() {
         _gameData.IsGameEnded = true;
+        _gameAudio.PlayNextSound(_gameAudio.Lose);
         StorageManager.GameDataMain.IsFirstAttemptWin = false;
         MainManager.Instance.RemoveHealthAfterLose();
         GameUI.Instance.GoalView.SetTasksActive(false);

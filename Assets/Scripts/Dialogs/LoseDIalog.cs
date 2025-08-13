@@ -17,13 +17,27 @@ public class LoseDialog : DialogBase {
         _hpText.text = _hpText.text.Replace("{hp}", dialogData.Hp.ToString());
     }
 
+    public override UniTask Show(Action onClose) {
+        LessMusic();
+        return base.Show(onClose);
+    }
+
+    private void LessMusic() {
+        BackgroundMusicManager.Instance.SetMusicVolume(0f);
+    }
+
+    private void MoreMusic() {
+        BackgroundMusicManager.Instance.SetMusicVolume(1f);
+    }
     public void ClickRetry() {
         _clickRetry.Invoke();
+        MoreMusic();
         Hide().Forget();
     }
 
     public void ClickExit() {
         _clickExit.Invoke();
+        MoreMusic();
         Hide().Forget();
     }
 
