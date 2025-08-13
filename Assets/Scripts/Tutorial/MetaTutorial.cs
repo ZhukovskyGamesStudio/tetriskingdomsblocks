@@ -98,8 +98,8 @@ public class MetaTutorial : MonoBehaviour {
 
     private void MoveCameraToNeedPosition() {
         MetaFieldManager.Instance.CanDragCamera = false;
-        return;
         MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
+        return;
     }
 
     public void ShowSecondStepTutorial() {

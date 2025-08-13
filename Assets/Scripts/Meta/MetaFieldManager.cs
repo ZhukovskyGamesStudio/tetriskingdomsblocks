@@ -200,6 +200,7 @@ public class MetaFieldManager : FieldManager {
 
             DeleteFigureFormFromList(figureIndex);
             HummerDestoyPieceAnimation(destroyedCells);
+            GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
             RecalculateCellGroupAfterDeletePiece(groupIndex);
             CalculateResourceCellsMultiplayers();
             return true;
