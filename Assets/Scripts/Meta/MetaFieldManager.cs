@@ -172,7 +172,7 @@ public class MetaFieldManager : FieldManager {
             Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
                 Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
             var cellType = _field[(int)cellPos.x, (int)cellPos.z];
-            if (cellType == CellType.LockedMetaCell || cellType == CellType.VillagePart || FieldUtils.IsVillageCell(cellType)) {
+            if (cellType == CellType.LockedMetaCell || cellType == CellType.BuildingPart || FieldUtils.IsVillageCell(cellType)) {
                 return false;
             }
 
@@ -301,7 +301,7 @@ public class MetaFieldManager : FieldManager {
         var finY = FieldContainers.Instance.PlacedCellsVerticalAnchor.position.y - 0.3f;
         var upgradedPrefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellConfig.UpgradeCellType);
         foreach (var cell in cellsToUpgrade) {
-            if (_field[cell.x, cell.y] == CellType.VillagePart) continue;
+            if (_field[cell.x, cell.y] == CellType.BuildingPart) continue;
             _field[cell.x, cell.y] = cellConfig.UpgradeCellType;
             _cells[cell.x, cell.y].UpgradeStart();
             var seed = _cells[cell.x, cell.y].Seed;
@@ -655,18 +655,24 @@ public class MetaFieldManager : FieldManager {
                     _field[i, j] = StorageManager.GameDataMain.FieldRows[i].RowCells[j].CellType;
                     var cellType = _field[i, j];
                     if (cellType != CellType.Empty) {
-                        if (cellType != CellType.VillagePart) {
+                        if (cellType != CellType.BuildingPart) {
                             CellView prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellType);
                             var go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
                             go.transform.localPosition = new Vector3(i, _instantiatedCellsGlobalY, j);
                             _cells[i, j] = go;
 
                             go.SetSeed(Guid.NewGuid());
-                            if (FieldUtils.IsVillageCell(cellType))
-                                villagePosition = new Vector2Int(i, j);
+                            if (FieldUtils.IsVillageCell(cellType) || FieldUtils.IsSawmillCell(cellType)) {
+                                 villagePosition = new Vector2Int(i, j);
+                                 
+                                   _cells[i+1, j] = _cells[villagePosition.x, villagePosition.y];
+                                   _cells[i+1, j-1] = _cells[villagePosition.x, villagePosition.y];
+                                   _cells[i, j-1] = _cells[villagePosition.x, villagePosition.y];
+                            }
+                               
                         } else {
-                            CellView prefab = _cells[villagePosition.x, villagePosition.y];
-                            _cells[i, j] = prefab;
+                           
+                           
                         }
                     }
                 }

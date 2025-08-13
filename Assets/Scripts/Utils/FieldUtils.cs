@@ -21,6 +21,10 @@ public static class FieldUtils {
         CellType.Village,
         CellType.VillageLevel2,
     };
+    
+    private static readonly List<CellType> SawmillCells = new List<CellType>() {
+        CellType.Sawmill,
+    };
 
     private static readonly List<CellType> CantBecomeRowCells = new List<CellType>() {
         CellType.Empty,
@@ -111,5 +115,6 @@ public static class FieldUtils {
     public static bool IsResourceCell(CellType cellType) => ResourcesCells.Contains(cellType);
     
     public static bool IsVillageCell(CellType cellType) => VillageCells.Contains(cellType);
+    public static bool IsSawmillCell(CellType cellType) => SawmillCells.Contains(cellType);
     public static Vector2Int ClampToCoord(Vector3 coord) => new(Mathf.RoundToInt(coord.x) / CellSize, Mathf.RoundToInt(coord.z) / CellSize);
 }

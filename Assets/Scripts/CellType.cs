@@ -26,7 +26,7 @@ public enum CellType {
 
     Dynamite = 250,
 
-    VillagePart = 300,
+    BuildingPart = 300,
     MountainLevel2 = 301,
     ForestLevel2 = 302,
     FieldOfWheatLevel2 = 303,
