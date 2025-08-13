@@ -10,11 +10,12 @@ public class MetaCraftsConfig : ScriptableObject {
 
 [Serializable]
 public class MetaCraftInfo {
+    public GameObject ResultPrefab;
+    public CellTypeInfo ResultCellTypeInfo;
     public string CraftName;
     public string Description;
     public CellType NeededCell;
     public int NeededCellLevel;
-    public Vector2Int PieceSize;
     public CellType ResultCell;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> NeededResources;
