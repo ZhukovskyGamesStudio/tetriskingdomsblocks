@@ -101,21 +101,16 @@ public class GameBoostersPanels : MonoBehaviour {
     }
 
     public void SetBoosterActive(BoosterType booster, bool isActive) {
-        if (booster != BoosterType.Bomb || !isActive) {
-            //BoostersManager.Instance.CancelDynamite();
-        }
+       
 
         if (booster == BoosterType.Rotate && isActive) {
             RotateSelect.SetActive(true);
             RotateUse.SetActive(false);
         }
-
-        if (booster == BoosterType.Shuffle && isActive) {
-            //TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
-        }
+        
 
         if (booster == BoosterType.Hammer && isActive) {
-            TutorialHoleHelper.SpawnHoles(GameFieldManager.Instance.AllHammerableCells());
+            TutorialHoleHelper.HighlightCells(GameFieldManager.Instance.AllHammerableCells());
         }
 
         if (booster == BoosterType.Bomb && isActive) {

@@ -21,6 +21,10 @@ public class TutorialHoleHelper : MonoBehaviour {
         }
     }
 
+    public static void HighlightCells(List<Vector3Int> cells) {
+        _highlightHelper.HighlightObjectsInCells(cells);
+    }
+    
     public static void HighlightObjects(List<GameObject> objs) {
         _highlightHelper.HighlightObjects(objs);
     }

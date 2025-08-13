@@ -17,12 +17,10 @@ public class GameBoostersButtons : MonoBehaviour {
 
     [SerializeField]
     private Button _randomFieldButton;
+    
 
     [SerializeField]
-    public Button _dinamyteButton;
-
-    [SerializeField]
-    public Button _hummerButton;
+    public Button _hummerButton,_dinamyteButton, ShuffleButton;
 
     [SerializeField]
     private Button _rotatePieceButton;
@@ -42,28 +40,28 @@ public class GameBoostersButtons : MonoBehaviour {
     public void SetBoosterButtons(BoostersConfig config, int curLevel) {
         var lockSprite = config.LockBoosterSprite;
 
-        if (config.RandomUnlockLevel > curLevel) {
+        if (config.RandomUnlockLevel > curLevel+1) {
             _randomImageButton.sprite = lockSprite;
             _randomFieldButton.enabled = false;
-            _randomFieldCountText.text = (config.RandomUnlockLevel + 1).ToString();
+            _randomFieldCountText.text = (config.RandomUnlockLevel).ToString();
         }
 
-        if (config.DynamiteUnlockLevel > curLevel) {
+        if (config.DynamiteUnlockLevel > curLevel+1) {
             _dynamiteImageButton.sprite = lockSprite;
             _dinamyteButton.enabled = false;
-            _dinamyteCountText.text = (config.DynamiteUnlockLevel + 1).ToString();
+            _dinamyteCountText.text = (config.DynamiteUnlockLevel).ToString();
         }
 
-        if (config.HummerUnlockLevel > curLevel) {
+        if (config.HammerUnlockLevel > curLevel+1) {
             _hummerImageButton.sprite = lockSprite;
             _hummerButton.enabled = false;
-            _hummerCountText.text = (config.HummerUnlockLevel + 1).ToString();
+            _hummerCountText.text = (config.HammerUnlockLevel).ToString();
         }
 
-        if (config.RotateUnlockLevel > curLevel) {
+        if (config.RotateUnlockLevel > curLevel+1) {
             _rotateImageButton.sprite = lockSprite;
             _rotatePieceButton.enabled = false;
-            _rotatePieceCountText.text = (config.RotateUnlockLevel + 1).ToString();
+            _rotatePieceCountText.text = (config.RotateUnlockLevel).ToString();
         }
     }
 

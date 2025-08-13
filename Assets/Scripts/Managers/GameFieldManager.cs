@@ -192,7 +192,7 @@ public class GameFieldManager : FieldManager {
 
     public List<Vector3Int> AllHammerableCells() {
         var res = new List<Vector3Int>();
-        var r = FieldManager.AllFieldCells();
+        var r = AllFieldCells();
         foreach (Vector3Int pos in r) {
             if (_cells[pos.x, pos.z] == null) {
                 continue;

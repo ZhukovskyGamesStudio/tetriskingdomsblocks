@@ -47,8 +47,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
         _boosterContainer.gameObject.SetActive(false);
-
-        TutorialHoleHelper.DestroyHoles();
+        
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         GameUI.Instance.GoalView.ShowWitchWithAnimation();
         DestroyTutorial();

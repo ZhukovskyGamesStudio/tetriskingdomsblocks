@@ -275,7 +275,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public bool CanHammer() {
-        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.HummerUnlockLevel, StorageManager.GameDataMain.HummerCount);
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.HammerUnlockLevel, StorageManager.GameDataMain.HummerCount);
     }
 
     public bool CanRotate() {
@@ -287,7 +287,7 @@ public class BoostersManager : MonoBehaviour {
             return false;
         }
 
-        if (StorageManager.GameDataMain.CurMaxLevel < unlockLvl) {
+        if (StorageManager.GameDataMain.CurMaxLevel < unlockLvl-1) {
             return false;
         }
 
