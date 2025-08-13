@@ -10,7 +10,7 @@ public class MetaCraftsConfig : ScriptableObject {
 
 [Serializable]
 public class MetaCraftInfo {
-    public GameObject ResultPrefab;
+    public CellView ResultPrefab;
     public CellTypeInfo ResultCellTypeInfo;
     public string CraftName;
     public string Description;

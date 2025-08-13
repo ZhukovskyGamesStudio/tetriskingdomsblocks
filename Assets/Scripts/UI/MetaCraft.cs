@@ -28,12 +28,10 @@ public class MetaCraft : MonoBehaviour {
     [SerializeField]
     private Transform _pieceContainer;
 
-    private Action _craft;
-    private MetaCraftInfo _craftInfo;
+    private Action<CellView> _craft;
+    private CellView _craftingPiece;
     
-    public void SetData(MetaCraftInfo craftInfo, Action craft, bool hasCell) {
-        _craftInfo = craftInfo;
-        
+    public void SetData(MetaCraftInfo craftInfo, Action<CellView> craft, bool hasCell) {
         _hasCellState.SetActive(hasCell);
         _cellAbsentState.SetActive(!hasCell);
         if(!hasCell) _craftButton.interactable = false;
@@ -54,8 +52,9 @@ public class MetaCraft : MonoBehaviour {
         }
     }
 
-    private void ApplyResultCell(GameObject cellPrefab) {
-        GameObject instance = Instantiate(cellPrefab, _pieceContainer);
+    private void ApplyResultCell(CellView cellPrefab) {
+        CellView instance = Instantiate(cellPrefab, _pieceContainer);
+        _craftingPiece = instance;
         ApplyLayerToChildren(instance.transform, _pieceLayer);
     }
 
@@ -67,6 +66,6 @@ public class MetaCraft : MonoBehaviour {
     }
 
     public void Craft() {
-        _craft.Invoke();
+        _craft.Invoke(_craftingPiece);
     }
 }

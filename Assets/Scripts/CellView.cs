@@ -14,7 +14,6 @@ public class CellView : MonoBehaviour {
 
     [SerializeField]
     private GameObject _objectsContainer;
-    
 
     [SerializeField]
     private Collider _cellCollider;
@@ -22,11 +21,23 @@ public class CellView : MonoBehaviour {
     [SerializeField]
     private List<GameObject> _selectOneList;
 
+    [field: SerializeField]
+    public Transform CenterPivot { get; private set; }
+
     private Tween _currentTween;
     public Guid Seed { get; private set; } = Guid.NewGuid();
     
     //TODO move into config
     private float _upgradeTime = 0.4f;
+
+    private void Awake() {
+        if(CenterPivot == null) CenterPivot = transform;
+        else {
+            CenterPivot.SetParent(transform.parent);
+            transform.SetParent(CenterPivot);
+        }
+    }
+
     public void SetSeed(Guid seed) {
         Seed = seed;
         if (_objectsContainer) {
