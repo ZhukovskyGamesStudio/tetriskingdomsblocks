@@ -34,27 +34,34 @@ public class FloatingResourcesManager : MonoBehaviour {
         _floatingImagePool.Release(needTextObject);
     }
 
-    public async void FromPointToPointAnimation(int needCount, ResourceType resourceType, Vector2 startWorldPos, Vector2 endWorldPos,
+    public async UniTask FromPointToPointAnimation(int needCount, ResourceType resourceType, Vector2 startWorldPos, Vector2 endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, float interval = 0.1f) {
+        await FromPointToSomePointsAnimation(needCount, resourceType, startWorldPos, new List<Vector2> { endWorldPos }, changeTextAction,
+            startCount, isRemoveResources, interval);
+    }
+
+    public async UniTask FromPointToSomePointsAnimation(int needCount, ResourceType resourceType, Vector2 startWorldPos,
+        List<Vector2> endWorldPos, Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources,
+        float interval = 0.1f) {
         float currentCount = needCount;
 
         if (needCount > 30)
             needCount = 30;
 
-        float addedCountToText = currentCount / needCount;
-        Vector2 midPoint = (startWorldPos + endWorldPos) / 2;
-
-        Vector2 direction = (endWorldPos - startWorldPos).normalized;
-        Vector2 perpendicular = new Vector2(-direction.y, direction.x);
-
-        float randomSign = Random.Range(0, 2) * 2 - 1;
-        float randomFactor = Random.Range(0.5f, 1f) * 0.5f * randomSign;
-
-        Vector2 controlPoint = midPoint + Vector2.up * 150 + perpendicular * randomFactor * (endWorldPos - startWorldPos).magnitude * 0.3f;
-
-        Vector3[] path = { startWorldPos, controlPoint, endWorldPos };
-
         for (int i = 0; i < needCount; i++) {
+            float addedCountToText = currentCount / needCount;
+            var endPos = endWorldPos[i % endWorldPos.Count];
+            Vector2 midPoint = (startWorldPos + endPos) / 2;
+
+            Vector2 direction = (endPos - startWorldPos).normalized;
+            Vector2 perpendicular = new Vector2(-direction.y, direction.x);
+
+            float randomSign = Random.Range(0, 2) * 2 - 1;
+            float randomFactor = Random.Range(0.5f, 1f) * 0.5f * randomSign;
+
+            Vector2 controlPoint = midPoint + Vector2.up * 150 + perpendicular * randomFactor * (endPos - startWorldPos).magnitude * 0.3f;
+
+            Vector3[] path = { startWorldPos, controlPoint, endPos };
             var uiElement = ShowFloatingImage();
             uiElement.sprite = SpritesManager.Instance.GetSprite(resourceType);
             uiElement.transform.position = startWorldPos;
