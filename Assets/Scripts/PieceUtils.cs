@@ -62,6 +62,7 @@ public static class PieceUtils {
             float chance = Random.Range(0, chancesToSpawn[chancesToSpawn.Length - 1]);
             for (int i = 0; i < chancesToSpawn.Length; i++) {
                 if (chancesToSpawn[i] > chance) {
+                    
                     cellInfo = PiecesViewTable.Instance.CellsList.Combined().First(c => c.CellType == cellsToSpawn[i]);
                     break;
                 }

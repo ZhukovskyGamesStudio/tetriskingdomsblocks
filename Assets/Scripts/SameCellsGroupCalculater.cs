@@ -79,7 +79,7 @@ public class SameCellsGroupCalculater {
                 int newCol = col + dir.col;
 
                 if (newRow >= 0 && newRow < grid.GetLength(0) && newCol >= 0 && newCol < grid.GetLength(1) && !visited[newRow, newCol] &&
-                    grid[newRow, newCol] != CellType.Empty && grid[newRow, newCol] != CellType.LockedMetaCell) {
+                    grid[newRow, newCol] != CellType.Empty && grid[newRow, newCol] != CellType.LockedMetaCell && !FieldUtils.IsSawmillCell(grid[newRow, newCol])) {
                     var resourceType = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == grid[newRow, newCol])
                         .AfkResourceType; //make afk collect info in config
                     if (resourceType ==  ResourceType.None || resourceType != targetType) continue;
