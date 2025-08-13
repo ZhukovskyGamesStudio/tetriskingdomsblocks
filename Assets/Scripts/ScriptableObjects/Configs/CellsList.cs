@@ -14,7 +14,10 @@ namespace ScriptableObjects.Configs {
                 _combined.AddRange(MetaCellsConfigs);
                 _combined.AddRange(CoreCellsConfigs);
             }
-          
+            Debug.Log(_combined.Count);
+            foreach (var type in _combined) {
+                Debug.Log(type.CellType);
+            }
             return _combined;
         }
     }
