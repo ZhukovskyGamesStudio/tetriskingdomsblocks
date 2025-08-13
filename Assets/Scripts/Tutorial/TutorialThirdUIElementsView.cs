@@ -15,6 +15,7 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
     private SpotlightAnimConfig _step1Config;
 
     void Start() {
+        GameUI.Instance.GoalView.UltimateProgressBar.maxValue = 5;
         GameFieldManager.Instance.OnCellPlaced += ShowUltimateStepTutorial;
         SetHolesPositions();
         NextPiecesView.Instance.SetTinyPortalActive(false);
@@ -38,14 +39,13 @@ public class TutorialThirdUIElementsView : MonoBehaviour {
         SpotlightsManager.Instance.HideFinger();
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
-        _goalViewContainer.gameObject.SetActive(false);
-        DestroyTutorial();
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        NextPiecesView.Instance.SetTinyPortalActive(true);
         GameUI.Instance.GoalView.ShowWitchWithAnimation();
+        DestroyTutorial();
     }
 
     public void DestroyTutorial() {
-        NextPiecesView.Instance.SetTinyPortalActive(true);
         _currentTween.Kill();
 
         Destroy(_goalViewContainer.gameObject);
