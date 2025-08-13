@@ -8,8 +8,10 @@ using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
+
     [field: SerializeField]
-    public Transform _buildButton { get;private set; }
+    public Button BuildButton { get; private set; }
+
     [field: SerializeField]
     public HealthView HealthView { get; private set; }
 
@@ -19,9 +21,9 @@ public class MetaUI : MonoBehaviour {
     [SerializeField]
     private TMP_Text _destroyPieceText;
 
-    [field:SerializeField]
-    public Transform _openResourceTabButtonTransform{ get; private set; }
-    
+    [field: SerializeField]
+    public Transform _openResourceTabButtonTransform { get; private set; }
+
     [SerializeField]
     private TMP_Text _playText;
 
@@ -35,43 +37,59 @@ public class MetaUI : MonoBehaviour {
     private GameObject _buyPieceButton;
 
     [field: SerializeField]
-    public RectTransform _mainCanvas { get;set; }
+    public RectTransform _mainCanvas { get; set; }
 
     private Vector3 _buildCameraShift;
-
 
     [SerializeField]
     private Image _ruleAvatarImage;
 
     [SerializeField]
     private AvatarsConfig _avatarsConfig;
-    
-    [field:SerializeField]
-    public GetPieceButtonView  _getPieceButtonView{ get; private set; }
-    [field:SerializeField]
-    public Button  _playButton{ get; private set; }
+
+    [field: SerializeField]
+    public GetPieceButtonView _getPieceButtonView { get; private set; }
+
+    [field: SerializeField]
+    public Button _playButton { get; private set; }
+
     [SerializeField]
-    public MetaTutorial  _metaTutorial;
+    public MetaTutorial _metaTutorial;
+
     [SerializeField]
-    public Transform  _metaTutorialContainer;
+    public Transform _metaTutorialContainer;
+
+    [field: SerializeField]
+    public Button CraftButton { get; private set; }
+
+    [field: SerializeField]
+    public Button ProfileButton { get; private set; }
+
+    [field: SerializeField]
+    public Button ResourcesButton { get; private set; }
+
+    [field: SerializeField]
+    public GameObject Tabs { get; private set; }
 
     public bool IsBuildState;
 
     private void Awake() {
         Instance = this;
+    }
+
+    private void Start() {
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
+        CraftButton.gameObject.SetActive(MainManager.Instance._mainConfig.SawmillUnlockLevel <= StorageManager.GameDataMain.CurMaxLevel);
         //TODO Skipped for testing purposes
-      
     }
-    
 
     private void InitBuildCameras() {
         var ray = new Ray(_buildCamera.transform.position, _buildCamera.transform.forward);
         var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
 
         if (hit) {
-            _buildCameraShift =  _buildCamera.transform.position - hitinfo.point;
+            _buildCameraShift = _buildCamera.transform.position - hitinfo.point;
         }
     }
 
@@ -83,7 +101,7 @@ public class MetaUI : MonoBehaviour {
                 Craft = MetaFieldManager.Instance.Craft
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
@@ -94,7 +112,7 @@ public class MetaUI : MonoBehaviour {
                 RewardingPiece = rewardingPiece
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
@@ -111,7 +129,7 @@ public class MetaUI : MonoBehaviour {
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -126,7 +144,7 @@ public class MetaUI : MonoBehaviour {
                 CurrentAvatar = StorageManager.GameDataMain.ProfileAvatar
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -137,9 +155,10 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenResources() {
         Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
-        if(resourcesInfo.Count == 0) {
+        if (resourcesInfo.Count == 0) {
             return;
         }
+
         resourcesInfo.TryAdd(ResourceType.Wood, 0);
         resourcesInfo.TryAdd(ResourceType.Rocks, 0);
         resourcesInfo.TryAdd(ResourceType.Food, 0);
@@ -148,16 +167,21 @@ public class MetaUI : MonoBehaviour {
             DialogType = typeof(OverviewDialog),
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
-                    new OverviewResourceInfo(ResourceType.Coins, (int)StorageManager.GameDataMain.GetResource(ResourceType.Coins), (int)resourcesInfo[ResourceType.Coins]),
-                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.GetResource(ResourceType.Wood), (int)resourcesInfo[ResourceType.Wood]),
-                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.GetResource(ResourceType.Rocks), (int)resourcesInfo[ResourceType.Rocks]),
-                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.GetResource(ResourceType.Food), (int)resourcesInfo[ResourceType.Food]),
-                    new OverviewResourceInfo(ResourceType.Metal, (int)StorageManager.GameDataMain.GetResource(ResourceType.Metal), (int)resourcesInfo[ResourceType.Metal])
+                    new OverviewResourceInfo(ResourceType.Coins, (int)StorageManager.GameDataMain.GetResource(ResourceType.Coins),
+                        (int)resourcesInfo[ResourceType.Coins]),
+                    new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.GetResource(ResourceType.Wood),
+                        (int)resourcesInfo[ResourceType.Wood]),
+                    new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.GetResource(ResourceType.Rocks),
+                        (int)resourcesInfo[ResourceType.Rocks]),
+                    new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.GetResource(ResourceType.Food),
+                        (int)resourcesInfo[ResourceType.Food]),
+                    new OverviewResourceInfo(ResourceType.Metal, (int)StorageManager.GameDataMain.GetResource(ResourceType.Metal),
+                        (int)resourcesInfo[ResourceType.Metal])
                 },
                 ShowResource = StorageManager.GameDataMain.SeenResource
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -205,7 +229,7 @@ public class MetaUI : MonoBehaviour {
                 BuyResource = MainManager.Instance.BuyMetaResource
             }
         };
-        
+
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 

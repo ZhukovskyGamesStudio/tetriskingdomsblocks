@@ -6,6 +6,7 @@ using UnityEngine;
 
 [Serializable]
 public class GameDataForSave {
+    public bool IsTutorialComplete;
     public string CreatedVersion;
     public int CurMaxLevel;
     private SerializedDictionary<ResourceType, float> _resourcesCount;

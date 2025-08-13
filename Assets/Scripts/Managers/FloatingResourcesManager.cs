@@ -20,6 +20,8 @@ public class FloatingResourcesManager : MonoBehaviour {
     [SerializeField]
     private Transform _floatingTextContainer;
 
+    public Action<ResourceType> OnAnimationEnd;
+
     private void Awake() {
         DontDestroyOnLoad(gameObject);
         Instance = this;
@@ -49,12 +51,16 @@ public class FloatingResourcesManager : MonoBehaviour {
         if (isRemoveResources)
             addedCountToText = -addedCountToText;
 
+        List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < needCount; i++) {
-            startCount = ImageAnimation(resourceType, startWorldPos, endWorldPos, changeTextAction, startCount, isRemoveResources, i,
-                addedCountToText, ActionAfterEndAnimaation);
+            tasks.Add(ImageAnimation(resourceType, startWorldPos, endWorldPos, changeTextAction, startCount, isRemoveResources, i,
+                addedCountToText, ActionAfterEndAnimaation));
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
+
+        await UniTask.WhenAll(tasks);
+        OnAnimationEnd?.Invoke(resourceType);
     }
 
     public async UniTask FromSomePointsToPointAnimation(ResourceType resourceType, List<Vector2> startWorldPos, Vector2 endWorldPos,
@@ -65,12 +71,17 @@ public class FloatingResourcesManager : MonoBehaviour {
         float addedCountToText = currentCount / startWorldPos.Count;
         if (isRemoveResources)
             addedCountToText = -addedCountToText;
+
+        List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < startWorldPos.Count; i++) {
-            startCount = ImageAnimation(resourceType, startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i,
-                addedCountToText, ActionAfterEndAnimaation);
+            tasks.Add(ImageAnimation(resourceType, startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i,
+                addedCountToText, ActionAfterEndAnimaation));
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
+
+        await UniTask.WhenAll(tasks);
+        OnAnimationEnd?.Invoke(resourceType);
     }
 
     public async UniTask FromPointToSomePointsAnimation(ResourceType resourceType, Vector2 startWorldPos, List<Vector2> endWorldPos,
@@ -81,12 +92,17 @@ public class FloatingResourcesManager : MonoBehaviour {
         float addedCountToText = currentCount / endWorldPos.Count;
         if (isRemoveResources)
             addedCountToText = -addedCountToText;
+
+        List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < endWorldPos.Count; i++) {
-            startCount = ImageAnimation(resourceType, startWorldPos, endWorldPos[i], changeTextAction, startCount, isRemoveResources, i,
-                addedCountToText, ActionAfterEndAnimaation);
+            tasks.Add(ImageAnimation(resourceType, startWorldPos, endWorldPos[i], changeTextAction, startCount, isRemoveResources, i,
+                addedCountToText, ActionAfterEndAnimaation));
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
+
+        await UniTask.WhenAll(tasks);
+        OnAnimationEnd?.Invoke(resourceType);
     }
 
     public async UniTask FromSomePointsToPointMultiplyResourcesAnimation(List<ResourceType> resourceType, List<Vector2> startWorldPos,
@@ -97,15 +113,20 @@ public class FloatingResourcesManager : MonoBehaviour {
         float addedCountToText = currentCount / startWorldPos.Count;
         if (isRemoveResources)
             addedCountToText = -addedCountToText;
+
+        List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < startWorldPos.Count; i++) {
-            startCount = ImageAnimation(resourceType[i], startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i,
-                addedCountToText, ActionAfterEndAnimaation);
+            tasks.Add(ImageAnimation(resourceType[i], startWorldPos[i], endWorldPos, changeTextAction, startCount, isRemoveResources, i,
+                addedCountToText, ActionAfterEndAnimaation));
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval));
         }
+
+        await UniTask.WhenAll(tasks);
+        OnAnimationEnd?.Invoke(resourceType[0]);
     }
 
-    private float ImageAnimation(ResourceType resourceType, Vector2 startWorldPos, Vector2 endWorldPos,
+    private async UniTask ImageAnimation(ResourceType resourceType, Vector2 startWorldPos, Vector2 endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, int i, float addedCountToText,
         bool ActionAfterEndAnimaation) {
         Vector2 midPoint = (startWorldPos + endWorldPos) / 2;
@@ -122,16 +143,14 @@ public class FloatingResourcesManager : MonoBehaviour {
         var uiElement = ShowFloatingImage();
         uiElement.sprite = SpritesManager.Instance.GetSprite(resourceType);
         uiElement.transform.position = startWorldPos;
-        float newCount;
 
         if (!ActionAfterEndAnimaation)
             changeTextAction?.Invoke(resourceType, addedCountToText);
 
-        uiElement.rectTransform.DOPath(path, 0.8f, PathType.CatmullRom).SetEase(Ease.OutQuad).OnComplete(() => {
+        await uiElement.rectTransform.DOPath(path, 0.8f, PathType.CatmullRom).SetEase(Ease.OutQuad).OnComplete(() => {
             ReleaseFloatingImage(uiElement);
             if (ActionAfterEndAnimaation)
                 changeTextAction?.Invoke(resourceType, addedCountToText);
-        });
-        return startCount;
+        }).AsyncWaitForCompletion();
     }
 }

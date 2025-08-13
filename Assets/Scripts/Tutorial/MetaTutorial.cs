@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using TMPro;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 public class MetaTutorial : MonoBehaviour {
+    [SerializeField]
+    private SpotlightAnimConfig _metaTutor0, _metaTutor1, _metaTutor2, _metaTutor3, _metaTutor4;
+
     [SerializeField]
     private RectTransform _holeImageGetFreeTetramineButton;
 
@@ -20,15 +22,6 @@ public class MetaTutorial : MonoBehaviour {
 
     [SerializeField]
     private RectTransform _holeTetraminesToBuild;
-
-    [SerializeField]
-    private RectTransform _blackBGImage;
-
-    [SerializeField]
-    private TMP_Text _tutorialText;
-
-    [SerializeField]
-    private Image _fingerImage;
 
     [SerializeField]
     private Transform _fingerImageContainer;
@@ -53,7 +46,6 @@ public class MetaTutorial : MonoBehaviour {
 
     [SerializeField]
     private Tween _currentTween;
-    
 
     [SerializeField]
     private TutorialHoleHelper _holeHelper;
@@ -69,7 +61,7 @@ public class MetaTutorial : MonoBehaviour {
     private Vector3 _cameraPosition = new Vector3(-7.5f, 0, -2);
 
     private EventTrigger _invCell;
-
+    private GameObject _pieceCellsContainer;
     void Start() {
         // GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
         TryAddMissingResources();
@@ -83,57 +75,51 @@ public class MetaTutorial : MonoBehaviour {
         }
     }
 
+    private void DisableUI() {
+        MetaUI.Instance.CraftButton.gameObject.SetActive(false);
+        MetaUI.Instance.ProfileButton.gameObject.SetActive(false);
+        MetaUI.Instance.ResourcesButton.gameObject.SetActive(false);
+        MetaUI.Instance.Tabs.gameObject.SetActive(false);
+    }
+
+    public void EnableUI() {
+        MetaUI.Instance.CraftButton.gameObject.SetActive(false);
+        MetaUI.Instance.ProfileButton.gameObject.SetActive(true);
+        MetaUI.Instance.ResourcesButton.gameObject.SetActive(true);
+        MetaUI.Instance.Tabs.gameObject.SetActive(true);
+    }
+
     private async UniTask TutorialAsync() {
+        DisableUI();
         MetaUI.Instance._playButton.enabled = false;
         ShowFirstStepTutorial();
         SetHolesPositions();
+        await UniTask.Delay(TimeSpan.FromSeconds(1));
+        MoveCameraToNeedPosition();
         await UniTask.WaitUntil(() => MetaWorldCanvasView.Instance.UnlockFieldCellsView.gameObject.activeInHierarchy);
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         ShowSecondStepTutorial();
     }
 
     public void SetHolesPositions() {
         _holeTetraminesToBuild.gameObject.SetActive(false);
-        _holeImageBuildButton.transform.SetParent(MetaUI.Instance._buildButton);
+        _holeImageBuildButton.transform.SetParent(MetaUI.Instance.BuildButton.transform);
         _holeImageBuildButton.transform.localPosition = Vector3.zero;
         _holeImageBuildButton.gameObject.SetActive(false);
         _holeImageGetFreeTetramineButton.SetParent(MetaUI.Instance._getPieceButtonView.transform);
         _holeImageGetFreeTetramineButton.transform.localPosition = Vector3.zero;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
-        MetaUI.Instance._buildButton.GetComponent<Button>().enabled = false;
+        MetaUI.Instance.BuildButton.enabled = false;
         MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
-        _fingerImage.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 2));
-    }
-
-    public void StartAnimation() {
-        _fingerImageContainer.localScale = Vector3.one;
-        var color = _fingerImage.color;
-        color.a = 0;
-        _fingerImage.color = color;
-    }
-    
-    public void FingerAnimation(Vector2 startPos) {
-        _fingerImageContainer.localScale = Vector3.one;
-        _fingerImage.transform.localPosition = Vector3.zero;
-        _fingerImageContainer.transform.position = startPos;
-        var color = _fingerImage.color;
-        color.a = 0;
-        _fingerImage.color = color;
-        _currentTween = DOTween.Sequence()
-            .Append(_fingerImage.DOFade(1, 0.8f))
-            .Join(_fingerImageContainer.DOScale(Vector3.one * 0.75f, 0.8f))
-            .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)), 2.5f))
-            .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
-            .Append(_fingerImageContainer.DOMove(startPos, 1)).SetLoops(-1, LoopType.Restart);
     }
 
     private void ShowFirstStepTutorial() {
         //MoveCameraToNeedPosition();
-        Invoke(nameof(MoveCameraToNeedPosition), 1f);
+        //Invoke(nameof(MoveCameraToNeedPosition), 1f);
         TutorialHoleHelper.DestroyHoles();
-          List<GameObject> highlihtObjects = new List<GameObject>();  
-        TutorialHoleHelper.SpawnHoles(_openedCloudCells);
-
-        _tutorialText.text = _openCloudsText;
+        TutorialHoleHelper.SpawnHoles(_openedCloudCells, false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor0);
+        SpotlightsManager.Instance.StartFingerClickAnimation((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 2f)));
     }
 
     private void MoveCameraToNeedPosition() {
@@ -141,96 +127,99 @@ public class MetaTutorial : MonoBehaviour {
         MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
     }
 
-    private GameObject _pieceCellsContainer;
-
-    private void HighlightCurrentPiece() {
-        PieceView piece = FindAnyObjectByType<PieceView>();
-        _pieceCellsContainer = piece._cellsContainer.gameObject;
-        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
-    }
+   
 
     public void ShowSecondStepTutorial() {
-        // TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+         TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         TutorialHoleHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
-        _tutorialText.text = _tapButtonOpenCloudsText;
-        MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton.onClick.AddListener(HideSecondStepTutorial);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton,
+            _metaTutor1, HideSecondStepTutorial);
     }
 
     public void HideSecondStepTutorial() {
+        HideSecondStepTutorialAsync().Forget();
+    }
+
+    private async UniTask HideSecondStepTutorialAsync() {
         TutorialHoleHelper.DestroyHoles();
-        MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton.onClick.RemoveListener(HideSecondStepTutorial);
-        _fingerImage.gameObject.SetActive(false);
-        Invoke("ShowThirdStepTutorial", 0.8f);
+        SpotlightsManager.Instance.HideFinger();
+        bool waiting = true;
+        FloatingResourcesManager.Instance.OnAnimationEnd += _ => waiting = false;
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        await UniTask.WaitWhile(() => waiting);
+        FloatingResourcesManager.Instance.OnAnimationEnd -= _ => waiting = false;
+        ShowThirdStepTutorial();
     }
 
     public void ShowThirdStepTutorial() {
-        _tutorialText.text = _tapButtonOpenCloudsText;
         _tutorialStep = 3;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(true);
-        MetaUI.Instance._getPieceButtonView.GetPieceButton.onClick.AddListener(()=>HideThirdStepTutorial().Forget());
-        _tutorialText.text = _thirdTutorialText;
-        _tutorialText.transform.position =
-            new Vector2(_holeImageGetFreeTetramineButton.position.x, _holeImageGetFreeTetramineButton.position.y + 200);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._getPieceButtonView.GetPieceButton, _metaTutor2,
+            HideThirdStepTutorial);
 
         MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
     }
 
-    public async UniTask HideThirdStepTutorial() {
+    private void HideThirdStepTutorial() {
+        HideThirdStepTutorialAsync().Forget();
+    }
+
+    private async UniTask HideThirdStepTutorialAsync() {
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
-        _tutorialText.gameObject.SetActive(false);
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => StorageManager.GameDataMain.InventoryFigures.Count == 0 || DialogsManager.Instance.IsDialogActive);
         ShowFourthStepTutorial();
     }
 
     private void ShowFourthStepTutorial() {
-        //  continueButton.onClick.AddListener(ShowFourthStepTutorial);
-        _tutorialText.gameObject.SetActive(true);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.BuildButton, _metaTutor3, HideFourthStepTutorial);
         _holeImageBuildButton.gameObject.SetActive(true);
-        _tutorialText.transform.position = new Vector2(MetaUI.Instance._buildButton.transform.position.x,
-            MetaUI.Instance._buildButton.transform.position.y + 200);
-        MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.AddListener(ShowFifthStepTutorial);
-        MetaUI.Instance._buildButton.GetComponent<Button>().enabled = true;
+
+        MetaUI.Instance.BuildButton.enabled = true;
         _tutorialStep = 4;
-        _tutorialText.text = _fourthTutorialText;
+    }
+
+    private void HideFourthStepTutorial() {
+        HideFourthStepTutorialAsync().Forget();
+    }
+
+    private async UniTask HideFourthStepTutorialAsync() {
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        ShowFifthStepTutorial();
     }
 
     private void ShowFifthStepTutorial() {
+        TutorialHoleHelper.SpawnHoles(_openedCloudCells);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor4);
         _holeImageBuildButton.gameObject.SetActive(true);
-        MetaUI.Instance._buildButton.gameObject.GetComponent<Button>().onClick.RemoveListener(ShowFifthStepTutorial);
         _tutorialStep = 5;
-        _fingerImage.gameObject.SetActive(true);
-       
 
-        _tutorialText.text = _fifethTutorialText;
-        Invoke("SetupInventoryCell", 0.3f);
+        Invoke(nameof(SetupInventoryCell), 0.3f);
     }
 
     private void SetupInventoryCell() {
         _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<EventTrigger>();
-        FingerAnimation(_invCell.transform.position);
+        SpotlightsManager.Instance.StartFingerDragAnimation(_invCell.transform.position, (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)));
+       
         _holeTetraminesToBuild.gameObject.SetActive(true);
         _holeTetraminesToBuild.position = _invCell.transform.position;
         EventTrigger.Entry entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.BeginDrag;
-        _tutorialText.transform.position = new Vector2(_invCell.transform.position.x, _invCell.transform.position.y + 250);
-        UnityAction<BaseEventData> callback = new UnityAction<BaseEventData>(ShowSixthStepTutorial);
-        entry.callback.AddListener(callback);
+        entry.callback.AddListener(ShowSixthStepTutorial);
 
         _invCell.triggers.Add(entry);
     }
 
     private void ShowSixthStepTutorial(BaseEventData eventData) {
-        _tutorialText.text = _sixthTutorialText;
         _tutorialStep = 5;
-        _tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 5f));
-        
+
         MetaFieldManager.Instance.OnCellPlaced += (i, bools) => HideSixthStepTutorial();
-        //highlight field
     }
 
     private void HideSixthStepTutorial() {
-        MetaFieldManager.Instance.OnCellPlaced -= (i, bools) => HideSixthStepTutorial();
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        MetaFieldManager.Instance.OnCellPlaced -= (_, _) => HideSixthStepTutorial();
         MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
         _holeImageBuildButton.gameObject.SetActive(false);
@@ -238,15 +227,11 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     public void DestroyTutorial() {
+        EnableUI();
         MetaUI.Instance._playButton.enabled = true;
         _currentTween.Kill();
-        //  foreach (var hole in _holeImages) {
-        //        Destroy(hole.gameObject);
-        //     }
-
-        if (_fingerImage == null) return;
-        Destroy(_fingerImage.gameObject);
-
+        StorageManager.GameDataMain.IsTutorialComplete = true;
+        StorageManager.SaveGame();
         Destroy(gameObject);
     }
 }

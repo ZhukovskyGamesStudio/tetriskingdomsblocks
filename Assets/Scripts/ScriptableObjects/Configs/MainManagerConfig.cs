@@ -5,5 +5,7 @@ public class MainManagerConfig : ScriptableObject
 {
     public LevelConfig[] Levels;
 
+    public int SawmillUnlockLevel = 30;
+
     public Material _normal, _priorityMaterial, PriorityHighlightedMaterial;
 }
