@@ -17,21 +17,60 @@ public class CameraScaleToBounds : MonoBehaviour {
 
     private float _aspectRatio = -1;
 
-    private void Awake() {
+    public static CameraScaleToBounds Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public async void Init() {
         _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
-        TryFitToBounds();
+         TryFitToBounds();
+        if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
+            Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
+        }
+        else
+        {
+            MoveCameraToVillagePosition();
+            Debug.Log(" moveToVillage");
+        }
     }
 
     private void Update() {
         TryFitToBounds();
     }
 
+    private void MoveCameraToVillagePosition()
+    {
+        if (MetaFieldManager.Instance != null)
+        {
+            var metaField = MetaFieldManager.Instance._field;
+
+            for (int i = 0; i < metaField.GetLength(0); i++)
+            {
+                for (int j = 0; j < metaField.GetLength(1); j++)
+                {
+                    if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i,j]))
+                    {
+                        var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform;
+                        CalculateBounds(needCameraPos);
+                                        return;
+                      }
+                }
+            }
+
+            
+        }
+           
+    }
     private void TryFitToBounds() {
         float curAspect = (float)Screen.width / Screen.height;
         if (!Mathf.Approximately(curAspect, _aspectRatio)) {
             _aspectRatio = curAspect;
-            FitCameraToTarget(_aspectRatio);
+           FitCameraToTarget(_aspectRatio);
         }
+        
     }
 
     private void FitCameraToTarget(float aspectRatio) {
@@ -76,7 +115,7 @@ public class CameraScaleToBounds : MonoBehaviour {
         for (int i = 1; i < renderers.Length; i++) {
             bounds.Encapsulate(renderers[i].bounds);
         }
-
+Debug.Log(" CALCULATE BOUNDS");
         return bounds;
     }
 }

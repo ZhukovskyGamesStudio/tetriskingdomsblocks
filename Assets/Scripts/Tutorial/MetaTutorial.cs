@@ -126,12 +126,6 @@ public class MetaTutorial : MonoBehaviour {
         var color = _fingerImage.color;
         color.a = 0;
         _fingerImage.color = color;
-        /*  _currentTween = DOTween.Sequence()
-              .Append(_fingerImage.DOFade(1, 0.8f))
-              .Join(_fingerImageContainer.DOScale(Vector3.one * 0.75f, 0.8f))
-              .Append(_fingerImageContainer.DOMove((Vector2)Camera.main.WorldToScreenPoint(new Vector3(3f, 0, 3.5f)), 2.5f))
-              .Append(_fingerImageContainer.DOScale(Vector3.one, 0.8f)).Join(_fingerImage.DOFade(0, 0.8f))
-              .Append(_fingerImageContainer.DOMove(_holeImages[0].transform.position, 1)).SetLoops(-1, LoopType.Restart);*/
     }
     
     public void FingerAnimation(Vector2 startPos) {
@@ -151,10 +145,8 @@ public class MetaTutorial : MonoBehaviour {
 
     private void ShowFirstStepTutorial() {
         //MoveCameraToNeedPosition();
-        Invoke(nameof(MoveCameraToNeedPosition), 1.5f);
+        Invoke(nameof(MoveCameraToNeedPosition), 1f);
         TutorialHoleHelper.DestroyHoles();
-//        _fingerImage.transform.position =  (Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 5f));
-        //_tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 4f));
           List<GameObject> highlihtObjects = new List<GameObject>();
         // foreach (var needPos in _openedCloudCells) {
            //  highlihtObjects.Add(MetaFieldManager.Instance._cells[needPos.x, needPos.y].gameObject);    
