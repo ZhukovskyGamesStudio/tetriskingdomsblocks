@@ -449,9 +449,10 @@ public class MetaFieldManager : FieldManager {
     public async UniTask UnlockCell() {
         int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1000;
         var lockedCellGroup = LockedCellGroups[groupIndex];
-        Vector3 uiPos = Vector3.zero;
 
-        if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) return;
+        if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) {
+            return;
+        }
 
         UnmarkLockedGroup();
         List<Vector2> endPositions= new List<Vector2>();
@@ -460,13 +461,16 @@ public class MetaFieldManager : FieldManager {
 
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube)); 
         FloatingResourcesManager.Instance.FromPointToSomePointsAnimation(  ResourceType.MagicCube, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
-            endPositions, ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true, false);
+            endPositions, ChangeCubes, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), true, false);
            
         StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
        CloseCellUI();
+       GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesStart);
+       
        await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
+            GameAudio.Instance.PlayNextSound(GameAudio.Instance.CloudsRemove);
             _cells[lockCellPos.x, lockCellPos.y] = null;
             _field[lockCellPos.x, lockCellPos.y] = CellType.Empty;
             _groupCellIndex[lockCellPos.x, lockCellPos.y] = 0;
@@ -474,8 +478,13 @@ public class MetaFieldManager : FieldManager {
                 new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
-        
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesEnd);
       
+    }
+
+    private void ChangeCubes(ResourceType resourceType, float needCount) {
+        ChangeResorceText(resourceType, needCount);
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesMiddle);
     }
 
     public void CloseCellUI() {

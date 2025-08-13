@@ -258,17 +258,30 @@ public class FieldManager : MonoBehaviour {
 
             _gameAudio.PlayNextSound(_gameAudio.PlacePiece);
             switch (pieceData.Type.CellType) {
+                case CellType.Wood:
                 case CellType.Forest:
+                case CellType.ForestLevel2:
                     _gameAudio.PlayNextSound(_gameAudio.WoodPlaced);
                     break;
+                case CellType.Stone:
                 case CellType.Mountain:
+                case CellType.MountainLevel2:
                     _gameAudio.PlayNextSound(_gameAudio.RockPlaced);
                     break;
+                case CellType.Wheat:
                 case CellType.FieldOfWheat:
+                case CellType.FieldOfWheatLevel2:
                     _gameAudio.PlayNextSound(_gameAudio.WheatPlaced);
                     break;
+                case CellType.MetalMines:
+                case CellType.MetalMinesLevel2:
                 case CellType.Metal:
                     _gameAudio.PlayNextSound(_gameAudio.MetalPlaced);
+                    break;
+                case CellType.Village:
+                case CellType.VillageLevel2:
+                case CellType.Sawmill:
+                    _gameAudio.PlayNextSound(_gameAudio.HousePlaced);
                     break;
             }
 

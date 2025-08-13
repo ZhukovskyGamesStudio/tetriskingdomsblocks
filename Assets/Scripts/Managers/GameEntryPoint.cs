@@ -107,8 +107,6 @@ public class GameEntryPoint : MonoBehaviour {
 
         _gameData.CurrentTasks.Add(new TaskInfoAndUI(newTaskInfo, taskUI, task.Count));
         _gameData.ResourceTypesForTasks.Add(task.NeedResource);
-
-        //GameUI.Instance.StartCharacterInfoTextCoroutine();
     }
 
     private void CheckGameGoal() {
@@ -186,12 +184,10 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void SaveWinGame() {
-      //  StorageManager.GameDataMain.AddResource(ResourceType.Coins, 100); /* + StorageManager.GameDataMain.CurMaxLevel * 5*/;
-        if (StorageManager.GameDataMain.IsFirstAttemptWin)
+        if (StorageManager.GameDataMain.IsFirstAttemptWin) {
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
+        }
         StorageManager.GameDataMain.IsFirstAttemptWin = true;
-        // StorageManager.GameDataMain.ResourcesCount[ResourceType.MagicCube] += 5 + StorageManager.GameDataMain.CurMaxLevel / 2;
-      //  StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, MainManager.Instance.CurrentLevelConfig.MagicCubesCount);
         MainManager.Instance.IncreaseMaxLevel();
         StorageManager.SaveGame();
     }

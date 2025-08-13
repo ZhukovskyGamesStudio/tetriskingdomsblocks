@@ -143,7 +143,7 @@ public class BoostersManager : MonoBehaviour {
         if (!CanShuffle()) {
             return;
         }
-
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseShuffle);
         Dictionary<CellType, int> cellsToPlace = new Dictionary<CellType, int>();
         List<UniTask> _destroyTasks = new List<UniTask>();
         int cellsCount = 0;
@@ -188,7 +188,6 @@ public class BoostersManager : MonoBehaviour {
                 GameFieldManager.Instance.CheckClosestCells(needPosition);
             }
         }
-
         GameFieldManager.Instance.ExplodeCellsInRows();
 
         OnBoosterEndedWorking?.Invoke();

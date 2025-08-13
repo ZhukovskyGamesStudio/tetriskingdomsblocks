@@ -17,12 +17,20 @@ public class GameAudio : MonoBehaviour {
     public AudioQueueMixer RockPlaced;
     public AudioQueueMixer WheatPlaced;
     public AudioQueueMixer MetalPlaced;
+    public AudioQueueMixer HousePlaced;
+    
+    [Header("Cubes use on meta")]
+    public AudioQueueMixer CubesStart;
+    public AudioQueueMixer CubesMiddle;
+    public AudioQueueMixer CubesEnd;
+    public AudioQueueMixer CloudsRemove;
 
     [Header("Game Events")]
     public AudioQueueMixer Win;
     public AudioQueueMixer Lose;
     public AudioQueueMixer ResourceCollected;
     public AudioQueueMixer RowCollected;
+    public AudioQueueMixer UseShuffle;
 
     private void Awake() {
         Instance = this;
@@ -30,7 +38,9 @@ public class GameAudio : MonoBehaviour {
 
     public void PlayNextSound(AudioQueueMixer mixer)
     {
-        if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) return;
+        if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) {
+            return;
+        }
         mixer.PlayNext();
     }
 }
