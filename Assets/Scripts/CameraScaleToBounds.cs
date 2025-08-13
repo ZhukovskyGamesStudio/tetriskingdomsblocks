@@ -18,15 +18,17 @@ public class CameraScaleToBounds : MonoBehaviour {
     private float _aspectRatio = -1;
 
     public static CameraScaleToBounds Instance;
+    private Vector3 _startTargetPosition;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public async void Init() {
+    public void Init() {
         _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
          TryFitToBounds();
+         _startTargetPosition = _targetArea.position;
         if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
         }
@@ -49,7 +51,7 @@ public class CameraScaleToBounds : MonoBehaviour {
                 for (int j = 0; j < metaField.GetLength(1); j++) {
                     if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i, j])) {
                         var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform.position + Vector3.one;
-                        _targetArea.position = needCameraPos;
+                        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x-12.5f, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z-1.3f) ;
                        
                         return;
                     }
@@ -109,9 +111,6 @@ public class CameraScaleToBounds : MonoBehaviour {
             bounds.Encapsulate(renderers[i].bounds);
         }
 
-        if (_targetArea.position != startTargetPosition)
-            _targetArea.position = startTargetPosition;
-Debug.Log(" CALCULATE BOUNDS");
         return bounds;
     }
 }
