@@ -51,9 +51,9 @@ public class MetaUI : MonoBehaviour {
     [field:SerializeField]
     public Button  _playButton{ get; private set; }
     [SerializeField]
-    private MetaTutorial  _metaTutorial;
+    public MetaTutorial  _metaTutorial;
     [SerializeField]
-    private Transform  _metaTutorialContainer;
+    public Transform  _metaTutorialContainer;
 
     public bool IsBuildState;
 
@@ -62,9 +62,7 @@ public class MetaUI : MonoBehaviour {
         SetAvatar(StorageManager.GameDataMain.ProfileAvatar);
         InitBuildCameras();
         //TODO Skipped for testing purposes
-       if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
-           Instantiate(_metaTutorial, _metaTutorialContainer);
-       }
+      
     }
     
 
@@ -81,7 +79,8 @@ public class MetaUI : MonoBehaviour {
         var dialogData = new DialogWithData {
             DialogType = typeof(MetaCraftDialog),
             Data = new MetaCraftDialog.Data {
-                Crafts = ConfigsManager.Instance.MetaCraftsConfig.Crafts
+                Crafts = ConfigsManager.Instance.MetaCraftsConfig.Crafts,
+                Craft = MetaFieldManager.Instance.Craft
             }
         };
         
@@ -92,7 +91,7 @@ public class MetaUI : MonoBehaviour {
         var dialogData = new DialogWithData {
             DialogType = typeof(LootboxDialog),
             Data = new LootboxDialog.Data {
-                RewardingPiece = rewardingPiece,
+                RewardingPiece = rewardingPiece
             }
         };
         

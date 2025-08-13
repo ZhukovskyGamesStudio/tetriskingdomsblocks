@@ -1,0 +1,64 @@
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using ScriptableObjects;
+using UnityEngine;
+using UnityEngine.UI;
+
+public abstract class BoosterTutorialView : MonoBehaviour {
+    [SerializeField]
+    private RectTransform _boosterContainer;
+
+    private Tween _currentTween;
+
+    [SerializeField]
+    private SpotlightAnimConfig _stepConfig;
+
+    void Start() {
+        SetHolesPositions();
+        ShowBoosterStepTutorial();
+
+        Init();
+    }
+
+    protected abstract void Init();
+
+    protected abstract Button BoosterButton { get; }
+
+    private void SetHolesPositions() {
+        var boosterContainer = BoosterButton.transform;
+        _boosterContainer.transform.SetParent(boosterContainer);
+
+        _boosterContainer.transform.position = boosterContainer.position;
+    }
+
+    private void ShowBoosterStepTutorial() {
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(BoosterButton, _stepConfig, HideTutorial);
+        SpotlightsManager.Instance.StartFingerClickAnimation(BoosterButton.transform.position);
+    }
+
+    private void HideTutorial() {
+        HideBoosterStepTutorial().Forget();
+    }
+
+    private async UniTask HideBoosterStepTutorial() {
+        SpotlightsManager.Instance.HideFinger();
+        GameFieldManager.Instance.ClearAllLockedCells();
+        _currentTween.Kill();
+        _boosterContainer.gameObject.SetActive(false);
+
+        TutorialHoleHelper.DestroyHoles();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        GameUI.Instance.GoalView.ShowWitchWithAnimation();
+        DestroyTutorial();
+    }
+
+    private void DestroyTutorial() {
+        NextPiecesView.Instance.SetTinyPortalActive(true);
+        _currentTween.Kill();
+
+        Destroy(_boosterContainer.gameObject);
+        Destroy(gameObject);
+    }
+}

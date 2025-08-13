@@ -7,9 +7,9 @@ public class MetaEntryPoint : MonoBehaviour {
     private MetaFieldManager _metaFieldManager;
     private void Start() {
         _metaFieldManager.SetupGame();
-
+        CameraScaleToBounds.Instance.Init();
        (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
-       MainManager.Instance.AddRewardToMeta(cubes, coins);
+       
        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins,
            MetaUI.Instance._playButton.transform.position ,MetaUI.Instance.CountersPanelView.GetCoinsIconPosition,
       MetaFieldManager.Instance.ChangeResorceText,StorageManager.GameDataMain.GetResource(ResourceType.Coins), false, true );
