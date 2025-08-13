@@ -74,15 +74,19 @@ public class MetaCraftDialog : DialogBase {
     }
 
     public void ClickClaimPiece() {
+        ClaimAndClose().Forget();
+    }
+
+    private async UniTask ClaimAndClose() {
         HideAnimation().Forget();
         _cellRotateSpeed *= 2.3f;
         
-        DOTween.Sequence()
+        await DOTween.Sequence()
             .Append(_craftingCell.CenterPivot.DOMove(_buildButtonAnchor.position, 1))
             .Join(_craftingCell.CenterPivot.DOScale(Vector3.zero, 1))
-            .WaitForCompletion();
-        
-        // Hide().Forget();
+            .AsyncWaitForCompletion();
+
+        CloseInstant();
     }
 
     [Serializable]

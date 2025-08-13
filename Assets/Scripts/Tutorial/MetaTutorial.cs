@@ -24,33 +24,6 @@ public class MetaTutorial : MonoBehaviour {
     private RectTransform _holeTetraminesToBuild;
 
     [SerializeField]
-    private Transform _fingerImageContainer;
-
-    [SerializeField]
-    private string _openCloudsText;
-
-    [SerializeField]
-    private string _tapButtonOpenCloudsText;
-
-    [SerializeField]
-    private string _thirdTutorialText;
-
-    [SerializeField]
-    private string _fourthTutorialText;
-
-    [SerializeField]
-    private string _fifethTutorialText;
-
-    [SerializeField]
-    private string _sixthTutorialText;
-
-    [SerializeField]
-    private Tween _currentTween;
-
-    [SerializeField]
-    private TutorialHoleHelper _holeHelper;
-
-    [SerializeField]
     private List<Vector3Int> _openedCloudCells, _secondStepCells, _thirdStepCells;
 
     [SerializeField]
@@ -62,6 +35,7 @@ public class MetaTutorial : MonoBehaviour {
 
     private EventTrigger _invCell;
     private GameObject _pieceCellsContainer;
+
     void Start() {
         // GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
         TryAddMissingResources();
@@ -127,10 +101,8 @@ public class MetaTutorial : MonoBehaviour {
         MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
     }
 
-   
-
     public void ShowSecondStepTutorial() {
-         TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
+        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         TutorialHoleHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton,
@@ -200,8 +172,9 @@ public class MetaTutorial : MonoBehaviour {
 
     private void SetupInventoryCell() {
         _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<EventTrigger>();
-        SpotlightsManager.Instance.StartFingerDragAnimation(_invCell.transform.position, (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)));
-       
+        SpotlightsManager.Instance.StartFingerDragAnimation(_invCell.transform.position,
+            (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)));
+
         _holeTetraminesToBuild.gameObject.SetActive(true);
         _holeTetraminesToBuild.position = _invCell.transform.position;
         EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -229,7 +202,6 @@ public class MetaTutorial : MonoBehaviour {
     public void DestroyTutorial() {
         EnableUI();
         MetaUI.Instance._playButton.enabled = true;
-        _currentTween.Kill();
         StorageManager.GameDataMain.IsTutorialComplete = true;
         StorageManager.SaveGame();
         Destroy(gameObject);
