@@ -89,36 +89,19 @@ public class MetaTutorial : MonoBehaviour {
         SetHolesPositions();
         await UniTask.WaitUntil(() => MetaWorldCanvasView.Instance.UnlockFieldCellsView.gameObject.activeInHierarchy);
         ShowSecondStepTutorial();
-        //  StartAnimation();
-
     }
 
     public void SetHolesPositions() {
         _holeTetraminesToBuild.gameObject.SetActive(false);
-        //    var posHoleSecond = (Vector2)Camera.main.WorldToScreenPoint(NextPiecesView.Instance._piecesContainers[0].transform.position);
         _holeImageBuildButton.transform.SetParent(MetaUI.Instance._buildButton);
         _holeImageBuildButton.transform.localPosition = Vector3.zero;
         _holeImageBuildButton.gameObject.SetActive(false);
         _holeImageGetFreeTetramineButton.SetParent(MetaUI.Instance._getPieceButtonView.transform);
         _holeImageGetFreeTetramineButton.transform.localPosition = Vector3.zero;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
-        // Присваиваем позицию UI-элементу
-        //ar posHoleFirst = GameUI.Instance._tasksContainer.position;
-        // MetaUI.Instance.
         MetaUI.Instance._buildButton.GetComponent<Button>().enabled = false;
         MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
-        //_holeImages[1].transform.SetParent(_holeHelper._holesContainer,true);
-        //_holeImages[0].transform.SetParent(_holeHelper._holesContainer,true);
-        //_holeImages[2].transform.SetParent(_holeHelper._holesContainer,true);
-
-        //_holeImages[1].position = posHoleFirst;
-        //  _holeImages[0].transform.position = posHoleSecond;
-        //_holeImages[2].transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 3.5f));
-        //_tutorialText.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 4));
         _fingerImage.transform.position = (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4, 0, 2));
-        //  _holeImages[0].gameObject.SetActive(true);
-        //  _holeImages[1].gameObject.SetActive(false);
-        // _holeImages[2].gameObject.SetActive(false);
     }
 
     public void StartAnimation() {
@@ -147,21 +130,15 @@ public class MetaTutorial : MonoBehaviour {
         //MoveCameraToNeedPosition();
         Invoke(nameof(MoveCameraToNeedPosition), 1f);
         TutorialHoleHelper.DestroyHoles();
-          List<GameObject> highlihtObjects = new List<GameObject>();
-        // foreach (var needPos in _openedCloudCells) {
-           //  highlihtObjects.Add(MetaFieldManager.Instance._cells[needPos.x, needPos.y].gameObject);    
-         // }
+          List<GameObject> highlihtObjects = new List<GameObject>();  
         TutorialHoleHelper.SpawnHoles(_openedCloudCells);
 
         _tutorialText.text = _openCloudsText;
-      
-        // HighlightCurrentPiece();
     }
 
     private void MoveCameraToNeedPosition() {
         MetaFieldManager.Instance.CanDragCamera = false;
         MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
-        //TutorialHoleHelper.SpawnHoles(_openedCloudCells);
     }
 
     private GameObject _pieceCellsContainer;
@@ -172,25 +149,12 @@ public class MetaTutorial : MonoBehaviour {
         TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
     }
 
-    /*   public void HideFirstStepTutorial() {
-           TutorialHoleHelper.DestroyHoles();
-           GameFieldManager.Instance.ClearAllLockedCells();
-           _currentTween.Kill();
-           _canSkipTutorial = true;
-         //  _holeImages[0].gameObject.SetActive(false);
-           _fingerImage.gameObject.SetActive(false);
-           _blackBGImage.gameObject.SetActive(false);
-           _tutorialText.gameObject.SetActive(false);
-           ShowSecondStepTutorial();
-       }*/
-
     public void ShowSecondStepTutorial() {
         // TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         TutorialHoleHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
         _tutorialText.text = _tapButtonOpenCloudsText;
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton.onClick.AddListener(HideSecondStepTutorial);
-        // _holeImages[2].gameObject.SetActive(true);
     }
 
     public void HideSecondStepTutorial() {
