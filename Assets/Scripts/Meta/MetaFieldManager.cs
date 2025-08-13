@@ -148,6 +148,24 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
+    public bool HasPieceInInventory(CellType cellType) {
+        foreach (InventoryCellView cell in _currentPiecesInInventory) {
+            if (cell.Data.Type.CellType == cellType) return true;
+        }
+        
+        return false;
+    }
+
+    public void RemovePieceFromInventory(CellType cellType) {
+        foreach (InventoryCellView cell in _currentPiecesInInventory) {
+            if (cell.Data.Type.CellType != cellType) continue;
+            
+            Destroy(cell.gameObject);
+            _currentPiecesInInventory.Remove(cell);
+            return;
+        }
+    }
+
     protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
         if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
@@ -361,8 +379,13 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void Craft(MetaCraftInfo craftInfo) {
-        print(craftInfo.CraftName);
-        // TODO: реализовать
+        foreach (var resource in craftInfo.NeededResources) {
+            StorageManager.GameDataMain.AddResource(resource.Key, -resource.Value);
+        }
+        
+        RemovePieceFromInventory(craftInfo.NeededCell);
+        var pieceData = PieceUtils.GetNewMetaPiece(craftInfo.ResultCellTypeInfo);
+        AddPieceToInventory(pieceData);
     }
 
     private Vector2Int GetGroupSize(int groupIndex) {

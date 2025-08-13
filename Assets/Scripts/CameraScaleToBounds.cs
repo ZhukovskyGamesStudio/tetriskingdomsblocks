@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraScaleToBounds : MonoBehaviour {
     [SerializeField]
     private CinemachineCamera _virtualCamera;
-
+    [SerializeField]
     private CinemachinePositionComposer _framingComposer; // Optional, if you want to use a composer for camera framing
 
     [SerializeField]
@@ -18,21 +18,24 @@ public class CameraScaleToBounds : MonoBehaviour {
     private float _aspectRatio = -1;
 
     public static CameraScaleToBounds Instance;
+    private Vector3 _startTargetPosition;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public async void Init() {
+    public void Init() {
+        if(_framingComposer == null)
         _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
          TryFitToBounds();
+         _startTargetPosition = _targetArea.position;
         if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
         }
         else
         {
-            MoveCameraToVillagePosition();
+           Invoke( "MoveCameraToVillagePosition", 1.2f);
             Debug.Log(" moveToVillage");
         }
     }
@@ -41,28 +44,21 @@ public class CameraScaleToBounds : MonoBehaviour {
         TryFitToBounds();
     }
 
-    private void MoveCameraToVillagePosition()
-    {
-        if (MetaFieldManager.Instance != null)
-        {
+    private void MoveCameraToVillagePosition() {
+        if (MetaFieldManager.Instance != null) {
             var metaField = MetaFieldManager.Instance._field;
 
-            for (int i = 0; i < metaField.GetLength(0); i++)
-            {
-                for (int j = 0; j < metaField.GetLength(1); j++)
-                {
-                    if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i,j]))
-                    {
-                        var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform;
-                        CalculateBounds(needCameraPos);
-                                        return;
-                      }
+            for (int i = 0; i < metaField.GetLength(0); i++) {
+                for (int j = 0; j < metaField.GetLength(1); j++) {
+                    if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i, j])) {
+                        var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform.position + Vector3.one;
+                        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x-12.5f, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z-1.3f) ;
+                       
+                        return;
+                    }
                 }
             }
-
-            
         }
-           
     }
     private void TryFitToBounds() {
         float curAspect = (float)Screen.width / Screen.height;
@@ -115,7 +111,7 @@ public class CameraScaleToBounds : MonoBehaviour {
         for (int i = 1; i < renderers.Length; i++) {
             bounds.Encapsulate(renderers[i].bounds);
         }
-Debug.Log(" CALCULATE BOUNDS");
+
         return bounds;
     }
 }

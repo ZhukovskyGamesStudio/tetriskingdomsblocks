@@ -141,7 +141,7 @@ public class GameEntryPoint : MonoBehaviour {
     {
         if (CheckWin() && !_gameData.IsGameEnded) {
             UltaManager.Instance.UltimateActionEndRound(Win);
-         
+            _gameData.IsGameEnded = true;
             return true;
         }
 
