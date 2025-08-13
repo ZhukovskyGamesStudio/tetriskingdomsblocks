@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraScaleToBounds : MonoBehaviour {
     [SerializeField]
     private CinemachineCamera _virtualCamera;
-
+    [SerializeField]
     private CinemachinePositionComposer _framingComposer; // Optional, if you want to use a composer for camera framing
 
     [SerializeField]
@@ -26,6 +26,7 @@ public class CameraScaleToBounds : MonoBehaviour {
     }
 
     public void Init() {
+        if(_framingComposer == null)
         _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
          TryFitToBounds();
          _startTargetPosition = _targetArea.position;
