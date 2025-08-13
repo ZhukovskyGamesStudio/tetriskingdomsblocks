@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09156b0e8cb610043bb93735c2b723d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ResourcesSprites:
+  _resourcesSprites:
     _serializedList:
     - Key: 14
       Value: {fileID: 21300000, guid: a4e7b91a2c0508a4cbf1a29c26366db1, type: 3}
@@ -60,10 +60,8 @@ MonoBehaviour:
       Value: {fileID: 21300000, guid: 923f0d23432d2604889d58c97b9ed006, type: 3}
     - Key: 4
       Value: {fileID: 21300000, guid: ddac612d3bf9e604bbe85866b824b598, type: 3}
-    - Key: 5
-      Value: {fileID: 0}
     - Key: 6
-      Value: {fileID: 3393049721760945122, guid: 1129c22ada657a84485cff727d8e574c, type: 3}
+      Value: {fileID: 21300000, guid: 1129c22ada657a84485cff727d8e574c, type: 3}
     - Key: 7
       Value: {fileID: 21300000, guid: 032c3d326b31c0040bba8f8747c98aa0, type: 3}
     - Key: 8
@@ -72,4 +70,16 @@ MonoBehaviour:
       Value: {fileID: 21300000, guid: 361348b9fa640eb45a950bc03678a312, type: 3}
     - Key: 10
       Value: {fileID: 21300000, guid: acdc084ea076687468f45f886d9ec1d4, type: 3}
+    - Key: 11
+      Value: {fileID: 21300000, guid: 5129e0a181b07d848b1aac36ff102ae5, type: 3}
+  _cellsIcons:
+    _serializedList:
+    - Key: 101
+      Value: {fileID: 21300000, guid: 04b281c0a076da147b4c256efc66aa64, type: 3}
+    - Key: 102
+      Value: {fileID: 21300000, guid: d2b145955ea27c04b8bdb664d6d62215, type: 3}
+    - Key: 103
+      Value: {fileID: 21300000, guid: 1a8c25387925fbc4d8bfbc8eccb941e1, type: 3}
+    - Key: 104
+      Value: {fileID: 21300000, guid: fd5ad0019c2da2f4bb64374971582ca9, type: 3}
   LineSprite: {fileID: 21300000, guid: 71c2dd05c60b1004fa9e2f81da97e977, type: 3}

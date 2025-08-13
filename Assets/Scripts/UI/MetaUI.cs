@@ -81,7 +81,8 @@ public class MetaUI : MonoBehaviour {
         var dialogData = new DialogWithData {
             DialogType = typeof(MetaCraftDialog),
             Data = new MetaCraftDialog.Data {
-                Crafts = ConfigsManager.Instance.MetaCraftsConfig.Crafts
+                Crafts = ConfigsManager.Instance.MetaCraftsConfig.Crafts,
+                Craft = MetaFieldManager.Instance.Craft
             }
         };
         
@@ -92,7 +93,7 @@ public class MetaUI : MonoBehaviour {
         var dialogData = new DialogWithData {
             DialogType = typeof(LootboxDialog),
             Data = new LootboxDialog.Data {
-                RewardingPiece = rewardingPiece,
+                RewardingPiece = rewardingPiece
             }
         };
         
