@@ -7,7 +7,6 @@ public class MetaEntryPoint : MonoBehaviour {
     private MetaFieldManager _metaFieldManager;
     private void Start() {
         _metaFieldManager.SetupGame();
-        CameraScaleToBounds.Instance.Init();
        (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
        
        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins,
