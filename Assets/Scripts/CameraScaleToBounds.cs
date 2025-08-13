@@ -19,19 +19,14 @@ public class CameraScaleToBounds : MonoBehaviour {
 
     public static CameraScaleToBounds Instance;
 
-    private Vector3 startTargetPosition;
-
     private void Awake()
     {
         Instance = this;
-        
     }
 
-    public void Init() {
+    public async void Init() {
         _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
          TryFitToBounds();
-         
-         startTargetPosition = _targetArea.position;
         if (StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
         }
