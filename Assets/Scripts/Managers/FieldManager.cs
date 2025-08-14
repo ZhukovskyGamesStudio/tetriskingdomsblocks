@@ -79,7 +79,11 @@ public class FieldManager : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             if (_isDestroyPieceMode) {
                 TryDestroyPiece();
+                if(BoostersManager.Instance != null)
                 BoostersManager.Instance.CancelHammer();
+                else {
+                    MetaFieldManager.Instance.SetDestroyPieceMode(false);
+                }
             } else if (_placeDynamiteMode) {
                 TryPlaceDynamite();
                 BoostersManager.Instance.CancelDynamite();

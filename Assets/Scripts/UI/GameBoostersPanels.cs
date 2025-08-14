@@ -116,7 +116,7 @@ public class GameBoostersPanels : MonoBehaviour {
         if (booster == BoosterType.Bomb && isActive) {
             TutorialHoleHelper.SpawnHoles(FieldManager.AllFieldCells());
         }
-
+        if(GameUI.Instance != null)
         GameUI.Instance.GoalView.gameObject.SetActive(!isActive);
 
         if (isActive) { } else {
