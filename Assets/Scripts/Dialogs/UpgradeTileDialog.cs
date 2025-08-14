@@ -18,6 +18,9 @@ public class UpgradeTileDialog : DialogBase {
     private Image _costIcon;
     
     [SerializeField]
+    private Button _upgradeButton;
+    
+    [SerializeField]
     private List<GameObject> _hideOnMaxLevel, _showOnMaxLevel;
     
     private Action _clickUpgrade, _clickClose;
@@ -54,6 +57,8 @@ public class UpgradeTileDialog : DialogBase {
                 gmObject.SetActive(true);
             }
         }
+
+        _upgradeButton.interactable = dialogData.CanUpgrade();
     }
 
     private void OpenUpgradeState(Data dialogData) {
@@ -76,6 +81,7 @@ public class UpgradeTileDialog : DialogBase {
     [Serializable]
     public class Data {
         public Action ClickUpgrade, ClickClose;
+        public Func<bool> CanUpgrade;
         public ResourceType Resource;
         public int IncomeBefore, IncomeAfter, CapacityBefore, CapacityAfter;
         public string TileName;

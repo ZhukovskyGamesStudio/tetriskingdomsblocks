@@ -278,7 +278,8 @@ public class MetaFieldManager : FieldManager {
                 TileName = cell.CellName,
                 CurrentLevel = 1, // TODO: убрать заглушку уровня
                 IsMaxLevel = cell.UpgradeCellType == CellType.Empty,
-                UpgradeCost = cell.UpgradeCost
+                UpgradeCost = cell.UpgradeCost,
+                CanUpgrade = CanUpgrade
             }
         };
 
@@ -301,12 +302,28 @@ public class MetaFieldManager : FieldManager {
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
-    public void UpgradeResourceCell() {
-        //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
-        var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
+    public bool CanUpgrade() {
         var cellConfig =
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
+
+        if (cellConfig.AfkResourceType != ResourceType.Coins) {
+            if (StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType) < cellConfig.UpgradeCost) {
+                return false;
+            }
+        } else {
+            if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void UpgradeResourceCell() {
+        //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
+        var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
+        var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
         Vector3 finalUiNeedPos = Vector3.zero;
         foreach (var cellPos in cellsToUpgrade.Cells)
