@@ -128,7 +128,9 @@ public class UltaManager : MonoBehaviour {
         var pos = cellView.transform.position;
         pos.x = _startSpawnXPos * multi;
         star.transform.position = pos;
-        GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsEach);
+        if(!isEndRoundUltimate) {
+            GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsEach);
+        }
         await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
             .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
             .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
