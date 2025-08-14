@@ -54,18 +54,24 @@ public class MetaTutorial : MonoBehaviour {
         MetaUI.Instance.ProfileButton.gameObject.SetActive(false);
         MetaUI.Instance.ResourcesButton.gameObject.SetActive(false);
         MetaUI.Instance.Tabs.gameObject.SetActive(false);
+        MetaUI.Instance._playButton.enabled = false;
+        MetaUI.Instance.SettingsButton.gameObject.SetActive(false);
     }
 
-    public void EnableUI() {
+    private void EnableUI() {
         MetaUI.Instance.CraftButton.gameObject.SetActive(false);
         MetaUI.Instance.ProfileButton.gameObject.SetActive(true);
         MetaUI.Instance.ResourcesButton.gameObject.SetActive(true);
+        MetaUI.Instance.SettingsButton.gameObject.SetActive(true);
         MetaUI.Instance.Tabs.gameObject.SetActive(true);
+        MetaUI.Instance._playButton.enabled = true;
     }
 
     private async UniTask TutorialAsync() {
         DisableUI();
-        MetaUI.Instance._playButton.enabled = false;
+        
+        await FloatingResourcesManager.Instance.OnAnimationEndAsync();
+        
         ShowFirstStepTutorial();
         SetHolesPositions();
         await UniTask.Delay(TimeSpan.FromSeconds(1));

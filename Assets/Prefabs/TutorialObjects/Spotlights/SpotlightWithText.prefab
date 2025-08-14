@@ -585,7 +585,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animation: {fileID: 3457342276867093635}
-  _knoledgeCanAnimated: {fileID: 7609779136412160242}
   _hintText: {fileID: 4091422671467808527}
   _centerImageCanvasGroup: {fileID: 8645115302656207523}
   _shadowTransform: {fileID: 5751496574203566050}
@@ -1200,6 +1199,18 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 400
       objectReference: {fileID: 0}
+    - target: {fileID: 784207568102205545, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
+      propertyPath: m_Alpha
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4069118552516402768, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
+      propertyPath: initialFlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4069118552516402768, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
+      propertyPath: initialFlipY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7218782826797567611, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -1.4799995
@@ -1317,14 +1328,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7377546667828082369, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
   m_PrefabInstance: {fileID: 4522238094123465467}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7609779136412160242 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6294178881774643721, guid: 5e119212209e566499bc60c5d0f223ce, type: 3}
-  m_PrefabInstance: {fileID: 4522238094123465467}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c27e7dd27ce394948902ca4ccd5058f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
