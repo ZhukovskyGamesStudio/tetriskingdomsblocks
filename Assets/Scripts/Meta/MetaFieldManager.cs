@@ -218,7 +218,7 @@ public class MetaFieldManager : FieldManager {
             if (!FieldUtils.IsInsideField(_field, cellPos)) {
                 return;
             }
-
+Debug.Log("CastLockedCell()");
             if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
                 CastLockedCell(cellPos);
             else
@@ -229,6 +229,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void CastResourceCell(Vector2Int cellPos) {
+        
         if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
         int groupIndex = _groupCellIndex[cellPos.x, cellPos.y] - 1;
 
@@ -245,7 +246,7 @@ public class MetaFieldManager : FieldManager {
 
     private void ShowUpgradeTileDialog(Vector2Int cellPos, MetaCellTypeInfo cell, float multiplier) {
         multiplier = _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Multiplayer;
-        float production = cell.AfkProduceCountPerSecond *  multiplier *
+        float production = cell.AfkProduceCountPerSecond * multiplier *
                            _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
         float capacity = cell.MaxAfkCapacity * multiplier * _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
 
@@ -265,6 +266,23 @@ public class MetaFieldManager : FieldManager {
                 UpgradeCost = cell.UpgradeCost
             }
         };
+
+        if (FieldUtils.IsSawmillCell(cell.CellType)) { 
+            UnmarkLockedGroup();
+            Vector2Int[] checkedCellsPositions = {
+                new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0), new(-2, 1),
+                new(-2, 2)
+            };
+            foreach (var cellPosForBoost in checkedCellsPositions) {
+                var markCellPos = new Vector3(cellPosForBoost.x +cellPos.x,-0.3f,cellPosForBoost.y +cellPos.y) ;
+               // var markedCell = PiecesViewTable.Instance.MarkedCell;
+               // var markCell = Instantiate(markedCell);
+             //   markCell.transform.position = new Vector3(markCellPos.x, 0, markCellPos.y);
+             
+               CreateMarkedCellOnField(markCellPos);
+            }
+        }
+
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
@@ -275,28 +293,28 @@ public class MetaFieldManager : FieldManager {
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
-   Vector3 finalUiNeedPos = Vector3.zero;
-            foreach (var cellPos in cellsToUpgrade.Cells)
-                finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
+        Vector3 finalUiNeedPos = Vector3.zero;
+        foreach (var cellPos in cellsToUpgrade.Cells)
+            finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
 
-            finalUiNeedPos /= cellsToUpgrade.Cells.Count;
+        finalUiNeedPos /= cellsToUpgrade.Cells.Count;
         if (cellConfig.AfkResourceType != ResourceType.Coins) {
             if (StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType) < cellConfig.UpgradeCost) {
                 return;
             }
 
-           FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, cellConfig.AfkResourceType,
-                MetaUI.Instance._openResourceTabButtonTransform.position, _mainCamera.WorldToScreenPoint(finalUiNeedPos),
-                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType),true, false);   
-       //     StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
+            FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, cellConfig.AfkResourceType,
+                MetaUI.Instance._openResourceTabButtonTransform.position, _mainCamera.WorldToScreenPoint(finalUiNeedPos), ChangeResorceText,
+                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false);
+            //     StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
         } else {
-            if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost) 
+            if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost)
                 return;
-            
+
             FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Coins,
-                MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos),
-                ChangeResorceText,StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true,false);
-          //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
+                MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, _mainCamera.WorldToScreenPoint(finalUiNeedPos), ChangeResorceText,
+                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false);
+            //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
         }
 
         CollectResourcesFromMark(_groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1, 1);
@@ -375,10 +393,14 @@ public class MetaFieldManager : FieldManager {
         UnmarkLockedGroup();
 
         foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
-            GameObject newCell = Instantiate(_markedCellPrefab, _markedLockedCellsContainer);
-            newCell.transform.localPosition = _cells[cell.x, cell.y].transform.position;
-            _markedLockedCells.Add(newCell);
+            CreateMarkedCellOnField(_cells[cell.x, cell.y].transform.position );
         }
+    }
+
+    private void CreateMarkedCellOnField(Vector3 cell) {
+        GameObject newCell = Instantiate(_markedCellPrefab, _markedLockedCellsContainer);
+            newCell.transform.localPosition = cell;
+        _markedLockedCells.Add(newCell);
     }
 
     private void CalculateResourceCellsMultiplayers() {
@@ -389,26 +411,16 @@ public class MetaFieldManager : FieldManager {
             if (formInfo.Value.Cells.Count == 4 && FieldUtils.IsSawmillCell(_field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y])) {
                 List<int> forestForms = new List<int>();
                 Vector2Int[] checkedCellsPositions = {
-                    new (-1,2),
-                    new (0,2),
-                    new (1,2),
-                    new (2,2),
-                    new (2,1),
-                    new (2,0),
-                    new (2,-1),
-                    new (-1,-1),
-                    new (0,-1),
-                    new (1,-1),
-                    new (-1,0),
-                    new (-1,1)
+                    new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0), new(-2, 1),
+                    new(-2, 2)
                 };
                 foreach (var cellAround in checkedCellsPositions) {
                     var newCellPos = formInfo.Value.Cells[0] + cellAround;
-
+Debug.Log(newCellPos);
                     if (!FieldUtils.IsInsideField(_field, newCellPos) || _field[newCellPos.x, newCellPos.y] == CellType.Empty ||
                         _field[newCellPos.x, newCellPos.y] == CellType.LockedMetaCell ||
                         FieldUtils.IsSawmillCell(_field[newCellPos.x, newCellPos.y])) continue;
-Debug.Log(newCellPos);
+
                     if (PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newCellPos.x, newCellPos.y])
                             .AfkResourceType == ResourceType.Wood) {
                       
