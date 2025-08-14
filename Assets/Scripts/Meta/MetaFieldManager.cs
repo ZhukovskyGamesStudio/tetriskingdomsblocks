@@ -389,33 +389,34 @@ public class MetaFieldManager : FieldManager {
             if (formInfo.Value.Cells.Count == 4 && FieldUtils.IsSawmillCell(_field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y])) {
                 List<int> forestForms = new List<int>();
                 Vector2Int[] checkedCellsPositions = {
-                    new (-1,1),
-                    new (0,1),
-                    new (1,1),
+                    new (-1,2),
+                    new (0,2),
+                    new (1,2),
+                    new (2,2),
                     new (2,1),
                     new (2,0),
                     new (2,-1),
-                    new (2,-2),
-                    new (-1,-2),
-                    new (0,-2),
-                    new (1,-2),
                     new (-1,-1),
-                    new (-1,0)
+                    new (0,-1),
+                    new (1,-1),
+                    new (-1,0),
+                    new (-1,1)
                 };
-                    foreach (var cellAround in checkedCellsPositions) {
-                        var newCellPos = formInfo.Value.Cells[0] + cellAround;
+                foreach (var cellAround in checkedCellsPositions) {
+                    var newCellPos = formInfo.Value.Cells[0] + cellAround;
+
+                    if (!FieldUtils.IsInsideField(_field, newCellPos) || _field[newCellPos.x, newCellPos.y] == CellType.Empty ||
+                        _field[newCellPos.x, newCellPos.y] == CellType.LockedMetaCell ||
+                        FieldUtils.IsSawmillCell(_field[newCellPos.x, newCellPos.y])) continue;
+Debug.Log(newCellPos);
+                    if (PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newCellPos.x, newCellPos.y])
+                            .AfkResourceType == ResourceType.Wood) {
                       
-                        if (!FieldUtils.IsInsideField(_field, newCellPos) || _field[newCellPos.x, newCellPos.y] == CellType.Empty ||
-                            _field[newCellPos.x, newCellPos.y] == CellType.LockedMetaCell ||
-                            FieldUtils.IsSawmillCell(_field[newCellPos.x, newCellPos.y])) continue; Debug.Log(_field[newCellPos.x, newCellPos.y] + "    "+ PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newCellPos.x, newCellPos.y]).AfkResourceType);
-                        if (PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newCellPos.x, newCellPos.y])
-                                .AfkResourceType == ResourceType.Wood) { 
-                           
-                            int formIndex = _formGroupCellIndex[newCellPos.x, newCellPos.y];
-                            if (!forestForms.Contains(formIndex))
-                                forestForms.Add(formIndex);
-                        }
+                        int formIndex = _formGroupCellIndex[newCellPos.x, newCellPos.y];
+                        if (!forestForms.Contains(formIndex))
+                            forestForms.Add(formIndex);
                     }
+                }
                 
 
                 foreach (var neededForm in forestForms) {
