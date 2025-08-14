@@ -1163,7 +1163,7 @@ public class MetaFieldManager : FieldManager {
 
             collectedResouces = Mathf.Min(collectedResouces, maxCollectedResouces);
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
-            resourceMark.transform.position = collectResourceMarkPosition;
+            resourceMark.transform.position = collectResourceMarkPosition + new Vector3(0,1,0) ;
             resourceMark.SetResourceMarkInfo(maxCollectedResouces, collectedResouces, curResource, resourceMark.markIndex);
             resourceMark.SetColor(resourceColor);
 
