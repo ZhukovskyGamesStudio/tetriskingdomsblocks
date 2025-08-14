@@ -138,7 +138,7 @@ public class UltaManager : MonoBehaviour {
         star.ShowBoom(_starsParticles.transform.parent);
         Destroy(star.gameObject);
 
-        cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
+       
         if (!isEndRoundUltimate)
             GameFieldManager.Instance.CheckCellTypesBeforePlacePiece(placedCellPosition);
         if (GameFieldManager.Instance != null)
@@ -148,6 +148,10 @@ public class UltaManager : MonoBehaviour {
             GameFieldManager.Instance.CollectResourcesOnPlace(pieceData, new []{ cellView});
             GameFieldManager.Instance.ExplodeCellsInRows();
         }
+       if(GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y] != CellType.Empty) 
+        cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
+       else 
+           cellView.gameObject.transform.localScale = Vector3.one;
     }
 
     private PieceData GetRandomCellType() {
