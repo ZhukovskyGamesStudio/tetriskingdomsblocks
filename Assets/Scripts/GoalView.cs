@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Spine.Unity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +42,9 @@ public class GoalView : MonoBehaviour {
     
     [SerializeField]
     private AnimationClip _witchShowClip;
+
+    [SerializeField]
+    private SkeletonGraphic _skeletonAnimation;
     
     private Tween _currentTween;
 
@@ -75,9 +80,14 @@ public class GoalView : MonoBehaviour {
             .Append(animationObject.DOScale(Vector3.zero, 0.7f).SetEase(Ease.InBack));
     }
 
-    public void ShowWitchWithAnimation() {
+    public async UniTask ShowWitchWithAnimation() {
         Witch.SetActive(true);
+        //_skeletonAnimation.gameObject.SetActive(false);
         _witchAnimation.Play(_witchShowClip.name);
+        await UniTask.WaitWhile(()=>_witchAnimation.isPlaying);
+        //_skeletonAnimation.gameObject.SetActive(true);
+        //_skeletonAnimation.AnimationState.SetAnimation(0, "idle", true);
+        //_skeletonAnimation.AnimationState.AddAnimation(0, "idle", true, 0.2f); 
     }
     
 }
