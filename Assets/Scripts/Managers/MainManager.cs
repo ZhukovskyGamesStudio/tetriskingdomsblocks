@@ -26,6 +26,15 @@ public class MainManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        SetupTime();
+
+        Application.targetFrameRate = 144;
+    }
+
+    private void SetupTime() {
+        _currentGameTime = DateTime.Now;
+        _hasInternetConnection = true;
+        return;
         _networkTimeAPI = new NetworkTimeAPI();
         _networkTimeAPI.GetNetworkTime(dateTime => {
             _currentGameTime = dateTime;
@@ -34,11 +43,7 @@ public class MainManager : MonoBehaviour {
             _currentGameTime = DateTime.Now;
             _hasInternetConnection = false;
         });
-
-        Application.targetFrameRate = 144;
     }
-    
-    
 
     private void Update() {
         UpdateTimerAndHealth();

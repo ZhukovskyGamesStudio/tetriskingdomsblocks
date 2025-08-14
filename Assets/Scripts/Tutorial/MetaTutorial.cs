@@ -56,6 +56,7 @@ public class MetaTutorial : MonoBehaviour {
         MetaUI.Instance.Tabs.gameObject.SetActive(false);
         MetaUI.Instance._playButton.enabled = false;
         MetaUI.Instance.SettingsButton.gameObject.SetActive(false);
+        MetaFieldManager.Instance.CanDragCamera = false;
     }
 
     private void EnableUI() {
@@ -65,11 +66,11 @@ public class MetaTutorial : MonoBehaviour {
         MetaUI.Instance.SettingsButton.gameObject.SetActive(true);
         MetaUI.Instance.Tabs.gameObject.SetActive(true);
         MetaUI.Instance._playButton.enabled = true;
+        MetaFieldManager.Instance.CanDragCamera = true;
     }
 
     private async UniTask TutorialAsync() {
         DisableUI();
-        MetaFieldManager.Instance.CanDragCamera = false;
         //await FloatingResourcesManager.Instance.OnAnimationEndAsync();
         
         SetHolesPositions();
@@ -122,6 +123,7 @@ public class MetaTutorial : MonoBehaviour {
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => waiting);
         FloatingResourcesManager.Instance.OnAnimationEnd -= _ => waiting = false;
+        MetaFieldManager.Instance.CanDragCamera = false;
         ShowThirdStepTutorial();
     }
 
@@ -142,6 +144,7 @@ public class MetaTutorial : MonoBehaviour {
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => StorageManager.GameDataMain.InventoryFigures.Count == 0 || DialogsManager.Instance.IsDialogActive);
+        MetaFieldManager.Instance.CanDragCamera = false;
         ShowFourthStepTutorial();
     }
 
@@ -193,7 +196,6 @@ public class MetaTutorial : MonoBehaviour {
     private void HideSixthStepTutorial() {
         MetaFieldManager.Instance.OnCellPlacedTrigger -= HideSixthStepTutorial;
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
-        MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
         _holeImageBuildButton.gameObject.SetActive(false);
         DestroyTutorial();

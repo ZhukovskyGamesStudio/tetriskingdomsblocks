@@ -224,22 +224,24 @@ public class MetaFieldManager : FieldManager {
 
     private void TryCastLockCell() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null) {
-            Vector2Int cellPos = new Vector2Int(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-
-            if (!FieldUtils.IsInsideField(_field, cellPos)) {
-                return;
-            }
-
-            Debug.Log("CastLockedCell()");
-            if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
-                CastLockedCell(cellPos);
-            else
-                CastResourceCell(cellPos);
-
-            //check neighbour closed cell
+        if (hit.collider == null) {
+            return;
         }
+
+        Vector2Int cellPos = new Vector2Int(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
+            Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+
+        if (!FieldUtils.IsInsideField(_field, cellPos)) {
+            return;
+        }
+
+        Debug.Log("CastLockedCell()");
+        if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
+            CastLockedCell(cellPos);
+        else
+            CastResourceCell(cellPos);
+
+        //check neighbour closed cell
     }
 
     private void CastResourceCell(Vector2Int cellPos) {
@@ -359,7 +361,9 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void CastLockedCell(Vector2Int cellPos) {
-        if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
+        if (_currentMarkedFieldCell != -Vector2Int.one) {
+            CloseCellUI();
+        }
 
         int groupIndex = _groupCellIndex[cellPos.x, cellPos.y] - 1000;
 

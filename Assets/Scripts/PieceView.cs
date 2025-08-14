@@ -91,10 +91,10 @@ public class PieceView : MonoBehaviour {
     public async UniTask AppearFromInventoryAsync() {
         Vector3 finScale = _cellsContainer.localScale;
         _cellsContainer.localScale = Vector3.zero;
-        await DOTween.Sequence()
+        /*await DOTween.Sequence()
             .Append(_cellsContainer.DOScale(finScale * 1.1f, 0.2f))
             .Append(_cellsContainer.DOScale(finScale, 0.2f))
-            .AsyncWaitForCompletion();
+            .AsyncWaitForCompletion();*/
     }
 
     private void Update() {

@@ -15,6 +15,9 @@ public class UpgradeTileDialog : DialogBase {
     private List<Image> _resourceImages;
 
     [SerializeField]
+    private Image _costIcon;
+    
+    [SerializeField]
     private List<GameObject> _hideOnMaxLevel, _showOnMaxLevel;
     
     private Action _clickUpgrade, _clickClose;
@@ -59,6 +62,7 @@ public class UpgradeTileDialog : DialogBase {
         _afterLevelText.text = _levelText.text.Replace("{level}", (dialogData.CurrentLevel + 1).ToString());
         _clickUpgrade = dialogData.ClickUpgrade;
         _costText.text = dialogData.UpgradeCost.ToString();
+        _costIcon.sprite = SpritesManager.Instance.GetSprite(dialogData.Resource);
     }
 
     public void ClickUpgrade() {
