@@ -89,5 +89,10 @@ public class GoalView : MonoBehaviour {
         //_skeletonAnimation.AnimationState.SetAnimation(0, "idle", true);
         //_skeletonAnimation.AnimationState.AddAnimation(0, "idle", true, 0.2f); 
     }
+
+    public void OnWitchClick() {
+        _skeletonAnimation.AnimationState.ClearTrack(0);
+        _skeletonAnimation.AnimationState.SetAnimation(0, "idle", true); 
+    }
     
 }
