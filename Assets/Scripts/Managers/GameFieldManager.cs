@@ -412,7 +412,7 @@ public class GameFieldManager : FieldManager {
                     resourcesMultiplayers[config.ResourcesForDestroy[0].ResourceType] = config.MultiplayerForSameResourceType;
             }
 
-            if (TaskUtils.IsResourceNeededForTasks(_gameData,config.ResourcesForDestroy[0].ResourceType))
+            if (config.ResourcesForDestroy.Length != 0 && TaskUtils.IsResourceNeededForTasks(_gameData,config.ResourcesForDestroy[0].ResourceType))
             {
                 resourceTypes.Add(config.ResourcesForDestroy[0].ResourceType);
                 cellsPositionsInUI.Add(_cells[(int)curPosition.x, (int)curPosition.y].transform.position);
@@ -533,13 +533,6 @@ public class GameFieldManager : FieldManager {
                     PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y), true);
                     CrystalCellAnimation(randomPos, coordAround);
 
-                    /*var _currentTween = DOTween.Sequence().Append(crystalCellTransform.DOScale(Vector3.one * 1.2f, 0.4f))
-                        .Join(crystalCellTransform.DOMoveX(endCrystalPosition.x,0.6f))
-                        .Join(crystalCellTransform.DOMoveZ(endCrystalPosition.z,0.6f))
-                        .Join(crystalCellTransform.DOMoveY(endCrystalPosition.y + 0.6f,0.4f))
-                        .Append(crystalCellTransform.DOScale(Vector3.one, 0.1f))
-                        .Join(crystalCellTransform.DOMoveY(endCrystalPosition.y,0.2f));*/
-                    //crystal anim
                     break;
             }
         }

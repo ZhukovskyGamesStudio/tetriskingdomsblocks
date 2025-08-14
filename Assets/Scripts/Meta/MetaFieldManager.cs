@@ -7,6 +7,7 @@ using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
@@ -485,13 +486,16 @@ Debug.Log("CastLockedCell()");
         if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) {
             return;
         }
-
+        CanDragCamera = false;
         UnmarkLockedGroup();
         List<Vector3> endPositions= new List<Vector3>();
+       // Vector3 finalCameraPos = Vector3.zero;
         foreach (var lockCell in lockedCellGroup) {
               endPositions .Add(_cells[lockCell.x, lockCell.y].transform.position );
+            //  finalCameraPos += _cells[lockCell.x, lockCell.y].transform.position;
         }
-
+       // finalCameraPos /= lockedCellGroup.Count;
+        //finalCameraPos += new Vector3(finalCameraPos.x-25, CameraContainer.transform.position.y, finalCameraPos.z-10);
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
         FloatingResourcesManager.Instance.FromPointToSomePointsAnimation(ResourceType.MagicCube,
             MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition, endPositions, ChangeCubes,
@@ -500,7 +504,7 @@ Debug.Log("CastLockedCell()");
         StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
         CloseCellUI();
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesStart);
-       
+      //  CameraContainer.transform.DOMove(finalCameraPos, 0.3f).SetEase(Ease.InOutQuad);
        await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
@@ -512,6 +516,8 @@ Debug.Log("CastLockedCell()");
                 new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
+
+        CanDragCamera = true;
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesEnd);
       
     }

@@ -27,7 +27,7 @@ public class FloatingResourcesManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
         Instance = this;
         _floatingImagePool = new ObjectPool<Image>(() => Instantiate(_floatingImagePrefab, _floatingTextContainer));
-        _floatingImageAnchors = new ObjectPool<Transform>(() => Instantiate(_floatingImageAnchor));
+        _floatingImageAnchors = new ObjectPool<Transform>(() => Instantiate(_floatingImageAnchor, _floatingTextContainer));
         OnAnimationEnd += type => _isAnimationActive = false;
     }
 
@@ -136,10 +136,8 @@ var mainCamera = Camera.main;
         float currentCount = endWorldPos.Count;
         var _mainCamera = Camera.main;
         Transform[] endTransform = new Transform[endWorldPos.Count];
-        for (int i = 0; i < endTransform.Length; i++) {
+        for (int i = 0; i < endTransform.Length; i++) 
             endTransform[i] = ShowFloatingImageAnchor(endWorldPos[i]);
-           Debug.Log(endTransform[i].position); 
-        }
             
            
         Transform startTransform = ShowFloatingImageAnchor(startWorldPos);
