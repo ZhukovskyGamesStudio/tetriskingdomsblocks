@@ -405,6 +405,9 @@ Debug.Log("CastLockedCell()");
 
     private void CalculateResourceCellsMultiplayers() {
         foreach (var formInfo in _formGroupCellPositions) {
+            formInfo.Value.Multiplayer = 1;
+        }
+        foreach (var formInfo in _formGroupCellPositions) {
             var cellType = _field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y];
             if (cellType == CellType.LockedMetaCell || cellType == CellType.BuildingPart || FieldUtils.IsVillageCell(cellType)) continue;
 
@@ -416,7 +419,6 @@ Debug.Log("CastLockedCell()");
                 };
                 foreach (var cellAround in checkedCellsPositions) {
                     var newCellPos = formInfo.Value.Cells[0] + cellAround;
-Debug.Log(newCellPos);
                     if (!FieldUtils.IsInsideField(_field, newCellPos) || _field[newCellPos.x, newCellPos.y] == CellType.Empty ||
                         _field[newCellPos.x, newCellPos.y] == CellType.LockedMetaCell ||
                         FieldUtils.IsSawmillCell(_field[newCellPos.x, newCellPos.y])) continue;
