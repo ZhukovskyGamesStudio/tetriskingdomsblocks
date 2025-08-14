@@ -16,10 +16,10 @@ MonoBehaviour:
   - ResultPrefab: {fileID: 3199888184775657234, guid: 09a0f5e49334ba747a4e1d3e278172aa, type: 3}
     ResultCellTypeInfo: {fileID: 11400000, guid: aa30d64ae02893742a7133a8aff43147, type: 2}
     CraftName: Sawmill
-    Description: Sawmill gives a bonus to nearby forest cells
+    Description: near forest cells
+    BonusPercents: 30
+    BonusResource: 1
     NeededCell: 101
-    NeededCellLevel: 1
-    ResultCell: 1000
     NeededResources:
       _serializedList:
       - Key: 1
@@ -28,14 +28,18 @@ MonoBehaviour:
         Value: 100
       - Key: 13
         Value: 100
-  - ResultPrefab: {fileID: 3199888184775657234, guid: af5ca647fb286274f82b0c06efaf26e6, type: 3}
-    ResultCellTypeInfo: {fileID: 11400000, guid: 23713640182d6fd4b93ac7ff8a6c0445, type: 2}
-    CraftName: eshe choto
-    Description: test
-    NeededCell: 102
-    NeededCellLevel: 1
-    ResultCell: 100
+  - ResultPrefab: {fileID: 3199888184775657234, guid: 09a0f5e49334ba747a4e1d3e278172aa, type: 3}
+    ResultCellTypeInfo: {fileID: 11400000, guid: aa30d64ae02893742a7133a8aff43147, type: 2}
+    CraftName: Sawmill
+    Description: near forest cells
+    BonusPercents: 30
+    BonusResource: 1
+    NeededCell: 101
     NeededResources:
       _serializedList:
-      - Key: 14
-        Value: 42
+      - Key: 1
+        Value: 100
+      - Key: 2
+        Value: 100
+      - Key: 13
+        Value: 100

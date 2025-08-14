@@ -11,16 +11,13 @@ public class MetaCraft : MonoBehaviour {
     private Transform _resourcesContainer;
 
     [SerializeField]
-    private TextMeshProUGUI _nameText, _descriptionText, _cellLevelText;
+    private TextMeshProUGUI _nameText, _descriptionText, _bonusText;
 
     [SerializeField]
-    private Image _neededCellImage;
+    private Image _bonusResourceIcon;
 
     [SerializeField]
     private Button _craftButton;
-
-    [SerializeField]
-    private GameObject _hasCellState, _cellAbsentState;
 
     [SerializeField]
     private int _pieceLayer;
@@ -32,16 +29,17 @@ public class MetaCraft : MonoBehaviour {
     private CellView _craftingPiece;
     
     public void SetData(MetaCraftInfo craftInfo, Action<CellView> craft, bool hasCell) {
-        _hasCellState.SetActive(hasCell);
-        _cellAbsentState.SetActive(!hasCell);
         if(!hasCell) _craftButton.interactable = false;
         
         ApplyResultCell(craftInfo.ResultPrefab);
         _nameText.text = craftInfo.CraftName;
         _descriptionText.text = craftInfo.Description;
         _craft = craft;
-        _neededCellImage.sprite = SpritesManager.Instance.GetSprite(craftInfo.NeededCell);
-        _cellLevelText.text = $"{craftInfo.NeededCellLevel}+";
+        _bonusText.text = $"+{craftInfo.BonusPercents}%";
+        _bonusResourceIcon.sprite = SpritesManager.Instance.GetSprite(craftInfo.BonusResource);
+
+        MetaCraftResource _cellResource = Instantiate(_resourcePrefab, _resourcesContainer);
+        _cellResource.SetData(craftInfo.NeededCell, hasCell);
         
         foreach (var resource in craftInfo.NeededResources) {
             MetaCraftResource _newResource = Instantiate(_resourcePrefab, _resourcesContainer);
@@ -55,6 +53,7 @@ public class MetaCraft : MonoBehaviour {
     private void ApplyResultCell(CellView cellPrefab) {
         CellView instance = Instantiate(cellPrefab, _pieceContainer);
         instance.ApplyCenterPivot();
+        instance.CenterPivot.localPosition = Vector3.zero;
         _craftingPiece = instance;
         ApplyLayerToChildren(instance.CenterPivot, _pieceLayer);
     }
