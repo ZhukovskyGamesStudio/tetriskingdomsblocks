@@ -21,11 +21,12 @@ public class FloatingResourcesManager : MonoBehaviour {
     private Transform _floatingTextContainer;
 
     public Action<ResourceType> OnAnimationEnd;
-
+    private bool _isAnimationActive = false;
     private void Awake() {
         DontDestroyOnLoad(gameObject);
         Instance = this;
         _floatingImagePool = new ObjectPool<Image>(() => Instantiate(_floatingImagePrefab, _floatingTextContainer));
+        OnAnimationEnd += type => _isAnimationActive = false;
     }
 
     public Image ShowFloatingImage() {
@@ -39,11 +40,15 @@ public class FloatingResourcesManager : MonoBehaviour {
         _floatingImagePool.Release(needTextObject);
     }
 
+    public async UniTask OnAnimationEndAsync() {
+        await UniTask.WaitWhile(() => _isAnimationActive);
+    } 
+
     public async UniTask FromPointToPointAnimation(int needCount, ResourceType resourceType, Vector2 startWorldPos, Vector2 endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool ActionAfterEndAnimaation,
         float interval = _interval) {
         float currentCount = needCount;
-
+        _isAnimationActive = true;
         if (needCount > 30)
             needCount = 30;
 
@@ -66,6 +71,7 @@ public class FloatingResourcesManager : MonoBehaviour {
     public async UniTask FromSomePointsToPointAnimation(ResourceType resourceType, List<Vector2> startWorldPos, Vector2 endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool ActionAfterEndAnimaation,
         float interval = _interval) {
+        _isAnimationActive = true;
         float currentCount = startWorldPos.Count;
 
         float addedCountToText = currentCount / startWorldPos.Count;
@@ -87,6 +93,7 @@ public class FloatingResourcesManager : MonoBehaviour {
     public async UniTask FromPointToSomePointsAnimation(ResourceType resourceType, Vector2 startWorldPos, List<Vector2> endWorldPos,
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool ActionAfterEndAnimaation,
         float interval = _interval) {
+        _isAnimationActive = true;
         float currentCount = endWorldPos.Count;
 
         float addedCountToText = currentCount / endWorldPos.Count;
@@ -108,6 +115,7 @@ public class FloatingResourcesManager : MonoBehaviour {
     public async UniTask FromSomePointsToPointMultiplyResourcesAnimation(List<ResourceType> resourceType, List<Vector2> startWorldPos,
         Vector2 endWorldPos, Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources,
         bool ActionAfterEndAnimaation, float interval = _interval) {
+        _isAnimationActive = true;
         float currentCount = startWorldPos.Count;
 
         float addedCountToText = currentCount / startWorldPos.Count;

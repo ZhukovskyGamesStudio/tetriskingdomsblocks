@@ -67,6 +67,8 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public Button ResourcesButton { get; private set; }
+    [field: SerializeField]
+    public Button SettingsButton { get; private set; }
 
     [field: SerializeField]
     public GameObject Tabs { get; private set; }
