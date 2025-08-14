@@ -32,7 +32,7 @@ public class CameraScaleToBounds : MonoBehaviour {
 
     public void Init() {
         if (_framingComposer == null) {
-            _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
+            //_framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
         }
 
         _initStarted = true;
@@ -98,8 +98,11 @@ public class CameraScaleToBounds : MonoBehaviour {
 
         // pick the greater distance (whichever would otherwise crop)
         float targetDistance = Mathf.Max(vertDistance, horizDistance) * padding;
-       // _framingComposer.enabled = true;
-        //_framingComposer.CameraDistance = targetDistance;
+        if (_framingComposer) {
+            _framingComposer.enabled = true;
+            _framingComposer.CameraDistance = targetDistance;
+        }
+
         DisableComposer().Forget();
     }
 

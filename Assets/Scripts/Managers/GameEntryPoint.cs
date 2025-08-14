@@ -26,6 +26,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void Start() {
         Instance = this;
+        CameraScaleToBounds.Instance.Init();
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
         _gameData = new GameData {
             MovesLeft = levelConfig.MovesCount
