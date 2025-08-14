@@ -32,7 +32,6 @@ public class SameCellsGroupCalculater {
                     result.Add(group);
                     foreach (var (row, col) in group)
                         cellsIndex[row, col] = result.Count;
-                    Debug.Log(result.Count);
                 }
             }
         }
