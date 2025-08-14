@@ -1790,9 +1790,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5980382672512742080}
     m_Modifications:
+    - target: {fileID: 1000012632487452, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1000012685801410, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
       propertyPath: m_Name
       value: LongSparkleYellow
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012685801410, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4000013264406872, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
       propertyPath: m_LocalScale.x
@@ -1866,6 +1874,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 199000010779689774, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d3fc423b8a3f11446b8cd82679377d7c, type: 2}
     - target: {fileID: 199000012015180712, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1878,6 +1890,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 199000012015180712, guid: af6ce60e646f0964eaf03c57257bbd14, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d3fc423b8a3f11446b8cd82679377d7c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2022,9 +2038,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7122461087132819342}
     m_Modifications:
+    - target: {fileID: 1000010114940106, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1000012411878518, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
       propertyPath: m_Name
       value: LongSparklePurple
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012411878518, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4000013248541268, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
       propertyPath: m_LocalScale.x
@@ -2098,6 +2122,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 199000011027384654, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 493cd1695f31e7348a1ce2d10fe1a065, type: 2}
     - target: {fileID: 199000012611842986, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -2110,6 +2138,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 199000012611842986, guid: 2d8a98f438d95e145b99fc3b08c1cdbf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 493cd1695f31e7348a1ce2d10fe1a065, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
