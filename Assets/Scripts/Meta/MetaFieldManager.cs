@@ -450,6 +450,7 @@ Debug.Log(newCellPos);
         RemovePieceFromInventory(craftInfo.NeededCell);
         var pieceData = PieceUtils.GetNewMetaPiece(craftInfo.ResultCellTypeInfo);
         AddPieceToInventory(pieceData);
+        SaveInventory();
     }
 
     private Vector2Int GetGroupSize(int groupIndex) {
