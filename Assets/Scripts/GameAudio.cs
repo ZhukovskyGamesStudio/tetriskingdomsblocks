@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GameAudio : MonoBehaviour {
@@ -30,7 +31,11 @@ public class GameAudio : MonoBehaviour {
     public AudioQueueMixer Lose;
     public AudioQueueMixer ResourceCollected;
     public AudioQueueMixer RowCollected;
+    public AudioQueueMixer UseHammer;
+    public AudioQueueMixer UseDynamite;
     public AudioQueueMixer UseShuffle;
+    public AudioQueueMixer StarsLong;
+    public AudioQueueMixer StarsEach;
 
     private void Awake() {
         Instance = this;
@@ -41,6 +46,15 @@ public class GameAudio : MonoBehaviour {
         if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) {
             return;
         }
+        mixer.PlayNext();
+    }
+
+    public async UniTask PlayNextSoundWithDelay(AudioQueueMixer mixer, float delay) {
+        if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) {
+            return;
+        }
+
+        await UniTask.Delay(TimeSpan.FromSeconds(delay));
         mixer.PlayNext();
     }
 }

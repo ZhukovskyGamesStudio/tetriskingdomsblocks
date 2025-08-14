@@ -19,9 +19,9 @@ public class CameraScaleToBounds : MonoBehaviour {
     private float _aspectRatio = -1;
 
     public static CameraScaleToBounds Instance;
-    private Vector3 _startTargetPosition;
 
     public bool IsInited { get; private set; }
+    private bool _initStarted;
 
     private void Awake() {
         Instance = this;
@@ -32,12 +32,12 @@ public class CameraScaleToBounds : MonoBehaviour {
             _framingComposer = _virtualCamera.GetComponent<CinemachinePositionComposer>();
         }
 
+        _initStarted = true;
         TryFitToBounds();
-        _startTargetPosition = _targetArea.position;
     }
 
     private void Update() {
-        if (IsInited) {
+        if (_initStarted) {
             TryFitToBounds();
         }
     }

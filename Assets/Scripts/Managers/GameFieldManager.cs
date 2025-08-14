@@ -69,7 +69,7 @@ public class GameFieldManager : FieldManager {
         }
         BoostersManager.Instance.BreakCellWithHammer();
         HummerDestoyPieceAnimation(new CellView[] { _cells[(int)cellPos.x, (int)cellPos.z] });
-
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
         var configSlime =
             PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == _field[(int)cellPos.x, (int)cellPos.z]);
         TryAddResourceForCell(configSlime, new Vector2Int((int)cellPos.x, (int)cellPos.z));
