@@ -26,7 +26,7 @@ public class CellView : MonoBehaviour {
 
     private Tween _currentTween;
     public Guid Seed { get; private set; } = Guid.NewGuid();
-
+    
     //TODO move into config
     private float _upgradeTime = 0.4f;
 
@@ -48,6 +48,7 @@ public class CellView : MonoBehaviour {
         if (_selectOneList != null && _selectOneList.Count > 0) {
             EnableRandomFromList(_selectOneList);
         }
+    
     }
 
     private void EnableRandomFromList(List<GameObject> list) {
@@ -55,16 +56,16 @@ public class CellView : MonoBehaviour {
         for (int i = 0; i < list.Count; i++) {
             if (i == rnd) {
                 list[i].SetActive(true);
-                while (list[i].transform.childCount > 0) {
+                while (list[i].transform.childCount>0) {
                     list[i].transform.GetChild(0).SetParent(transform, true);
                 }
-
                 list[i].transform.SetSiblingIndex(0);
             } else {
                 Destroy(list[i]);
             }
         }
     }
+    
 
     private void RandomRotateObjects(Guid seed) {
         int hash = seed.GetHashCode();
@@ -85,10 +86,11 @@ public class CellView : MonoBehaviour {
         await _currentTween.AsyncWaitForCompletion();
     }
 
-    [ItemCanBeNull]
-    public List<Transform> Children => GetComponentsInChildren<Transform>(false).OrderBy(c => c.GetSiblingIndex()).ToList();
 
-    public Sequence DropWithDecorSequence(DragConfig cnfg, float finY) {
+    [ItemCanBeNull]
+    public List<Transform> Children => GetComponentsInChildren<Transform>( false).OrderBy(c=>c.GetSiblingIndex()).ToList();
+
+    public Sequence DropWithDecorSequence(DragConfig cnfg,  float finY) {
         var animSpeedMultiplayer = cnfg.AfterDropPieceAnimationMultiplayer;
         var seq = DOTween.Sequence();
 
@@ -105,28 +107,32 @@ public class CellView : MonoBehaviour {
 
         return seq;
     }
+  
+   
 
     public void UpgradeStart() {
         DOTween.Sequence().Append(transform.DOScale(transform.localScale * 0f, _upgradeTime / 2));
     }
 
-    public void UpgradeEnd(DragConfig dragConfig, float finY) {
+    public void UpgradeEnd(DragConfig dragConfig,float finY) {
         var finScale = transform.localScale;
         transform.localScale = Vector3.zero;
         DOTween.Sequence().AppendInterval(_upgradeTime / 2).Append(transform.DOScale(finScale, _upgradeTime / 2));
     }
-
-    public static AnimationCurve InvertCurve(AnimationCurve original) {
+    
+    public static AnimationCurve InvertCurve(AnimationCurve original)
+    {
         var keys = original.keys;
-        for (int i = 0; i < keys.Length; i++) {
+        for (int i = 0; i < keys.Length; i++)
+        {
             keys[i].value = 1f - keys[i].value; // инверсия относительно 1
             keys[i].inTangent = -keys[i].inTangent;
             keys[i].outTangent = -keys[i].outTangent;
         }
-
         return new AnimationCurve(keys);
     }
-
+    
+    
     private void OnDestroy() {
         _currentTween.Kill();
     }

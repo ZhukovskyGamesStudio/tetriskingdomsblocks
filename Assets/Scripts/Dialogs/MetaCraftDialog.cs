@@ -60,7 +60,7 @@ public class MetaCraftDialog : DialogBase {
         
         await DOTween.Sequence()
             .Append(cell.CenterPivot.DOMove(_craftingCellAnchor.position, 0.8f))
-            .Join(cell.CenterPivot.DOScale(cell.CenterPivot.localScale * 4, 0.8f))
+            .Join(cell.CenterPivot.DOScale(cell.CenterPivot.localScale * 3, 0.8f))
             .AsyncWaitForCompletion();
         _claimButton.SetActive(true);
     }

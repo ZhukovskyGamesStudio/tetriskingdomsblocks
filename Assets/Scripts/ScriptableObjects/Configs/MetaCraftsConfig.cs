@@ -14,9 +14,9 @@ public class MetaCraftInfo {
     public CellTypeInfo ResultCellTypeInfo;
     public string CraftName;
     public string Description;
+    public int BonusPercents;
+    public ResourceType BonusResource;
     public CellType NeededCell;
-    public int NeededCellLevel;
-    public CellType ResultCell;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> NeededResources;
 }
