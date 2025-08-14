@@ -45,9 +45,33 @@ public static class FieldUtils {
     
     private static readonly List<CellType> CantDestroyInRowCells = new List<CellType>() {
         CellType.LockedCoreCell,
+        CellType.LockedMetaCell,
         CellType.GoldMine,
         CellType.CrystalMine,
         CellType.Empty,
+    };
+    private static readonly List<CellType> CanBeHammeredOrExploded = new List<CellType>() {
+        CellType.Wood,
+        CellType.Stone,
+        CellType.Wheat,
+        CellType.Metal,
+        
+        CellType.Box,
+        CellType.Ice,
+        CellType.Slime,
+        CellType.Slime,
+        
+        
+        CellType.Forest,
+        CellType.ForestLevel2,
+        CellType.Mountain,
+        CellType.MountainLevel2,
+        CellType.FieldOfWheat,
+        CellType.FieldOfWheatLevel2,
+        CellType.MetalMines,
+        CellType.MetalMinesLevel2,
+        
+        CellType.Sawmill,
     };
 
     public static Vector2Int GetRandomEmptyCell(CellType[,] field)
@@ -112,6 +136,7 @@ public static class FieldUtils {
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
     public static bool CantDestroyInRow(CellType cellType) => CantDestroyInRowCells.Contains(cellType);
+    public static bool CanHammerOrExplode(CellType cellType) => CanBeHammeredOrExploded.Contains(cellType);
     public static bool IsResourceCell(CellType cellType) => ResourcesCells.Contains(cellType);
     
     public static bool IsVillageCell(CellType cellType) => VillageCells.Contains(cellType);

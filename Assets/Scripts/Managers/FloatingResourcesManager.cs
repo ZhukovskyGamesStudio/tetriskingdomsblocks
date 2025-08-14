@@ -80,21 +80,21 @@ public class FloatingResourcesManager : MonoBehaviour {
         float addedCountToText = currentCount / needCount;
         if (isRemoveResources)
             addedCountToText = -addedCountToText;
-var mainCamera = Camera.main;
+        Camera mainCamera = Camera.main;
         List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < needCount; i++) {
             var finalEndPosition = endPointCanChange ? mainCamera.WorldToScreenPoint(endTransform.position) : endTransform.position;
             var finalStartPosition = startPointCanChange ? mainCamera.WorldToScreenPoint(startTransform.position) : startTransform.position;
-            
+
             tasks.Add(ImageAnimation(resourceType, finalStartPosition, finalEndPosition, changeTextAction, startCount, isRemoveResources, i,
                 addedCountToText, actionAfterEndAnimation));
 
-            await UniTask.Delay(TimeSpan.FromSeconds(interval));
+            await UniTask.Delay(TimeSpan.FromSeconds(interval), cancellationToken: mainCamera.gameObject.GetCancellationTokenOnDestroy());
         }
 
         await UniTask.WhenAll(tasks);
         OnAnimationEnd?.Invoke(resourceType);
-        
+
         ReleaseFloatingImageAnchor(startTransform);
         ReleaseFloatingImageAnchor(endTransform);
     }
@@ -103,7 +103,7 @@ var mainCamera = Camera.main;
         Action<ResourceType, float> changeTextAction, float startCount, bool isRemoveResources, bool actionAfterEndAnimation,
         float interval = _interval) {
         _isAnimationActive = true;
-        var _mainCamera = Camera.main;
+        var mainCamera = Camera.main;
         float currentCount = startWorldPos.Count;
         Transform[] startTransform = new Transform[startWorldPos.Count];
         for (int i = 0; i < startTransform.Length; i++) 
@@ -116,10 +116,10 @@ var mainCamera = Camera.main;
 
         List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < startWorldPos.Count; i++) {
-            tasks.Add(ImageAnimation(resourceType, _mainCamera.WorldToScreenPoint(startTransform[i].position), endTransform.position, changeTextAction, startCount, isRemoveResources, i,
+            tasks.Add(ImageAnimation(resourceType, mainCamera.WorldToScreenPoint(startTransform[i].position), endTransform.position, changeTextAction, startCount, isRemoveResources, i,
                 addedCountToText, actionAfterEndAnimation));
 
-            await UniTask.Delay(TimeSpan.FromSeconds(interval));
+            await UniTask.Delay(TimeSpan.FromSeconds(interval),cancellationToken: mainCamera.gameObject.GetCancellationTokenOnDestroy());
         }
 
         await UniTask.WhenAll(tasks);
@@ -134,7 +134,7 @@ var mainCamera = Camera.main;
         float interval = _interval) {
         _isAnimationActive = true;
         float currentCount = endWorldPos.Count;
-        var _mainCamera = Camera.main;
+        var mainCamera = Camera.main;
         Transform[] endTransform = new Transform[endWorldPos.Count];
         for (int i = 0; i < endTransform.Length; i++) 
             endTransform[i] = ShowFloatingImageAnchor(endWorldPos[i]);
@@ -149,10 +149,10 @@ var mainCamera = Camera.main;
         List<UniTask> tasks = new List<UniTask>();
         for (int i = 0; i < endWorldPos.Count; i++) {
             tasks.Add(ImageAnimation(resourceType, startTransform.position,
-                _mainCamera.WorldToScreenPoint(endTransform[i].position), changeTextAction, startCount, isRemoveResources, i, addedCountToText,
+                mainCamera.WorldToScreenPoint(endTransform[i].position), changeTextAction, startCount, isRemoveResources, i, addedCountToText,
                     actionAfterEndAnimation));
 
-            await UniTask.Delay(TimeSpan.FromSeconds(interval));
+            await UniTask.Delay(TimeSpan.FromSeconds(interval),cancellationToken: mainCamera.gameObject.GetCancellationTokenOnDestroy());
         }
 
         await UniTask.WhenAll(tasks);

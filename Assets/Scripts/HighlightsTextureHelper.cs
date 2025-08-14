@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HighlightsTextureHelper : MonoBehaviour {
     private RenderTexture _renderTexture;
-    public static RenderTexture RenderTexture { get; private set; }
+    public static Dictionary<string, RenderTexture> RenderTexture { get; private set; } = new Dictionary<string, RenderTexture>();
 
     [SerializeField]
     private RectTransform _rect;
@@ -15,6 +16,7 @@ public class HighlightsTextureHelper : MonoBehaviour {
 
     [SerializeField]
     private string _cameraName = "FieldHighlightsCamera";
+
     private Camera _currentCamera;
     private float _width, _height;
 
@@ -22,22 +24,38 @@ public class HighlightsTextureHelper : MonoBehaviour {
         _width = _rect.rect.width;
         _height = _rect.rect.height;
 
-        if (_renderTexture != null) {
+       
+
+        var cameras = FindObjectsByType<Camera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        var cam = cameras.First(o => o.gameObject.name == _cameraName);
+        
+        if (_renderTexture != null ) {
+            if (cam != null && cam.targetTexture == _renderTexture ) {
+                cam.targetTexture = null;
+            }
             _renderTexture.Release();
             Destroy(_renderTexture);
         }
-
-      
-        var cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        var cam = cameras.First(o => o.gameObject.name == _cameraName);
+        
         if (cam != null) {
+            if (_currentCamera != null) {
+                _currentCamera.targetTexture = null;
+            }
             _currentCamera = cam;
+           
             _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
             _renderTexture.Create();
-            _rawImage.texture = _renderTexture;
-            RenderTexture = _renderTexture;
-            
-            cam.targetTexture = _renderTexture;
+            if (_rawImage != null) {
+                _rawImage.texture = _renderTexture;
+            }
+         
+            RenderTexture[_cameraName] = _renderTexture;
+
+            _currentCamera.targetTexture = _renderTexture;
+            var cameras2 = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(o => o.gameObject.name == _cameraName);
+            foreach (var VARIABLE in cameras2) {
+                VARIABLE.targetTexture = _renderTexture;
+            }
         } else {
             _currentCamera = null;
             _width = 0;
@@ -46,10 +64,19 @@ public class HighlightsTextureHelper : MonoBehaviour {
     }
 
     private void Update() {
-        Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         Camera cam = cameras.First(o => o.gameObject.name == _cameraName);
-       
-        if (!Mathf.Approximately(_width, _rect.rect.width) || !Mathf.Approximately(_height, _rect.rect.height) || cam != _currentCamera) {
+        if (cam != _currentCamera) {
+            UpdateTextureSize();
+            return;
+        }
+
+        if (cam.targetTexture != RenderTexture[_cameraName]) {
+            UpdateTextureSize();
+            return;
+        }
+
+        if (!Mathf.Approximately(_width, _rect.rect.width) || !Mathf.Approximately(_height, _rect.rect.height)) {
             UpdateTextureSize();
         }
     }

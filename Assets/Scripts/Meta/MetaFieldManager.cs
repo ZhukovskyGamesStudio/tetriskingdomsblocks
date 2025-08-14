@@ -64,7 +64,7 @@ public class MetaFieldManager : FieldManager {
     private List<GameObject> _markedLockedCells = new();
     
     public bool CanDragCamera = true;
-
+    private bool _isDragging;
     protected override void Awake() {
         base.Awake();
         Instance = this;
@@ -103,7 +103,20 @@ public class MetaFieldManager : FieldManager {
         CloseCellUI();
     }
 
-    private bool _isDragging;
+    public void StartDestroyMode() {
+        MetaUI.Instance.OpenHammerState();
+        
+        TutorialHoleHelper.HighlightCells(AllHammerableCells());
+        SetDestroyPieceMode(true);
+    }
+
+    public void EndDestroyMode() {
+        TutorialHoleHelper.DestroyHoles();
+        MetaUI.Instance.CloseHammerState();
+        SetDestroyPieceMode(false);
+    }
+
+
 
     private void CheckDragCamera() {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
@@ -169,45 +182,46 @@ public class MetaFieldManager : FieldManager {
 
     protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider != null && StorageManager.GameDataMain.MetaHummerCount > 0) {
-            Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
-                Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
-            var cellType = _field[(int)cellPos.x, (int)cellPos.z];
-            if (cellType == CellType.LockedMetaCell || cellType == CellType.BuildingPart || FieldUtils.IsVillageCell(cellType)) {
-                return false;
-            }
-
-            StorageManager.GameDataMain.MetaHummerCount--;
-
-            int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
-
-            int figureIndex = _formGroupCellIndex[(int)cellPos.x, (int)cellPos.z];
-
-            CollectResourcesFromMark(groupIndex - 1, 1);
-            _connectedGroups[groupIndex - 1].ResourceMarkView.CollectAnimation();
-
-            var destroyedCellsPositions = _formGroupCellPositions[figureIndex].Cells;
-
-            var destroyedCells = new CellView[destroyedCellsPositions.Count];
-            int index = 0;
-            foreach (var cellPosition in destroyedCellsPositions) {
-                _groupCellIndex[cellPosition.x, cellPosition.y] = 0;
-                destroyedCells[index] = _cells[cellPosition.x, cellPosition.y];
-                index++;
-                _field[cellPosition.x, cellPosition.y] = CellType.Empty;
-                StorageManager.GameDataMain.FieldRows[cellPosition.x].RowCells[cellPosition.y] =
-                    new ResourceAndCountData(_field[cellPosition.x, cellPosition.y], 0);
-            }
-
-            DeleteFigureFormFromList(figureIndex);
-            HummerDestoyPieceAnimation(destroyedCells);
-            GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
-            RecalculateCellGroupAfterDeletePiece(groupIndex);
-            CalculateResourceCellsMultiplayers();
-            return true;
+        if (hit.collider == null || StorageManager.GameDataMain.MetaHummerCount <= 0) {
+            return false;
         }
 
-        return false;
+        Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
+            Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
+        var cellType = _field[(int)cellPos.x, (int)cellPos.z];
+        if (cellType == CellType.LockedMetaCell || cellType == CellType.BuildingPart || FieldUtils.IsVillageCell(cellType)) {
+            return false;
+        }
+
+        StorageManager.GameDataMain.MetaHummerCount--;
+
+        int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
+
+        int figureIndex = _formGroupCellIndex[(int)cellPos.x, (int)cellPos.z];
+
+        CollectResourcesFromMark(groupIndex - 1, 1);
+        _connectedGroups[groupIndex - 1].ResourceMarkView.CollectAnimation();
+
+        var destroyedCellsPositions = _formGroupCellPositions[figureIndex].Cells;
+
+        var destroyedCells = new CellView[destroyedCellsPositions.Count];
+        int index = 0;
+        foreach (var cellPosition in destroyedCellsPositions) {
+            _groupCellIndex[cellPosition.x, cellPosition.y] = 0;
+            destroyedCells[index] = _cells[cellPosition.x, cellPosition.y];
+            index++;
+            _field[cellPosition.x, cellPosition.y] = CellType.Empty;
+            StorageManager.GameDataMain.FieldRows[cellPosition.x].RowCells[cellPosition.y] =
+                new ResourceAndCountData(_field[cellPosition.x, cellPosition.y], 0);
+        }
+
+        DeleteFigureFormFromList(figureIndex);
+        HummerDestoyPieceAnimation(destroyedCells);
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
+        RecalculateCellGroupAfterDeletePiece(groupIndex);
+        CalculateResourceCellsMultiplayers();
+        return true;
+
     }
 
     private void TryCastLockCell() {

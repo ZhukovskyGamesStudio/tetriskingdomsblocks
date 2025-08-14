@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using MoreMountains.Feedbacks;
@@ -80,10 +81,11 @@ public class FieldManager : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             if (_isDestroyPieceMode) {
                 TryDestroyPiece();
-                if(BoostersManager.Instance != null)
-                BoostersManager.Instance.CancelHammer();
+                if(BoostersManager.Instance != null) {
+                    BoostersManager.Instance.CancelHammer();
+                }
                 else {
-                    MetaFieldManager.Instance.SetDestroyPieceMode(false);
+                    MetaFieldManager.Instance.EndDestroyMode();
                 }
             } else if (_placeDynamiteMode) {
                 TryPlaceDynamite();
@@ -151,6 +153,11 @@ public class FieldManager : MonoBehaviour {
         DestroyPieceWithHummer(cells);
     }
 
+    public List<Vector3Int> AllHammerableCells() {
+        List<Vector3Int> r = AllFieldCells();
+        return r.Where(pos => _cells[pos.x, pos.z] != null).Where(pos => FieldUtils.CanHammerOrExplode(_field[pos.x, pos.z])).ToList();
+    }
+    
     private void DestroyPieceWithHummer(CellView[] cells) {
         foreach (var cell in cells)
             cell.DestroyCell();

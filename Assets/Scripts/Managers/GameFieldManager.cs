@@ -190,23 +190,7 @@ public class GameFieldManager : FieldManager {
         DOTween.Sequence().Append(cellContainer.DOScale(Vector3.one, 0.5f)).Join(cellContainer.DOMove(endPosition, 0.5f));
     }
 
-    public List<Vector3Int> AllHammerableCells() {
-        var res = new List<Vector3Int>();
-        var r = AllFieldCells();
-        foreach (Vector3Int pos in r) {
-            if (_cells[pos.x, pos.z] == null) {
-                continue;
-            }
-
-            if (FieldUtils.CantDestroyInRow(_field[pos.x, pos.z])) {
-                continue;
-            }
-
-            res.Add(pos);
-        }
-
-        return res;
-    }
+   
     public List<Vector3Int> AllEmptyCells() {
         var res = new List<Vector3Int>();
         var r = AllFieldCells();

@@ -28,7 +28,7 @@ public class MetaUI : MonoBehaviour {
     private TMP_Text _playText;
 
     [SerializeField]
-    private GameObject _ruleState, _buildState;
+    private GameObject _ruleState, _buildState, _hammerState;
 
     [SerializeField]
     private GameObject _ruleCamera, _buildCamera;
@@ -67,6 +67,7 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public Button ResourcesButton { get; private set; }
+
     [field: SerializeField]
     public Button SettingsButton { get; private set; }
 
@@ -210,6 +211,21 @@ public class MetaUI : MonoBehaviour {
         }
 
         MetaWorldCanvasView.Instance.gameObject.SetActive(false);
+    }
+
+    public void CloseBuildState() {
+        IsBuildState = false;
+        _buildState.SetActive(false);
+    }
+
+    public void OpenHammerState() {
+        _hammerState.gameObject.SetActive(true);
+        CloseBuildState();
+    }
+
+    public void CloseHammerState() {
+        _hammerState.gameObject.SetActive(false);
+        OpenBuildState();
     }
 
     public void OpenRuleState() {

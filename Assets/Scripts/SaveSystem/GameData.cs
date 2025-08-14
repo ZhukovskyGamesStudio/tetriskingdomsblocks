@@ -38,7 +38,7 @@ public class GameDataForSave {
     public int RandomFieldCount;
     public int RotatePieceCount;
     public int HummerCount;
-    public int MetaHummerCount;
+    public int MetaHummerCount = 100000;
     
     public SettingsData SettingsData;
 

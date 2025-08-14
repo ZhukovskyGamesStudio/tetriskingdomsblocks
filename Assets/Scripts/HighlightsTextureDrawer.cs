@@ -6,7 +6,10 @@ public class HighlightsTextureDrawer : MonoBehaviour {
     [SerializeField]
     private RawImage _rawImage;
 
+    [SerializeField]
+    private string _cameraName = "FieldHighlightsCamera";
+
     private void LateUpdate() {
-        _rawImage.texture = HighlightsTextureHelper.RenderTexture;
+        _rawImage.texture = HighlightsTextureHelper.RenderTexture[_cameraName];
     }
 }
