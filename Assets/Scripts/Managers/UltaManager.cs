@@ -81,7 +81,7 @@ public class UltaManager : MonoBehaviour {
         GameUI.Instance.GoalView.HideUltimateButton();
         _starsParticles.gameObject.SetActive(true);
         _starsParticles.Play();
-
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsLong);
         int maxStars = StorageManager.GameDataMain.CurMaxLevel == 2 ? 100 : _mainGameConfig.MaxUltimateCells;
         var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field, maxStars);
         var list = new List<UniTask>();
@@ -128,7 +128,7 @@ public class UltaManager : MonoBehaviour {
         var pos = cellView.transform.position;
         pos.x = _startSpawnXPos * multi;
         star.transform.position = pos;
-
+        GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsEach);
         await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
             .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
             .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();

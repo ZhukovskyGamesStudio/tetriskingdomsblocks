@@ -34,6 +34,8 @@ public class GameAudio : MonoBehaviour {
     public AudioQueueMixer UseHammer;
     public AudioQueueMixer UseDynamite;
     public AudioQueueMixer UseShuffle;
+    public AudioQueueMixer StarsLong;
+    public AudioQueueMixer StarsEach;
 
     private void Awake() {
         Instance = this;
