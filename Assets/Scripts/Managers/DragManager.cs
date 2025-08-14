@@ -3,6 +3,9 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 
 public class DragManager : MonoBehaviour {
+
+    public static bool IsDragDisabled = false;
+    
     public static void LerpToFinal(Transform _cellsContainer, Vector3 _finalPos, Vector3 _finalScale) {
         _cellsContainer.position =
             Vector3.Lerp(_cellsContainer.position, _finalPos, Time.deltaTime * ConfigsManager.Instance.DragConfig.LerpSpeed);
@@ -62,8 +65,13 @@ public class DragManager : MonoBehaviour {
 
     public static void OnStartDrag(ref bool isDragging, PieceData _data, ref Vector2Int CurrentPieceMaxSize, ref Vector3 finalScale,
         Transform markedCellsContainer, PieceView _pieceGameObject) {
-        if (AdminManager.Instance.AdminToggle.isOn || (UltaManager.Instance != null && UltaManager.Instance._ultimateIsActive))
+        if (AdminManager.Instance.AdminToggle.isOn || (UltaManager.Instance != null && UltaManager.Instance._ultimateIsActive)) {
             return;
+        }
+
+        if (IsDragDisabled) {
+            return;
+        }
 
         if (BoostersManager.Instance != null) {
             if (BoostersManager.Instance.RotationState == BoostersManager.RotateBoosterStates.RotatePiece ||

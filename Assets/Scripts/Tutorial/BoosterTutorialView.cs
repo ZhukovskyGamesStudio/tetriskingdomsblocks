@@ -33,6 +33,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
     }
 
     private void ShowBoosterStepTutorial() {
+        DragManager.IsDragDisabled = true;
         GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(BoosterButton, _stepConfig, HideTutorial);
         SpotlightsManager.Instance.StartFingerClickAnimation(BoosterButton.transform.position);
@@ -54,6 +55,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
     }
 
     private void DestroyTutorial() {
+        DragManager.IsDragDisabled = false;
         NextPiecesView.Instance.SetTinyPortalActive(true);
         _currentTween.Kill();
 
