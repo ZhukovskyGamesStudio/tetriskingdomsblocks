@@ -7,7 +7,7 @@ public class SpotlightsManager : MonoBehaviour {
     public static SpotlightsManager Instance;
 
     [ SerializeField]
-    private Transform _fingerTransform;
+    private RectTransform _fingerTransform;
 
     [ SerializeField]
     private Image _fingerImage;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -36,6 +37,12 @@ public abstract class BoosterTutorialView : MonoBehaviour {
         DragManager.IsDragDisabled = true;
         GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(BoosterButton, _stepConfig, HideTutorial);
+        SpotlightsManager.Instance.HideFinger();
+        ShowFingerWithDelay().Forget();
+    }
+
+    private async UniTask ShowFingerWithDelay() {
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: this.GetCancellationTokenOnDestroy());
         SpotlightsManager.Instance.StartFingerClickAnimation(BoosterButton.transform.position);
     }
 
@@ -48,7 +55,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
         GameFieldManager.Instance.ClearAllLockedCells();
         _currentTween.Kill();
         _boosterContainer.gameObject.SetActive(false);
-        
+
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         GameUI.Instance.GoalView.ShowWitchWithAnimation();
         DestroyTutorial();
