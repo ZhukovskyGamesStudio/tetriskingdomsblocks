@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -36,6 +37,11 @@ public class GameAudio : MonoBehaviour {
     public AudioQueueMixer UseShuffle;
     public AudioQueueMixer StarsLong;
     public AudioQueueMixer StarsEach;
+    
+    [Header("Dialogs")]
+    public AudioQueueMixer LootboxAppear;
+    //public AudioQueueMixer LootboxIdle;
+    public AudioQueueMixer LootboxOpen;
 
     private void Awake() {
         Instance = this;
@@ -49,12 +55,16 @@ public class GameAudio : MonoBehaviour {
         mixer.PlayNext();
     }
 
-    public async UniTask PlayNextSoundWithDelay(AudioQueueMixer mixer, float delay) {
+    public async UniTask PlayNextSoundWithDelay(AudioQueueMixer mixer, float delay, CancellationToken cancellationToken ) {
         if (!StorageManager.GameDataMain.SettingsData.IsSoundOn) {
             return;
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(delay));
+        await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken:cancellationToken);
         mixer.PlayNext();
+    }
+
+    public void ForceStop(AudioQueueMixer mixer) {
+        mixer.StopCurrentAudioSource(false);
     }
 }

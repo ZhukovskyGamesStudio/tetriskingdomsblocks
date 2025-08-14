@@ -119,7 +119,7 @@ public class FieldManager : MonoBehaviour {
         _placeDynamiteMode = false;
         var p = await NextPiecesView.Instance.CreateDynamitePieceView(pos);
         PlacePiece(p.Data, coord, p._cells, p._cellsContainer);
-        GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.UseDynamite, 0.25f);
+        GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.UseDynamite, 0.25f, this.GetCancellationTokenOnDestroy());
         Destroy(p.gameObject);
     }
 
