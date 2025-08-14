@@ -33,19 +33,32 @@ public class VibrationsManager : MonoBehaviour {
     }
 
     public void SpawnVibration(VibrationType type) {
-        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn)return;
+        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn) {
+            return;
+        }
         _vibrationsD[type].Play();
     }
 
     public void SpawnVibrationEmhpasis(float amplitude, float frequency = 0.7f) {
-        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn)return;
+        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn) {
+            return;
+        }
         HapticPatterns.PlayEmphasis(amplitude, frequency);
     }
 
     public void SpawnContinuous(float amplitude, float frequency, float duration) {
-        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn)return;
+        if(!StorageManager.GameDataMain.SettingsData.IsVibrationOn) {
+            return;
+        }
         HapticController.fallbackPreset = HapticPatterns.PresetType.LightImpact;
         HapticPatterns.PlayConstant(amplitude, frequency, duration);
+      
+    }
+
+    public void StopAll() {
+        foreach (var VARIABLE in _vibrationsD.Values) {
+            VARIABLE.Stop();
+        }
     }
 }
 
