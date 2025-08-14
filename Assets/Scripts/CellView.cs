@@ -31,14 +31,12 @@ public class CellView : MonoBehaviour {
     private float _upgradeTime = 0.4f;
 
     private void Awake() {
-        CenterPivot = transform;
-        return;
-        if (CenterPivot == null) {
-            CenterPivot = transform;
-        } else {
-            CenterPivot.SetParent(transform.parent);
-            transform.SetParent(CenterPivot);
-        }
+        if(CenterPivot == null) CenterPivot = transform;
+    }
+
+    public void ApplyCenterPivot() {
+        CenterPivot.SetParent(transform.parent);
+        transform.SetParent(CenterPivot);
     }
 
     public void SetSeed(Guid seed) {
