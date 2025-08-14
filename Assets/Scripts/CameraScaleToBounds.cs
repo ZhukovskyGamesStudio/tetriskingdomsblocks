@@ -20,6 +20,9 @@ public class CameraScaleToBounds : MonoBehaviour {
 
     public static CameraScaleToBounds Instance;
 
+    [SerializeField]
+    private Vector3 _shiftFromTargetCell;
+
     public bool IsInited { get; private set; }
     private bool _initStarted;
 
@@ -46,15 +49,14 @@ public class CameraScaleToBounds : MonoBehaviour {
         if (MetaFieldManager.Instance == null) {
             return;
         }
-
+        
         var metaField = MetaFieldManager.Instance._field;
 
         for (int i = 0; i < metaField.GetLength(0); i++) {
             for (int j = 0; j < metaField.GetLength(1); j++) {
                 if (FieldUtils.IsVillageCell(MetaFieldManager.Instance._field[i, j])) {
-                    var needCameraPos = MetaFieldManager.Instance._cells[i, j].transform.position + Vector3.one;
-                    MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x - 12.5f,
-                        MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z - 1.3f);
+                    var needCameraPos = new Vector3(i,0,j) + new Vector3(+0.5f,0,+0.5f) + _shiftFromTargetCell;
+                    MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z) ;
 
                     return;
                 }
@@ -63,9 +65,9 @@ public class CameraScaleToBounds : MonoBehaviour {
     }
 
     public void MoveCameraToStartingPosition() {
-        var needCameraPos = MetaFieldManager.Instance._cells[4, 2].transform.position + Vector3.one;
-        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x - 12.5f,
-            MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z - 1.3f);
+       
+        var needCameraPos = new Vector3(5,0,5) + _shiftFromTargetCell;
+        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z) ;
     }
 
     private void TryFitToBounds() {
@@ -96,8 +98,8 @@ public class CameraScaleToBounds : MonoBehaviour {
 
         // pick the greater distance (whichever would otherwise crop)
         float targetDistance = Mathf.Max(vertDistance, horizDistance) * padding;
-        _framingComposer.enabled = true;
-        _framingComposer.CameraDistance = targetDistance;
+       // _framingComposer.enabled = true;
+        //_framingComposer.CameraDistance = targetDistance;
         DisableComposer().Forget();
     }
 

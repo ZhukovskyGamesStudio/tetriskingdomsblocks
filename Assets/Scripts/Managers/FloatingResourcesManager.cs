@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Pool;
 using UnityEngine.UI;
@@ -62,7 +63,6 @@ public class FloatingResourcesManager : MonoBehaviour {
        
     }
 
-
     public async UniTask OnAnimationEndAsync() {
         await UniTask.WaitWhile(() => _isAnimationActive);
     }
@@ -91,7 +91,7 @@ public class FloatingResourcesManager : MonoBehaviour {
 
             await UniTask.Delay(TimeSpan.FromSeconds(interval), cancellationToken: mainCamera.gameObject.GetCancellationTokenOnDestroy());
         }
-
+        
         await UniTask.WhenAll(tasks);
         OnAnimationEnd?.Invoke(resourceType);
 

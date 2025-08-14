@@ -62,9 +62,10 @@ public class MetaFieldManager : FieldManager {
     private Transform _markedLockedCellsContainer;
 
     private List<GameObject> _markedLockedCells = new();
-    
+
     public bool CanDragCamera = true;
     private bool _isDragging;
+
     protected override void Awake() {
         base.Awake();
         Instance = this;
@@ -105,7 +106,7 @@ public class MetaFieldManager : FieldManager {
 
     public void StartDestroyMode() {
         MetaUI.Instance.OpenHammerState();
-        
+
         TutorialHoleHelper.HighlightCells(AllHammerableCells());
         SetDestroyPieceMode(true);
     }
@@ -115,8 +116,6 @@ public class MetaFieldManager : FieldManager {
         MetaUI.Instance.CloseHammerState();
         SetDestroyPieceMode(false);
     }
-
-
 
     private void CheckDragCamera() {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
@@ -166,14 +165,14 @@ public class MetaFieldManager : FieldManager {
         foreach (InventoryCellView cell in _currentPiecesInInventory) {
             if (cell.Data.Type.CellType == cellType) return true;
         }
-        
+
         return false;
     }
 
     public void RemovePieceFromInventory(CellType cellType) {
         foreach (InventoryCellView cell in _currentPiecesInInventory) {
             if (cell.Data.Type.CellType != cellType) continue;
-            
+
             Destroy(cell.gameObject);
             _currentPiecesInInventory.Remove(cell);
             return;
@@ -221,7 +220,6 @@ public class MetaFieldManager : FieldManager {
         RecalculateCellGroupAfterDeletePiece(groupIndex);
         CalculateResourceCellsMultiplayers();
         return true;
-
     }
 
     private void TryCastLockCell() {
@@ -233,7 +231,8 @@ public class MetaFieldManager : FieldManager {
             if (!FieldUtils.IsInsideField(_field, cellPos)) {
                 return;
             }
-Debug.Log("CastLockedCell()");
+
+            Debug.Log("CastLockedCell()");
             if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
                 CastLockedCell(cellPos);
             else
@@ -244,7 +243,6 @@ Debug.Log("CastLockedCell()");
     }
 
     private void CastResourceCell(Vector2Int cellPos) {
-        
         if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
         int groupIndex = _groupCellIndex[cellPos.x, cellPos.y] - 1;
 
@@ -282,19 +280,19 @@ Debug.Log("CastLockedCell()");
             }
         };
 
-        if (FieldUtils.IsSawmillCell(cell.CellType)) { 
+        if (FieldUtils.IsSawmillCell(cell.CellType)) {
             UnmarkLockedGroup();
             Vector2Int[] checkedCellsPositions = {
                 new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0), new(-2, 1),
                 new(-2, 2)
             };
             foreach (var cellPosForBoost in checkedCellsPositions) {
-                var markCellPos = new Vector3(cellPosForBoost.x +cellPos.x,-0.3f,cellPosForBoost.y +cellPos.y) ;
-               // var markedCell = PiecesViewTable.Instance.MarkedCell;
-               // var markCell = Instantiate(markedCell);
-             //   markCell.transform.position = new Vector3(markCellPos.x, 0, markCellPos.y);
-             
-               CreateMarkedCellOnField(markCellPos);
+                var markCellPos = new Vector3(cellPosForBoost.x + cellPos.x, -0.3f, cellPosForBoost.y + cellPos.y);
+                // var markedCell = PiecesViewTable.Instance.MarkedCell;
+                // var markCell = Instantiate(markedCell);
+                //   markCell.transform.position = new Vector3(markCellPos.x, 0, markCellPos.y);
+
+                CreateMarkedCellOnField(markCellPos);
             }
         }
 
@@ -320,7 +318,7 @@ Debug.Log("CastLockedCell()");
 
             FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, cellConfig.AfkResourceType,
                 MetaUI.Instance._openResourceTabButtonTransform.position, finalUiNeedPos, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false,false,true);
+                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false, false, true);
             //     StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
         } else {
             if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost)
@@ -328,7 +326,7 @@ Debug.Log("CastLockedCell()");
 
             FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Coins,
                 MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, finalUiNeedPos, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false,false,true);
+                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false, false, true);
             //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
         }
 
@@ -355,12 +353,11 @@ Debug.Log("CastLockedCell()");
         CloseCellUI();
     }
 
-    public void ChangeResorceText(ResourceType resourceType ,float needCount)
-    {
+    public void ChangeResorceText(ResourceType resourceType, float needCount) {
         StorageManager.GameDataMain.AddResource(resourceType, needCount);
         MetaUI.Instance.CountersPanelView.SetResourceCount(resourceType, StorageManager.GameDataMain.GetResource(resourceType));
     }
-    
+
     private void CastLockedCell(Vector2Int cellPos) {
         if (_currentMarkedFieldCell != -Vector2Int.one) CloseCellUI();
 
@@ -408,13 +405,13 @@ Debug.Log("CastLockedCell()");
         UnmarkLockedGroup();
 
         foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
-            CreateMarkedCellOnField(_cells[cell.x, cell.y].transform.position );
+            CreateMarkedCellOnField(_cells[cell.x, cell.y].transform.position);
         }
     }
 
     private void CreateMarkedCellOnField(Vector3 cell) {
         GameObject newCell = Instantiate(_markedCellPrefab, _markedLockedCellsContainer);
-            newCell.transform.localPosition = cell;
+        newCell.transform.localPosition = cell;
         _markedLockedCells.Add(newCell);
     }
 
@@ -422,6 +419,7 @@ Debug.Log("CastLockedCell()");
         foreach (var formInfo in _formGroupCellPositions) {
             formInfo.Value.Multiplayer = 1;
         }
+
         foreach (var formInfo in _formGroupCellPositions) {
             var cellType = _field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y];
             if (cellType == CellType.LockedMetaCell || cellType == CellType.BuildingPart || FieldUtils.IsVillageCell(cellType)) continue;
@@ -429,7 +427,8 @@ Debug.Log("CastLockedCell()");
             if (formInfo.Value.Cells.Count == 4 && FieldUtils.IsSawmillCell(_field[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y])) {
                 List<int> forestForms = new List<int>();
                 Vector2Int[] checkedCellsPositions = {
-                    new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0), new(-2, 1),
+                    new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0),
+                    new(-2, 1),
                     new(-2, 2)
                 };
                 foreach (var cellAround in checkedCellsPositions) {
@@ -440,30 +439,27 @@ Debug.Log("CastLockedCell()");
 
                     if (PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[newCellPos.x, newCellPos.y])
                             .AfkResourceType == ResourceType.Wood) {
-                      
                         int formIndex = _formGroupCellIndex[newCellPos.x, newCellPos.y];
                         if (!forestForms.Contains(formIndex))
                             forestForms.Add(formIndex);
                     }
                 }
-                
 
                 foreach (var neededForm in forestForms) {
                     _formGroupCellPositions[neededForm].Multiplayer *= 1.3f;
                 }
             } else {
-
                 formInfo.Value.Multiplayer *= MainMetaConfig.ResourceMultipliers[
                     _connectedGroups[_groupCellIndex[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y] - 1].Pieces.Count - 1];
             }
         }
     }
-    
+
     public void Craft(MetaCraftInfo craftInfo) {
         foreach (var resource in craftInfo.NeededResources) {
             StorageManager.GameDataMain.AddResource(resource.Key, -resource.Value);
         }
-        
+
         RemovePieceFromInventory(craftInfo.NeededCell);
         var pieceData = PieceUtils.GetNewMetaPiece(craftInfo.ResultCellTypeInfo);
         AddPieceToInventory(pieceData);
@@ -472,7 +468,7 @@ Debug.Log("CastLockedCell()");
 
     private Vector2Int GetGroupSize(int groupIndex) {
         Vector2Int min = LockedCellGroups[groupIndex][0], max = min;
-        
+
         foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
             min = new Vector2Int(Mathf.Min(cell.x, min.x), Mathf.Min(cell.y, min.y));
             max = new Vector2Int(Mathf.Max(cell.x, max.x), Mathf.Max(cell.y, max.y));
@@ -485,14 +481,13 @@ Debug.Log("CastLockedCell()");
         foreach (GameObject markedCell in _markedLockedCells) {
             Destroy(markedCell);
         }
+
         _markedLockedCells = new List<GameObject>();
     }
 
-    public void UnlockCellForButton()
-    {
+    public void UnlockCellForButton() {
         UnlockCell();
     }
-    
 
     public async UniTask UnlockCell() {
         int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1000;
@@ -501,15 +496,17 @@ Debug.Log("CastLockedCell()");
         if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) {
             return;
         }
+
         CanDragCamera = false;
         UnmarkLockedGroup();
-        List<Vector3> endPositions= new List<Vector3>();
-       // Vector3 finalCameraPos = Vector3.zero;
+        List<Vector3> endPositions = new List<Vector3>();
+        // Vector3 finalCameraPos = Vector3.zero;
         foreach (var lockCell in lockedCellGroup) {
-              endPositions .Add(_cells[lockCell.x, lockCell.y].transform.position );
+            endPositions.Add(_cells[lockCell.x, lockCell.y].transform.position);
             //  finalCameraPos += _cells[lockCell.x, lockCell.y].transform.position;
         }
-       // finalCameraPos /= lockedCellGroup.Count;
+
+        // finalCameraPos /= lockedCellGroup.Count;
         //finalCameraPos += new Vector3(finalCameraPos.x-25, CameraContainer.transform.position.y, finalCameraPos.z-10);
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
         FloatingResourcesManager.Instance.FromPointToSomePointsAnimation(ResourceType.MagicCube,
@@ -519,8 +516,8 @@ Debug.Log("CastLockedCell()");
         StorageManager.GameDataMain.RemainedLockedZones.Remove(groupIndex);
         CloseCellUI();
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesStart);
-      //  CameraContainer.transform.DOMove(finalCameraPos, 0.3f).SetEase(Ease.InOutQuad);
-       await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
+        //  CameraContainer.transform.DOMove(finalCameraPos, 0.3f).SetEase(Ease.InOutQuad);
+        await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
             GameAudio.Instance.PlayNextSound(GameAudio.Instance.CloudsRemove);
@@ -534,7 +531,6 @@ Debug.Log("CastLockedCell()");
 
         CanDragCamera = true;
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesEnd);
-      
     }
 
     private void ChangeCubes(ResourceType resourceType, float needCount) {
@@ -544,7 +540,7 @@ Debug.Log("CastLockedCell()");
 
     public void CloseCellUI() {
         if (_currentMarkedFieldCell == -Vector2Int.one) return;
-        
+
         UnmarkLockedGroup();
         MetaWorldCanvasView.Instance.UnlockFieldCellsView.SetActiveUnlockUI(false);
         DialogsManager.Instance.CloseDialog(typeof(UpgradeTileDialog));
@@ -669,7 +665,8 @@ Debug.Log("CastLockedCell()");
     }
 
     public void BuyPiece() {
-        if (StorageManager.GameDataMain.GetResource(ResourceType.Wood) >= 100 && StorageManager.GameDataMain.GetResource(ResourceType.Rocks) >= 100 &&
+        if (StorageManager.GameDataMain.GetResource(ResourceType.Wood) >= 100 &&
+            StorageManager.GameDataMain.GetResource(ResourceType.Rocks) >= 100 &&
             StorageManager.GameDataMain.GetResource(ResourceType.Food) >= 100) {
             // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
             StorageManager.GameDataMain.AddResource(ResourceType.Wood, -100);
@@ -761,17 +758,13 @@ Debug.Log("CastLockedCell()");
 
                             go.SetSeed(Guid.NewGuid());
                             if (FieldUtils.IsVillageCell(cellType) || FieldUtils.IsSawmillCell(cellType)) {
-                                 villagePosition = new Vector2Int(i, j);
-                                 
-                                   _cells[i+1, j] = _cells[villagePosition.x, villagePosition.y];
-                                   _cells[i+1, j-1] = _cells[villagePosition.x, villagePosition.y];
-                                   _cells[i, j-1] = _cells[villagePosition.x, villagePosition.y];
+                                villagePosition = new Vector2Int(i, j);
+
+                                _cells[i + 1, j] = _cells[villagePosition.x, villagePosition.y];
+                                _cells[i + 1, j - 1] = _cells[villagePosition.x, villagePosition.y];
+                                _cells[i, j - 1] = _cells[villagePosition.x, villagePosition.y];
                             }
-                               
-                        } else {
-                           
-                           
-                        }
+                        } else { }
                     }
                 }
             }
@@ -796,9 +789,10 @@ Debug.Log("CastLockedCell()");
         if (LoadingManager.Instance.FirstLoad && MainManager.Instance._hasInternetConnection) {
             TryShowRetentionDialog();
         }
+
         base.SetupGame();
     }
-    
+
     private void TryShowRetentionDialog() {
         LoadingManager.Instance.FirstLoad = false;
         Dictionary<ResourceType, float> afkResources = GetAllAfkResourceInfoForDialog();
@@ -837,6 +831,7 @@ Debug.Log("CastLockedCell()");
                 if (resourceType == ResourceType.None) {
                     continue;
                 }
+
                 if (!infoForDialog.TryAdd(resourceType, resourceCount))
                     infoForDialog[resourceType] += resourceCount;
             }
@@ -877,7 +872,7 @@ Debug.Log("CastLockedCell()");
                 cells.Add(cell);
             }
 
-            _formGroupCellPositions.Add(currentIndex, new FormCellsAndMultiplayer(cells,1));
+            _formGroupCellPositions.Add(currentIndex, new FormCellsAndMultiplayer(cells, 1));
             currentIndex++;
         }
     }
@@ -912,14 +907,14 @@ Debug.Log("CastLockedCell()");
         if (curResource != ResourceType.Coins) {
             FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), curResource,
                 startPosition, MetaUI.Instance._openResourceTabButtonTransform.position, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(curResource), false, true,true,false);
+                StorageManager.GameDataMain.GetResource(curResource), false, true, true, false);
             // StorageManager.GameDataMain.AddResource(curResource, finalResourceCount);
             UpdateResourcesCountUIText();
         } else {
             //  MetaUI.Instance.CountersPanelView.SetGold(StorageManager.GameDataMain.GetResource(ResourceType.Coins));
             FloatingResourcesManager.Instance.FromPointToPointAnimation((int)(collectedResouces * multiplayerResources), ResourceType.Coins,
                 startPosition, MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(curResource), false, true,true,false);
+                StorageManager.GameDataMain.GetResource(curResource), false, true, true, false);
             //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
         }
     }
@@ -939,7 +934,7 @@ Debug.Log("CastLockedCell()");
         foreach (var resourceMarkGroup in _connectedGroups) {
             if (resourceMarkGroup.ResourceMarkView != null)
                 resourceMarkGroup.ResourceMarkView.CollectAnimation();
-            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer,floatingResourceSpawnPosition);
+            CollectResourcesFromMark(resourceMarkGroup.ResourceMarkView.markIndex, multiplayer, floatingResourceSpawnPosition);
         }
     }
 
@@ -994,7 +989,7 @@ Debug.Log("CastLockedCell()");
             _formGroupCellIndex[placedCell.Item1, placedCell.Item2] = currentIndex;
         }
 
-        _formGroupCellPositions.Add(currentIndex, new FormCellsAndMultiplayer(cells,1));
+        _formGroupCellPositions.Add(currentIndex, new FormCellsAndMultiplayer(cells, 1));
     }
 
     private void DeleteFigureFormFromList(int destroyedForm) {
@@ -1054,8 +1049,8 @@ Debug.Log("CastLockedCell()");
             _connectedGroups[curIndex - 1].ResourceMarkView.CollectAnimation();
         }
 
-        List<(int, int)> cellsInNewGroup = new ();
-        Vector3 newResourceMarkPosition = new ();
+        List<(int, int)> cellsInNewGroup = new();
+        Vector3 newResourceMarkPosition = new();
         int curGroupIndex = 0;
         if (connectedCellGroups.Count == 0)
             curGroupIndex = _connectedGroups.Count + 1;
@@ -1203,7 +1198,7 @@ Debug.Log("CastLockedCell()");
 
             collectedResouces = Mathf.Min(collectedResouces, maxCollectedResouces);
             collectResourceMarkPosition /= connectedGroupsPieces[i].Count;
-            resourceMark.transform.position = collectResourceMarkPosition + new Vector3(0,1,0) ;
+            resourceMark.transform.position = collectResourceMarkPosition + new Vector3(0, 1, 0);
             resourceMark.SetResourceMarkInfo(maxCollectedResouces, collectedResouces, curResource, resourceMark.markIndex);
             resourceMark.SetColor(resourceColor);
 
@@ -1283,6 +1278,7 @@ Debug.Log("CastLockedCell()");
             var pieceData = _currentPiecesInInventory[i].Data;
             StorageManager.GameDataMain.InventoryFigures.Add(new FormAndCellTypeData(pieceData.FormName, pieceData.Type.CellType));
         }
+
         StorageManager.SaveGame();
         //
     }

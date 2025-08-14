@@ -18,6 +18,7 @@ public class MetaEntryPoint : MonoBehaviour {
             CameraScaleToBounds.Instance.MoveCameraToStartingPosition();
             Instantiate(MetaUI.Instance._metaTutorial, MetaUI.Instance._metaTutorialContainer);
         } else {
+            //CameraScaleToBounds.Instance.MoveCameraToStartingPosition();
             CameraScaleToBounds.Instance.MoveCameraToVillagePosition();
         }
 

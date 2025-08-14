@@ -69,13 +69,9 @@ public class MetaTutorial : MonoBehaviour {
 
     private async UniTask TutorialAsync() {
         DisableUI();
+        MetaFieldManager.Instance.CanDragCamera = false;
+        //await FloatingResourcesManager.Instance.OnAnimationEndAsync();
         
-        List<UniTask> tasks = new List<UniTask>();
-        tasks.Add( FloatingResourcesManager.Instance.OnAnimationEndAsync());
-        tasks.Add(UniTask.Delay(TimeSpan.FromSeconds(1)));
-        await UniTask.WhenAll(tasks);
-        
-        MoveCameraToNeedPosition();
         SetHolesPositions();
         ShowFirstStepTutorial();
        
@@ -84,7 +80,7 @@ public class MetaTutorial : MonoBehaviour {
         SpotlightsManager.Instance.HideFinger();
         ShowSecondStepTutorial();
     }
-
+    
     public void SetHolesPositions() {
         _holeTetraminesToBuild.gameObject.SetActive(false);
         _holeImageBuildButton.transform.SetParent(MetaUI.Instance.BuildButton.transform);
@@ -104,11 +100,7 @@ public class MetaTutorial : MonoBehaviour {
         SpotlightsManager.Instance.StartFingerClickAnimation((Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 5f)));
     }
 
-    private void MoveCameraToNeedPosition() {
-        MetaFieldManager.Instance.CanDragCamera = false;
-        MetaFieldManager.Instance.CameraContainer.position += _cameraPosition;
-        return;
-    }
+    
 
     public void ShowSecondStepTutorial() {
         TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
