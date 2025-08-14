@@ -54,8 +54,9 @@ public class MetaCraft : MonoBehaviour {
 
     private void ApplyResultCell(CellView cellPrefab) {
         CellView instance = Instantiate(cellPrefab, _pieceContainer);
+        instance.ApplyCenterPivot();
         _craftingPiece = instance;
-        ApplyLayerToChildren(instance.transform, _pieceLayer);
+        ApplyLayerToChildren(instance.CenterPivot, _pieceLayer);
     }
 
     private void ApplyLayerToChildren(Transform obj, int layer) {

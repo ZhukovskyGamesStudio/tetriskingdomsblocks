@@ -40,7 +40,7 @@ public class MetaCraftDialog : DialogBase {
     }
 
     private void Craft(MetaCraftInfo craftInfo, CellView craftingCell) {
-        // _craft.Invoke(craftInfo);
+        _craft.Invoke(craftInfo);
         _panelCanvasGroup.interactable = false;
         _craftingCell = craftingCell;
         CraftAnimation(craftingCell).Forget();
@@ -79,11 +79,11 @@ public class MetaCraftDialog : DialogBase {
 
     private async UniTask ClaimAndClose() {
         HideAnimation().Forget();
-        _cellRotateSpeed *= 2.3f;
+        _cellRotateSpeed *= 5;
         
         await DOTween.Sequence()
-            .Append(_craftingCell.CenterPivot.DOMove(_buildButtonAnchor.position, 1))
-            .Join(_craftingCell.CenterPivot.DOScale(Vector3.zero, 1))
+            .Append(_craftingCell.CenterPivot.DOMove(_buildButtonAnchor.position, 0.6f))
+            .Join(_craftingCell.CenterPivot.DOScale(Vector3.zero, 0.6f))
             .AsyncWaitForCompletion();
 
         CloseInstant();
