@@ -39,6 +39,7 @@ public class SpotlightsManager : MonoBehaviour {
         var color = _fingerImage.color;
         color.a = 0;
         _fingerImage.color = color;
+        _fingerTween?.Kill();
         _fingerTween =  DOTween.Sequence()
             .Append(_fingerImage.DOFade(1, 0.8f))
             .Join(finger.DOScale(Vector3.one * 0.75f, 0.8f))
@@ -58,6 +59,7 @@ public class SpotlightsManager : MonoBehaviour {
         var color = _fingerImage.color;
         color.a = 0;
         _fingerImage.color = color;
+        _fingerTween?.Kill();
         _fingerTween =  DOTween.Sequence().Append(_fingerImage.DOFade(1, 0.8f))
             .Join(finger.DOScale(Vector3.one * 0.75f, 0.8f))
             .Append(finger.DOScale(Vector3.one, 0.8f))

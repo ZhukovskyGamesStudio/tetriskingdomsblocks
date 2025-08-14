@@ -53,6 +53,7 @@ public class FieldManager : MonoBehaviour {
 
     // protected LevelConfig _currentLevelConfig;
     public event Action<Vector2Int, bool[,]> OnCellPlaced;
+    public event Action OnCellPlacedTrigger;
 
     private Tween _currentTween;
 
@@ -203,6 +204,7 @@ public class FieldManager : MonoBehaviour {
     public virtual void PlacePiece(PieceData pieceData, Vector2Int pos, CellView[,] cells, Transform cellsContainer) {
         float cellsAmount = 0;
         OnCellPlaced?.Invoke(pos, pieceData.Cells);
+        OnCellPlacedTrigger?.Invoke();
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
 
         if (pieceData.Type.CellType == CellType.Dynamite) {

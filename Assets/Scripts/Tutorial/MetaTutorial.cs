@@ -70,14 +70,18 @@ public class MetaTutorial : MonoBehaviour {
     private async UniTask TutorialAsync() {
         DisableUI();
         
-        await FloatingResourcesManager.Instance.OnAnimationEndAsync();
+        List<UniTask> tasks = new List<UniTask>();
+        tasks.Add( FloatingResourcesManager.Instance.OnAnimationEndAsync());
+        tasks.Add(UniTask.Delay(TimeSpan.FromSeconds(1)));
+        await UniTask.WhenAll(tasks);
         
-        ShowFirstStepTutorial();
-        SetHolesPositions();
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
         MoveCameraToNeedPosition();
+        SetHolesPositions();
+        ShowFirstStepTutorial();
+       
         await UniTask.WaitUntil(() => MetaWorldCanvasView.Instance.UnlockFieldCellsView.gameObject.activeInHierarchy);
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        SpotlightsManager.Instance.HideFinger();
         ShowSecondStepTutorial();
     }
 
@@ -94,12 +98,10 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void ShowFirstStepTutorial() {
-        //MoveCameraToNeedPosition();
-        //Invoke(nameof(MoveCameraToNeedPosition), 1f);
         TutorialHoleHelper.DestroyHoles();
         TutorialHoleHelper.SpawnHoles(_openedCloudCells, false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor0);
-        SpotlightsManager.Instance.StartFingerClickAnimation((Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 2f)));
+        SpotlightsManager.Instance.StartFingerClickAnimation((Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 5f)));
     }
 
     private void MoveCameraToNeedPosition() {
@@ -193,13 +195,12 @@ public class MetaTutorial : MonoBehaviour {
 
     private void ShowSixthStepTutorial(BaseEventData eventData) {
         _tutorialStep = 5;
-
-        MetaFieldManager.Instance.OnCellPlaced += (i, bools) => HideSixthStepTutorial();
+        MetaFieldManager.Instance.OnCellPlacedTrigger += HideSixthStepTutorial;
     }
 
     private void HideSixthStepTutorial() {
+        MetaFieldManager.Instance.OnCellPlacedTrigger -= HideSixthStepTutorial;
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
-        MetaFieldManager.Instance.OnCellPlaced -= (_, _) => HideSixthStepTutorial();
         MetaFieldManager.Instance.CanDragCamera = true;
         TutorialHoleHelper.DestroyHoles();
         _holeImageBuildButton.gameObject.SetActive(false);
