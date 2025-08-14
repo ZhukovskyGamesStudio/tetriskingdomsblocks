@@ -37,8 +37,6 @@ public class MetaTutorial : MonoBehaviour {
     private GameObject _pieceCellsContainer;
 
     void Start() {
-        // GameFieldManager.Instance.OnCellPlaced += HideFirstStepTutorial;
-        TryAddMissingResources();
         TutorialAsync().Forget();
     }
 
@@ -104,6 +102,7 @@ public class MetaTutorial : MonoBehaviour {
     
 
     public void ShowSecondStepTutorial() {
+        TryAddMissingResources();
         TutorialHoleHelper.HighlightObjects(new List<GameObject> { _pieceCellsContainer });
         TutorialHoleHelper.SpawnHoles(_secondStepCells);
         _tutorialStep = 2;
