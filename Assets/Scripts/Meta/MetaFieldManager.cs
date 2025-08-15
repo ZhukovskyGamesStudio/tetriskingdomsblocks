@@ -62,7 +62,7 @@ public class MetaFieldManager : FieldManager {
     private Transform _markedLockedCellsContainer;
 
     private List<GameObject> _markedLockedCells = new();
-
+    public bool CanOpenLockedZones = true;
     public bool CanDragCamera = true;
     private bool _isDragging;
 
@@ -130,7 +130,7 @@ public class MetaFieldManager : FieldManager {
                 _currentDraggedPiece.OnDrop();
                 CloseCellUI();
             } else if (!_nowCellUnlockUIWasClose && !_isDestroyPieceMode && _dragStartPosition == _dragStartPositionForUICheck) {
-                if (!EventSystem.current.IsPointerOverGameObject()) {
+                if (!EventSystem.current.IsPointerOverGameObject() && CanOpenLockedZones) {
                     TryCastLockCell();
                 }
             } else if (Vector3.Distance(_dragStartPosition, _dragStartPositionForUICheck) > 5f && _currentMarkedFieldCell != -Vector2Int.one)
@@ -518,6 +518,7 @@ public class MetaFieldManager : FieldManager {
             return;
         }
 
+        CanOpenLockedZones = false;
         CanDragCamera = false;
         UnmarkLockedGroup();
         List<Vector3> endPositions = new List<Vector3>();
@@ -551,6 +552,7 @@ public class MetaFieldManager : FieldManager {
         }
 
         CanDragCamera = true;
+        CanOpenLockedZones = true;
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesEnd);
     }
 

@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
-
+    [field: SerializeField]
+    public Button CloseInventoryButton { get; private set; }
     [field: SerializeField]
     public Button BuildButton { get; private set; }
 
