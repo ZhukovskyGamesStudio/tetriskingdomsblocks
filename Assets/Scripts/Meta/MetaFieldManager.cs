@@ -211,7 +211,7 @@ public class MetaFieldManager : FieldManager {
             index++;
             _field[cellPosition.x, cellPosition.y] = CellType.Empty;
             StorageManager.GameDataMain.FieldRows[cellPosition.x].RowCells[cellPosition.y] =
-                new ResourceAndCountData(_field[cellPosition.x, cellPosition.y], 0);
+                new CellTypeAndCountData(_field[cellPosition.x, cellPosition.y], 0);
         }
 
         DeleteFigureFormFromList(figureIndex);
@@ -538,7 +538,7 @@ public class MetaFieldManager : FieldManager {
             _field[lockCellPos.x, lockCellPos.y] = CellType.Empty;
             _groupCellIndex[lockCellPos.x, lockCellPos.y] = 0;
             StorageManager.GameDataMain.FieldRows[lockCellPos.x].RowCells[lockCellPos.y] =
-                new ResourceAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
+                new CellTypeAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
 
@@ -748,7 +748,7 @@ public class MetaFieldManager : FieldManager {
             StorageManager.GameDataMain.FieldSaveIsCreated = true;
             StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
             for (int i = 0; i < _field.GetLength(0); i++) {
-                StorageManager.GameDataMain.FieldRows[i].RowCells = new ResourceAndCountData[_field.GetLength(1)];
+                StorageManager.GameDataMain.FieldRows[i].RowCells = new CellTypeAndCountData[_field.GetLength(1)];
                 for (int j = 0; j < _field.GetLength(1); j++) {
                     _field[i, j] = CellType.LockedMetaCell;
                     var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(CellType.LockedMetaCell);
@@ -757,7 +757,7 @@ public class MetaFieldManager : FieldManager {
                     _cells[i, j] = go;
                     // go.SetSeed(Guid.NewGuid());
 
-                    StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new ResourceAndCountData(_field[i, j], 0);
+                    StorageManager.GameDataMain.FieldRows[i].RowCells[j] = new CellTypeAndCountData(_field[i, j], 0);
                 }
             }
         } else if (StorageManager.GameDataMain.FieldRows != null && StorageManager.GameDataMain.FieldRows.Length > 1) {
@@ -1114,7 +1114,7 @@ public class MetaFieldManager : FieldManager {
         }
 
         foreach (var (row, col) in cellsInNewGroup) {
-            StorageManager.GameDataMain.FieldRows[row].RowCells[col] = new ResourceAndCountData(_field[row, col], 0);
+            StorageManager.GameDataMain.FieldRows[row].RowCells[col] = new CellTypeAndCountData(_field[row, col], 0);
         }
     }
 

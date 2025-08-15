@@ -182,6 +182,8 @@ public class MainManager : MonoBehaviour {
                     break;
             }
         }
+        
+        StorageManager.SaveGame();
     }
 
     private void AddBoostersToInventory(Vector2 startPosition, KeyValuePair<ResourceType, int> kvp) {

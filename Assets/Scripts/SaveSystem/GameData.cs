@@ -9,7 +9,7 @@ public class GameDataForSave {
     public bool IsTutorialComplete;
     public string CreatedVersion;
     public int CurMaxLevel;
-    private SerializedDictionary<ResourceType, float> _resourcesCount;
+    private Dictionary<ResourceType, float> _resourcesCount;
     public Dictionary<ResourceType, bool> SeenResource;
     public List<int> RemainedLockedZones;
     public bool FieldSaveIsCreated; //change code with this bool
@@ -44,7 +44,7 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        _resourcesCount = new SerializedDictionary<ResourceType, float>() {
+        _resourcesCount = new Dictionary<ResourceType, float>() {
             { ResourceType.Wood, 0 },
             { ResourceType.Rocks, 0 },
             { ResourceType.Food, 0 },
@@ -102,15 +102,15 @@ public class GameDataForSave {
 
 [Serializable]
 public struct MetaFieldData {
-    public ResourceAndCountData[] RowCells;
+    public CellTypeAndCountData[] RowCells;
 }
 
 [Serializable]
-public struct ResourceAndCountData {
+public struct CellTypeAndCountData {
     public CellType CellType;
     public float ResourceCount;
 
-    public ResourceAndCountData(CellType cellType, float resourceCount) {
+    public CellTypeAndCountData(CellType cellType, float resourceCount) {
         CellType = cellType;
         ResourceCount = resourceCount;
     }
@@ -135,4 +135,15 @@ public struct FormAndCellTypeData {
     }
     
     
+}
+
+[Serializable]
+public struct ResourceAndCountData {
+    public ResourceType CellType;
+    public float ResourceCount;
+
+    public ResourceAndCountData(ResourceType cellType, float resourceCount) {
+        CellType = cellType;
+        ResourceCount = resourceCount;
+    }
 }

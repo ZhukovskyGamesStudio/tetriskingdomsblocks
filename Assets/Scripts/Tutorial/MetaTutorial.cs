@@ -222,31 +222,33 @@ public class MetaTutorial : MonoBehaviour {
     private void HideSeventhStepTutorial() {
         MetaUI.Instance.BuildButton.enabled = false;
         MetaUI.Instance._getPieceButtonView.GetPieceButton.enabled = false;
- 
+        StorageManager.GameDataMain.IsTutorialComplete = true;
+        StorageManager.SaveGame();
      //   SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
        // MetaUI.Instance.CloseInventoryButton.onClick.RemoveListener(HideSeventhStepTutorial);
         MetaUI.Instance._playButton.enabled = true;
+        MetaUI.Instance._playButton.onClick.RemoveAllListeners();
         ShowEighththStepTutorial();   
     }
     
     private void ShowEighththStepTutorial() {
         _tutorialStep = 7;
         _holeButtonPlay.gameObject.SetActive(true);
+        
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._playButton, _metaTutor6,HideEighthStepTutorial);      
         _holeButtonExitInventory.gameObject.SetActive(false);
     }
     
     private async void HideEighthStepTutorial() {
-        _holeButtonPlay.gameObject.SetActive(false);   
-        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        _holeButtonPlay.gameObject.SetActive(false); 
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();  
+        EnableUI();
         DestroyTutorial();
     }
 
     public void DestroyTutorial() {
-        EnableUI();
         MetaFieldManager.Instance.CanOpenLockedZones = true;
-        StorageManager.GameDataMain.IsTutorialComplete = true;
-        StorageManager.SaveGame();
+        MetaFieldManager.Instance.Play();
         Destroy(gameObject);
     }
 }
