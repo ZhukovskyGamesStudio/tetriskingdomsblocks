@@ -12,7 +12,7 @@ public class RealShopDialog : DialogBase {
 
     [SerializeField]
     private RealShopOffer _specialOfferPrefab;
-    
+
     [SerializeField]
     private RealShopResourceOffer _resourceOfferPrefab;
 
@@ -23,38 +23,47 @@ public class RealShopDialog : DialogBase {
     private ShopOffersConfig _offersConfig;
 
     private Action _clickClose;
-    private Action<ResourceType, int> _buyResource;
+    private Data _data;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
+        _data = dialogData;
 
-        _buyResource = dialogData.BuyResource;
-        
         if (dialogData.IsCore) {
             _balanceText.text = dialogData.Balance.ToString();
         } else _coreState.SetActive(false);
-        
+
         _clickClose = dialogData.ClickClose;
 
         foreach (SpecialOfferData specialOffer in _offersConfig.SpecialOffers) {
             RealShopOffer newOffer = Instantiate(specialOffer.Prefab, _specialOffersContainer);
-            newOffer.SetData(specialOffer);
+            newOffer.SetData(specialOffer, BuyOffer);
         }
+
         foreach (SpecialOfferData bundleOffer in _offersConfig.BundleOffers) {
             RealShopOffer newOffer = Instantiate(bundleOffer.Prefab, _bundleOffersContainers);
-            newOffer.SetData(bundleOffer);
+            newOffer.SetData(bundleOffer, BuyOffer);
         }
-        
+
         foreach (ResourceOfferData resourceOffer in _offersConfig.ResourceOffers) {
             RealShopResourceOffer newOffer = Instantiate(_resourceOfferPrefab, _resourceOffersContainer);
             newOffer.SetData(resourceOffer, BuyResource);
         }
+
         BuyPieceForCoinsOffer buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
-        buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost);
+        buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost, BuyPieceForCoins);
     }
 
-    public void BuyResource(ResourceType resource, int count) {
-        _buyResource.Invoke(resource, count);
+    public void BuyOffer(SpecialOfferData data) {
+        _data.BuyOffer(data);
+    }
+
+    public void BuyResource(ResourceOfferData data) {
+        _data.BuyResource(data);
+    }
+
+    public void BuyPieceForCoins() {
+        _data.BuyPieceForCoins(_offersConfig.BuyPieceForCoinsCost);
     }
 
     public void ClickClose() {
@@ -67,6 +76,8 @@ public class RealShopDialog : DialogBase {
         public Action ClickClose;
         public int Balance;
         public bool IsCore;
-        public Action<ResourceType, int> BuyResource;
+        public Action<int> BuyPieceForCoins;
+        public Action<SpecialOfferData> BuyOffer;
+        public Action<ResourceOfferData> BuyResource;
     }
 }

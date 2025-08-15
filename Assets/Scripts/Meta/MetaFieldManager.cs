@@ -705,9 +705,13 @@ public class MetaFieldManager : FieldManager {
         if (MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
-            var pieceData = GenerateNewPiece();
-            MetaUI.Instance.OpenLootboxDialog(pieceData);
+            GenerateAndOpenLootbox();
         }
+    }
+
+    public void GenerateAndOpenLootbox() {
+        var pieceData = GenerateNewPiece();
+        MetaUI.Instance.OpenLootboxDialog(pieceData);
     }
 
     public void CollectAll() {

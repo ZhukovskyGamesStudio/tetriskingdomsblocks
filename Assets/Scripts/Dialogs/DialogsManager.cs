@@ -55,11 +55,11 @@ public class DialogsManager : MonoBehaviour {
     }
 
     private void AddToQueue(DialogWithData dialogWithData) {
-        if (_dialogsQ.Any(d => d.DialogType == dialogWithData.DialogType)) {
+        if (_dialogsQ.Any(d => d.DialogType == dialogWithData.DialogType) && dialogWithData.DialogType != typeof(LootboxDialog)) {
             return;
         }
 
-        if (_currentDialog != null && _currentDialog.GetType() == dialogWithData.DialogType) {
+        if (_currentDialog != null && (_currentDialog.GetType() == dialogWithData.DialogType && dialogWithData.DialogType != typeof(LootboxDialog))) {
             return;
         }
 

@@ -11,10 +11,10 @@ public class RealShopResourceOffer : MonoBehaviour
     [SerializeField]
     private Image _offerIcon;
 
-    private Action<ResourceType, int> _buyResource;
+    private Action<ResourceOfferData> _buyResource;
     private ResourceOfferData _offerData;
     
-    public void SetData(ResourceOfferData data, Action<ResourceType, int> buyResource) {
+    public void SetData(ResourceOfferData data, Action<ResourceOfferData> buyResource) {
         _offerData = data;
         
         _priceText.text = data.Price + " RUB";
@@ -27,6 +27,6 @@ public class RealShopResourceOffer : MonoBehaviour
     }
 
     public void Buy() {
-        _buyResource.Invoke(_offerData.Resource, _offerData.ResourceCount);
+        _buyResource?.Invoke(_offerData);
     }
 }
