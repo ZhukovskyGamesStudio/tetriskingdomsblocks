@@ -23,6 +23,9 @@ public class LootboxDialog : DialogBase {
     [SerializeField]
     private float _fromScale, _toScale, _startYPos, _addedYPos, _appearDelay, _appearDuration, _rotationSpeed;
 
+    [SerializeField]
+    private Transform _particles;
+    
     private PieceData _rewardingPiece;
     private PieceView _piece;
     private CancellationTokenSource _openCts;
@@ -84,12 +87,14 @@ public class LootboxDialog : DialogBase {
         await UniTask.Delay(TimeSpan.FromSeconds(_appearDelay));
         var finPos = _piece.transform.position + Vector3.up * _addedYPos;
         await DOTween.Sequence().Append(_piece.transform.DOScale(Vector3.one * _toScale, _appearDuration))
-            .Join(_piece.transform.DOMove(finPos, _appearDuration)).Join(_piece.transform.DORotate(_finalRotation, _appearDuration))
+            .Join(_piece.transform.DOMove(finPos, _appearDuration))
+            .Join(_piece.transform.DORotate(_finalRotation, _appearDuration))
             .AsyncWaitForCompletion();
         PieceIdleRotate().Forget();
     }
 
     private async UniTask PieceIdleRotate() {
+        _particles.gameObject.SetActive(true);
         var token = this.GetCancellationTokenOnDestroy();
         while (true) {
             _piece.transform.Rotate(Vector3.up * _rotationSpeed * Time.deltaTime);
@@ -102,6 +107,7 @@ public class LootboxDialog : DialogBase {
     }
 
     public void ClickContinue() {
+        _particles.gameObject.SetActive(false);
         Hide().Forget();
     }
 

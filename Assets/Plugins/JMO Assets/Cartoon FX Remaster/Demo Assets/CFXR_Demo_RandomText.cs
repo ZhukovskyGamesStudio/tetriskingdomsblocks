@@ -7,8 +7,7 @@ namespace CartoonFX
 	public class CFXR_Demo_RandomText : MonoBehaviour
 	{
 		public ParticleSystem particles;
-	
-		//public CFXR_ParticleText dynamicParticleText;
+		public CFXR_ParticleText dynamicParticleText;
 
 		void OnEnable()
 		{
@@ -31,7 +30,7 @@ namespace CartoonFX
 			float intensity = damage / 1000f;
 			float size = Mathf.Lerp(0.8f, 1.3f, intensity);
 			Color color1 = Color.Lerp(Color.red, Color.yellow, intensity);
-		//	dynamicParticleText.UpdateText(text, size, color1);
+			dynamicParticleText.UpdateText(text, size, color1);
 
 			particles.Play(true);
 		}
