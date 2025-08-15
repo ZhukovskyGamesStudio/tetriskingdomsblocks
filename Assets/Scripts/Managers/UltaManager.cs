@@ -118,7 +118,7 @@ public class UltaManager : MonoBehaviour {
 
         var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
         var cellView =  GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
-        var finPos = new Vector3(cellView.transform.position.x, 0.75f, cellView.transform.position.z);
+        var finPos = new Vector3(cellView.transform.position.x, 0.55f, cellView.transform.position.z);
         cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
         cellView.gameObject.SetActive(false);
