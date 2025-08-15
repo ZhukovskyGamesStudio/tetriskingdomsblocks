@@ -254,13 +254,11 @@ public class MetaFieldManager : FieldManager {
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
 
-        float resourceMultiplier = MainMetaConfig.ResourceMultipliers[_connectedGroups[groupIndex].Pieces.Count];
-
-        ShowUpgradeTileDialog(cellPos, cellConfig, resourceMultiplier);
+        ShowUpgradeTileDialog(cellPos, cellConfig);
     }
 
-    private void ShowUpgradeTileDialog(Vector2Int cellPos, MetaCellTypeInfo cell, float multiplier) {
-        multiplier = _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Multiplayer;
+    private void ShowUpgradeTileDialog(Vector2Int cellPos, MetaCellTypeInfo cell) {
+        var multiplier = _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Multiplayer;
         float production = cell.AfkProduceCountPerSecond * multiplier *
                            _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
         float capacity = cell.MaxAfkCapacity * multiplier * _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
@@ -278,7 +276,7 @@ public class MetaFieldManager : FieldManager {
                 TileName = cell.CellName,
                 CurrentLevel = 1, // TODO: убрать заглушку уровня
                 IsMaxLevel = cell.UpgradeCellType == CellType.Empty,
-                UpgradeCost = cell.UpgradeCost[0].Cost,
+                UpgradeCost = cell.UpgradeCost,
                 CanUpgrade = CanUpgrade
             }
         };
@@ -440,8 +438,7 @@ public class MetaFieldManager : FieldManager {
                 List<int> forestForms = new List<int>();
                 Vector2Int[] checkedCellsPositions = {
                     new(-2, 3), new(-1, 3), new(0, 3), new(1, 3), new(1, 2), new(1, 1), new(1, 0), new(-2, 0), new(-1, 0), new(0, 0),
-                    new(-2, 1),
-                    new(-2, 2)
+                    new(-2, 1), new(-2, 2)
                 };
                 foreach (var cellAround in checkedCellsPositions) {
                     var newCellPos = formInfo.Value.Cells[0] + cellAround;
@@ -461,8 +458,11 @@ public class MetaFieldManager : FieldManager {
                     _formGroupCellPositions[neededForm].Multiplayer *= 1.3f;
                 }
             } else {
-                formInfo.Value.Multiplayer *= MainMetaConfig.ResourceMultipliers[
-                    _connectedGroups[_groupCellIndex[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y] - 1].Pieces.Count - 1];
+                var needIndexCount = _connectedGroups[_groupCellIndex[formInfo.Value.Cells[0].x, formInfo.Value.Cells[0].y] - 1].Pieces.Count -
+                                     1;
+                if (MainMetaConfig.ResourceMultipliers.Length - 1 < needIndexCount)
+                    needIndexCount = MainMetaConfig.ResourceMultipliers.Length - 1;
+                formInfo.Value.Multiplayer *= MainMetaConfig.ResourceMultipliers[needIndexCount];
             }
         }
     }

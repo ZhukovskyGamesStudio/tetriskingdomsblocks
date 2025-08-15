@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
@@ -128,10 +129,13 @@ public class MainManager : MonoBehaviour {
     }
     
     private void ShowOfferRewardDialog(SerializedDictionary<ResourceType,int> rewards) {
+        Vector2 startPosition = Vector2.zero;
+        if(MetaUI.Instance != null)
+            startPosition = MetaUI.Instance._mainCanvas.transform.position;
         var dialog = new DialogWithData {
             DialogType = typeof(OfferRewardDialog),
             Data = new OfferRewardDialog.Data {
-                ClickDefaultClaim = ()=>ClaimOfferRewards(rewards),
+                ClickDefaultClaim = ()=>ClaimOfferRewards(rewards,startPosition),
                 OfflineResources = rewards
             }
         };
@@ -139,17 +143,36 @@ public class MainManager : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
-    private void ClaimOfferRewards(SerializedDictionary<ResourceType,int> rewards) {
+    private void ClaimOfferRewards(SerializedDictionary<ResourceType, int> rewards, Vector2 startPosition) {
         foreach (var kvp in rewards) {
+            Debug.Log(kvp.Key + " "+ kvp.Value);
             switch (kvp.Key) {
                 case ResourceType.Coins:
-                    StorageManager.GameDataMain.AddResource(ResourceType.Coins, kvp.Value);
+                    if (MetaFieldManager.Instance != null) {
+                        FloatingResourcesManager.Instance.FromPointToPointAnimation(kvp.Value, ResourceType.Coins, startPosition,
+                            MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, AddShopItemsInInventory,
+                            StorageManager.GameDataMain.GetResource(kvp.Key), false, true, false, false);
+                    } else
+                        StorageManager.GameDataMain.AddResource(ResourceType.Coins, kvp.Value);
+
                     break;
                 case ResourceType.Health:
                     StorageManager.GameDataMain.HealthCount += kvp.Value;
                     break;
+                case ResourceType.ShuffleBooster:
+                    AddBoostersToInventory(startPosition, kvp);
+                    break;
                 case ResourceType.MagicCube:
                     StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, kvp.Value);
+                    break;
+                case ResourceType.HammerBooster:
+                    AddBoostersToInventory(startPosition, kvp);
+                    break;
+                case ResourceType.BombBooster:
+                    AddBoostersToInventory(startPosition, kvp);
+                    break;
+                case ResourceType.RotateBooster:
+                    AddBoostersToInventory(startPosition, kvp);
                     break;
                 case ResourceType.Lootbox:
                     for (int i = 0; i < kvp.Value; i++) {
@@ -160,8 +183,20 @@ public class MainManager : MonoBehaviour {
             }
         }
     }
-    
-    
+
+    private void AddBoostersToInventory(Vector2 startPosition, KeyValuePair<ResourceType, int> kvp) {
+        if (MetaFieldManager.Instance != null) {
+            FloatingResourcesManager.Instance.FromPointToPointAnimation(kvp.Value, kvp.Key, startPosition,
+                MetaUI.Instance._playButton.transform.position, AddShopItemsInInventory,
+                StorageManager.GameDataMain.GetResource(kvp.Key), false, true, false, false);
+        } else
+            StorageManager.GameDataMain.AddResource(kvp.Key, kvp.Value);
+    }
+
+    private void AddShopItemsInInventory(ResourceType resourceType, float needCount) {
+        StorageManager.GameDataMain.AddResource(resourceType, needCount);
+        MetaUI.Instance.CountersPanelView.SetResourceCount(resourceType, StorageManager.GameDataMain.GetResource(resourceType));
+    }
 
     private void UpdateTimerAndHealth() {
         if (MetaUI.Instance == null && !_hasInternetConnection) return;

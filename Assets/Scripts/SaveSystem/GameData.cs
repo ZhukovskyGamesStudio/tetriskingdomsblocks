@@ -50,7 +50,11 @@ public class GameDataForSave {
             { ResourceType.Food, 0 },
             { ResourceType.MagicCube, 0 },
             { ResourceType.Coins, 0 },
-            { ResourceType.Metal, 0 }
+            { ResourceType.Metal, 0 },
+            { ResourceType.ShuffleBooster, 0 },
+            { ResourceType.HammerBooster, 0 },
+            { ResourceType.RotateBooster, 0 },
+            { ResourceType.BombBooster, 0 }
         };
         SeenResource = new Dictionary<ResourceType, bool> {
             { ResourceType.Wood, false },
@@ -60,20 +64,30 @@ public class GameDataForSave {
             { ResourceType.Coins, true },
             { ResourceType.Metal, false }
         };
-        SettingsData = new SettingsData {
-            IsSoundOn = true,
-            IsMusicOn = true,
-            IsVibrationOn = true
-        };
+        SettingsData = new SettingsData { IsSoundOn = true, IsMusicOn = true, IsVibrationOn = true };
         RemainedLockedZones = new List<int>() {
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
         };
         CreatedVersion = Application.version;
         ProfileAvatar = 0;
     }
 
     public void AddResource(ResourceType resource, float count) {
-        if (!SeenResource[resource]) SeenResource[resource] = true;
+        if (SeenResource.ContainsKey(resource) && !SeenResource[resource]) SeenResource[resource] = true;
         _resourcesCount[resource] += count;
     }
 

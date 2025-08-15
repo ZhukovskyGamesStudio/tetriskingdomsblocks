@@ -9,13 +9,13 @@ public class UpgradeTileDialog : DialogBase {
     private TextMeshProUGUI _capacityText, _afterCapacityText, _incomeText, _afterIncomeText;
 
     [SerializeField]
-    private TextMeshProUGUI _headerText, _levelText, _afterLevelText, _costText;
+    private TextMeshProUGUI _headerText, _levelText, _afterLevelText;
 
     [SerializeField]
     private List<Image> _resourceImages;
 
     [SerializeField]
-    private Image _costIcon;
+    private ImageAndTextObject[] _upgradeInfoObjects;
     
     [SerializeField]
     private Button _upgradeButton;
@@ -66,8 +66,17 @@ public class UpgradeTileDialog : DialogBase {
         _afterIncomeText.text = FormatIncome(dialogData.IncomeAfter);
         _afterLevelText.text = _levelText.text.Replace("{level}", (dialogData.CurrentLevel + 1).ToString());
         _clickUpgrade = dialogData.ClickUpgrade;
-        _costText.text = dialogData.UpgradeCost.ToString();
-        _costIcon.sprite = SpritesManager.Instance.GetSprite(dialogData.Resource);
+
+        for (int i = 0; i < _upgradeInfoObjects.Length; i++) {
+            if (dialogData.UpgradeCost.Count > i) {
+                var upgradeInfoObject = _upgradeInfoObjects[i];
+                upgradeInfoObject.gameObject.SetActive(true);
+                upgradeInfoObject.Image.sprite = SpritesManager.Instance.GetSprite(dialogData.UpgradeCost[i].ResourceType);
+                upgradeInfoObject.Text.text = dialogData.UpgradeCost[i].Cost.ToString();
+            }
+            else
+                _upgradeInfoObjects[i].gameObject.SetActive(false);
+        }
     }
 
     public void ClickUpgrade() {
@@ -87,6 +96,6 @@ public class UpgradeTileDialog : DialogBase {
         public string TileName;
         public int CurrentLevel;
         public bool IsMaxLevel;
-        public int UpgradeCost;
+        public List<UpgradeInfo> UpgradeCost;
     }
 }

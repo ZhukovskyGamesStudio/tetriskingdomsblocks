@@ -18,3 +18,4 @@ public class UpgradeInfo {
     public ResourceType ResourceType;
     public int Cost;
 }
+
