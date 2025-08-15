@@ -13,16 +13,73 @@ MonoBehaviour:
   m_Name: ShopOffersConfig
   m_EditorClassIdentifier: 
   SpecialOffers:
-  - Price: 100
-    Icon: {fileID: 21300000, guid: 2d22c73bb7ee0d74eb3898bef6dced8d, type: 3}
+  - Price: 99
     Resources:
       _serializedList:
-      - Key: 1
-        Value: 100
-      - Key: 2
-        Value: 100
-      - Key: 10
-        Value: 100
+      - Key: 13
+        Value: 2000
+      - Key: 16
+        Value: 5
+      - Key: 17
+        Value: 5
+      - Key: 18
+        Value: 5
+      - Key: 19
+        Value: 5
+      - Key: 15
+        Value: 10
+    Prefab: {fileID: 8105248171716010955, guid: ce2c03c1babe70546a97b6fb4da913f3, type: 3}
+  BundleOffers:
+  - Price: 399
+    Resources:
+      _serializedList:
+      - Key: 13
+        Value: 5000
+      - Key: 16
+        Value: 10
+      - Key: 17
+        Value: 10
+      - Key: 18
+        Value: 10
+      - Key: 19
+        Value: 10
+      - Key: 15
+        Value: 20
+    Prefab: {fileID: 7168891031256207293, guid: 88c21ab445bfc6543883528c20c67b3d, type: 3}
+  - Price: 799
+    Resources:
+      _serializedList:
+      - Key: 13
+        Value: 10000
+      - Key: 16
+        Value: 20
+      - Key: 17
+        Value: 20
+      - Key: 18
+        Value: 20
+      - Key: 19
+        Value: 20
+      - Key: 15
+        Value: 30
+    Prefab: {fileID: 4207031830801539634, guid: 43378306f124a134d9692f48df6abd80, type: 3}
+  - Price: 1999
+    Resources:
+      _serializedList:
+      - Key: 13
+        Value: 20000
+      - Key: 16
+        Value: 20
+      - Key: 17
+        Value: 20
+      - Key: 18
+        Value: 20
+      - Key: 19
+        Value: 20
+      - Key: 15
+        Value: 30
+      - Key: 20
+        Value: 120
+    Prefab: {fileID: 202350281794341286, guid: 18a540172787798419f72a3fc6af79fc, type: 3}
   ResourceOffers:
   - Icon: {fileID: 21300000, guid: bbaa93b594cd8f74bbcef1a032c7edfc, type: 3}
     Price: 200
@@ -33,14 +90,11 @@ MonoBehaviour:
     Price: 200
     ImageScale: 0.9
     Resource: 14
-    ResourceCount: 50
+    ResourceCount: 25
   - Icon: {fileID: 21300000, guid: aa04871d55ad4478a99ba540017e88c0, type: 3}
     Price: 200
     ImageScale: 0.7
     Resource: 13
-    ResourceCount: 50
-  - Icon: {fileID: 21300000, guid: 5129e0a181b07d848b1aac36ff102ae5, type: 3}
-    Price: 100
-    ImageScale: 0.9
-    Resource: 11
-    ResourceCount: 1
+    ResourceCount: 500
+  BuyPieceForCoinsCost: 500
+  BuyPieceForCoinsOffer: {fileID: 8212373709287343935, guid: ac6f6c9d438886e4d9dbb4515e274bbb, type: 3}
