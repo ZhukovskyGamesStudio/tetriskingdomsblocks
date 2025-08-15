@@ -31,6 +31,15 @@ public enum ResourceType {
     Slime = 10,
     MetaPiece = 11,
     Health = 12,
+    
     Coins = 13,
-    MagicCube = 14
+    MagicCube = 14,
+    Lootbox = 15,
+    
+    HammerBooster = 16,
+    BombBooster = 17,
+    ShuffleBooster = 18,
+    RotateBooster = 19,
+    
+    InfiniteHP= 20,
 }

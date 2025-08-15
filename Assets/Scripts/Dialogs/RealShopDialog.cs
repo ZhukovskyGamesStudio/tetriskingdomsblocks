@@ -8,7 +8,7 @@ public class RealShopDialog : DialogBase {
     private TextMeshProUGUI _balanceText;
 
     [SerializeField]
-    private Transform _specialOffersContainer, _resourceOffersContainer;
+    private Transform _specialOffersContainer, _bundleOffersContainers, _resourceOffersContainer, _buyPieceContainer;
 
     [SerializeField]
     private RealShopOffer _specialOfferPrefab;
@@ -37,14 +37,20 @@ public class RealShopDialog : DialogBase {
         _clickClose = dialogData.ClickClose;
 
         foreach (SpecialOfferData specialOffer in _offersConfig.SpecialOffers) {
-            RealShopOffer newOffer = Instantiate(_specialOfferPrefab, _specialOffersContainer);
+            RealShopOffer newOffer = Instantiate(specialOffer.Prefab, _specialOffersContainer);
             newOffer.SetData(specialOffer);
+        }
+        foreach (SpecialOfferData bundleOffer in _offersConfig.BundleOffers) {
+            RealShopOffer newOffer = Instantiate(bundleOffer.Prefab, _bundleOffersContainers);
+            newOffer.SetData(bundleOffer);
         }
         
         foreach (ResourceOfferData resourceOffer in _offersConfig.ResourceOffers) {
             RealShopResourceOffer newOffer = Instantiate(_resourceOfferPrefab, _resourceOffersContainer);
             newOffer.SetData(resourceOffer, BuyResource);
         }
+        BuyPieceForCoinsOffer buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
+        buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost);
     }
 
     public void BuyResource(ResourceType resource, int count) {

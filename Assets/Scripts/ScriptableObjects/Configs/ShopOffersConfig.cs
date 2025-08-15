@@ -6,15 +6,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ShopOffersConfig", menuName = "Scriptable Objects/ShopOffersConfig")]
 public class ShopOffersConfig : ScriptableObject {
     public List<SpecialOfferData> SpecialOffers;
+    public List<SpecialOfferData> BundleOffers;
     public List<ResourceOfferData> ResourceOffers;
+
+    public int BuyPieceForCoinsCost = 500;
+    public BuyPieceForCoinsOffer BuyPieceForCoinsOffer;
 }
 
 [Serializable]
 public class SpecialOfferData {
     public float Price;
-    public Sprite Icon;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> Resources;
+
+    public RealShopOffer Prefab;
 }
 
 [Serializable]
