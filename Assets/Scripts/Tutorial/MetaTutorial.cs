@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class MetaTutorial : MonoBehaviour {
     [SerializeField]
-    private SpotlightAnimConfig _metaTutor0, _metaTutor1, _metaTutor2, _metaTutor3, _metaTutor4;
+    private SpotlightAnimConfig _metaTutor0, _metaTutor1, _metaTutor2, _metaTutor3, _metaTutor4,_metaTutor5,_metaTutor6;
 
     [SerializeField]
     private RectTransform _holeImageGetFreeTetramineButton;
@@ -22,6 +22,10 @@ public class MetaTutorial : MonoBehaviour {
 
     [SerializeField]
     private RectTransform _holeTetraminesToBuild;
+    [SerializeField]
+    private RectTransform _holeButtonExitInventory;
+    [SerializeField]
+    private RectTransform _holeButtonPlay;
 
     [SerializeField]
     private List<Vector3Int> _openedCloudCells, _secondStepCells, _thirdStepCells;
@@ -88,6 +92,9 @@ public class MetaTutorial : MonoBehaviour {
         _holeImageGetFreeTetramineButton.SetParent(MetaUI.Instance._getPieceButtonView.transform);
         _holeImageGetFreeTetramineButton.transform.localPosition = Vector3.zero;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
+        _holeButtonPlay.transform.position = MetaUI.Instance._playButton.transform.position;
+        _holeButtonPlay.gameObject.SetActive(false);
+        _holeButtonExitInventory.gameObject.SetActive(false);
         MetaUI.Instance.BuildButton.enabled = false;
         MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
     }
@@ -123,10 +130,12 @@ public class MetaTutorial : MonoBehaviour {
         await UniTask.WaitWhile(() => waiting);
         FloatingResourcesManager.Instance.OnAnimationEnd -= _ => waiting = false;
         MetaFieldManager.Instance.CanDragCamera = false;
-        ShowThirdStepTutorial();
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
+        ShowThirdStepTutorial(); 
     }
 
     public void ShowThirdStepTutorial() {
+        
         _tutorialStep = 3;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._getPieceButtonView.GetPieceButton, _metaTutor2,
@@ -144,6 +153,7 @@ public class MetaTutorial : MonoBehaviour {
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => StorageManager.GameDataMain.InventoryFigures.Count == 0 || DialogsManager.Instance.IsDialogActive);
         MetaFieldManager.Instance.CanDragCamera = false;
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
         ShowFourthStepTutorial();
     }
 
@@ -194,15 +204,47 @@ public class MetaTutorial : MonoBehaviour {
 
     private void HideSixthStepTutorial() {
         MetaFieldManager.Instance.OnCellPlacedTrigger -= HideSixthStepTutorial;
-        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        //SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         TutorialHoleHelper.DestroyHoles();
         _holeImageBuildButton.gameObject.SetActive(false);
+        ShowSeventhStepTutorial();
+        SpotlightsManager.Instance.HideFinger();
+    }
+    
+    private void ShowSeventhStepTutorial() {
+        _tutorialStep = 6;
+        _holeTetraminesToBuild.gameObject.SetActive(false);
+        _holeButtonExitInventory.gameObject.SetActive(true);
+        _holeButtonExitInventory.transform.position = MetaUI.Instance.CloseInventoryButton.transform.position;
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.CloseInventoryButton, _metaTutor5,HideSeventhStepTutorial);
+    }
+    
+    private void HideSeventhStepTutorial() {
+        MetaUI.Instance.BuildButton.enabled = false;
+        MetaUI.Instance._getPieceButtonView.GetPieceButton.enabled = false;
+ 
+     //   SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+       // MetaUI.Instance.CloseInventoryButton.onClick.RemoveListener(HideSeventhStepTutorial);
+        MetaUI.Instance._playButton.enabled = true;
+        ShowEighththStepTutorial();   
+    }
+    
+    private void ShowEighththStepTutorial() {
+        _tutorialStep = 7;
+        _holeButtonPlay.gameObject.SetActive(true);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._playButton, _metaTutor6,HideEighthStepTutorial);      
+        _holeButtonExitInventory.gameObject.SetActive(false);
+    }
+    
+    private void HideEighthStepTutorial() {
+        _holeButtonPlay.gameObject.SetActive(false);   
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         DestroyTutorial();
     }
 
     public void DestroyTutorial() {
         EnableUI();
-        MetaUI.Instance._playButton.enabled = true;
+        MetaFieldManager.Instance.CanOpenLockedZones = true;
         StorageManager.GameDataMain.IsTutorialComplete = true;
         StorageManager.SaveGame();
         Destroy(gameObject);
