@@ -19,6 +19,12 @@ MonoBehaviour:
   ChanceToSpawn: 0
   AfkResourceType: 13
   MaxAfkCapacity: 100
-  AfkProduceCountPerSecond: 0.00278
-  UpgradeCost: 200
+  AfkProduceCountPerSecond: 0.0278
   UpgradeCellType: 305
+  UpgradeCost:
+  - ResourceType: 3
+    Cost: 200
+  - ResourceType: 2
+    Cost: 300
+  - ResourceType: 1
+    Cost: 500

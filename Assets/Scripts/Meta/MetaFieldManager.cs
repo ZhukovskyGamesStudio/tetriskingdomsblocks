@@ -271,14 +271,14 @@ public class MetaFieldManager : FieldManager {
                 ClickUpgrade = UpgradeResourceCell,
                 ClickClose = CloseCellUI,
                 Resource = cell.AfkResourceType,
-                IncomeBefore = (int)production,
-                IncomeAfter = (int)(production * 2), // TODO: брать из конфига
+                IncomeBefore = (int)(production * 3600),
+                IncomeAfter = (int)(production * 2 * 3600), // TODO: брать из конфига
                 CapacityBefore = (int)capacity,
                 CapacityAfter = (int)(capacity * 2), // TODO: брать из конфига
                 TileName = cell.CellName,
                 CurrentLevel = 1, // TODO: убрать заглушку уровня
                 IsMaxLevel = cell.UpgradeCellType == CellType.Empty,
-                UpgradeCost = cell.UpgradeCost,
+                UpgradeCost = cell.UpgradeCost[0].Cost,
                 CanUpgrade = CanUpgrade
             }
         };
@@ -307,14 +307,9 @@ public class MetaFieldManager : FieldManager {
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
 
-        if (cellConfig.AfkResourceType != ResourceType.Coins) {
-            if (StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType) < cellConfig.UpgradeCost) {
+        foreach (var resourceToUpgrade in cellConfig.UpgradeCost) {
+            if (StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType) < resourceToUpgrade.Cost)
                 return false;
-            }
-        } else {
-            if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost) {
-                return false;
-            }
         }
 
         return true;
@@ -323,30 +318,26 @@ public class MetaFieldManager : FieldManager {
     public void UpgradeResourceCell() {
         //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
         var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
-        var cellConfig = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
+        var cellConfig =
+            PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
+                c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
         //  Vector3 uiPos = Vector3.zero;
         Vector3 finalUiNeedPos = Vector3.zero;
         foreach (var cellPos in cellsToUpgrade.Cells)
             finalUiNeedPos += new Vector3(cellPos.x, 0, cellPos.y);
 
         finalUiNeedPos /= cellsToUpgrade.Cells.Count;
-        if (cellConfig.AfkResourceType != ResourceType.Coins) {
-            if (StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType) < cellConfig.UpgradeCost) {
-                return;
+
+        foreach (var resourceToUpgrade in cellConfig.UpgradeCost) {
+            if (resourceToUpgrade.ResourceType != ResourceType.Coins) {
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost, resourceToUpgrade.ResourceType,
+                    MetaUI.Instance._openResourceTabButtonTransform.position, finalUiNeedPos, ChangeResorceText,
+                    StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType), true, false, false, true);
+            } else {
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost, ResourceType.Coins,
+                    MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, finalUiNeedPos, ChangeResorceText,
+                    StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType), true, false, false, true);
             }
-
-            FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, cellConfig.AfkResourceType,
-                MetaUI.Instance._openResourceTabButtonTransform.position, finalUiNeedPos, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false, false, true);
-            //     StorageManager.GameDataMain.AddResource(cellConfig.AfkResourceType, -cellConfig.UpgradeCost);
-        } else {
-            if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) < cellConfig.UpgradeCost)
-                return;
-
-            FloatingResourcesManager.Instance.FromPointToPointAnimation(cellConfig.UpgradeCost, ResourceType.Coins,
-                MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, finalUiNeedPos, ChangeResorceText,
-                StorageManager.GameDataMain.GetResource(cellConfig.AfkResourceType), true, false, false, true);
-            //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cellConfig.UpgradeCost);
         }
 
         CollectResourcesFromMark(_groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1, 1);

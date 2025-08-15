@@ -236,9 +236,9 @@ public class MetaTutorial : MonoBehaviour {
         _holeButtonExitInventory.gameObject.SetActive(false);
     }
     
-    private void HideEighthStepTutorial() {
+    private async void HideEighthStepTutorial() {
         _holeButtonPlay.gameObject.SetActive(false);   
-        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
+        await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         DestroyTutorial();
     }
 
