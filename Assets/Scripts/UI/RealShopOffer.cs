@@ -1,3 +1,4 @@
+using System;
 using AYellowpaper.SerializedCollections;
 using TMPro;
 using UnityEngine;
@@ -19,7 +20,12 @@ public class RealShopOffer : MonoBehaviour {
     [SerializeField]
     private SerializedDictionary<ResourceType, TextMeshProUGUI> _resourcesText;
 
-    public void SetData(SpecialOfferData data) {
+    private SpecialOfferData _specialOfferData;
+    private Action<SpecialOfferData> _buyClick;
+
+    public void SetData(SpecialOfferData data, Action<SpecialOfferData> onBuy) {
+        _specialOfferData = data;
+        _buyClick = onBuy;
         _priceText.text = data.Price + " RUB";
         //_offerIcon.sprite = data.Icon;
 
@@ -30,8 +36,21 @@ public class RealShopOffer : MonoBehaviour {
             }
 
             if (_resourcesText.TryGetValue(resource.Key, out TextMeshProUGUI ugui)) {
-                ugui.text = $"x{resource.Value}";
+                if (resource.Key == ResourceType.InfiniteHPMinutes) {
+                    var time = TimeSpan.FromMinutes(resource.Value);
+                    if (time.TotalHours > 0) {
+                        ugui.text = TimeSpan.FromMinutes(resource.Value).ToString(@"hh\:mm");
+                    } else {
+                        ugui.text = TimeSpan.FromMinutes(resource.Value).ToString(@"mm\:ss");
+                    }
+                } else {
+                    ugui.text = $"x{resource.Value}";
+                }
             }
         }
+    }
+
+    public void BuyClick() {
+        _buyClick?.Invoke(_specialOfferData);
     }
 }

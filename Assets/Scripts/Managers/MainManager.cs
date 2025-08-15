@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,7 +11,7 @@ public class MainManager : MonoBehaviour {
     public MainManagerConfig _mainConfig { get; private set; }
 
     public DateTime _currentGameTime { get; private set; }
-    public bool _hasInternetConnection{ get; private set; }
+    public bool _hasInternetConnection { get; private set; }
 
     private const int MAX_HEALTH_COUNT = 5;
     private const float MINUTES_TO_HEALTH_RECOVERY = 5;
@@ -18,6 +19,7 @@ public class MainManager : MonoBehaviour {
 
     private int _currentRewardedCubes;
     private int _currentRewardedCoins;
+
     public LevelConfig CurrentLevelConfig =>
         _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
 
@@ -56,10 +58,12 @@ public class MainManager : MonoBehaviour {
         _currentRewardedCubes = 0;
         return (cubes, coins);
     }
+
     public void AddRewardToMeta() {
         _currentRewardedCubes += CurrentLevelConfig.MagicCubesCount;
         _currentRewardedCoins += CurrentLevelConfig.GoldAmount;
     }
+
     public void SetupGetPieceTimer() {
         if (StorageManager.GameDataMain.LastGetPieceTime == DateTime.MinValue.ToString(CultureInfo.InvariantCulture)) {
             StorageManager.GameDataMain.LastGetPieceTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
@@ -80,8 +84,8 @@ public class MainManager : MonoBehaviour {
                 MetaUI.Instance.HealthView.SetHealthTimerText(StorageManager.GameDataMain.LastHealthRecoveryTime);
             else
                 MetaUI.Instance.HealthView.SetHealthTimerText("No internet connection");
+        }
 
-        } 
         MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
     }
 
@@ -101,24 +105,63 @@ public class MainManager : MonoBehaviour {
                 .AddMinutes(healthToAdd * MINUTES_TO_HEALTH_RECOVERY).ToString(CultureInfo.InvariantCulture);
     }
 
-    public void BuyMetaResource(ResourceType resource, int count) {
-        switch (resource) {
-            case ResourceType.Coins:
-                StorageManager.GameDataMain.AddResource(ResourceType.Coins, count);
-                break;
-            case ResourceType.Health:
-                StorageManager.GameDataMain.HealthCount += count;
-                break;
-            case ResourceType.MagicCube:
-                StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, count);
-                break;
-            case ResourceType.MetaPiece:
-                MetaFieldManager.Instance.GenerateNewPiece();
-                break;
-            default:
-                break;
+    public void BuyMetaResource(ResourceOfferData data) {
+      
+        MetaTabsPanel.Instance.OpenRule();
+        ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() {
+            {data.Resource, data.ResourceCount}
+        });
+    }
+
+    public void BuyBundleOffer(SpecialOfferData data) {
+    
+        MetaTabsPanel.Instance.OpenRule();
+        ShowOfferRewardDialog(data.Resources);
+    }
+
+    public void BuyPiece(int cost) {
+        if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) >= cost) {
+            StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cost);
+            MetaTabsPanel.Instance.OpenRule();
+            MetaFieldManager.Instance.GenerateAndOpenLootbox();
         }
     }
+    
+    private void ShowOfferRewardDialog(SerializedDictionary<ResourceType,int> rewards) {
+        var dialog = new DialogWithData {
+            DialogType = typeof(OfferRewardDialog),
+            Data = new OfferRewardDialog.Data {
+                ClickDefaultClaim = ()=>ClaimOfferRewards(rewards),
+                OfflineResources = rewards
+            }
+        };
+
+        DialogsManager.Instance.ShowDialogWithData(dialog);
+    }
+
+    private void ClaimOfferRewards(SerializedDictionary<ResourceType,int> rewards) {
+        foreach (var kvp in rewards) {
+            switch (kvp.Key) {
+                case ResourceType.Coins:
+                    StorageManager.GameDataMain.AddResource(ResourceType.Coins, kvp.Value);
+                    break;
+                case ResourceType.Health:
+                    StorageManager.GameDataMain.HealthCount += kvp.Value;
+                    break;
+                case ResourceType.MagicCube:
+                    StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, kvp.Value);
+                    break;
+                case ResourceType.Lootbox:
+                    for (int i = 0; i < kvp.Value; i++) {
+                        MetaFieldManager.Instance.GenerateAndOpenLootbox();
+                    }
+
+                    break;
+            }
+        }
+    }
+    
+    
 
     private void UpdateTimerAndHealth() {
         if (MetaUI.Instance == null && !_hasInternetConnection) return;
@@ -138,7 +181,7 @@ public class MainManager : MonoBehaviour {
                         Mathf.Min(StorageManager.GameDataMain.HealthCount + energyToAdd, MAX_HEALTH_COUNT);
                     StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);
                     StorageManager.SaveGame();
-                    if(MetaUI.Instance?.HealthView != null) {
+                    if (MetaUI.Instance?.HealthView != null) {
                         MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
                     }
                 }
@@ -192,6 +235,7 @@ public class MainManager : MonoBehaviour {
         StorageManager.GameDataMain.HealthCount = healthCount;
         if (MetaUI.Instance != null) MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
     }
+
     public void RemoveHealthAfterLose() {
         if (StorageManager.GameDataMain.HealthCount == MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.LastHealthRecoveryTime = _currentGameTime.ToString(CultureInfo.InvariantCulture);

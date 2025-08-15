@@ -331,7 +331,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2061807527573495498}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 564602341935518467}
+        m_TargetAssemblyTypeName: RealShopOffer, Assembly-CSharp
+        m_MethodName: BuyClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7196665088982708151
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +515,8 @@ MonoBehaviour:
   _resourcePrefab: {fileID: 8412598554589907797, guid: bbf28a6d6a48c9b4ba79bb8abeb822c9, type: 3}
   _priceText: {fileID: 2393011010001515669}
   _offerIcon: {fileID: 5405583310478529720}
+  _resourcesText:
+    _serializedList: []
 --- !u!1 &7748616590223530700
 GameObject:
   m_ObjectHideFlags: 0

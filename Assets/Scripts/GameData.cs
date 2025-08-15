@@ -41,5 +41,5 @@ public enum ResourceType {
     ShuffleBooster = 18,
     RotateBooster = 19,
     
-    InfiniteHP= 20,
+    InfiniteHPMinutes= 20,
 }
