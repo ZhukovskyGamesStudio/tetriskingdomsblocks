@@ -173,7 +173,7 @@ public class IconRendererManager : MonoBehaviour {
         _renderCamera.enabled = true;
         _renderCamera.Render();
 
-        Debug.Log(format);
+       
         _renderCamera.enabled = false;
         Texture2D icon = new Texture2D(_renderTexture.width, _renderTexture.height, format, false);
 

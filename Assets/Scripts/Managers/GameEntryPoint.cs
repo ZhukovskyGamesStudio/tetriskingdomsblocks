@@ -35,7 +35,9 @@ public class GameEntryPoint : MonoBehaviour {
         CreateTasksForLevel(levelConfig);
 
         _gameFieldManager.Init(_mainGameConfig, _gameData);
-
+        
+      
+        
         _gameFieldManager.InitFromLevel(levelConfig);
         _gameFieldManager.SetupGame();
         _gameFieldManager.PlaceStartingField(levelConfig);
@@ -49,12 +51,13 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.HideNeededContainers();
         
       
-
+        DragManager.IsDragDisabled = false;
         if (levelConfig.TutorialObject != null && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(levelConfig.TutorialObject, GameUI.Instance.BlackBgContainer);
         }
 
         _spawnRandomNature.Generate();
+       
     }
 
     private void OnMoveEnded() {
@@ -117,6 +120,7 @@ public class GameEntryPoint : MonoBehaviour {
             return;
 
         if (CheckLose() && !_gameData.IsGameEnded) {
+            DragManager.IsDragDisabled = true;
             Lose();
             return;
         }
@@ -139,6 +143,7 @@ public class GameEntryPoint : MonoBehaviour {
     public bool CheckWinWithAction()
     {
         if (CheckWin() && !_gameData.IsGameEnded) {
+            DragManager.IsDragDisabled = true;
             UltaManager.Instance.UltimateActionEndRound(Win);
             _gameData.IsGameEnded = true;
             return true;
@@ -169,6 +174,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void Win() {
+       
         SaveWinGame();
         MainManager.Instance.AddRewardToMeta();
         GameFieldManager.Instance.SetWinState();

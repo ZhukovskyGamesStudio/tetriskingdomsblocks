@@ -938,7 +938,6 @@ public class MetaFieldManager : FieldManager {
     }
 
     public override void SaveEnergyData() {
-        Debug.Log("save");
         StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
         SetFigureFormsInfoToData();
         base.SaveEnergyData();

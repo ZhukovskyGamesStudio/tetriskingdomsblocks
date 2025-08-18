@@ -31,7 +31,7 @@ public class TutorialHighlightHelper {
             if (obj == null) {
                 continue;
             }
-
+            
             var renders = obj.GetComponentsInChildren<MeshRenderer>();
             foreach (var render in renders) {
                 if (_highlitedLayers.ContainsKey(render.gameObject)) {

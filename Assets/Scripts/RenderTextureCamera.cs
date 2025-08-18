@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HighlightsTextureHelper : MonoBehaviour {
+public class RenderTextureCamera : MonoBehaviour {
     private RenderTexture _renderTexture;
     public static Dictionary<string, RenderTexture> RenderTexture { get; private set; } = new Dictionary<string, RenderTexture>();
 
@@ -20,39 +20,42 @@ public class HighlightsTextureHelper : MonoBehaviour {
     private Camera _currentCamera;
     private float _width, _height;
 
+    public static Dictionary<string, int> RenderTextureCount;
+
     private void UpdateTextureSize() {
         _width = _rect.rect.width;
         _height = _rect.rect.height;
 
-       
-
         var cameras = FindObjectsByType<Camera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         var cam = cameras.First(o => o.gameObject.name == _cameraName);
-        
-        if (_renderTexture != null ) {
-            if (cam != null && cam.targetTexture == _renderTexture ) {
+
+        if (_renderTexture != null) {
+            if (cam != null && cam.targetTexture == _renderTexture) {
                 cam.targetTexture = null;
             }
+
             _renderTexture.Release();
             Destroy(_renderTexture);
         }
-        
+
         if (cam != null) {
             if (_currentCamera != null) {
                 _currentCamera.targetTexture = null;
             }
+
             _currentCamera = cam;
-           
+
             _renderTexture = new RenderTexture(Mathf.RoundToInt(_width), Mathf.RoundToInt(_height), 24, RenderTextureFormat.Default);
             _renderTexture.Create();
             if (_rawImage != null) {
                 _rawImage.texture = _renderTexture;
             }
-         
+
             RenderTexture[_cameraName] = _renderTexture;
 
             _currentCamera.targetTexture = _renderTexture;
-            var cameras2 = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(o => o.gameObject.name == _cameraName);
+            var cameras2 = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .Where(o => o.gameObject.name == _cameraName);
             foreach (var VARIABLE in cameras2) {
                 VARIABLE.targetTexture = _renderTexture;
             }

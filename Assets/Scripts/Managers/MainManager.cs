@@ -98,8 +98,7 @@ public class MainManager : MonoBehaviour {
         if (healthToAdd > 0) {
             StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
         }
-
-        Debug.Log(healthToAdd + " added health");
+        
 
         if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.LastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime

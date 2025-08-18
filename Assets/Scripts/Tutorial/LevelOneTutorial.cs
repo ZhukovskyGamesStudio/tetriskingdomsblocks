@@ -95,9 +95,11 @@ public class LevelOneTutorial : MonoBehaviour {
     }
 
     public void ShowThirdStepTutorial() {
+        TutorialHoleHelper.HighlightObjects(new List<GameObject>(){GameUI.Instance.GoalView.gameObject});
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(GameUI.Instance.GoalView.transform, _step2Config);
         _tutorialStep = 3;
         _canSkipTutorial = true;
+        _goalViewContainer.transform.position = GameUI.Instance.GoalView.transform.position;
         _goalViewContainer.gameObject.SetActive(true);
     }
 
