@@ -239,15 +239,17 @@ public class MetaUI : MonoBehaviour {
         MetaWorldCanvasView.Instance.gameObject.SetActive(true);
     }
 
-    public void OpenShop() {
+    public void OpenShop(bool onPiece) {
         _ruleState.SetActive(false);
+        _buildState.SetActive(false);
         var dialog = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
                 ClickClose = MetaTabsPanel.Instance.OpenRule,
                 BuyResource = MainManager.Instance.BuyMetaResource,
                 BuyOffer = MainManager.Instance.BuyBundleOffer,
-                BuyPieceForCoins = MainManager.Instance.BuyPiece
+                BuyPieceForCoins = MainManager.Instance.BuyPiece,
+                OnPiece = onPiece
             }
         };
 

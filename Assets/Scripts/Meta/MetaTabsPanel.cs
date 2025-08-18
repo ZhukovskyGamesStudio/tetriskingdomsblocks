@@ -33,7 +33,14 @@ public class MetaTabsPanel : MonoBehaviour {
     public void OpenShop() {
         if (_selectedTab == MetaTab.Shop) return;
         
-        MetaUI.Instance.OpenShop();
+        MetaUI.Instance.OpenShop(false);
+        ChangeTab(MetaTab.Shop);
+    }
+    
+    public void OpenShopOnPiece() {
+        if (_selectedTab == MetaTab.Shop) return;
+        
+        MetaUI.Instance.OpenShop(true);
         ChangeTab(MetaTab.Shop);
     }
     
