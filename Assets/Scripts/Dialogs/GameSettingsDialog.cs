@@ -12,7 +12,9 @@ public class GameSettingsDialog : DialogBase {
     private Action<bool> _changeMusic, _changeSound, _changeVibration;
 
     [SerializeField]
-    private Transform _exitFromGameButton;
+    private Button _exitFromGameButton;
+    [SerializeField]
+    private Transform _exitLockedButtonObject;
 
     public override void SetData(object data) {
         Data dialogData = data as Data;
@@ -25,8 +27,12 @@ public class GameSettingsDialog : DialogBase {
         _musicToggle.Init(dialogData.IsMusicOn);
         _soundToggle.Init(dialogData.IsSoundOn);
         _vibrationToggle.Init(dialogData.IsVibrationOn);
-        
-        _exitFromGameButton.gameObject.SetActive(StorageManager.GameDataMain.CurMaxLevel > 2);
+
+        if (StorageManager.GameDataMain.CurMaxLevel <= 2) {
+             _exitFromGameButton.gameObject.SetActive(false);
+             Instantiate(_exitLockedButtonObject, _exitFromGameButton.transform.parent);
+        }
+       
     }
 
     public void ToggleVibrations(bool isOn) {

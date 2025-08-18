@@ -7,6 +7,10 @@ using UnityEngine.UI;
 public class MetaUI : MonoBehaviour {
     public static MetaUI Instance;
     [field: SerializeField]
+    public Transform _filtersContainer { get; private set; }
+    [field: SerializeField]
+    public Transform _destroyPiecesButtonTransform { get; private set; }
+    [field: SerializeField]
     public Button CloseInventoryButton { get; private set; }
     [field: SerializeField]
     public Button BuildButton { get; private set; }
@@ -206,7 +210,10 @@ public class MetaUI : MonoBehaviour {
         _ruleState.SetActive(false);
         _ruleCamera.SetActive(false);
         _buildCamera.SetActive(true);
+        
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
 
+        MetaFieldManager.Instance.CloseCellUI();
         var ray = new Ray(_ruleCamera.transform.position, _ruleCamera.transform.forward);
         var hit = Physics.Raycast(ray, out RaycastHit hitinfo, 100, LayerMask.GetMask("Ground"));
 
@@ -234,6 +241,7 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenRuleState() {
         IsBuildState = false;
+        MetaFieldManager.Instance.CanOpenLockedZones = true;
         DialogsManager.Instance.CloseAllDialogs();
         _buildState.SetActive(false);
         _ruleState.SetActive(true);
