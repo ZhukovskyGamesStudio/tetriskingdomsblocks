@@ -71,6 +71,8 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void GoToMetaAdminButton() {
+        DialogsManager.Instance.CloseAllDialogs();
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         SceneManager.LoadScene("MetaScene");
     }
     public void RemoveOneHealthAdminButton() {
@@ -97,8 +99,9 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void RestartGame() {
-        if (GameFieldManager.Instance != null)
+        if (GameFieldManager.Instance != null) {
             MainManager.Instance.Restart();
+        }
     }
 
     private void SetupLevelButtons() {
@@ -115,6 +118,8 @@ public class AdminManager : MonoBehaviour {
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
         SpotlightsManager.Instance.ShadowWithText.HideSpeak();
         StorageManager.GameDataMain.CurMaxLevel = needLevelNumber;
+        DialogsManager.Instance.CloseAllDialogs();
+        SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         StorageManager.SaveGame();
         SceneManager.LoadScene("GameScene");
     }

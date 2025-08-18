@@ -25,11 +25,11 @@ public class MetaEntryPoint : MonoBehaviour {
 
         (int cubes, int coins) = MainManager.Instance.GetRewardToMeta();
 
-        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins, MetaUI.Instance._playButton.transform.position,
+        FloatingResourcesManager.Instance.FromPointToPointAnimation(coins, ResourceType.Coins, MetaUI.Instance.PlayButton.transform.position,
             MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, MetaFieldManager.Instance.ChangeResorceText,
             StorageManager.GameDataMain.GetResource(ResourceType.Coins), false, true, false, false);
         FloatingResourcesManager.Instance.FromPointToPointAnimation(cubes, ResourceType.MagicCube,
-            MetaUI.Instance._playButton.transform.position, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
+            MetaUI.Instance.PlayButton.transform.position, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
             MetaFieldManager.Instance.ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false, true, false,
             false);
     }

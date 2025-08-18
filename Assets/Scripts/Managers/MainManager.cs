@@ -188,7 +188,7 @@ public class MainManager : MonoBehaviour {
     private void AddBoostersToInventory(Vector2 startPosition, KeyValuePair<ResourceType, int> kvp) {
         if (MetaFieldManager.Instance != null) {
             FloatingResourcesManager.Instance.FromPointToPointAnimation(kvp.Value, kvp.Key, startPosition,
-                MetaUI.Instance._playButton.transform.position, AddShopItemsInInventory,
+                MetaUI.Instance.PlayButton.transform.position, AddShopItemsInInventory,
                 StorageManager.GameDataMain.GetResource(kvp.Key), false, true, false, false);
         } else
             StorageManager.GameDataMain.AddResource(kvp.Key, kvp.Value);
