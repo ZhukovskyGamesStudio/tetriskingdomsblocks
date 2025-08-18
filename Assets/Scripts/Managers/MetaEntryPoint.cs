@@ -11,6 +11,7 @@ public class MetaEntryPoint : MonoBehaviour {
     }
 
     private async UniTask InitScene() {
+        DragManager.IsDragDisabled = false;
         VibrationsManager.Instance.StopAll();
         IconRendererManager.Instance.InitializeRenderSystem();
         _metaFieldManager.SetupGame();

@@ -201,8 +201,7 @@ public class MetaTutorial : MonoBehaviour {
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor4);
         _holeImageBuildButton.gameObject.SetActive(true);
         _tutorialStep = 5;
-
-        Invoke(nameof(SetupInventoryCell), 0.3f);
+        SetupInventoryCell();
     }
 
     private void SetupInventoryCell() {
