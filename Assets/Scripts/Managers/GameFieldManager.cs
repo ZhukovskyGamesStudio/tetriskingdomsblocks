@@ -107,6 +107,7 @@ public class GameFieldManager : FieldManager {
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {
+        if(UltaManager.Instance._ultimateIsActive)return;
         base.PlacePiece(pieceData, coord, cells, cellsContainer);
 
         //  CheckPlacedCellsForTask();
