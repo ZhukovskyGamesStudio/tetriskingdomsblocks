@@ -46,16 +46,40 @@ public class GoalView : MonoBehaviour {
     [SerializeField]
     private SkeletonGraphic _skeletonAnimation;
     
-    private Tween _currentTween;
+    private Sequence _currentTween;
 
     public void SetMovesCount(int count) {
         _movesCountText.text = count.ToString();
+        if(count > 5)
+            MinusOneMoveAnimation();
+        else if(count == 5) {
+            TextMovesAnimation();
+        }
     }
 
     public void SetTasksActive(bool active) {
         foreach (var taskUI in TaskUIViews) {
             taskUI.gameObject.SetActive(active);
         }
+    }
+
+    public void TextMovesAnimation() {
+        _currentTween?.Kill();
+        _currentTween = DOTween.Sequence();
+        _movesCountText.DOColor(Color.red, 0.5f);
+        _currentTween.Append(_movesCountText.transform.DOScale(1.2f, 0.7f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine));
+        
+        _currentTween.Play();
+    }
+
+    private void MinusOneMoveAnimation() {
+        _currentTween?.Kill();
+
+        _currentTween = DOTween.Sequence();
+        _currentTween.Append(_movesCountText.transform.DOScale(1.2f, 0.3f).SetLoops(1, LoopType.Yoyo).SetEase(Ease.InOutSine))
+            .Append(_movesCountText.transform.DOScale(1f, 0.3f).SetLoops(1, LoopType.Yoyo).SetEase(Ease.InOutSine));
+
+        _currentTween.Play();
     }
 
     public void ExitGame() {
