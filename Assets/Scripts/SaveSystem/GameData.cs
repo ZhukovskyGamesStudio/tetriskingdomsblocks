@@ -9,7 +9,7 @@ public class GameDataForSave {
     public bool IsTutorialComplete;
     public string CreatedVersion;
     public int CurMaxLevel;
-    public SerializedDictionary<ResourceType, float> _resourcesCount;
+    public SerializedDictionary<ResourceType, float> ResourcesCount;
     public SerializedDictionary<ResourceType, bool> SeenResource;
     
     public List<int> RemainedLockedZones;
@@ -45,7 +45,7 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        _resourcesCount = new SerializedDictionary<ResourceType, float>() {
+        ResourcesCount = new SerializedDictionary<ResourceType, float>() {
             { ResourceType.Wood, 0 },
             { ResourceType.Rocks, 0 },
             { ResourceType.Food, 0 },
@@ -92,16 +92,16 @@ public class GameDataForSave {
             SeenResource[resource] = true;
         }
 
-        _resourcesCount[resource] += count;
+        ResourcesCount[resource] += count;
     }
 
     public void SetResource(ResourceType resource, float count) {
-        AddResource(resource, count - _resourcesCount[resource]);
+        AddResource(resource, count - ResourcesCount[resource]);
     }
     
-    public float GetResource(ResourceType resource) => _resourcesCount[resource];
+    public float GetResource(ResourceType resource) => ResourcesCount[resource];
 
-    public Dictionary<ResourceType, float> GetAllResources() => _resourcesCount;
+    public Dictionary<ResourceType, float> GetAllResources() => ResourcesCount;
 
 }
 

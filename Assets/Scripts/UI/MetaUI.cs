@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using TMPro;
-using UnityEngine.Pool;
 using UnityEngine.UI;
 
 public class MetaUI : MonoBehaviour {
@@ -49,10 +47,10 @@ public class MetaUI : MonoBehaviour {
     private AvatarsConfig _avatarsConfig;
 
     [field: SerializeField]
-    public GetPieceButtonView _getPieceButtonView { get; private set; }
+    public GetPieceButtonView GetPieceButtonView { get; private set; }
 
     [field: SerializeField]
-    public Button _playButton { get; private set; }
+    public Button PlayButton { get; private set; }
 
     [SerializeField]
     public MetaTutorial _metaTutorial;
@@ -62,6 +60,8 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public Button CraftButton { get; private set; }
+    [field: SerializeField]
+    public CanvasGroup CountersCanvasGroup { get; private set; }
 
     [field: SerializeField]
     public Button ProfileButton { get; private set; }
@@ -71,6 +71,9 @@ public class MetaUI : MonoBehaviour {
 
     [field: SerializeField]
     public Button SettingsButton { get; private set; }
+    
+    [field: SerializeField]
+    public Button BuyPieceButton { get; private set; }
 
     [field: SerializeField]
     public GameObject Tabs { get; private set; }
@@ -194,7 +197,7 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void UpdateGetPieceTimer(TimeSpan timeLeft) {
-        _getPieceButtonView.UpdateGetPieceTimer(timeLeft);
+        GetPieceButtonView.UpdateGetPieceTimer(timeLeft);
     }
 
     public void OpenBuildState() {
@@ -239,15 +242,17 @@ public class MetaUI : MonoBehaviour {
         MetaWorldCanvasView.Instance.gameObject.SetActive(true);
     }
 
-    public void OpenShop() {
+    public void OpenShop(bool onPiece) {
         _ruleState.SetActive(false);
+        _buildState.SetActive(false);
         var dialog = new DialogWithData {
             DialogType = typeof(RealShopDialog),
             Data = new RealShopDialog.Data {
                 ClickClose = MetaTabsPanel.Instance.OpenRule,
                 BuyResource = MainManager.Instance.BuyMetaResource,
                 BuyOffer = MainManager.Instance.BuyBundleOffer,
-                BuyPieceForCoins = MainManager.Instance.BuyPiece
+                BuyPieceForCoins = MainManager.Instance.BuyPiece,
+                OnPiece = onPiece
             }
         };
 

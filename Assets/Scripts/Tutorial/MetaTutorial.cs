@@ -55,9 +55,16 @@ public class MetaTutorial : MonoBehaviour {
         MetaUI.Instance.CraftButton.gameObject.SetActive(false);
         MetaUI.Instance.ProfileButton.gameObject.SetActive(false);
         MetaUI.Instance.ResourcesButton.gameObject.SetActive(false);
+        MetaUI.Instance.BuyPieceButton.gameObject.SetActive(false);
+        MetaUI.Instance.PlayButton.gameObject.SetActive(false);
         MetaUI.Instance.Tabs.gameObject.SetActive(false);
-        MetaUI.Instance._playButton.enabled = false;
+        MetaUI.Instance.CloseInventoryButton.gameObject.SetActive(false);
+        MetaUI.Instance.PlayButton.enabled = false;
         MetaUI.Instance.SettingsButton.gameObject.SetActive(false);
+        MetaUI.Instance.GetPieceButtonView.gameObject.SetActive(false);
+        MetaUI.Instance.BuildButton.gameObject.SetActive(false);
+        MetaUI.Instance.CountersCanvasGroup.blocksRaycasts = false;
+        
         MetaFieldManager.Instance.CanDragCamera = false;
     }
 
@@ -66,8 +73,16 @@ public class MetaTutorial : MonoBehaviour {
         MetaUI.Instance.ProfileButton.gameObject.SetActive(true);
         MetaUI.Instance.ResourcesButton.gameObject.SetActive(true);
         MetaUI.Instance.SettingsButton.gameObject.SetActive(true);
+        MetaUI.Instance.BuyPieceButton.gameObject.SetActive(true);
+        MetaUI.Instance.PlayButton.gameObject.SetActive(true);
+        MetaUI.Instance.CloseInventoryButton.gameObject.SetActive(true);
+        
+        MetaUI.Instance.GetPieceButtonView.gameObject.SetActive(true);
+        MetaUI.Instance.BuildButton.gameObject.SetActive(true);
+
         MetaUI.Instance.Tabs.gameObject.SetActive(true);
-        MetaUI.Instance._playButton.enabled = true;
+        MetaUI.Instance.PlayButton.enabled = true;
+        MetaUI.Instance.CountersCanvasGroup.blocksRaycasts = true;
         MetaFieldManager.Instance.CanDragCamera = true;
     }
 
@@ -89,14 +104,14 @@ public class MetaTutorial : MonoBehaviour {
         _holeImageBuildButton.transform.SetParent(MetaUI.Instance.BuildButton.transform);
         _holeImageBuildButton.transform.localPosition = Vector3.zero;
         _holeImageBuildButton.gameObject.SetActive(false);
-        _holeImageGetFreeTetramineButton.SetParent(MetaUI.Instance._getPieceButtonView.transform);
+        _holeImageGetFreeTetramineButton.SetParent(MetaUI.Instance.GetPieceButtonView.transform);
         _holeImageGetFreeTetramineButton.transform.localPosition = Vector3.zero;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(false);
-        _holeButtonPlay.transform.position = MetaUI.Instance._playButton.transform.position;
+        _holeButtonPlay.transform.position = MetaUI.Instance.PlayButton.transform.position;
         _holeButtonPlay.gameObject.SetActive(false);
         _holeButtonExitInventory.gameObject.SetActive(false);
         MetaUI.Instance.BuildButton.enabled = false;
-        MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
+        MetaUI.Instance.GetPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
     }
 
     private void ShowFirstStepTutorial() {
@@ -138,10 +153,11 @@ public class MetaTutorial : MonoBehaviour {
         
         _tutorialStep = 3;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(true);
-        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._getPieceButtonView.GetPieceButton, _metaTutor2,
+        MetaUI.Instance.GetPieceButtonView.gameObject.SetActive(true);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.GetPieceButtonView.GetPieceButton, _metaTutor2,
             HideThirdStepTutorial);
 
-        MetaUI.Instance._getPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
+        MetaUI.Instance.GetPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
     }
 
     private void HideThirdStepTutorial() {
@@ -158,6 +174,7 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void ShowFourthStepTutorial() {
+        MetaUI.Instance.BuildButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.BuildButton, _metaTutor3, HideFourthStepTutorial);
         _holeImageBuildButton.gameObject.SetActive(true);
 
@@ -217,26 +234,27 @@ public class MetaTutorial : MonoBehaviour {
         _holeTetraminesToBuild.gameObject.SetActive(false);
         _holeButtonExitInventory.gameObject.SetActive(true);
         _holeButtonExitInventory.transform.position = MetaUI.Instance.CloseInventoryButton.transform.position;
+        MetaUI.Instance.CloseInventoryButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.CloseInventoryButton, _metaTutor5,HideSeventhStepTutorial);
     }
     
     private void HideSeventhStepTutorial() {
         MetaUI.Instance.BuildButton.enabled = false;
-        MetaUI.Instance._getPieceButtonView.GetPieceButton.enabled = false;
+        MetaUI.Instance.GetPieceButtonView.GetPieceButton.enabled = false;
         StorageManager.GameDataMain.IsTutorialComplete = true;
         StorageManager.SaveGame();
      //   SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
        // MetaUI.Instance.CloseInventoryButton.onClick.RemoveListener(HideSeventhStepTutorial);
-        MetaUI.Instance._playButton.enabled = true;
-        MetaUI.Instance._playButton.onClick.RemoveAllListeners();
+        MetaUI.Instance.PlayButton.enabled = true;
+        MetaUI.Instance.PlayButton.onClick.RemoveAllListeners();
         ShowEighththStepTutorial();   
     }
     
     private void ShowEighththStepTutorial() {
         _tutorialStep = 7;
         _holeButtonPlay.gameObject.SetActive(true);
-        
-        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance._playButton, _metaTutor6,HideEighthStepTutorial);      
+        MetaUI.Instance.PlayButton.gameObject.SetActive(true);
+        SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.PlayButton, _metaTutor6,HideEighthStepTutorial);      
         _holeButtonExitInventory.gameObject.SetActive(false);
     }
     

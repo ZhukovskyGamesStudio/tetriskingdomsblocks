@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RealShopDialog : DialogBase {
     [SerializeField]
@@ -22,6 +23,11 @@ public class RealShopDialog : DialogBase {
     [SerializeField]
     private ShopOffersConfig _offersConfig;
 
+    [SerializeField]
+    private ScrollRect _scrollRect;
+
+    private BuyPieceForCoinsOffer _buyPieceOffer;
+    
     private Action _clickClose;
     private Data _data;
 
@@ -50,8 +56,16 @@ public class RealShopDialog : DialogBase {
             newOffer.SetData(resourceOffer, BuyResource);
         }
 
-        BuyPieceForCoinsOffer buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
-        buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost, BuyPieceForCoins);
+        _buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
+        _buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost, BuyPieceForCoins);
+        
+    }
+
+    public override UniTask Show(Action onClose) {
+        if (_data.OnPiece) {
+            _scrollRect.normalizedPosition = Vector2.down;
+        }
+        return base.Show(onClose);
     }
 
     public void BuyOffer(SpecialOfferData data) {
@@ -79,5 +93,21 @@ public class RealShopDialog : DialogBase {
         public Action<int> BuyPieceForCoins;
         public Action<SpecialOfferData> BuyOffer;
         public Action<ResourceOfferData> BuyResource;
+        public bool OnPiece;
+    }
+}
+
+public static class ScrollRectExtensions
+{
+    public static Vector2 GetSnapToPositionToBringChildIntoView(this ScrollRect instance, RectTransform child)
+    {
+        Canvas.ForceUpdateCanvases();
+        Vector2 viewportLocalPosition = instance.viewport.localPosition;
+        Vector2 childLocalPosition   = child.localPosition;
+        Vector2 result = new Vector2(
+            0 - (viewportLocalPosition.x + childLocalPosition.x),
+            0 - (viewportLocalPosition.y + childLocalPosition.y)
+        );
+        return result;
     }
 }
