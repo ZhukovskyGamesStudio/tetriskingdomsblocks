@@ -44,7 +44,7 @@ public class TaskUIView : MonoBehaviour
 
    public void CompleteTask()
    {
-      CurrentTaskInfo.fontStyle = FontStyles.Strikethrough;
+    //  CurrentTaskInfo.fontStyle = FontStyles.Strikethrough;
       _currentTween.Kill();
       _currentTween = DOTween.Sequence()
          .Append(CurrentTaskInfo.transform.DOScale(Vector3.one * 1.5f, 0.3f)) 
