@@ -111,6 +111,8 @@ public class MetaTutorial : MonoBehaviour {
         _holeButtonPlay.gameObject.SetActive(false);
         _holeButtonExitInventory.gameObject.SetActive(false);
         MetaUI.Instance.BuildButton.enabled = false;
+        MetaUI.Instance._filtersContainer.gameObject.SetActive(false);
+        MetaUI.Instance._destroyPiecesButtonTransform.gameObject.SetActive(false);
         MetaUI.Instance.GetPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = false;
     }
 
@@ -234,6 +236,7 @@ public class MetaTutorial : MonoBehaviour {
         _holeTetraminesToBuild.gameObject.SetActive(false);
         _holeButtonExitInventory.gameObject.SetActive(true);
         _holeButtonExitInventory.transform.position = MetaUI.Instance.CloseInventoryButton.transform.position;
+        MetaUI.Instance.CloseInventoryButton.onClick.AddListener(()=> MetaFieldManager.Instance.CanOpenLockedZones = false);
         MetaUI.Instance.CloseInventoryButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.CloseInventoryButton, _metaTutor5,HideSeventhStepTutorial);
     }
