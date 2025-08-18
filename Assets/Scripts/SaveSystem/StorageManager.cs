@@ -23,12 +23,13 @@ public static class StorageManager {
         if (!GameDataMain.IsTutorialComplete) {
             CreateNewSaveData();
         }
+
         
         //Удаляет сохранение при обновлении игры, удалить после тестов
         /* if (GameDataMain.CreatedVersion == null || GameDataMain.CreatedVersion != Application.version) {
              CreateNewSaveData();
          }*/
-        
+
     }
 
     public static bool IsNewPlayer() {

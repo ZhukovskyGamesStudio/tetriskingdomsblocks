@@ -9,8 +9,9 @@ public class GameDataForSave {
     public bool IsTutorialComplete;
     public string CreatedVersion;
     public int CurMaxLevel;
-    private Dictionary<ResourceType, float> _resourcesCount;
-    public Dictionary<ResourceType, bool> SeenResource;
+    public SerializedDictionary<ResourceType, float> _resourcesCount;
+    public SerializedDictionary<ResourceType, bool> SeenResource;
+    
     public List<int> RemainedLockedZones;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
@@ -44,7 +45,7 @@ public class GameDataForSave {
 
     public GameDataForSave() {
         HealthCount = 5;
-        _resourcesCount = new Dictionary<ResourceType, float>() {
+        _resourcesCount = new SerializedDictionary<ResourceType, float>() {
             { ResourceType.Wood, 0 },
             { ResourceType.Rocks, 0 },
             { ResourceType.Food, 0 },
@@ -56,13 +57,13 @@ public class GameDataForSave {
             { ResourceType.RotateBooster, 0 },
             { ResourceType.BombBooster, 0 }
         };
-        SeenResource = new Dictionary<ResourceType, bool> {
-            { ResourceType.Wood, false },
-            { ResourceType.Rocks, false },
-            { ResourceType.Food, false },
-            { ResourceType.MagicCube, false },
-            { ResourceType.Coins, true },
-            { ResourceType.Metal, false }
+        SeenResource = new SerializedDictionary<ResourceType, bool>() {
+            {ResourceType.Wood, false}, 
+            {ResourceType.Rocks, false}, 
+            {ResourceType.Food, false}, 
+            {ResourceType.MagicCube, false}, 
+            {ResourceType.Coins, false}, 
+            {ResourceType.Metal, false}
         };
         SettingsData = new SettingsData { IsSoundOn = true, IsMusicOn = true, IsVibrationOn = true };
         RemainedLockedZones = new List<int>() {
@@ -87,7 +88,10 @@ public class GameDataForSave {
     }
 
     public void AddResource(ResourceType resource, float count) {
-        if (SeenResource.ContainsKey(resource) && !SeenResource[resource]) SeenResource[resource] = true;
+        if (SeenResource.ContainsKey(resource) && !SeenResource[resource]) {
+            SeenResource[resource] = true;
+        }
+
         _resourcesCount[resource] += count;
     }
 
@@ -98,6 +102,7 @@ public class GameDataForSave {
     public float GetResource(ResourceType resource) => _resourcesCount[resource];
 
     public Dictionary<ResourceType, float> GetAllResources() => _resourcesCount;
+
 }
 
 [Serializable]
@@ -135,15 +140,4 @@ public struct FormAndCellTypeData {
     }
     
     
-}
-
-[Serializable]
-public struct ResourceAndCountData {
-    public ResourceType CellType;
-    public float ResourceCount;
-
-    public ResourceAndCountData(ResourceType cellType, float resourceCount) {
-        CellType = cellType;
-        ResourceCount = resourceCount;
-    }
 }
