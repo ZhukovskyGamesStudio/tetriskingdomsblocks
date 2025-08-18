@@ -19,6 +19,9 @@ public class AdminManager : MonoBehaviour {
     [SerializeField]
     private MainManagerConfig _mainManagerConfig;
 
+    [SerializeField]
+    private TextMeshProUGUI _versionText;
+
     public static bool IsInfiniteHealth = true;
 
     [SerializeField]
@@ -35,6 +38,7 @@ public class AdminManager : MonoBehaviour {
         Instance = this;
         _infiniteHpToggle.SetIsOnWithoutNotify(IsInfiniteHealth);
         _infiniteBoostersToggle.SetIsOnWithoutNotify(IsInfiniteBoosters);
+        _versionText.text = $"v{Application.version}";
         //_skipTutorialsToggle.SetIsOnWithoutNotify(IsSkipTutorials);
         DontDestroyOnLoad(this);
         SetupLevelButtons();

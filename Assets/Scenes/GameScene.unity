@@ -1176,36 +1176,6 @@ MonoBehaviour:
   _gameAudio: {fileID: 2120509509}
   _mainGameConfig: {fileID: 11400000, guid: 217ebe7f84a630c439145cfff15a9650, type: 2}
   _ultaManager: {fileID: 695767041}
---- !u!1 &611030345 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8477859968861178291, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
-  m_PrefabInstance: {fileID: 5010224016518838486}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &611030348 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5533997194279816320, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
-  m_PrefabInstance: {fileID: 5010224016518838486}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 611030345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &611030350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 611030345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rawImage: {fileID: 611030348}
-  _cameraName: FieldHighlightsCamera
 --- !u!1 &695767040
 GameObject:
   m_ObjectHideFlags: 0
@@ -4057,10 +4027,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8477859968861178291, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 611030350}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41af44229de3a0d429cdc69040a4b327, type: 3}
 --- !u!114 &5010224016518838487 stripped
 MonoBehaviour:

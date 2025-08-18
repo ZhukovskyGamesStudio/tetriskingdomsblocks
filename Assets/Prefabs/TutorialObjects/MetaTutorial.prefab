@@ -344,7 +344,6 @@ GameObject:
   - component: {fileID: 1931773542550721582}
   - component: {fileID: 4892562177347770450}
   - component: {fileID: 4373174682660801064}
-  - component: {fileID: 4704377049913757619}
   - component: {fileID: 7354252506129990613}
   m_Layer: 5
   m_Name: HighlightsTexture
@@ -407,21 +406,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &4704377049913757619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7051952949949949050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rect: {fileID: 1931773542550721582}
-  _rawImage: {fileID: 4373174682660801064}
-  _cameraName: HighlightsCamera
 --- !u!114 &7354252506129990613
 MonoBehaviour:
   m_ObjectHideFlags: 0
