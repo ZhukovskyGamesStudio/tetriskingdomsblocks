@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4186301243791996169}
   - component: {fileID: 9136942405636107924}
   - component: {fileID: 3032532437443266393}
-  - component: {fileID: 6266722873131895556}
+  - component: {fileID: 7381883490381236085}
   m_Layer: 5
   m_Name: HighlightsTexture
   m_TagString: Untagged
@@ -73,7 +73,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &6266722873131895556
+--- !u!114 &7381883490381236085
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,10 +82,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1404671969060766314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rect: {fileID: 4186301243791996169}
   _rawImage: {fileID: 3032532437443266393}
   _cameraName: HighlightsCamera
 --- !u!1 &2277023747769869073
@@ -915,7 +914,7 @@ GameObject:
   - component: {fileID: 1467938807410874059}
   - component: {fileID: 7689059828238588503}
   - component: {fileID: 794234117174766109}
-  - component: {fileID: 8393680012958751482}
+  - component: {fileID: 7711568053926988541}
   m_Layer: 5
   m_Name: FieldHighlightesTexture
   m_TagString: Untagged
@@ -977,7 +976,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &8393680012958751482
+--- !u!114 &7711568053926988541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -986,10 +985,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8001584778644677239}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rect: {fileID: 1467938807410874059}
   _rawImage: {fileID: 794234117174766109}
   _cameraName: FieldHighlightsCamera
 --- !u!1 &8412768290314256052
