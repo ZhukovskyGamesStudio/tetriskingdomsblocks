@@ -61,6 +61,9 @@ public class MetaFieldManager : FieldManager {
     [SerializeField]
     private Transform _markedLockedCellsContainer;
 
+    [SerializeField]
+    private GameObject _addPieceButton;
+    
     private List<GameObject> _markedLockedCells = new();
     public bool CanOpenLockedZones = true;
     public bool CanDragCamera = true;
@@ -75,10 +78,14 @@ public class MetaFieldManager : FieldManager {
         ResourceType filterResource = (ResourceType)filterResourceId;
         foreach (Transform child in _inventoryCellsContainer) {
             InventoryCellView cell = child.GetComponent<InventoryCellView>();
+            if (cell == null) {
+                continue;
+            }
             CellType cellType = cell.Data.Type.CellType;
             ResourceType cellResource = _cellsResources.ContainsKey(cellType) ? _cellsResources[cellType] : ResourceType.None;
             child.gameObject.SetActive(filterResource == ResourceType.None || cellResource == filterResource);
         }
+        _addPieceButton.transform.SetAsFirstSibling();
     }
 
     public void SetCurrentPiece(PieceView pieceView = null, InventoryCellView inventoryCellView = null) {
