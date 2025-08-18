@@ -20,7 +20,7 @@ public class RenderTextureCamera : MonoBehaviour {
     private Camera _currentCamera;
     private float _width, _height;
 
-    public static Dictionary<string, int> RenderTextureCount;
+    public static readonly Dictionary<string, int> RenderTextureCount = new Dictionary<string, int>();
 
     private void UpdateTextureSize() {
         _width = _rect.rect.width;

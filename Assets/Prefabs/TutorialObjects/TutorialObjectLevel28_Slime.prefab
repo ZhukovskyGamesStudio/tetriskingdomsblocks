@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6920382445309777672}
   - component: {fileID: 4167805349872140366}
   - component: {fileID: 952634042653984933}
-  - component: {fileID: 5810811723507057747}
+  - component: {fileID: 4220800379302475795}
   m_Layer: 5
   m_Name: FieldHighlightesTexture
   m_TagString: Untagged
@@ -73,7 +73,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &5810811723507057747
+--- !u!114 &4220800379302475795
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,10 +82,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2671158630351778765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rect: {fileID: 6920382445309777672}
   _rawImage: {fileID: 952634042653984933}
   _cameraName: FieldHighlightsCamera
 --- !u!1 &3771330147951302315
@@ -121,7 +120,6 @@ RectTransform:
   m_Children:
   - {fileID: 6920382445309777672}
   - {fileID: 4271040982902787720}
-  - {fileID: 700206375715990412}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -193,7 +191,7 @@ GameObject:
   - component: {fileID: 4271040982902787720}
   - component: {fileID: 3958430750134432827}
   - component: {fileID: 8982170831336533978}
-  - component: {fileID: 6795561666295601034}
+  - component: {fileID: 7624502161000923576}
   m_Layer: 5
   m_Name: HighlightsTexture
   m_TagString: Untagged
@@ -255,7 +253,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &6795561666295601034
+--- !u!114 &7624502161000923576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,71 +262,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8050410888470005754}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Script: {fileID: 11500000, guid: 03ac831f94f64cd7bdfc4646346dd8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rect: {fileID: 4271040982902787720}
   _rawImage: {fileID: 8982170831336533978}
-  _cameraName: HighlightsCamera
---- !u!1001 &2854126845865168641
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1547800132999010715}
-    m_Modifications:
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4876772104506788051, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-      propertyPath: m_Name
-      value: TutorialHoleHelper
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
---- !u!4 &700206375715990412 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3327109832010425485, guid: 8c1954dc65223da41be0db8ffddbdfbb, type: 3}
-  m_PrefabInstance: {fileID: 2854126845865168641}
-  m_PrefabAsset: {fileID: 0}
+  _cameraName: FieldHighlightsCamera

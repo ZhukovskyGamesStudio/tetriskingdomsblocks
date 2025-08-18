@@ -14,7 +14,13 @@ public class RenderTextureDrawer : MonoBehaviour {
     }
 
     private void Start() {
-        RenderTextureCamera.RenderTextureCount[_cameraName]++;
+        if (_rawImage == null) {
+            _rawImage = GetComponent<RawImage>();
+        }
+
+        if (!RenderTextureCamera.RenderTextureCount.TryAdd(_cameraName, 1)) {
+            RenderTextureCamera.RenderTextureCount[_cameraName]++;
+        }
     }
 
     private void OnDestroy() {

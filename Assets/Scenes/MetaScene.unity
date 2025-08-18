@@ -8202,6 +8202,7 @@ GameObject:
   m_Component:
   - component: {fileID: 612296046}
   - component: {fileID: 612296047}
+  - component: {fileID: 612296048}
   m_Layer: 11
   m_Name: HighlightsCamera
   m_TagString: Untagged
@@ -8275,6 +8276,21 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &612296048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612296045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rect: {fileID: 1212849847}
+  _rawImage: {fileID: 0}
+  _cameraName: HighlightsCamera
 --- !u!1001 &615416848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11792,6 +11808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 992467409}
   - component: {fileID: 992467410}
+  - component: {fileID: 992467411}
   m_Layer: 12
   m_Name: FieldHighlightsCamera
   m_TagString: Untagged
@@ -11865,6 +11882,21 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &992467411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992467408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rect: {fileID: 1212849847}
+  _rawImage: {fileID: 0}
+  _cameraName: FieldHighlightsCamera
 --- !u!1 &999745340
 GameObject:
   m_ObjectHideFlags: 0
@@ -12822,6 +12854,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1096197168}
   - component: {fileID: 1096197169}
+  - component: {fileID: 1096197170}
   m_Layer: 12
   m_Name: FieldHighlightsCamera
   m_TagString: Untagged
@@ -12895,6 +12928,21 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1096197170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096197167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rect: {fileID: 1212849847}
+  _rawImage: {fileID: 0}
+  _cameraName: FieldHighlightsCamera
 --- !u!1001 &1101322583
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14998,6 +15046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1497766609}
   - component: {fileID: 1497766610}
+  - component: {fileID: 1497766611}
   m_Layer: 11
   m_Name: HighlightsCamera
   m_TagString: Untagged
@@ -15071,6 +15120,21 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1497766611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497766608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rect: {fileID: 1212849847}
+  _rawImage: {fileID: 0}
+  _cameraName: HighlightsCamera
 --- !u!1 &1511781269
 GameObject:
   m_ObjectHideFlags: 0

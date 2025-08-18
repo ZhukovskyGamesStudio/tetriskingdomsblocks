@@ -175,6 +175,7 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void ShowFifthStepTutorial() {
+        DragManager.IsDragDisabled = false;
         TutorialHoleHelper.SpawnHoles(_openedCloudCells);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor4);
         _holeImageBuildButton.gameObject.SetActive(true);
