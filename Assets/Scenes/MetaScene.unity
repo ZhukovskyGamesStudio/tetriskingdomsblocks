@@ -8174,7 +8174,7 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 1
+  m_ReverseArrangement: 0
 --- !u!1 &612089817
 GameObject:
   m_ObjectHideFlags: 0
@@ -13808,7 +13808,6 @@ GameObject:
   - component: {fileID: 1212849845}
   - component: {fileID: 1212849844}
   - component: {fileID: 1212849848}
-  - component: {fileID: 1212849849}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -13946,21 +13945,6 @@ MonoBehaviour:
   <BuyPieceButton>k__BackingField: {fileID: 612089819}
   <Tabs>k__BackingField: {fileID: 1966804082}
   IsBuildState: 0
---- !u!114 &1212849849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212849843}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304e925bc7cef324eb94e9c5b660ab62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rect: {fileID: 1294333760}
-  _rawImage: {fileID: 1294333762}
-  _cameraName: HighlightsCamera
 --- !u!1 &1222653061
 GameObject:
   m_ObjectHideFlags: 0
@@ -17668,6 +17652,7 @@ MonoBehaviour:
       Value: 4
   _markedCellPrefab: {fileID: 8098495716344652187, guid: 1c004dc16d1148847a1bacc2c1d19371, type: 3}
   _markedLockedCellsContainer: {fileID: 1861212462}
+  _addPieceButton: {fileID: 612089817}
   CanOpenLockedZones: 1
   CanDragCamera: 1
 --- !u!4 &1910540965

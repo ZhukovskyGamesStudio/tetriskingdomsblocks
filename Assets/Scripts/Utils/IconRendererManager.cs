@@ -62,7 +62,7 @@ public class IconRendererManager : MonoBehaviour {
         format = TextureFormat.RGBA32;
     }
 
-    public async void GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
+    public async UniTask GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
         var texture = await GetIcon(prefab);
 
         if (texture == null) {

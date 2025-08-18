@@ -24,6 +24,9 @@ public class GoalView : MonoBehaviour {
     public Button UltimateButton{ get; private set; }
 
     [field:SerializeField]
+    public GameObject EarnUltimateIcon{ get; private set; }
+    
+    [field:SerializeField]
     public GameObject UseUltimateMenu{ get; private set; }
     
     [SerializeField]
@@ -90,8 +93,16 @@ public class GoalView : MonoBehaviour {
         _currentTween.Kill();
     }
     
+    public void ActivateUltimateButton() {
+       EarnUltimateIcon.SetActive(false);
+       UseUltimateMenu.SetActive(true);
+       UltimateButton.enabled = true;
+       UltimateProgressBar.gameObject.SetActive(false);
+    }
+    
     
     public void HideUltimateButton() {
+        EarnUltimateIcon.SetActive(true);
         UseUltimateMenu.SetActive(false);
         UltimateProgressBar.gameObject.SetActive(true);
         //make animations(maybe scale from 0 to 1)

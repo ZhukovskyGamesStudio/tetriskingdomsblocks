@@ -16,6 +16,7 @@ public class GameDataForSave {
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
+    public int GotPiecesCount;
     public int ProfileAvatar;
     public bool IsFirstAttemptWin;
     public int FirstAttemptWinLevelsCount;

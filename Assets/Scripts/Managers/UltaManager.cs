@@ -63,10 +63,7 @@ public class UltaManager : MonoBehaviour {
             return;
         }
 
-        GameUI.Instance.GoalView.UseUltimateMenu.SetActive(true);
-        GameUI.Instance.GoalView.UltimateButton.enabled = true;
-        GameUI.Instance.GoalView.UltimateProgressBar.gameObject.SetActive(false);
-        //make animations(maybe scale from 0 to 1)
+        GameUI.Instance.GoalView.ActivateUltimateButton();
     }
 
     private async void UltimateAction() {
