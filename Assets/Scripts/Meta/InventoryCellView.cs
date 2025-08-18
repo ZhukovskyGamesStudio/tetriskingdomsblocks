@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InventoryCellView : MonoBehaviour {
@@ -6,6 +7,9 @@ public class InventoryCellView : MonoBehaviour {
 
     public Image IconImage;
 
+    [field:SerializeField]
+    public EventTrigger EventTrigger;
+    
     public void SetPieceInfo(PieceData data) {
         Data = data;
     }
