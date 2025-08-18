@@ -8922,7 +8922,7 @@ GameObject:
   - component: {fileID: 673525892}
   - component: {fileID: 673525893}
   m_Layer: 10
-  m_Name: FigureIconManager
+  m_Name: IconRendererManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8936,14 +8936,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 673525891}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 876928775}
   - {fileID: 2114664826}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 793964004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &673525893
 MonoBehaviour:
@@ -9959,6 +9959,7 @@ Transform:
   - {fileID: 1984839919}
   - {fileID: 1610804696}
   - {fileID: 844603829}
+  - {fileID: 673525892}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &801882172
@@ -19635,7 +19636,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 1024
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: c6a64b8475b55ca478f2129e9b984482, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 87f3723508f557643a4907c8dac8ffef, type: 2}
   m_TargetDisplay: 7
   m_TargetEye: 3
   m_HDR: 1
@@ -19989,5 +19990,4 @@ SceneRoots:
   - {fileID: 1829324579}
   - {fileID: 1005776667}
   - {fileID: 793964004}
-  - {fileID: 673525892}
   - {fileID: 1634990621}

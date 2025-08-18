@@ -790,7 +790,7 @@ public class MetaFieldManager : FieldManager {
         GetResourceCollectMarks();
 
         InvokeRepeating(nameof(UpdateResourceMarks), MainMetaConfig.resourceMarksUpdateCouldown, MainMetaConfig.resourceMarksUpdateCouldown);
-        GetInventoryFromSave();
+      
         MetaUI.Instance.CountersPanelView.SetMagicCubes((int)StorageManager.GameDataMain.GetResource(ResourceType.MagicCube));
         MetaUI.Instance.CountersPanelView.SetGold((int)StorageManager.GameDataMain.GetResource(ResourceType.Coins));
         MetaUI.Instance.SetPlayText("Lv. " + (StorageManager.GameDataMain.CurMaxLevel + 1));
@@ -803,7 +803,7 @@ public class MetaFieldManager : FieldManager {
         if (LoadingManager.Instance.FirstLoad && MainManager.Instance._hasInternetConnection) {
             TryShowRetentionDialog();
         }
-
+        GetInventoryFromSave().Forget();
         base.SetupGame();
     }
 
@@ -1256,8 +1256,10 @@ public class MetaFieldManager : FieldManager {
 
           return TimeSpan.FromMinutes(minutesUntilNext);
       }*/
-    public void GetInventoryFromSave() {
-        if (StorageManager.GameDataMain.InventoryFigures == null) return;
+    public async UniTask GetInventoryFromSave() {
+        if (StorageManager.GameDataMain.InventoryFigures == null) {
+            return;
+        }
         var inventoryFigures = StorageManager.GameDataMain.InventoryFigures;
         foreach (var figure in inventoryFigures) {
             bool[,] cells = TetrisPieces.PieceShapesTable[figure.FormName];
@@ -1276,11 +1278,7 @@ public class MetaFieldManager : FieldManager {
             var cellInfo = PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == figure.FormCellType);
             var data = new PieceData() { Type = cellInfo, Cells = cells, CellGuids = cellGuids, FormName = figure.FormName };
 
-            AddPieceToInventory(data);
-
-            /* var inventoryCellView = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
-             inventoryCellView.SetPieceInfo(data);
-             _currentPiecesInInventory.Add(inventoryCellView);*/
+            await AddPieceToInventory(data);
         }
     }
 

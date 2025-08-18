@@ -12,6 +12,7 @@ public class MetaEntryPoint : MonoBehaviour {
 
     private async UniTask InitScene() {
         VibrationsManager.Instance.StopAll();
+        IconRendererManager.Instance.InitializeRenderSystem();
         _metaFieldManager.SetupGame();
         CameraScaleToBounds.Instance.Init();
         await UniTask.WaitWhile(() => CameraScaleToBounds.Instance.IsInited);

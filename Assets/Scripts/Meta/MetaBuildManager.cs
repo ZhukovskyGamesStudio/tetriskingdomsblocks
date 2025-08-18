@@ -22,6 +22,7 @@ public class MetaBuildManager : MonoBehaviour {
 
     public async UniTask SetInventoryCellIcon(InventoryCellView inventoryCell) {
         PieceView pieceView = Instance.CreatePiece(inventoryCell.Data);
-        await IconRendererManager.Instance.GetIconAsSprite(pieceView.gameObject, texture => { inventoryCell.IconImage.sprite = texture; });
+        var sprite = await IconRendererManager.Instance.GetIconAsSprite(pieceView.gameObject);
+        inventoryCell.IconImage.sprite = sprite;
     }
 }
