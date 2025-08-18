@@ -234,8 +234,7 @@ public class MetaFieldManager : FieldManager {
         if (!FieldUtils.IsInsideField(_field, cellPos)) {
             return;
         }
-
-        Debug.Log("CastLockedCell()");
+        
         if (_field[cellPos.x, cellPos.y] == CellType.LockedMetaCell)
             CastLockedCell(cellPos);
         else
