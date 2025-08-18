@@ -52,6 +52,7 @@ public class GameUI : MonoBehaviour {
     } 
 
     public void ShowSettings() {
+        if(UltaManager.Instance._ultimateIsActive)return;
         SettingsManager.Instance.ShowGameSettingsDialog();
     }
 
