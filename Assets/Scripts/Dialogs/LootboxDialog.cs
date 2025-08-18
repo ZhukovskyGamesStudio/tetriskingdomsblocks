@@ -25,11 +25,11 @@ public class LootboxDialog : DialogBase {
 
     [SerializeField]
     private Transform _particles;
-    
+
     private PieceData _rewardingPiece;
     private PieceView _piece;
     private CancellationTokenSource _openCts;
-
+    private bool _continueClicked;
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
@@ -46,19 +46,19 @@ public class LootboxDialog : DialogBase {
 
     private async UniTask AppearAndIdleSound(CancellationToken token) {
         GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.LootboxAppear, 0f, token).Forget();
-        await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken:token); 
-       /* while (true) {
-            GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.LootboxIdle, 0f,token).Forget();
-            await UniTask.Delay(TimeSpan.FromSeconds(5),cancellationToken:token); 
-        }*/
+        await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+        /* while (true) {
+             GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.LootboxIdle, 0f,token).Forget();
+             await UniTask.Delay(TimeSpan.FromSeconds(5),cancellationToken:token);
+         }*/
     }
 
     public void ClickOpen() {
         _openCts?.Cancel();
-       // GameAudio.Instance.ForceStop(GameAudio.Instance.LootboxIdle);
+        // GameAudio.Instance.ForceStop(GameAudio.Instance.LootboxIdle);
         _chestAnimator.SetTrigger(Open);
         _openState.SetActive(false);
-        GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.LootboxOpen, 0f,this.GetCancellationTokenOnDestroy()).Forget();
+        GameAudio.Instance.PlayNextSoundWithDelay(GameAudio.Instance.LootboxOpen, 0f, this.GetCancellationTokenOnDestroy()).Forget();
         WaitForOpen().Forget();
         var res = CreatePiece(_rewardingPiece);
         AppearPieceAnim().Forget();
@@ -87,8 +87,7 @@ public class LootboxDialog : DialogBase {
         await UniTask.Delay(TimeSpan.FromSeconds(_appearDelay));
         var finPos = _piece.transform.position + Vector3.up * _addedYPos;
         await DOTween.Sequence().Append(_piece.transform.DOScale(Vector3.one * _toScale, _appearDuration))
-            .Join(_piece.transform.DOMove(finPos, _appearDuration))
-            .Join(_piece.transform.DORotate(_finalRotation, _appearDuration))
+            .Join(_piece.transform.DOMove(finPos, _appearDuration)).Join(_piece.transform.DORotate(_finalRotation, _appearDuration))
             .AsyncWaitForCompletion();
         PieceIdleRotate().Forget();
     }
@@ -106,8 +105,21 @@ public class LootboxDialog : DialogBase {
         _continueState.SetActive(true);
     }
 
+
+
     public void ClickContinue() {
+        if (_continueClicked) {
+            return;
+        }
+
         _particles.gameObject.SetActive(false);
+        _continueClicked = true;
+
+        Close().Forget();
+    }
+
+    private async UniTask Close() {
+        await MetaFieldManager.Instance.AddPieceToInventory(_rewardingPiece);
         Hide().Forget();
     }
 

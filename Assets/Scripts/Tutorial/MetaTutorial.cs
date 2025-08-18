@@ -161,6 +161,7 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void HideThirdStepTutorial() {
+        MetaFieldManager.Instance.GenerateAndOpenLootbox();
         HideThirdStepTutorialAsync().Forget();
     }
 

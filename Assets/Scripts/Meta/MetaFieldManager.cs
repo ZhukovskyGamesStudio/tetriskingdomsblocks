@@ -677,19 +677,6 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
-    public void BuyPiece() {
-        if (StorageManager.GameDataMain.GetResource(ResourceType.Wood) >= 100 &&
-            StorageManager.GameDataMain.GetResource(ResourceType.Rocks) >= 100 &&
-            StorageManager.GameDataMain.GetResource(ResourceType.Food) >= 100) {
-            // DialogsManager.Instance.ShowDialog(typeof(BuyPieceDialog));
-            StorageManager.GameDataMain.AddResource(ResourceType.Wood, -100);
-            StorageManager.GameDataMain.AddResource(ResourceType.Rocks, -100);
-            StorageManager.GameDataMain.AddResource(ResourceType.Food, -100);
-            UpdateResourcesCountUIText();
-            GenerateNewPiece();
-        }
-    }
-
     public void UpdateResourcesCountUIText() {
         foreach (var kvp in StorageManager.GameDataMain.GetAllResources()) {
             MetaUI.Instance.CountersPanelView.SetResourceCount(kvp.Key, kvp.Value);
@@ -704,31 +691,34 @@ public class MetaFieldManager : FieldManager {
         if (MainManager.Instance._currentGameTime >= StorageManager.GameDataMain.LastGetPieceTimeDateTime) {
             StorageManager.GameDataMain.LastGetPieceTime =
                 (MainManager.Instance._currentGameTime + TimeSpan.FromHours(8)).ToString(CultureInfo.InvariantCulture);
-            GenerateAndOpenLootbox();
+            
+            
+            CellTypeInfo cellInfo = StorageManager.GameDataMain.GotPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
+            
+            GenerateAndOpenLootbox(cellInfo);
         }
     }
 
-    public void GenerateAndOpenLootbox() {
-        var pieceData = GenerateNewPiece();
+    public void GenerateAndOpenLootbox(CellTypeInfo cell = null) {
+        var pieceData = GenerateNewPiece(cell);
         MetaUI.Instance.OpenLootboxDialog(pieceData);
+        StorageManager.GameDataMain.GotPiecesCount++;
     }
 
     public void CollectAll() {
         DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
     }
 
-    public PieceData GenerateNewPiece() {
-        CellTypeInfo cellTypeInfo = StorageManager.GameDataMain.PlacedInMetaPiecesCount == 0 ? _villageStuffConfig.VillageCellTypeInfo : null;
-        var pieceData = PieceUtils.GetNewMetaPiece(cellTypeInfo);
-        AddPieceToInventory(pieceData);
+    private PieceData GenerateNewPiece(CellTypeInfo cell = null) {
+        var pieceData = PieceUtils.GetNewMetaPiece(cell);
         StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
         return pieceData;
     }
 
-    public void AddPieceToInventory(PieceData pieceView) {
+    public async UniTask AddPieceToInventory(PieceData pieceView) {
         InventoryCellView inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
         inventoryCell.SetPieceInfo(pieceView);
-        MetaBuildManager.Instance.SetInventoryCellIcon(inventoryCell);
+        await MetaBuildManager.Instance.SetInventoryCellIcon(inventoryCell);
         _currentPiecesInInventory.Add(inventoryCell);
         SaveInventory();
     }

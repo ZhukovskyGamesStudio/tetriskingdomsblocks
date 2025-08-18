@@ -14,7 +14,7 @@ public class GetPieceButtonView : MonoBehaviour {
     private TextMeshProUGUI _timerText;
 
     public Button GetPieceButton;
-
+    
     public void GetPiece() {
         _metaManager.GetPiece();
     }
