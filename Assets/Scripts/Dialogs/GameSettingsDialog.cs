@@ -11,6 +11,9 @@ public class GameSettingsDialog : DialogBase {
     private Action _goToMeta;
     private Action<bool> _changeMusic, _changeSound, _changeVibration;
 
+    [SerializeField]
+    private Transform _exitFromGameButton;
+
     public override void SetData(object data) {
         Data dialogData = data as Data;
 
@@ -22,6 +25,8 @@ public class GameSettingsDialog : DialogBase {
         _musicToggle.Init(dialogData.IsMusicOn);
         _soundToggle.Init(dialogData.IsSoundOn);
         _vibrationToggle.Init(dialogData.IsVibrationOn);
+        
+        _exitFromGameButton.gameObject.SetActive(StorageManager.GameDataMain.CurMaxLevel > 2);
     }
 
     public void ToggleVibrations(bool isOn) {

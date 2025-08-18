@@ -1155,6 +1155,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 8122798046523497171}
   _offState: {fileID: 6800688096023481588}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5481957321119082139
 GameObject:
   m_ObjectHideFlags: 0
@@ -1602,6 +1608,7 @@ MonoBehaviour:
   _musicToggle: {fileID: 6813239270750040892}
   _soundToggle: {fileID: 9124552916449789124}
   _vibrationToggle: {fileID: 7381677053045644584}
+  _exitFromGameButton: {fileID: 6870366582316944473}
 --- !u!114 &4370581763131637447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1768,6 +1775,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 4616817291629179433}
   _offState: {fileID: 6391436564496717688}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6800688096023481588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2014,6 +2027,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 5233383812610261937}
   _offState: {fileID: 1524592783228467245}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7858036752615945578
 GameObject:
   m_ObjectHideFlags: 0
