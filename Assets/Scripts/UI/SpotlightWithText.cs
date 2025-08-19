@@ -19,7 +19,7 @@ namespace UI {
         protected RectTransform _shadowTransform, _shadowCenter, _headShift, _textBubble, _headFinPosAnchor;
 
         [SerializeField]
-        protected CanvasGroup _textBubbleCanvas;
+        protected CanvasGroup _mainCanvasGroup,_textBubbleCanvas;
 
         private const string SHOW = "SpotlightShow";
         private const string HIDE = "SpotlightHide";
@@ -157,6 +157,13 @@ namespace UI {
         public async UniTask HideSpotlight() {
             _animation.Play(HIDE);
             await WaitForAnimationEnded(_cts.Token);
+            _isShown = false;
+        }
+        
+        public  void HideSpotlightInstant() {
+            _mainCanvasGroup.alpha = 0;
+            _mainCanvasGroup.interactable = false;
+            _mainCanvasGroup.blocksRaycasts = false;
             _isShown = false;
         }
 

@@ -41,10 +41,9 @@ public class IconRendererManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        InitializeRenderSystem();
     }
 
-    private void InitializeRenderSystem() {
+    public void InitializeRenderSystem() {
         // Настраиваем камеру
         _renderCamera.orthographic = true;
         _renderCamera.orthographicSize = 1;
@@ -62,12 +61,11 @@ public class IconRendererManager : MonoBehaviour {
         format = TextureFormat.RGBA32;
     }
 
-    public async UniTask GetIconAsSprite(GameObject prefab, System.Action<Sprite> callback) {
+    public async UniTask<Sprite> GetIconAsSprite(GameObject prefab) {
         var texture = await GetIcon(prefab);
 
         if (texture == null) {
-            callback?.Invoke(null);
-            return;
+            return null;
         }
 
         // Создаем спрайт из текстуры
@@ -75,7 +73,7 @@ public class IconRendererManager : MonoBehaviour {
             100, // Pixels per unit
             0, SpriteMeshType.Tight);
 
-        callback?.Invoke(sprite);
+        return sprite;
     }
 
     private async UniTask<Texture2D> GetIcon(GameObject prefab) {
@@ -96,7 +94,9 @@ public class IconRendererManager : MonoBehaviour {
     }
 
     private void SetLayerRecursively(GameObject obj, int layer) {
-        if (obj == null) return;
+        if (obj == null) {
+            return;
+        }
 
         obj.layer = layer;
 
@@ -159,31 +159,27 @@ public class IconRendererManager : MonoBehaviour {
 
     private Bounds CalculateObjectBounds(GameObject obj) {
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0) return new Bounds(obj.transform.position, Vector3.one);
+        if (renderers.Length == 0) {
+            return new Bounds(obj.transform.position, Vector3.one);
+        }
 
         Bounds bounds = renderers[0].bounds;
-        foreach (Renderer r in renderers)
+        foreach (Renderer r in renderers) {
             bounds.Encapsulate(r.bounds);
+        }
 
         return bounds;
     }
 
     private async UniTask<Texture2D> RenderIconTexture(GameObject target, string itemId) {
-        await UniTask.WaitForEndOfFrame();
-        _renderCamera.enabled = true;
         _renderCamera.Render();
 
-       
-        _renderCamera.enabled = false;
-        Texture2D icon = new Texture2D(_renderTexture.width, _renderTexture.height, format, false);
-
+        var tmp = RenderTexture.active;
         RenderTexture.active = _renderTexture;
+        Texture2D icon = new Texture2D(_renderTexture.width, _renderTexture.height, format, false);
         icon.ReadPixels(new Rect(0, 0, _renderTexture.width, _renderTexture.height), 0, 0);
         icon.Apply();
-        RenderTexture.active = null;
-
-        if (!_iconCache.ContainsKey(itemId))
-            _iconCache.Add(itemId, icon);
+        RenderTexture.active = tmp;
 
         return icon;
     }

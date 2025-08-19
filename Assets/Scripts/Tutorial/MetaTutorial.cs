@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using ScriptableObjects;
@@ -200,12 +201,13 @@ public class MetaTutorial : MonoBehaviour {
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor4);
         _holeImageBuildButton.gameObject.SetActive(true);
         _tutorialStep = 5;
-
-        Invoke(nameof(SetupInventoryCell), 0.3f);
+        SetupInventoryCell();
     }
 
     private void SetupInventoryCell() {
-        _invCell = GameObject.Find("InventoryCell(Clone)")?.GetComponent<EventTrigger>();
+        var invcells = FindObjectsByType<InventoryCellView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        _invCell = invcells.First(c => c.Data.Type.CellType == CellType.Village).EventTrigger; 
         SpotlightsManager.Instance.StartFingerDragAnimation(_invCell.transform.position,
             (Vector2)Camera.main.WorldToScreenPoint(new Vector3(4f, 0, 3.5f)));
 
