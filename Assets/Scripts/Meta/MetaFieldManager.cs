@@ -191,7 +191,7 @@ public class MetaFieldManager : FieldManager {
         if (hit.collider == null || StorageManager.GameDataMain.MetaHummerCount <= 0) {
             return false;
         }
-
+Debug.Log("destroy "+hit.collider.gameObject.name);
         Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
             Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
         var cellType = _field[(int)cellPos.x, (int)cellPos.z];
@@ -201,12 +201,13 @@ public class MetaFieldManager : FieldManager {
 
         StorageManager.GameDataMain.MetaHummerCount--;
 
-        int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z];
+        int groupIndex = _groupCellIndex[(int)cellPos.x, (int)cellPos.z] - 1;
 
+        
         int figureIndex = _formGroupCellIndex[(int)cellPos.x, (int)cellPos.z];
 
-        CollectResourcesFromMark(groupIndex - 1, 1);
-        _connectedGroups[groupIndex - 1].ResourceMarkView.CollectAnimation();
+        CollectResourcesFromMark(groupIndex, 1);
+        _connectedGroups[groupIndex].ResourceMarkView.CollectAnimation();
 
         var destroyedCellsPositions = _formGroupCellPositions[figureIndex].Cells;
 
@@ -224,7 +225,7 @@ public class MetaFieldManager : FieldManager {
         DeleteFigureFormFromList(figureIndex);
         HummerDestoyPieceAnimation(destroyedCells);
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
-        RecalculateCellGroupAfterDeletePiece(groupIndex);
+        RecalculateCellGroupAfterDeletePiece(groupIndex+1);
         CalculateResourceCellsMultiplayers();
         return true;
     }
