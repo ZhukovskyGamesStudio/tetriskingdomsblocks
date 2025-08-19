@@ -263,6 +263,12 @@ public class MetaFieldManager : FieldManager {
         ShowUpgradeTileDialog(cellPos, cellConfig);
     }
 
+    public void CanInteractWithField(bool isOn) {
+        if(MetaTabsPanel.Instance.SelectedTab != MetaTab.Rule)return;
+        CanDragCamera = isOn;
+        CanOpenLockedZones = isOn;
+    }
+
     private void ShowUpgradeTileDialog(Vector2Int cellPos, MetaCellTypeInfo cell) {
         var multiplier = _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Multiplayer;
         float production = cell.AfkProduceCountPerSecond * multiplier *

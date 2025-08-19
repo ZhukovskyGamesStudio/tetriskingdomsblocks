@@ -16,54 +16,57 @@ public class MetaTabsPanel : MonoBehaviour {
     public SerializedDictionary<MetaTab, RectTransform> _tabsButtons;
 
     private Vector2 _activeSize, _notActiveSize;
-    private MetaTab _selectedTab = MetaTab.Rule;
+    public MetaTab SelectedTab { get; private set; }
     
     private void Awake() {
+        SelectedTab = MetaTab.Rule;
         Instance = this;
         _activeSize = _activeButtonExample.sizeDelta;
         _notActiveSize = _notActiveButtonExample.sizeDelta;
     }
     
     public void OpenProfile() {
-        if (_selectedTab == MetaTab.Profile) return;
+        if (SelectedTab == MetaTab.Profile) return;
 
         ChangeTab(MetaTab.Profile);
     }
 
     public void OpenShop() {
-        if (_selectedTab == MetaTab.Shop) return;
-        
+        if (SelectedTab == MetaTab.Shop) return;
+        MetaFieldManager.Instance.CanDragCamera = false;
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
         MetaUI.Instance.OpenShop(false);
         ChangeTab(MetaTab.Shop);
     }
     
     public void OpenShopOnPiece() {
-        if (_selectedTab == MetaTab.Shop) return;
+        if (SelectedTab == MetaTab.Shop) return;
         
         MetaUI.Instance.OpenShop(true);
         ChangeTab(MetaTab.Shop);
     }
     
     public void OpenRule() {
-        if (_selectedTab == MetaTab.Rule) return;
-
+        if (SelectedTab == MetaTab.Rule) return;
+        MetaFieldManager.Instance.CanDragCamera = true;
+        MetaFieldManager.Instance.CanOpenLockedZones = true;
         MetaUI.Instance.OpenRuleState();
         ChangeTab(MetaTab.Rule);
     }
     
     public void OpenEvents() {
-        if (_selectedTab == MetaTab.Events) return;
+        if (SelectedTab == MetaTab.Events) return;
 
         ChangeTab(MetaTab.Events);
     }
 
     private void ChangeTab(MetaTab newTab) {
-        _tabsButtons[_selectedTab].sizeDelta = _notActiveSize;
-        _tabsButtons[_selectedTab].GetComponent<Image>().sprite = _notActiveSprite;
+        _tabsButtons[SelectedTab].sizeDelta = _notActiveSize;
+        _tabsButtons[SelectedTab].GetComponent<Image>().sprite = _notActiveSprite;
         _tabsButtons[newTab].sizeDelta = _activeSize;
         _tabsButtons[newTab].GetComponent<Image>().sprite = _activeSprite;
 
-        _selectedTab = newTab;
+        SelectedTab = newTab;
     }
 }
 

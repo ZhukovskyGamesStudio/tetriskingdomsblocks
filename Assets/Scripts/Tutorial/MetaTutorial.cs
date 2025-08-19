@@ -142,25 +142,30 @@ public class MetaTutorial : MonoBehaviour {
     private async UniTask HideSecondStepTutorialAsync() {
         TutorialHoleHelper.DestroyHoles();
         SpotlightsManager.Instance.HideFinger();
+        Debug.Log("StatAnimation");
         bool waiting = true;
+        
         FloatingResourcesManager.Instance.OnAnimationEnd += _ => waiting = false;
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => waiting);
         FloatingResourcesManager.Instance.OnAnimationEnd -= _ => waiting = false;
-        MetaFieldManager.Instance.CanDragCamera = false;
-        MetaFieldManager.Instance.CanOpenLockedZones = false;
+        Debug.Log("EndAnimation");
         ShowThirdStepTutorial(); 
     }
 
     public void ShowThirdStepTutorial() {
-        
         _tutorialStep = 3;
         _holeImageGetFreeTetramineButton.gameObject.SetActive(true);
         MetaUI.Instance.GetPieceButtonView.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.GetPieceButtonView.GetPieceButton, _metaTutor2,
             HideThirdStepTutorial);
-
+        Invoke("LockFieldInteract", 0.1f);
         MetaUI.Instance.GetPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
+    }
+
+    private void LockFieldInteract() {
+        MetaFieldManager.Instance.CanDragCamera = false;
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
     }
 
     private void HideThirdStepTutorial() {

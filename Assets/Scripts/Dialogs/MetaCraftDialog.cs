@@ -72,6 +72,10 @@ public class MetaCraftDialog : DialogBase {
             await UniTask.WaitForEndOfFrame(token);
         }
     }
+    
+    public void ExitFromDialog() {
+        MetaFieldManager.Instance.CanInteractWithField(true);
+    }
 
     public void ClickClaimPiece() {
         ClaimAndClose().Forget();

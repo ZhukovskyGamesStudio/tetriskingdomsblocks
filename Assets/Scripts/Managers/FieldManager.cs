@@ -214,6 +214,7 @@ public class FieldManager : MonoBehaviour {
         OnCellPlacedTrigger?.Invoke();
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
         
+        //Debug.Log( cellsContainer.transform.localScale);
         cellsContainer.transform.localScale = Vector3.one;
         
         if (pieceData.Type.CellType == CellType.Dynamite) {

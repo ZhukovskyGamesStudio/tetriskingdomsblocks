@@ -27,6 +27,9 @@ public class ProfileDialog : DialogBase {
         _clickEditAvatar = dialogData.ClickEditAvatar;
     }
 
+    public void ExitFromDialog() {
+        MetaFieldManager.Instance.CanInteractWithField(true);
+    }
     public void ClickEditAvatar() {
         Hide().Forget();
         _clickEditAvatar.Invoke();

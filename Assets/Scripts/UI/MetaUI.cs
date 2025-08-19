@@ -112,7 +112,7 @@ public class MetaUI : MonoBehaviour {
                 Craft = MetaFieldManager.Instance.Craft
             }
         };
-
+        MetaFieldManager.Instance.CanInteractWithField(false);
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
@@ -123,7 +123,7 @@ public class MetaUI : MonoBehaviour {
                 RewardingPiece = rewardingPiece
             }
         };
-
+        MetaFieldManager.Instance.CanInteractWithField(false);
         DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
@@ -140,7 +140,7 @@ public class MetaUI : MonoBehaviour {
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
             }
         };
-
+        MetaFieldManager.Instance.CanInteractWithField(false);
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -193,6 +193,7 @@ public class MetaUI : MonoBehaviour {
             }
         };
 
+        MetaFieldManager.Instance.CanInteractWithField(false);
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -268,6 +269,8 @@ public class MetaUI : MonoBehaviour {
     }
 
     public void OpenSettings() {
+        MetaFieldManager.Instance.CanOpenLockedZones = false;
+        MetaFieldManager.Instance.CanDragCamera = false;
         SettingsManager.Instance.ShowMetaSettingsDialog();
     }
 

@@ -19,7 +19,9 @@ public class OverviewDialog : DialogBase {
             newResource.SetData(resource);
         }
     }
-
+    public void ExitFromDialog() {
+        MetaFieldManager.Instance.CanInteractWithField(true);
+    }
     [Serializable]
     public class Data {
         public List<OverviewResourceInfo> Resources;

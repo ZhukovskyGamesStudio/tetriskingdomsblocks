@@ -1202,6 +1202,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: -2880004254593075548}
+        m_TargetAssemblyTypeName: MetaSettingsDialog, Assembly-CSharp
+        m_MethodName: CloseSettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -2880004254593075548}
         m_TargetAssemblyTypeName: DialogBase, Assembly-CSharp
         m_MethodName: HideByButton
         m_Mode: 1
@@ -3548,6 +3560,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 5207617904084537996}
   _offState: {fileID: 8436715426465844511}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7858036752615945578
 GameObject:
   m_ObjectHideFlags: 0
@@ -3846,6 +3864,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 760461006749144071}
   _offState: {fileID: 189814503679029729}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8037661697271697227
 GameObject:
   m_ObjectHideFlags: 0
@@ -4180,6 +4204,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 7213991289762772370}
   _offState: {fileID: 6513495700146635096}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8436715426465844511
 GameObject:
   m_ObjectHideFlags: 0
@@ -4502,6 +4532,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onState: {fileID: 9219119632669261101}
   _offState: {fileID: 4967603664396228536}
+  _onTurnOn:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTurnOff:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &9219119632669261101
 GameObject:
   m_ObjectHideFlags: 0

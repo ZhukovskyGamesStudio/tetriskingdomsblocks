@@ -37,6 +37,8 @@ public class LootboxDialog : DialogBase {
         _openCts = new CancellationTokenSource();
         _openState.SetActive(true);
         _continueState.SetActive(false);
+
+        MetaFieldManager.Instance.CanInteractWithField(false);
     }
 
     public override UniTask Show(Action onClose) {
@@ -114,7 +116,7 @@ public class LootboxDialog : DialogBase {
 
         _particles.gameObject.SetActive(false);
         _continueClicked = true;
-
+        MetaFieldManager.Instance.CanInteractWithField(true);
         Close().Forget();
     }
 

@@ -30,6 +30,12 @@ public class MetaSettingsDialog : DialogBase {
         _changeVibration.Invoke(isOn);
     }
 
+    public void CloseSettings() {
+        if(MetaTabsPanel.Instance.SelectedTab != MetaTab.Rule)return;
+        
+        MetaFieldManager.Instance.CanDragCamera = true;
+        MetaFieldManager.Instance.CanOpenLockedZones = true;
+    }
     public void ToggleMusic(bool isOn) {
         _changeMusic.Invoke(isOn);
     }
