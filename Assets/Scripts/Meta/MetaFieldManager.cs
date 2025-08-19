@@ -191,7 +191,6 @@ public class MetaFieldManager : FieldManager {
         if (hit.collider == null || StorageManager.GameDataMain.MetaHummerCount <= 0) {
             return false;
         }
-Debug.Log("destroy "+hit.collider.gameObject.name);
         Vector3 cellPos = new Vector3(Mathf.RoundToInt(hit.collider.transform.localPosition.x),
             Mathf.RoundToInt(hit.collider.transform.localPosition.y), Mathf.RoundToInt(hit.collider.transform.localPosition.z));
         var cellType = _field[(int)cellPos.x, (int)cellPos.z];

@@ -213,7 +213,9 @@ public class FieldManager : MonoBehaviour {
         OnCellPlaced?.Invoke(pos, pieceData.Cells);
         OnCellPlacedTrigger?.Invoke();
         cellsContainer.transform.SetParent(FieldContainers.Instance.FieldContainer);
-
+        
+        cellsContainer.transform.localScale = Vector3.one;
+        
         if (pieceData.Type.CellType == CellType.Dynamite) {
             if (!FieldUtils.CanPlaceOnCell(_field[pos.x, pos.y])) {
                 cellsContainer.transform.position += Vector3.up;

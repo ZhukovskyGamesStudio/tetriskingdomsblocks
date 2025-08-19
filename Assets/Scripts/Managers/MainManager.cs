@@ -291,10 +291,14 @@ public class MainManager : MonoBehaviour {
     }
 
     public void GoToMeta() {
-        if (StorageManager.GameDataMain.CurMaxLevel > 2)
+      //  if (StorageManager.GameDataMain.CurMaxLevel > 2)
             SceneManager.LoadScene("MetaScene");
-        else if (StorageManager.GameDataMain.HealthCount > 0)
-            SceneManager.LoadScene("GameScene");
+            
+    }
+
+    public void RemoveHealthAndGoToMeta() {
+        RemoveHealthAfterLose();
+        GoToMeta();
     }
 
     public void IncreaseMaxLevel() {

@@ -63,7 +63,7 @@ public class SettingsManager : MonoBehaviour {
         DialogsManager.Instance.ShowDialogWithData(new DialogWithData {
             DialogType = typeof(ExitGameDialog),
             Data = new ExitGameDialog.Data {
-                ClickExit = MainManager.Instance.GoToMeta
+                ClickExit = MainManager.Instance.RemoveHealthAndGoToMeta
             }
         });
     }

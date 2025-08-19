@@ -107,7 +107,7 @@ public class DragManager : MonoBehaviour {
         }
 
         FieldManager cellManager = GetCurrentFieldManager();
-        markedCellsContainer.gameObject.SetActive(false);
+       markedCellsContainer.gameObject.SetActive(false); 
         isDragging = false;
         if (cellManager.CanPlace(data, currentCoord)) {
             isLerpingDisabled = true;
