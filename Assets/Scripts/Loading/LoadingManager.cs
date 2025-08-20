@@ -37,6 +37,7 @@ public class LoadingManager : MonoBehaviour {
             StorageManager.CreateNewSaveData();
         }
 
+        StorageManager.GameDataMain.IsWonInThisSession = false;
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
         SettingsManager.Instance.SetSettings();
     }

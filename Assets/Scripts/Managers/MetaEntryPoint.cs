@@ -5,7 +5,7 @@ using UnityEngine;
 public class MetaEntryPoint : MonoBehaviour {
     [SerializeField]
     private MetaFieldManager _metaFieldManager;
-
+    
     private void Start() {
         InitScene().Forget();
     }
@@ -34,5 +34,9 @@ public class MetaEntryPoint : MonoBehaviour {
             MetaUI.Instance.PlayButton.transform.position, MetaUI.Instance.CountersPanelView.GetMagicCubesIconPosition,
             MetaFieldManager.Instance.ChangeResorceText, StorageManager.GameDataMain.GetResource(ResourceType.MagicCube), false, true, false,
             false);
+
+        if (StorageManager.GameDataMain.IsWonInThisSession && StorageManager.GameDataMain.CurMaxLevel >= MainManager.Instance._mainConfig.LevelsToStartShowRateus) {
+            RateUsManager.Instance.TryShowDialog("enter_meta");
+        }
     }
 }

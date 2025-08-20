@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
-//TODO integrate and uncomment
-/*using Google.Play.Review;
+using Google.Play.Review;
 using UnityEngine;
 
 public class MadPixelRateUsProvider : IRateUsProvider {
@@ -30,4 +29,4 @@ public class MadPixelRateUsProvider : IRateUsProvider {
             Debug.LogError(launchFlowOperation.Error.ToString());
         }
     }
-}*/
+}

@@ -11,7 +11,7 @@ public class GameDataForSave {
     public int CurMaxLevel;
     public SerializedDictionary<ResourceType, float> ResourcesCount;
     public SerializedDictionary<ResourceType, bool> SeenResource;
-    
+
     public List<int> RemainedLockedZones;
     public bool FieldSaveIsCreated; //change code with this bool
     public int HealthCount;
@@ -22,18 +22,20 @@ public class GameDataForSave {
     public int FirstAttemptWinLevelsCount;
 
     public bool FirstLaunch = true;
+    
+    public bool IsWonInThisSession = false;
+
     public bool WasRated = false;
     public bool HasNoAds = false;
     public bool IsIntersUnlocked = false;
-    
+
+    public string LastTimeRateUsShowed = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastTimeRateUsShowedDateTime => DateTime.Parse(LastTimeRateUsShowed, CultureInfo.InvariantCulture);
-    public string LastTimeRateUsShowed;
-    
+
     public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
-    public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};
+    public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData> { };
     public MetaFieldData[] FieldRows;
-    
-    
+
     public string LastHealthRecoveryTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastHealthRecoveryTimeDateTime => DateTime.Parse(LastHealthRecoveryTime, CultureInfo.InvariantCulture);
 
@@ -42,9 +44,9 @@ public class GameDataForSave {
 
     public string LastGetPieceTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastGetPieceTimeDateTime => DateTime.Parse(LastGetPieceTime, CultureInfo.InvariantCulture);
-    
+
     public int MetaHummerCount = 100000;
-    
+
     public SettingsData SettingsData;
 
     public GameDataForSave() {
@@ -62,12 +64,12 @@ public class GameDataForSave {
             { ResourceType.BombBooster, 0 }
         };
         SeenResource = new SerializedDictionary<ResourceType, bool>() {
-            {ResourceType.Wood, false}, 
-            {ResourceType.Rocks, false}, 
-            {ResourceType.Food, false}, 
-            {ResourceType.MagicCube, false}, 
-            {ResourceType.Coins, false}, 
-            {ResourceType.Metal, false}
+            { ResourceType.Wood, false },
+            { ResourceType.Rocks, false },
+            { ResourceType.Food, false },
+            { ResourceType.MagicCube, false },
+            { ResourceType.Coins, false },
+            { ResourceType.Metal, false }
         };
         SettingsData = new SettingsData { IsSoundOn = true, IsMusicOn = true, IsVibrationOn = true };
         RemainedLockedZones = new List<int>() {
@@ -102,11 +104,10 @@ public class GameDataForSave {
     public void SetResource(ResourceType resource, float count) {
         AddResource(resource, count - ResourcesCount[resource]);
     }
-    
+
     public float GetResource(ResourceType resource) => ResourcesCount[resource];
 
     public Dictionary<ResourceType, float> GetAllResources() => ResourcesCount;
-
 }
 
 [Serializable]
@@ -133,15 +134,14 @@ public struct FormPositionsData {
         FormCoordinates = formCoordinates;
     }
 }
+
 [Serializable]
 public struct FormAndCellTypeData {
     public CellType FormCellType;
     public string FormName;
 
-    public FormAndCellTypeData(string formName,CellType formCellType) {
+    public FormAndCellTypeData(string formName, CellType formCellType) {
         FormName = formName;
         FormCellType = formCellType;
     }
-    
-    
 }

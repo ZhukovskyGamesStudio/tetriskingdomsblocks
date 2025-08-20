@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 public class CollectAllDialog : DialogBase {
     public void CollectAll() {
@@ -9,7 +8,8 @@ public class CollectAllDialog : DialogBase {
 
     public void CollectAllWithAds() {
         Hide().Forget();
-        AdsManager.Instance.ShowRewarded(CollectAllWithMultiplier).Forget();
+        ZhukovskyAdsManager.Instance.AdsProvider.ShowRewardedAd(AdsIds.AdsTypesIds[AdsTypes.DoubleAfkResources], CollectAllWithMultiplier,
+            null);
     }
 
     private void CollectAllWithMultiplier() {
