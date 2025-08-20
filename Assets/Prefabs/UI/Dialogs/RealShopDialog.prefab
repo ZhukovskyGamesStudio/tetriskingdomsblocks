@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 1154907706075847291}
   - component: {fileID: 2208401345764823798}
   - component: {fileID: 8003583672043925418}
+  - component: {fileID: 4136704075502741524}
   m_Layer: 5
   m_Name: OffersContainer
   m_TagString: Untagged
@@ -184,6 +185,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4136704075502741524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867591884591940360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3e5d668a2a33a41a50ff799567b8cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1209195069144379792
 GameObject:
   m_ObjectHideFlags: 0
