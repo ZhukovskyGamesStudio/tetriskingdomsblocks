@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "appsflyer-unity-plugin": {
+      "version": "https://github.com/AppsFlyerSDK/appsflyer-unity-plugin.git#v6.15.3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e1efa6ec2e5559e48c589413ec6d02ee43d98bbb"
+    },
     "com.coffee.ui-particle": {
       "version": "https://github.com/mob-sakai/ParticleEffectForUGUI.git",
       "depth": 0,
@@ -36,6 +43,13 @@
         "com.esotericsoftware.spine.spine-csharp": "4.2.0"
       },
       "hash": "0d356d3a0c9eed6be84bd492491b14fda68ded79"
+    },
+    "com.google.external-dependency-manager": {
+      "version": "1.2.186",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
     },
     "com.unity.2d.animation": {
       "version": "10.2.1",
@@ -251,6 +265,15 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "io.appmetrica.analytics": {
+      "version": "https://github.com/appmetrica/appmetrica-unity-plugin.git#v6.5.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.google.external-dependency-manager": "1.2.183"
+      },
+      "hash": "49ca6c4c338c0913b067e3e8aa0ee45a54412a4a"
     },
     "com.unity.modules.androidjni": {
       "version": "1.0.0",
