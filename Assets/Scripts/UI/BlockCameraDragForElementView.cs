@@ -1,16 +1,15 @@
 using UnityEngine;
-
-public class BlockCameraDragForElementView : MonoBehaviour
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+public class BlockCameraDragForElementView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        
+        MetaFieldManager.Instance.CanDragCamera = false;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    public void OnPointerUp(PointerEventData eventData)
     {
-        
+        MetaFieldManager.Instance.CanDragCamera = true;
     }
 }
