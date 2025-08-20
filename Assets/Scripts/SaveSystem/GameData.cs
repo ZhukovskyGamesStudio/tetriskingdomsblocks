@@ -89,7 +89,6 @@ public class GameDataForSave {
         }
 
         ResourcesCount[resource] += count;
-        Debug.Log(resource + "    " + ResourcesCount[resource]);
     }
 
     public void SetResource(ResourceType resource, float count) {

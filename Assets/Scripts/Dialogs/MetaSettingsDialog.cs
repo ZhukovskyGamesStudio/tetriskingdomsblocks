@@ -32,9 +32,10 @@ public class MetaSettingsDialog : DialogBase {
 
     public void CloseSettings() {
         if(MetaTabsPanel.Instance.SelectedTab != MetaTab.Rule)return;
-        
+
         MetaFieldManager.Instance.CanDragCamera = true;
-        MetaFieldManager.Instance.CanOpenLockedZones = true;
+        if (!MetaUI.Instance.IsBuildState)
+            MetaFieldManager.Instance.CanOpenLockedZones = true;
     }
     public void ToggleMusic(bool isOn) {
         _changeMusic.Invoke(isOn);
