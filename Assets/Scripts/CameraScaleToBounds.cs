@@ -64,6 +64,11 @@ public class CameraScaleToBounds : MonoBehaviour {
         }
     }
 
+    public void MoveCameraToNeededCell(Vector2 cell) {
+        var needCameraPos = new Vector3(cell.x,0,cell.y) +_shiftFromTargetCell;
+        MetaFieldManager.Instance.CameraContainer.position = new Vector3(needCameraPos.x, MetaFieldManager.Instance.CameraContainer.position.y, needCameraPos.z) ;
+
+    }
     public void MoveCameraToStartingPosition() {
        
         var needCameraPos = new Vector3(5,0,5) + _shiftFromTargetCell;

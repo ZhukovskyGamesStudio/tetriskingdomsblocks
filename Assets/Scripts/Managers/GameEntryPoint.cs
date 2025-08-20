@@ -153,6 +153,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     private void AddMoves() {
         _gameData.MovesLeft += 5;
+        GameUI.Instance.GoalView.SetMovesCount(_gameData.MovesLeft);
     }
 
     public void RejectMoves() {
@@ -168,7 +169,6 @@ public class GameEntryPoint : MonoBehaviour {
         if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves ) {
             return true;
         }
-Debug.Log(!_gameFieldManager.CanPlaceAnyPiece() + " canPlace");
         return !_gameFieldManager.CanPlaceAnyPiece();
     }
 

@@ -292,7 +292,14 @@ public class MetaFieldManager : FieldManager {
                 CanUpgrade = CanUpgrade
             }
         };
+        Vector2 needPosToCamera = Vector2.zero;
+        foreach ( var cellPosToCamera in _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells) {
+            needPosToCamera += cellPosToCamera;
+        }
 
+        needPosToCamera /= _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
+        CameraScaleToBounds.Instance.MoveCameraToNeededCell(needPosToCamera);
+        
         if (FieldUtils.IsSawmillCell(cell.CellType)) {
             UnmarkLockedGroup();
             Vector2Int[] checkedCellsPositions = {
