@@ -15,7 +15,7 @@ public class AdminManager : MonoBehaviour {
 
     [SerializeField]
     private Toggle _infiniteHpToggle;
-    
+
     [SerializeField]
     private MainManagerConfig _mainManagerConfig;
 
@@ -28,7 +28,7 @@ public class AdminManager : MonoBehaviour {
     private Toggle _infiniteBoostersToggle;
 
     public bool IsInfiniteBoosters = true;
-    
+
     [SerializeField]
     private Toggle _skipTutorialsToggle;
 
@@ -79,6 +79,7 @@ public class AdminManager : MonoBehaviour {
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         SceneManager.LoadScene("MetaScene");
     }
+
     public void RemoveOneHealthAdminButton() {
         if (StorageManager.GameDataMain.HealthCount <= 0) return;
         MainManager.Instance.RemoveHealthAfterLose();
@@ -135,8 +136,18 @@ public class AdminManager : MonoBehaviour {
     public void SetInfiniteBoosters(bool isInfiniteBoosters) {
         IsInfiniteBoosters = isInfiniteBoosters;
     }
-    
+
     public void SetTutorialSkip(bool isSkipTutorialsBoosters) {
         IsSkipTutorials = !IsSkipTutorials;
+    }
+
+    private bool _isDisabled;
+
+    public void SetUICanvasDisabled(bool isDisabled) {
+        _isDisabled = isDisabled;
+    }
+
+    private void Update() {
+        GameObject.FindGameObjectsWithTag("UICanvas").ToList().ForEach(obj => obj.GetComponent<CanvasGroup>().alpha = _isDisabled ? 0 : 1);
     }
 }

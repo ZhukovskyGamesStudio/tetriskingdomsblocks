@@ -13809,9 +13809,10 @@ GameObject:
   - component: {fileID: 1212849845}
   - component: {fileID: 1212849844}
   - component: {fileID: 1212849848}
+  - component: {fileID: 1212849849}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: UICanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13946,6 +13947,18 @@ MonoBehaviour:
   <BuyPieceButton>k__BackingField: {fileID: 612089819}
   <Tabs>k__BackingField: {fileID: 1966804082}
   IsBuildState: 0
+--- !u!225 &1212849849
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212849843}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1222653061
 GameObject:
   m_ObjectHideFlags: 0
