@@ -91,6 +91,8 @@ public class MetaCraftDialog : DialogBase {
             .AsyncWaitForCompletion();
 
         CloseInstant();
+        
+        MetaFieldManager.Instance.CanInteractWithField(true);
     }
 
     [Serializable]
