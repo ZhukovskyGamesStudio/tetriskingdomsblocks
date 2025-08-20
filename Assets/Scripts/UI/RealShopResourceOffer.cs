@@ -17,7 +17,8 @@ public class RealShopResourceOffer : MonoBehaviour
     public void SetData(ResourceOfferData data, Action<ResourceOfferData> buyResource) {
         _offerData = data;
         
-        _priceText.text = data.Price + " RUB";
+        _priceText.text = InAppsManager.Instance.InAppsProvider.GetPrice(data.Type);
+        
         _countText.text = "x" + data.ResourceCount;
         _offerIcon.sprite = data.Icon;
 

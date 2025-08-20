@@ -26,7 +26,7 @@ public class RealShopOffer : MonoBehaviour {
     public void SetData(SpecialOfferData data, Action<SpecialOfferData> onBuy) {
         _specialOfferData = data;
         _buyClick = onBuy;
-        _priceText.text = data.Price + " RUB";
+        _priceText.text = InAppsManager.Instance.InAppsProvider.GetPrice(data.Type);
         //_offerIcon.sprite = data.Icon;
 
         foreach (var resource in data.Resources) {

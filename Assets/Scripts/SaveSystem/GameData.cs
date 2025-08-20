@@ -20,6 +20,14 @@ public class GameDataForSave {
     public int ProfileAvatar;
     public bool IsFirstAttemptWin;
     public int FirstAttemptWinLevelsCount;
+
+    public bool FirstLaunch = true;
+    public bool WasRated = false;
+    public bool HasNoAds = false;
+    public bool IsIntersUnlocked = false;
+    
+    public DateTime LastTimeRateUsShowedDateTime => DateTime.Parse(LastTimeRateUsShowed, CultureInfo.InvariantCulture);
+    public string LastTimeRateUsShowed;
     
     public List<FormPositionsData> FigureFormsData = new List<FormPositionsData>();
     public List<FormAndCellTypeData> InventoryFigures = new List<FormAndCellTypeData>{};

@@ -63,6 +63,7 @@ public class GameUI : MonoBehaviour {
                 Balance = Mathf.FloorToInt(StorageManager.GameDataMain.GetResource(ResourceType.Coins)),
                 ClickClose = ShowOutOfMovesDialog,
                 BuyResource = MainManager.Instance.BuyMetaResource,
+                BuyOffer = MainManager.Instance.BuyBundleOffer,
                 IsCore = true
             }
         };
