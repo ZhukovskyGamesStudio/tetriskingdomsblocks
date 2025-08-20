@@ -144,7 +144,6 @@ public class MainManager : MonoBehaviour {
 
     private void ClaimOfferRewards(SerializedDictionary<ResourceType, int> rewards, Vector2 startPosition) {
         foreach (var kvp in rewards) {
-            Debug.Log(kvp.Key + " "+ kvp.Value);
             switch (kvp.Key) {
                 case ResourceType.Coins:
                     if (MetaFieldManager.Instance != null) {
@@ -158,11 +157,11 @@ public class MainManager : MonoBehaviour {
                 case ResourceType.Health:
                     StorageManager.GameDataMain.HealthCount += kvp.Value;
                     break;
-                case ResourceType.ShuffleBooster:
-                    AddBoostersToInventory(startPosition, kvp);
-                    break;
                 case ResourceType.MagicCube:
                     StorageManager.GameDataMain.AddResource(ResourceType.MagicCube, kvp.Value);
+                    break;
+                case ResourceType.ShuffleBooster:
+                    AddBoostersToInventory(startPosition, kvp);
                     break;
                 case ResourceType.HammerBooster:
                     AddBoostersToInventory(startPosition, kvp);
@@ -181,7 +180,7 @@ public class MainManager : MonoBehaviour {
                     break;
             }
         }
-        
+
         StorageManager.SaveGame();
     }
 

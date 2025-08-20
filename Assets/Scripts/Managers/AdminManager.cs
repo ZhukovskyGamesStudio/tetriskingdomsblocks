@@ -90,10 +90,10 @@ public class AdminManager : MonoBehaviour {
     }
 
     public void AddBoosters() {
-        StorageManager.GameDataMain.RandomFieldCount += 5;
-        StorageManager.GameDataMain.HummerCount += 5;
-        StorageManager.GameDataMain.RotatePieceCount += 5;
-        StorageManager.GameDataMain.DynamiteCount += 5;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.ShuffleBooster] += 5;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.RotateBooster] += 5;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.HammerBooster] += 5;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.BombBooster] += 5;
 
         StorageManager.GameDataMain.MetaHummerCount += 5;
 

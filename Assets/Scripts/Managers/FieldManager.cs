@@ -101,7 +101,7 @@ public class FieldManager : MonoBehaviour {
     private async void TryPlaceDynamite() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _groundMask);
 
-        if (hit.collider == null || StorageManager.GameDataMain.DynamiteCount <= 0) {
+        if (hit.collider == null || StorageManager.GameDataMain.ResourcesCount[ResourceType.BombBooster] <= 0) {
             return;
         }
 

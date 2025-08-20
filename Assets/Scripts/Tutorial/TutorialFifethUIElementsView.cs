@@ -2,7 +2,7 @@ using UnityEngine.UI;
 
 public class TutorialHammerView : BoosterTutorialView {
     protected override void Init() {
-        StorageManager.GameDataMain.HummerCount = 5;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.HammerBooster] = 5;
 
         if (BoostersManager.Instance != null) {
             GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);

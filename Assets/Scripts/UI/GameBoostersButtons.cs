@@ -67,19 +67,19 @@ public class GameBoostersButtons : MonoBehaviour {
 
     public void UpdateCounters(GameDataForSave data) {
         if (_randomFieldButton.enabled) {
-            _randomFieldCountText.text = data.RandomFieldCount.ToString();
+            _randomFieldCountText.text = data.ResourcesCount[ResourceType.ShuffleBooster].ToString();
         }
 
         if (_dinamyteButton.enabled) {
-            _dinamyteCountText.text = data.DynamiteCount.ToString();
+            _dinamyteCountText.text = data.ResourcesCount[ResourceType.BombBooster].ToString();
         }
 
         if (_hummerButton.enabled) {
-            _hummerCountText.text = data.HummerCount.ToString();
+            _hummerCountText.text = data.ResourcesCount[ResourceType.HammerBooster].ToString();
         }
 
         if (_rotatePieceButton.enabled) {
-            _rotatePieceCountText.text = data.RotatePieceCount.ToString();
+            _rotatePieceCountText.text = data.ResourcesCount[ResourceType.RotateBooster].ToString();
         }
     }
 }

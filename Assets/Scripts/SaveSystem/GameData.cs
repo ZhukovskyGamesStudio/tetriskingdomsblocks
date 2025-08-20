@@ -35,11 +35,6 @@ public class GameDataForSave {
     public string LastGetPieceTime = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastGetPieceTimeDateTime => DateTime.Parse(LastGetPieceTime, CultureInfo.InvariantCulture);
     
-
-    public int DynamiteCount;
-    public int RandomFieldCount;
-    public int RotatePieceCount;
-    public int HummerCount;
     public int MetaHummerCount = 100000;
     
     public SettingsData SettingsData;
@@ -94,6 +89,7 @@ public class GameDataForSave {
         }
 
         ResourcesCount[resource] += count;
+        Debug.Log(resource + "    " + ResourcesCount[resource]);
     }
 
     public void SetResource(ResourceType resource, float count) {

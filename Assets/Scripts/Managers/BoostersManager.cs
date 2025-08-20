@@ -62,7 +62,7 @@ public class BoostersManager : MonoBehaviour {
         RotationState = RotateBoosterStates.LockRotate;
         _currentPieceView = null;
 
-        StorageManager.GameDataMain.RotatePieceCount--;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.RotateBooster]--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
     }
 
@@ -133,7 +133,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void BreakCellWithHammer() {
-        StorageManager.GameDataMain.HummerCount--;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.HammerBooster]--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         GameFieldManager.Instance.SetDestroyPieceMode(false);
         _gameBoostersPanels.CancelHammer();
@@ -163,7 +163,7 @@ public class BoostersManager : MonoBehaviour {
         if (cellsToPlace.Count == 0) {
             return;
         }
-        StorageManager.GameDataMain.RandomFieldCount--;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.ShuffleBooster]--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         List<Vector2Int> emptyCells = new List<Vector2Int>();
 
@@ -239,7 +239,7 @@ public class BoostersManager : MonoBehaviour {
         Instantiate(_dynamiteBoomFx, dynamite.transform.position, Quaternion.identity);
         Destroy(dynamite.gameObject);
 
-        StorageManager.GameDataMain.DynamiteCount--;
+        StorageManager.GameDataMain.ResourcesCount[ResourceType.BombBooster]--;
         GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
 
         OnBoosterEndedWorking?.Invoke();
@@ -266,22 +266,22 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public bool CanShuffle() {
-        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel, StorageManager.GameDataMain.RandomFieldCount);
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RandomUnlockLevel, StorageManager.GameDataMain.ResourcesCount[ResourceType.ShuffleBooster]);
     }
 
     public bool CanDynamite() {
-        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel, StorageManager.GameDataMain.DynamiteCount);
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.DynamiteUnlockLevel, StorageManager.GameDataMain.ResourcesCount[ResourceType.BombBooster]);
     }
 
     public bool CanHammer() {
-        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.HammerUnlockLevel, StorageManager.GameDataMain.HummerCount);
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.HammerUnlockLevel, StorageManager.GameDataMain.ResourcesCount[ResourceType.HammerBooster]);
     }
 
     public bool CanRotate() {
-        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel, StorageManager.GameDataMain.RotatePieceCount);
+        return CanUseBooster(ConfigsManager.Instance.BoostersConfig.RotateUnlockLevel, StorageManager.GameDataMain.ResourcesCount[ResourceType.RotateBooster]);
     }
 
-    private bool CanUseBooster(int unlockLvl, int hasAmount) {
+    private bool CanUseBooster(int unlockLvl, float hasAmount) {
         if (_gameData.IsGameEnded) {
             return false;
         }
@@ -290,6 +290,7 @@ public class BoostersManager : MonoBehaviour {
             return false;
         }
 
+        hasAmount = (int)hasAmount;
         return hasAmount > 0;
     }
 }

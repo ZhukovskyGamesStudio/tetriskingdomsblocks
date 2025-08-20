@@ -114,18 +114,20 @@ public class GameEntryPoint : MonoBehaviour {
         _gameData.ResourceTypesForTasks.Add(task.NeedResource);
     }
 
-    private void CheckGameGoal() {
+    public void CheckGameGoal() {
+        Debug.Log(FloatingResourcesManager.Instance._currentActiveAnimationsCount + " anim count");
+        if (UltaManager.Instance._ultimateIsActive || FloatingResourcesManager.Instance._currentActiveAnimationsCount > 0) return;
         TaskUtils.CheckResourceCountForTasks(_gameData);
-
+        Debug.Log("1");
         if(CheckWinWithAction())
             return;
-
+        Debug.Log("2");
         if (CheckLose() && !_gameData.IsGameEnded) {
             DragManager.IsDragDisabled = true;
             Lose();
             return;
         }
-
+        Debug.Log("3");
         if (_gameData.MovesLeft <= 0 && !_gameData.RejectedBuyMoves) {
             GameUI.Instance.ShowOutOfMovesDialog();
         }
@@ -170,7 +172,7 @@ public class GameEntryPoint : MonoBehaviour {
         if (_gameData.MovesLeft <= 0 && _gameData.RejectedBuyMoves ) {
             return true;
         }
-
+Debug.Log(!_gameFieldManager.CanPlaceAnyPiece() + " canPlace");
         return !_gameFieldManager.CanPlaceAnyPiece();
     }
 

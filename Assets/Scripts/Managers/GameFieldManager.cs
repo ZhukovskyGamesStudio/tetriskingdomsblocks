@@ -58,7 +58,7 @@ public class GameFieldManager : FieldManager {
 
     protected override bool TryDestroyPiece() {
         Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, _pieceMask);
-        if (hit.collider == null || StorageManager.GameDataMain.HummerCount <= 0) {
+        if (hit.collider == null || StorageManager.GameDataMain.ResourcesCount[ResourceType.HammerBooster] <= 0) {
             return false;
         }
 

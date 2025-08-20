@@ -18,7 +18,13 @@ MonoBehaviour:
   CellName: Metal mine
   ChanceToSpawn: 1
   AfkResourceType: 4
-  MaxAfkCapacity: 400
-  AfkProduceCountPerSecond: 1
-  UpgradeCost: 4
+  MaxAfkCapacity: 200
+  AfkProduceCountPerSecond: 0.006944
   UpgradeCellType: 304
+  UpgradeCost:
+  - ResourceType: 1
+    Cost: 200
+  - ResourceType: 2
+    Cost: 300
+  - ResourceType: 3
+    Cost: 250
