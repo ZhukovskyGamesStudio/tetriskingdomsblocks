@@ -15,7 +15,7 @@ public class ShopOffersConfig : ScriptableObject {
 
 [Serializable]
 public class SpecialOfferData {
-    public float Price;
+    public InApsTypes Type;
     [SerializedDictionary]
     public SerializedDictionary<ResourceType, int> Resources;
 
@@ -25,9 +25,9 @@ public class SpecialOfferData {
 [Serializable]
 public class ResourceOfferData {
     public Sprite Icon;
-    public float Price;
     public float ImageScale = 1;
     public ResourceType Resource;
+    public InApsTypes Type;
     public int ResourceCount;
 }
 

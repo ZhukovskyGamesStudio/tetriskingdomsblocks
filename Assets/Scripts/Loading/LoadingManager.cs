@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Abstract;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZhukovskyGamesPlugin;
 
 public class LoadingManager : MonoBehaviour {
     public bool FirstLoad { get; set; }
@@ -17,9 +21,14 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void Start() {
-        bool isNewGame = !StorageManager.IsTutorialCompleted();
+        LoadingAsync().Forget();
+    }
+
+    private async UniTask LoadingAsync() {
         InitManagers();
-        LoadAndChangeScene();
+        await LoadManagers();
+        SendFirstLaunchEvent();
+        await LoadAndChangeScene();
     }
 
     private void InitManagers() {
@@ -27,11 +36,34 @@ public class LoadingManager : MonoBehaviour {
             Debug.Log("Tutorial is not completed, recreating save");
             StorageManager.CreateNewSaveData();
         }
+
         BackgroundMusicManager.Instance.PlayEndlessMusic().Forget();
         SettingsManager.Instance.SetSettings();
     }
 
-    private async void LoadAndChangeScene() {
+    private async UniTask LoadManagers() {
+        CustomMonoBehaviour[] preloadedManagers = FindObjectsByType<CustomMonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            .OrderBy(m => m.InitPriority).ToArray();
+
+        foreach (CustomMonoBehaviour manager in preloadedManagers) {
+            if (manager is IPreloadable preloadable) {
+                preloadable.Init();
+            }
+        }
+
+        await UniTask.WaitUntil(() => ZhukovskyAdsManager.Instance.AdsProvider.IsAdsReady());
+    }
+
+    private static void SendFirstLaunchEvent() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("technical", new Dictionary<string, object> {
+            { "step_name", "01_gameLaunch" },
+            { "first_start", StorageManager.GameDataMain.FirstLaunch }
+        }, true);
+        StorageManager.GameDataMain.FirstLaunch = false;
+        StorageManager.SaveGame();
+    }
+
+    private async UniTask LoadAndChangeScene() {
         IsLoaded = true;
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));

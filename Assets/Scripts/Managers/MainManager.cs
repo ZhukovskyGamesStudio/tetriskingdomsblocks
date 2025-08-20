@@ -106,17 +106,20 @@ public class MainManager : MonoBehaviour {
     }
 
     public void BuyMetaResource(ResourceOfferData data) {
-      
-        MetaTabsPanel.Instance.OpenRule();
-        ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() {
-            {data.Resource, data.ResourceCount}
+        InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
+            MetaTabsPanel.Instance.OpenRule();
+            ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() {
+                { data.Resource, data.ResourceCount }
+            });
         });
     }
 
     public void BuyBundleOffer(SpecialOfferData data) {
-    
-        MetaTabsPanel.Instance.OpenRule();
-        ShowOfferRewardDialog(data.Resources);
+        InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
+            MetaTabsPanel.Instance.OpenRule();
+            ShowOfferRewardDialog(data.Resources);
+        });
+
     }
 
     public void BuyPiece(int cost) {
