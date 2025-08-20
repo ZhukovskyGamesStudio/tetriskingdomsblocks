@@ -52,6 +52,11 @@ public class MetaTutorial : MonoBehaviour {
         }
     }
 
+    private void Update() {
+       if(_tutorialStep != 1)  MetaFieldManager.Instance.CanOpenLockedZones = false;
+        MetaFieldManager.Instance.CanDragCamera = false;
+    }
+
     private void DisableUI() {
         MetaUI.Instance.CraftButton.gameObject.SetActive(false);
         MetaUI.Instance.ProfileButton.gameObject.SetActive(false);
