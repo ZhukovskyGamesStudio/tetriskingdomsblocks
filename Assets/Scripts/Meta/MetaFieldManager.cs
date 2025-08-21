@@ -296,7 +296,6 @@ public class MetaFieldManager : FieldManager {
         foreach ( var cellPosToCamera in _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells) {
             needPosToCamera += cellPosToCamera;
         }
-
         needPosToCamera /= _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count;
         CameraScaleToBounds.Instance.MoveCameraToNeededCell(needPosToCamera);
         

@@ -19,9 +19,7 @@ public class CameraScaleToBounds : MonoBehaviour {
     private float _aspectRatio = -1;
 
     public static CameraScaleToBounds Instance;
-
-    [SerializeField]
-    private Vector3 _shiftFromTargetCell;
+    private Vector3 _shiftFromTargetCell = new (-3f, 0, 4f);
 
     public bool IsInited { get; private set; }
     private bool _initStarted;
