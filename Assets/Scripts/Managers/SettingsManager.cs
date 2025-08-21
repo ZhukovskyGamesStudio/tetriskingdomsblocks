@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour {
@@ -40,8 +41,8 @@ public class SettingsManager : MonoBehaviour {
                 IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
                 IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn,
                 IsNotificationsOn = true,
-                ClickSupport = () => print("support clicked"), // TODO: убрать заглушки
-                ClickTerms = () => print("terms clicked")
+                ClickSupport = () => throw new NotImplementedException(), // TODO: убрать заглушки
+                ClickTerms = () => Application.OpenURL("https://madpixel.dev/privacy.html")
             }
         };
 

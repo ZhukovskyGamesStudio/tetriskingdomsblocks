@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using MadPixel.InApps;
 using UnityEngine.Purchasing;
 
-public class MadPixelInAppProvider : IInAppsProvider{
-    
+public class MadPixelInAppProvider : IInAppsProvider {
     private readonly Dictionary<string, Action> _successCallbacks = new Dictionary<string, Action>();
-    
+
     public void Init() {
         MobileInAppPurchaser.Instance.OnPurchaseResult += OnPurchaseResult;
         MobileInAppPurchaser.Instance.Init();
     }
 
-    public string GetPrice(string name) {
-        Product product = MobileInAppPurchaser.Instance.GetProduct(name);
+    public string GetPrice(InApsTypes name) {
+        string nameS = InApsIds.InAps[name];
+        Product product = MobileInAppPurchaser.Instance.GetProduct(nameS);
         if (product != null) {
             return product.metadata.localizedPriceString;
         }
@@ -22,19 +22,20 @@ public class MadPixelInAppProvider : IInAppsProvider{
         return "";
     }
 
-    public void Buy(string name, Action onSuccess) {
-        if (!_successCallbacks.TryAdd(name, onSuccess)) {
-            _successCallbacks[name] = onSuccess;
+    public void Buy(InApsTypes name, Action onSuccess) {
+        string nameS = InApsIds.InAps[name];
+        if (!_successCallbacks.TryAdd(nameS, onSuccess)) {
+            _successCallbacks[nameS] = onSuccess;
         }
-        
-        MobileInAppPurchaser.BuyProduct(name);
+
+        MobileInAppPurchaser.BuyProduct(nameS);
     }
 
     private void OnPurchaseResult(Product product) {
         if (product == null) {
             return;
-        } 
-        
+        }
+
         string id = product.definition.id;
 
         if (_successCallbacks.TryGetValue(id, out Action callback)) {

@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zhukovsky;
 
 public class RecoveryHealthDialog : DialogBase
 {

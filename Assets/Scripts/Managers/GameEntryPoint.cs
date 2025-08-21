@@ -192,6 +192,7 @@ public class GameEntryPoint : MonoBehaviour {
     private void SaveWinGame() {
         if (StorageManager.GameDataMain.IsFirstAttemptWin) {
             StorageManager.GameDataMain.FirstAttemptWinLevelsCount++;
+            StorageManager.GameDataMain.IsWonInThisSession = true;
         }
         StorageManager.GameDataMain.IsFirstAttemptWin = true;
         MainManager.Instance.IncreaseMaxLevel();
