@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 60554530}
   - component: {fileID: 60554532}
   - component: {fileID: 60554531}
+  - component: {fileID: 60554533}
   m_Layer: 5
   m_Name: Handle
   m_TagString: Untagged
@@ -627,7 +628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.20754719, g: 0.17652635, b: 0.13999645, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -651,6 +652,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 60554529}
   m_CullTransparentMesh: 1
+--- !u!114 &60554533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60554529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8533d0d7262f12e46839ad124fd3ef62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &77372633
 GameObject:
   m_ObjectHideFlags: 0
@@ -16720,6 +16733,7 @@ GameObject:
   - component: {fileID: 1769106114}
   - component: {fileID: 1769106113}
   - component: {fileID: 1769106115}
+  - component: {fileID: 1769106116}
   m_Layer: 5
   m_Name: InventoryScroll
   m_TagString: Untagged
@@ -16816,6 +16830,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1769106116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769106110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8533d0d7262f12e46839ad124fd3ef62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1829324575
 GameObject:
   m_ObjectHideFlags: 0
