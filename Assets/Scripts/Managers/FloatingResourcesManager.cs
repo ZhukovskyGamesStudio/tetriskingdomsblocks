@@ -70,7 +70,6 @@ public class FloatingResourcesManager : MonoBehaviour {
     private void CheckForGameLose() {
         _currentActiveAnimationsCount--;
         if (GameFieldManager.Instance != null && _currentActiveAnimationsCount==0 ) {
-            Debug.Log("Check for lose in fr manager");
             GameEntryPoint.Instance.CheckGameGoal();
         }
     }

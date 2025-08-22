@@ -147,14 +147,12 @@ public class MetaTutorial : MonoBehaviour {
     private async UniTask HideSecondStepTutorialAsync() {
         TutorialHoleHelper.DestroyHoles();
         SpotlightsManager.Instance.HideFinger();
-        Debug.Log("StatAnimation");
         bool waiting = true;
         
         FloatingResourcesManager.Instance.OnAnimationEnd += _ => waiting = false;
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         await UniTask.WaitWhile(() => waiting);
         FloatingResourcesManager.Instance.OnAnimationEnd -= _ => waiting = false;
-        Debug.Log("EndAnimation");
         ShowThirdStepTutorial(); 
     }
 
