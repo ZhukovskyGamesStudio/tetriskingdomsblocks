@@ -67,6 +67,7 @@ public class MetaFieldManager : FieldManager {
     private List<GameObject> _markedLockedCells = new();
     public bool CanOpenLockedZones = true;
     public bool CanDragCamera = true;
+    public bool DraggingInventoryScroll = false;
     private bool _isDragging;
 
     protected override void Awake() {
@@ -129,6 +130,7 @@ public class MetaFieldManager : FieldManager {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
             _isDragging = true;
+            DraggingInventoryScroll = false;
         }
 
         if (Input.GetMouseButtonUp(0)) {
@@ -146,7 +148,7 @@ public class MetaFieldManager : FieldManager {
             _nowCellUnlockUIWasClose = false;
         }
 
-        if (Input.GetMouseButton(0) && CanDragCamera && _isDragging && _currentDraggedPieceButton == null) {
+        if (Input.GetMouseButton(0) && !DraggingInventoryScroll && CanDragCamera && _isDragging && _currentDraggedPieceButton == null) {
             DragCamera();
         }
     }
