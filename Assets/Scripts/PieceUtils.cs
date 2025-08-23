@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public static class PieceUtils {
     public static PieceData GetNewMetaPiece(CellTypeInfo guaranteed) {
-        var cellsToSpawn = MetaFieldManager.Instance._currentCellsToSpawn;
-        var chancesToSpawn = MetaFieldManager.Instance.CellsChanceToSpawn;
+        var cellsToSpawn = MetaFieldManager.Instance != null? MetaFieldManager.Instance._currentCellsToSpawnInMeta : GameFieldManager.Instance._currentCellsToSpawnInMeta;
+        var chancesToSpawn = MetaFieldManager.Instance != null?MetaFieldManager.Instance.CellsChanceToSpawnInMeta:GameFieldManager.Instance.CellsChanceToSpawnInMeta;
 
         return GetNewPiece(cellsToSpawn, chancesToSpawn, guaranteed);
     }

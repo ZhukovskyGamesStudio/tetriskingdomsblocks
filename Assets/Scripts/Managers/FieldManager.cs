@@ -8,10 +8,8 @@ using UnityEngine;
 using UnityEngine.Pool;
 
 public class FieldManager : MonoBehaviour {
-    [HideInInspector]
-    public List<CellType> _currentCellsToSpawn { get; protected set; }
-
-    public float[] CellsChanceToSpawn { get; protected set; }
+    public List<CellType> _currentCellsToSpawnInMeta { get; protected set; }
+    public float[] CellsChanceToSpawnInMeta { get; protected set; }
     public float[] FiguresChanceToSpawn { get; protected set; }
 
     [SerializeField]
@@ -24,7 +22,8 @@ public class FieldManager : MonoBehaviour {
 
     [SerializeField]
     private LayerMask _additionalContainerMask;
-
+    [field: SerializeField]
+    public MainMetaConfig MainMetaConfig { get; private set; }
     [SerializeField]
     private ParticleSystem _placeCellEffect;
 
@@ -96,6 +95,13 @@ public class FieldManager : MonoBehaviour {
 
     protected virtual bool TryDestroyPiece() {
         return false;
+    }
+    
+ 
+    protected PieceData GenerateNewPiece(CellTypeInfo cell = null) {
+        var pieceData = PieceUtils.GetNewMetaPiece(cell);
+        StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
+        return pieceData;
     }
 
     private async void TryPlaceDynamite() {
@@ -397,7 +403,23 @@ public class FieldManager : MonoBehaviour {
     }
 
     public virtual void SetupGame() {
+        _currentCellsToSpawnInMeta = new List<CellType>();
+        foreach (var cellType in MainMetaConfig.CellsToSpawn) {
+            _currentCellsToSpawnInMeta.Add(cellType);
+        }
+
+        CalculateMetaCellSpawnChances();
+        
         _placeCellEffectsPool = new ObjectPool<ParticleSystem>(() => Instantiate(_placeCellEffect));
+    }
+    
+    private void CalculateMetaCellSpawnChances() {
+        float lastChance = 0;
+        CellsChanceToSpawnInMeta = new float[_currentCellsToSpawnInMeta.Count];
+        for (int i = 0; i < _currentCellsToSpawnInMeta.Count; i++) {
+            lastChance += PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _currentCellsToSpawnInMeta[i]).ChanceToSpawn;
+            CellsChanceToSpawnInMeta[i] = lastChance;
+        }
     }
 
     public void PlayCollectedSound() {

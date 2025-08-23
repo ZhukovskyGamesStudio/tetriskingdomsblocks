@@ -6,6 +6,8 @@ public class GameUI : MonoBehaviour {
     public static GameUI Instance;
 
     [Header("Game UI")]
+    [field: SerializeField]
+    public RectTransform _mainCanvas { get; set; }
     [SerializeField]
     private Transform _holesForBgContainer;
 
@@ -54,6 +56,16 @@ public class GameUI : MonoBehaviour {
     public void ShowSettings() {
         if(UltaManager.Instance._ultimateIsActive)return;
         SettingsManager.Instance.ShowGameSettingsDialog();
+    }
+    
+    public void OpenLootboxDialog(PieceData rewardingPiece) {
+        var dialogData = new DialogWithData {
+            DialogType = typeof(LootboxDialog),
+            Data = new LootboxDialog.Data {
+                RewardingPiece = rewardingPiece
+            }
+        };
+        DialogsManager.Instance.ShowDialogWithData(dialogData);
     }
 
     public void ShowShopDialog() {

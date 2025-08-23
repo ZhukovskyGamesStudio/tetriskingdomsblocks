@@ -107,16 +107,22 @@ public class MainManager : MonoBehaviour {
 
     public void BuyMetaResource(ResourceOfferData data) {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
-            MetaTabsPanel.Instance.OpenRule();
-            ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() {
-                { data.Resource, data.ResourceCount }
-            });
+            if (MetaTabsPanel.Instance != null)
+                MetaTabsPanel.Instance.OpenRule();
+            else 
+                DialogsManager.Instance.CloseAllDialogs();
+            
+            ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() { { data.Resource, data.ResourceCount } });
         });
     }
 
     public void BuyBundleOffer(SpecialOfferData data) {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
-            MetaTabsPanel.Instance.OpenRule();
+            if (MetaTabsPanel.Instance != null)
+                MetaTabsPanel.Instance.OpenRule();
+            else 
+                DialogsManager.Instance.CloseAllDialogs();
+
             ShowOfferRewardDialog(data.Resources);
         });
 
@@ -132,8 +138,11 @@ public class MainManager : MonoBehaviour {
     
     private void ShowOfferRewardDialog(SerializedDictionary<ResourceType,int> rewards) {
         Vector2 startPosition = Vector2.zero;
+        Debug.Log("Buy offer");
         if(MetaUI.Instance != null)
             startPosition = MetaUI.Instance._mainCanvas.transform.position;
+        else 
+            startPosition = GameUI.Instance._mainCanvas.transform.position;
         var dialog = new DialogWithData {
             DialogType = typeof(OfferRewardDialog),
             Data = new OfferRewardDialog.Data {
@@ -177,13 +186,18 @@ public class MainManager : MonoBehaviour {
                     break;
                 case ResourceType.Lootbox:
                     for (int i = 0; i < kvp.Value; i++) {
-                        MetaFieldManager.Instance.GenerateAndOpenLootbox();
+                        if (MetaFieldManager.Instance != null)
+                            MetaFieldManager.Instance.GenerateAndOpenLootbox();
+                        else
+                            GameFieldManager.Instance.GenerateAndOpenLootbox();
                     }
 
                     break;
             }
         }
 
+        if (GameUI.Instance != null)
+            GameUI.Instance.ShowOutOfMovesDialog();
         StorageManager.SaveGame();
     }
 

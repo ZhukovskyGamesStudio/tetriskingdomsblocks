@@ -19,8 +19,6 @@ public class MetaFieldManager : FieldManager {
     private VillageStuffConfig _villageStuffConfig;
 
     [field: Header("Meta")]
-    [field: SerializeField]
-    public MainMetaConfig MainMetaConfig { get; private set; }
 
     private List<ResourceMarkAndPieces> _connectedGroups = new List<ResourceMarkAndPieces>();
 
@@ -729,13 +727,6 @@ public class MetaFieldManager : FieldManager {
     public void CollectAll() {
         DialogsManager.Instance.ShowDialog(typeof(CollectAllDialog));
     }
-
-    private PieceData GenerateNewPiece(CellTypeInfo cell = null) {
-        var pieceData = PieceUtils.GetNewMetaPiece(cell);
-        StorageManager.GameDataMain.PlacedInMetaPiecesCount++;
-        return pieceData;
-    }
-
     public async UniTask AddPieceToInventory(PieceData pieceView) {
         InventoryCellView inventoryCell = Instantiate(_inventoryCellPrefab, _inventoryCellsContainer);
         inventoryCell.SetPieceInfo(pieceView);
@@ -748,12 +739,7 @@ public class MetaFieldManager : FieldManager {
         _field = new CellType[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         _cells = new CellView[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         CalculateFiguresSpawnChances();
-        _currentCellsToSpawn = new List<CellType>();
-        foreach (var cellType in MainMetaConfig.CellsToSpawn) {
-            _currentCellsToSpawn.Add(cellType);
-        }
-
-        CalculateCellSpawnChances();
+       
         if (!StorageManager.GameDataMain.FieldSaveIsCreated) {
             StorageManager.GameDataMain.FieldSaveIsCreated = true;
             StorageManager.GameDataMain.FieldRows = new MetaFieldData[_field.GetLength(0)];
@@ -971,15 +957,6 @@ public class MetaFieldManager : FieldManager {
 
     public void CollectDefaultResourcesFromAllMarks() {
         CollectResourcesFromAllMarks(1);
-    }
-
-    private void CalculateCellSpawnChances() {
-        float lastChance = 0;
-        CellsChanceToSpawn = new float[_currentCellsToSpawn.Count];
-        for (int i = 0; i < _currentCellsToSpawn.Count; i++) {
-            lastChance += PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == _currentCellsToSpawn[i]).ChanceToSpawn;
-            CellsChanceToSpawn[i] = lastChance;
-        }
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {

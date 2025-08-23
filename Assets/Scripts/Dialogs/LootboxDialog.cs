@@ -116,12 +116,17 @@ public class LootboxDialog : DialogBase {
 
         _particles.gameObject.SetActive(false);
         _continueClicked = true;
+        if(MetaFieldManager.Instance != null)
         MetaFieldManager.Instance.CanInteractWithField(true);
         Close().Forget();
     }
 
     private async UniTask Close() {
+        if(MetaFieldManager.Instance != null)
         await MetaFieldManager.Instance.AddPieceToInventory(_rewardingPiece);
+        else {
+            await GameFieldManager.Instance.AddPieceToInventory(_rewardingPiece);
+        }
         Hide().Forget();
     }
 

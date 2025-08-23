@@ -12,7 +12,8 @@ public class GameFieldManager : FieldManager {
     [field: Header("Game")]
     [field: SerializeField]
     public Transform AdditionalPieceContainer { get; private set; }
-
+    public List<CellType> _currentCellsToSpawn { get; protected set; }
+    public float[] CellsChanceToSpawn { get; protected set; }
     public event Action OnMoveEnded, OnPieceDestroyedByHammer;
     public PieceView AdditionalPiecePrefab { get; private set; }
 
@@ -104,6 +105,22 @@ public class GameFieldManager : FieldManager {
         if (_placedPiecesAmount % 3 == 0) {
             GenerateNewPieces();
         }
+    }
+    
+    public async UniTask AddPieceToInventory(PieceData pieceView) {
+        AddInventoryPieceSave(pieceView);
+    }
+
+    private void AddInventoryPieceSave(PieceData pieceView) {
+        StorageManager.GameDataMain.InventoryFigures.Add(new FormAndCellTypeData(pieceView.FormName, pieceView.Type.CellType));
+
+        StorageManager.SaveGame();
+    }
+    
+    public void GenerateAndOpenLootbox(CellTypeInfo cell = null) {
+        var pieceData = GenerateNewPiece(cell);
+        GameUI.Instance.OpenLootboxDialog(pieceData);
+        StorageManager.GameDataMain.GotPiecesCount++;
     }
 
     public override void PlacePiece(PieceData pieceData, Vector2Int coord, CellView[,] cells, Transform cellsContainer) {

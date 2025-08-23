@@ -338,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c907ba00a6e4f43bc4110c19c06b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <_mainCanvas>k__BackingField: {fileID: 52259832}
   _holesForBgContainer: {fileID: 937264548}
   _blackBgContainer: {fileID: 293830630}
   _floatingTextPrefab: {fileID: -52307583430235026, guid: b685db19aeb3d58449337ff19ece22f5, type: 3}
@@ -1454,6 +1455,7 @@ MonoBehaviour:
   _additionalContainerMask:
     serializedVersion: 2
     m_Bits: 512
+  <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
   _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
   _mmfPlayer: {fileID: 1575047846}
   _gameAudio: {fileID: 2120509509}
@@ -2687,7 +2689,6 @@ MonoBehaviour:
   _framingComposer: {fileID: 1970690218}
   _targetArea: {fileID: 984156514}
   padding: 1.1
-  _shiftFromTargetCell: {x: 0, y: 0, z: 0}
 --- !u!114 &1970690218
 MonoBehaviour:
   m_ObjectHideFlags: 0
