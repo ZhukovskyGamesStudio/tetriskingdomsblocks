@@ -129,9 +129,33 @@ public static class FieldUtils {
 
         var field = GameFieldManager.Instance._field;
         List<Vector2Int> placedCells = new List<Vector2Int>();
+        int currentColumn = 0;
+        int currentRow = 0;
+        Vector2Int ignoredCell = -Vector2Int.one;
+        if (pieceData.FormName == "ZRotated" || pieceData.FormName == "Z" || pieceData.FormName == "smallSquare") {
+            Vector2Int[] verticalDiractions = new Vector2Int[] { new(-1, -1), new(-1, 1), new(1, -1), new(1, 1) };
 
-        var currentColumn = Random.Range(fieldLengthOffset, field.GetLength(0) - fieldLengthOffset);
-        var currentRow = Random.Range(fieldHeightOffset, field.GetLength(1) - fieldHeightOffset);
+            for (int i = fieldLengthOffset; i < field.GetLength(0) - fieldLengthOffset; i++) {
+                if (currentRow != 0)
+                    break;
+                for (int j = fieldHeightOffset; j < field.GetLength(1) - fieldHeightOffset; j++) {
+                    if (currentRow != 0)
+                        break;
+                    foreach (Vector2Int verticalOffset in verticalDiractions) {
+                        if (CanPlaceOnCell(field[i + verticalOffset.x, j + verticalOffset.y])) {
+                            ignoredCell = new Vector2Int(i + verticalOffset.x, j + verticalOffset.y);
+                            currentColumn = j;
+                            currentRow = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            currentColumn = Random.Range(fieldLengthOffset, field.GetLength(0) - fieldLengthOffset);
+            currentRow = Random.Range(fieldHeightOffset, field.GetLength(1) - fieldHeightOffset);
+        }
+        
 
         for (int i = 0; i < field.GetLength(0); i++) {
             if (CanPlaceOnCell(field[currentColumn, i]))
@@ -144,10 +168,18 @@ public static class FieldUtils {
         }
 
         if (maxStars - placedCells.Count > 0) {
-           var randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count,placedCells);
-           foreach (var cell in randomEmptyCells) {
-               placedCells.Add(cell);
-           }
+            var randomEmptyCells = new List<Vector2Int>();
+            if (ignoredCell == -Vector2Int.one)
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, placedCells);
+            else {
+                var ignoredCellsArray = placedCells;
+                ignoredCellsArray.Add(ignoredCell);
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, ignoredCellsArray);
+            }
+
+            foreach (var cell in randomEmptyCells) {
+                placedCells.Add(cell);
+            }
         }
 
         

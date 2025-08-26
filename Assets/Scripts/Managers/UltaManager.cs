@@ -85,9 +85,9 @@ public class UltaManager : MonoBehaviour {
         List<Vector2Int> coordsToSpawn = new List<Vector2Int>();
        if(pieceCells != null)
             coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, maxStars,pieceCells);
-       else {
+       else 
            coordsToSpawn = FieldUtils.GetCellsFromUltRows(maxStars);
-       }
+       
        var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
