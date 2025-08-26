@@ -132,7 +132,8 @@ public static class FieldUtils {
         int currentColumn = 0;
         int currentRow = 0;
         Vector2Int ignoredCell = -Vector2Int.one;
-        if (pieceData.FormName == "ZRotated" || pieceData.FormName == "Z" || pieceData.FormName == "smallSquare") {
+        if (pieceData.FormName == "ZRotated" || pieceData.FormName == "Z" || pieceData.FormName == "smallSquare"
+            || pieceData.FormName == "S"|| pieceData.FormName == "SRotated") {
             Vector2Int[] verticalDiractions = new Vector2Int[] { new(-1, -1), new(-1, 1), new(1, -1), new(1, 1) };
 
             for (int i = fieldLengthOffset; i < field.GetLength(0) - fieldLengthOffset; i++) {
