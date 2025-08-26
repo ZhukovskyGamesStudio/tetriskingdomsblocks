@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4891749430784731945
 Transform:
   m_ObjectHideFlags: 0
@@ -47,8 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bedceeb2090b48344b1c79ee59851812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bInitializeOnStart: 1
-  CooldownBetweenInterstitials: 30
+  m_initializeOnStart: 1
+  m_cooldownBetweenInterstitials: 120
+  m_debugLogsOn: 1
 --- !u!114 &1637731151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,8 +62,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e3c3d582a1e417290dfa751ed73970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TermsPanelPrefab: {fileID: 6735355015495132518, guid: 5bbbadba1427140d8b07bddf259b2890, type: 3}
-  PanelParentCanvas: {fileID: 0}
+  m_termsPanelPrefab: {fileID: 6735355015495132518, guid: 5bbbadba1427140d8b07bddf259b2890, type: 3}
+  m_termsPanelParentCanvas: {fileID: 0}
 --- !u!114 &4983588585077373511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,8 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f250fb28960b74dbfd35bf15d9f0cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bIsDebug: 0
-  bUseTestSuite: 0
+  m_debugLogsOn: 1
+  m_debugTestSuiteOn: 1
 --- !u!114 &8635729869805989882
 MonoBehaviour:
   m_ObjectHideFlags: 0
