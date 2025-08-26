@@ -613,7 +613,32 @@ public class GameFieldManager : FieldManager {
 
         return false;
     }
+    
+    public List<Vector2Int> CanPlaceAnyPieceForUltimate() {
+        
+        if (AdditionalPiecePrefab != null && PieceUtils.CanPlacePiece(_field, AdditionalPiecePrefab.Data)) {
+            return PieceUtils.CanPlacedPiece(_field, AdditionalPiecePrefab.Data);
+        }
 
+        foreach (var pieceData in _nextBlocks) {
+            if(pieceData != null &&PieceUtils.CanPlacePiece(_field, pieceData)) {
+                return PieceUtils.CanPlacedPiece(_field,pieceData);
+            }
+        }
+
+        return null;
+    }
+
+    public PieceData GetRandomCurrentPieceData() {
+        List<PieceData> pieceDataList = new List<PieceData>();
+        if (AdditionalPiecePrefab != null)
+            pieceDataList.Add(AdditionalPiecePrefab.Data);
+        foreach (var pieceData in _nextBlocks) {
+            if (pieceData != null)
+                pieceDataList.Add(pieceData);
+        }
+        return pieceDataList[Random.Range(0, pieceDataList.Count)];
+    }
     public void SetWinState() {
         ExplodeCellsInRows();
     }

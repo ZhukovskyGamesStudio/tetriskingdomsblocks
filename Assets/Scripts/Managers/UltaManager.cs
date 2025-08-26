@@ -53,8 +53,9 @@ public class UltaManager : MonoBehaviour {
         _currentPoints += points;
 
         GameUI.Instance.GoalView.UltimateProgressBar.DOValue(_currentPoints, 0.4f).SetEase(Ease.Linear).OnComplete(() => {
-            if (_currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue)
+            if (_currentPoints >= GameUI.Instance.GoalView.UltimateProgressBar.maxValue) 
                 ActivateButton();
+            
         });
     }
 
@@ -67,7 +68,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private async void UltimateAction() {
-        if (_gameData.IsGameEnded) {
+        if (_gameData.IsGameEnded || FloatingResourcesManager.Instance._currentActiveAnimationsCount != 0) {
             return;
         }
 
@@ -80,8 +81,14 @@ public class UltaManager : MonoBehaviour {
         _starsParticles.Play();
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsLong);
         int maxStars = StorageManager.GameDataMain.CurMaxLevel == 2 ? 100 : _mainGameConfig.MaxUltimateCells;
-        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(GameFieldManager.Instance._field, maxStars);
-        var list = new List<UniTask>();
+        List<Vector2Int> pieceCells = GameFieldManager.Instance.CanPlaceAnyPieceForUltimate();
+        List<Vector2Int> coordsToSpawn = new List<Vector2Int>();
+       if(pieceCells != null)
+            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, maxStars,pieceCells);
+       else {
+           coordsToSpawn = FieldUtils.GetCellsFromUltRows(maxStars);
+       }
+       var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
             await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
@@ -98,8 +105,8 @@ public class UltaManager : MonoBehaviour {
     public async void UltimateActionEndRound(Action onUltimateEnded) {
         GameUI.Instance.GoalView.HideUltimateUI();
         _ultimateIsActive = true;
-        var needField =  GameFieldManager.Instance._field ;
-        var coordsToSpawn = FieldUtils.GetRandomEmptyCells(needField, 0);
+        var needField = GameFieldManager.Instance._field;
+        var coordsToSpawn = FieldUtils.GetAllEmptyCells(needField);
         foreach (var pos in coordsToSpawn) {
             SpawnNewCellFromUltimate(pos, true).Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(0.05f));
@@ -109,6 +116,7 @@ public class UltaManager : MonoBehaviour {
         _ultimateIsActive = false;
         onUltimateEnded?.Invoke();
     }
+    
 
     private async UniTask SpawnNewCellFromUltimate(Vector2Int placedCellPosition, bool isEndRoundUltimate = false) {
         var pieceData = GetRandomCellType();

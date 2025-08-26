@@ -87,24 +87,71 @@ public static class FieldUtils {
         }
         return emptyCells[Random.Range(0, emptyCells.Count)];
     }
-    
-    public static List<Vector2Int> GetRandomEmptyCells(CellType[,] field, int amount)
-    {
+
+    public static List<Vector2Int> GetAllEmptyCells(CellType[,] field) {
+        List<Vector2Int> emptyCells = new List<Vector2Int>();
+        for (int i = 0; i < field.GetLength(0); i++) {
+            for (int j = 0; j < field.GetLength(1); j++) {
+                if (CanPlaceOnCell(field[i, j]))
+                    emptyCells.Add(new Vector2Int(i, j));
+            }
+        }
+
+        return emptyCells;
+    }
+
+    public static List<Vector2Int> GetRandomEmptyCellsWithoutSomeCells(CellType[,] field, int amount, List<Vector2Int> pieceCells) {
         List<Vector2Int> emptyCells = new List<Vector2Int>();
         for (int i = 0; i < field.GetLength(0); i++)
         {
             for (int j = 0; j < field.GetLength(1); j++)
             {
-                if(CanPlaceOnCell(field[i,j])) {
+                if(CanPlaceOnCell(field[i,j])) 
                     emptyCells.Add(new Vector2Int(i, j));
-                }
             }
         }
 
         if (amount == 0)
             return emptyCells;
+        foreach (Vector2Int cell in pieceCells) {
+            emptyCells.Remove(cell);
+        }
+       
+        
         emptyCells = emptyCells.OrderBy(_ => Random.Range(0, 1f)).ToList();
         return emptyCells.Take(Mathf.Min(amount, emptyCells.Count)).ToList();
+    }
+
+    public static List<Vector2Int> GetCellsFromUltRows(int maxStars) {
+        var pieceData = GameFieldManager.Instance.GetRandomCurrentPieceData();
+        int fieldLengthOffset = pieceData.Cells.GetLength(0) - 1;
+        int fieldHeightOffset = pieceData.Cells.GetLength(1) - 1;
+
+        var field = GameFieldManager.Instance._field;
+        List<Vector2Int> placedCells = new List<Vector2Int>();
+
+        var currentColumn = Random.Range(fieldLengthOffset, field.GetLength(0) - fieldLengthOffset);
+        var currentRow = Random.Range(fieldHeightOffset, field.GetLength(1) - fieldHeightOffset);
+
+        for (int i = 0; i < field.GetLength(0); i++) {
+            if (CanPlaceOnCell(field[currentColumn, i]))
+                placedCells.Add(new Vector2Int(currentColumn, i));
+        }
+
+        for (int i = 0; i < field.GetLength(1); i++) {
+            if (CanPlaceOnCell(field[i, currentRow]) || i == currentColumn)
+                placedCells.Add(new Vector2Int(i, currentRow));
+        }
+
+        if (maxStars - placedCells.Count > 0) {
+           var randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count,placedCells);
+           foreach (var cell in randomEmptyCells) {
+               placedCells.Add(cell);
+           }
+        }
+
+        
+        return placedCells;
     }
     
     public static IEnumerable<Vector2Int> GetCellsAround(CellType[,] field, Vector2Int coord) {
@@ -132,6 +179,27 @@ public static class FieldUtils {
         }
 
         return true;
+    }
+    
+    public static List<Vector2Int> PlacedPieceCells(CellType[,] field, PieceData data, Vector2Int pos) {
+        if (pos.x < 0 || pos.y < 0)
+            return null;
+
+        if (pos.x + data.Cells.GetLength(0) - 1 >= field.GetLength(0))
+            return null;
+
+        if (pos.y + data.Cells.GetLength(1) - 1 >= field.GetLength(1))
+            return null;
+
+        List<Vector2Int> placedCells = new List<Vector2Int>();
+        for (int x = 0; x < data.Cells.GetLength(0); x++) {
+            for (int y = 0; y < data.Cells.GetLength(1); y++) {
+                if (data.Cells[x, y] && CanPlaceOnCell(field[pos.x + x, pos.y + y]))
+                    placedCells.Add(new Vector2Int(pos.x + x, pos.y + y));
+            }
+        }
+
+        return placedCells;
     }
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
