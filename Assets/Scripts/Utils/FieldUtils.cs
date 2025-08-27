@@ -58,6 +58,7 @@ public static class FieldUtils {
         CellType.Box,
         CellType.Ice,
         CellType.Slime,
+        CellType.Crystal,
         CellType.Empty
     };
     private static readonly List<CellType> CanBeHammeredOrExploded = new List<CellType>() {
@@ -69,7 +70,7 @@ public static class FieldUtils {
         CellType.Box,
         CellType.Ice,
         CellType.Slime,
-        CellType.Slime,
+        CellType.Crystal,
         
         
         CellType.Forest,
@@ -130,7 +131,7 @@ public static class FieldUtils {
 
     public static List<Vector2Int> GetCellsFromUltRows(int maxStars) {
         var pieceData = GameFieldManager.Instance.GetRandomCurrentPieceData();
-
+Debug.Log("new ult ..............................");
         
         var field = GameFieldManager.Instance._field;
         List<Vector2Int> placedCells = new List<Vector2Int>();
@@ -167,56 +168,95 @@ public static class FieldUtils {
 
         List<Vector2Int> placedCellsInEnd = new List<Vector2Int>();
 
-        foreach (var currentColumn in currentColumnToDestroy) {
-            for (int i = 0; i < field.GetLength(0); i++) {
-                if (CanPlaceOnCell(field[currentColumn, i])) {
-                    placedCells.Add(new Vector2Int(currentColumn, i));
-                    bool isAddThisCellInEnd = true;
-                    for (int j = 0; j < field.GetLength(1); j++) {
-                        if (DontCountInUltimateRow(field[j, i]) && j != currentColumn) {
-                            isAddThisCellInEnd = false;
-                            break;
-                        }
-                    }
+        bool xIsMainDirection = currentColumnToDestroy.Count == pieceData.Cells.GetLength(0);
+        bool yIsMainDirection = currentRowToDestroy.Count == pieceData.Cells.GetLength(1);
 
-                    if (isAddThisCellInEnd)
+        if ((!yIsMainDirection && !xIsMainDirection) || xIsMainDirection) {
+            foreach (var currentColumn in currentColumnToDestroy) {
+                
+                bool allCellIsCanPlaced = true;
+                for (int i = 0; i < field.GetLength(0); i++) {
+                    if (!CanPlaceOnCell(field[currentColumn, i])) {
+                        allCellIsCanPlaced = false;
+                        break;
+                    }
+                }
+
+                if (allCellIsCanPlaced)
+                    continue;
+                
+                for (int i = 0; i < field.GetLength(0); i++) {
+                    if (CanPlaceOnCell(field[currentColumn, i])) {
+                        placedCells.Add(new Vector2Int(currentColumn, i));
+                        bool isAddThisCellInEnd = true;
+                        for (int j = 0; j < field.GetLength(1); j++) {
+                            if (DontCountInUltimateRow(field[j, i]) && j != currentColumn) {
+                                isAddThisCellInEnd = false;
+                                break;
+                            }
+                        }
+
+                        if (isAddThisCellInEnd)
+                            placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                    } else if (field[currentColumn, i] == CellType.Box)
                         placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
-                } else if (field[currentColumn, i] == CellType.Box)
-                    placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
-            }
+                }
 
-            foreach (var endCell in placedCellsInEnd) {
-                placedCells.Add(endCell);
-            }
+                foreach (var endCell in placedCellsInEnd) {
+                    placedCells.Add(endCell);
+                }
 
-            placedCellsInEnd = new List<Vector2Int>();
+                placedCellsInEnd = new List<Vector2Int>();
+            }
         }
-
-        foreach (var currentRow in currentRowToDestroy) {
-            for (int i = 0; i < field.GetLength(1); i++) {
-                if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i))) {
-                    placedCells.Add(new Vector2Int(i, currentRow));
-
-                    bool isAddThisCellInEnd = true;
-                    for (int j = 0; j < field.GetLength(0); j++) {
-                        if (DontCountInUltimateRow(field[i, j]) && j != currentRow) {
-                            isAddThisCellInEnd = false;
+        Debug.Log("y main"+yIsMainDirection + " x main "+xIsMainDirection);
+        if ((!yIsMainDirection && !xIsMainDirection) || (yIsMainDirection && !xIsMainDirection)) {
+            foreach (var currentRow in currentRowToDestroy) {
+                bool allCellIsCanPlaced = true;
+                bool isAllRowIsFull = true;
+                for (int i = 0; i < field.GetLength(1); i++) {
+                    if (!CanPlaceOnCell(field[i, currentRow])) {
+                        allCellIsCanPlaced = false;
+                        if(!isAllRowIsFull)
                             break;
-                        }
                     }
+                    else if (!currentColumnToDestroy.Contains(i)) {
+                        isAllRowIsFull = false;
+                        if(!allCellIsCanPlaced)
+                            break;
+                    }
+                }
 
-                    if (isAddThisCellInEnd)
+                if (allCellIsCanPlaced || isAllRowIsFull)
+                    continue;
+                
+                for (int i = 0; i < field.GetLength(1); i++) {
+                    Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
+                    if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i))) {
+                        placedCells.Add(new Vector2Int(i, currentRow));
+
+                        bool isAddThisCellInEnd = true;
+                        for (int j = 0; j < field.GetLength(0); j++) {
+                            if (DontCountInUltimateRow(field[i, j]) && j != currentRow) {
+                                isAddThisCellInEnd = false;
+                                break;
+                            }
+                        }
+
+                        if (isAddThisCellInEnd)
+                            placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+                    } else if (field[i, currentRow] == CellType.Box)
                         placedCellsInEnd.Add(new Vector2Int(i, currentRow));
-                } else if (field[i, currentRow] == CellType.Box)
-                    placedCellsInEnd.Add(new Vector2Int(i, currentRow));
-            }
+                }
 
-            foreach (var endCell in placedCellsInEnd) {
-                placedCells.Add(endCell);
-            }
+                foreach (var endCell in placedCellsInEnd) {
+                    placedCells.Add(endCell);
+                }
 
-            placedCellsInEnd = new List<Vector2Int>();
+                placedCellsInEnd = new List<Vector2Int>();
+            }
         }
+         
 
         if (maxStars - placedCells.Count > 0) {
             var randomEmptyCells = new List<Vector2Int>();
