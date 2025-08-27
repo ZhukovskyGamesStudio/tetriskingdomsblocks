@@ -130,10 +130,7 @@ public static class FieldUtils {
 
     public static List<Vector2Int> GetCellsFromUltRows(int maxStars) {
         var pieceData = GameFieldManager.Instance.GetRandomCurrentPieceData();
-        int fieldLengthOffset = pieceData.Cells.GetLength(0) - 1;
-        int fieldHeightOffset = pieceData.Cells.GetLength(1) - 1;
 
-        //add cells on boxes after end main line
         
         var field = GameFieldManager.Instance._field;
         List<Vector2Int> placedCells = new List<Vector2Int>();
@@ -164,9 +161,8 @@ public static class FieldUtils {
         foreach (var yPos in yPositions) {
             if (yPos.Value > 1) {
                 currentRowToDestroy.Add(yPos.Key);
-                Debug.Log("key"+yPos.Key+"value"+yPos.Value);
+                Debug.Log("key" + yPos.Key + "value" + yPos.Value);
             }
-                  
         }
 
         List<Vector2Int> placedCellsInEnd = new List<Vector2Int>();
@@ -185,8 +181,7 @@ public static class FieldUtils {
 
                     if (isAddThisCellInEnd)
                         placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
-                }
-                else if(field[currentColumn, i] == CellType.Box)
+                } else if (field[currentColumn, i] == CellType.Box)
                     placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
             }
 
@@ -199,8 +194,7 @@ public static class FieldUtils {
 
         foreach (var currentRow in currentRowToDestroy) {
             for (int i = 0; i < field.GetLength(1); i++) {
-                if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 &&
-                                                             currentColumnToDestroy.Contains(i) && fieldHeightOffset != 0)) {
+                if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i))) {
                     placedCells.Add(new Vector2Int(i, currentRow));
 
                     bool isAddThisCellInEnd = true;
@@ -220,7 +214,7 @@ public static class FieldUtils {
             foreach (var endCell in placedCellsInEnd) {
                 placedCells.Add(endCell);
             }
-            
+
             placedCellsInEnd = new List<Vector2Int>();
         }
 
