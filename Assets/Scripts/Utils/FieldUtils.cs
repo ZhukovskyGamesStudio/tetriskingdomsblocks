@@ -102,11 +102,10 @@ public static class FieldUtils {
 
     public static List<Vector2Int> GetRandomEmptyCellsWithoutSomeCells(CellType[,] field, int amount, List<Vector2Int> pieceCells) {
         List<Vector2Int> emptyCells = new List<Vector2Int>();
-        for (int i = 0; i < field.GetLength(0); i++)
-        {
-            for (int j = 0; j < field.GetLength(1); j++)
-            {
-                if(CanPlaceOnCell(field[i,j])) 
+        if (amount <= 0) return null;
+        for (int i = 0; i < field.GetLength(0); i++) {
+            for (int j = 0; j < field.GetLength(1); j++) {
+                if (CanPlaceOnCell(field[i, j]))
                     emptyCells.Add(new Vector2Int(i, j));
             }
         }
@@ -116,8 +115,7 @@ public static class FieldUtils {
         foreach (Vector2Int cell in pieceCells) {
             emptyCells.Remove(cell);
         }
-       
-        
+
         emptyCells = emptyCells.OrderBy(_ => Random.Range(0, 1f)).ToList();
         return emptyCells.Take(Mathf.Min(amount, emptyCells.Count)).ToList();
     }
@@ -156,16 +154,52 @@ public static class FieldUtils {
             currentColumn = Random.Range(fieldLengthOffset, field.GetLength(0) - fieldLengthOffset);
             currentRow = Random.Range(fieldHeightOffset, field.GetLength(1) - fieldHeightOffset);
         }
-        
 
-        for (int i = 0; i < field.GetLength(0); i++) {
-            if (CanPlaceOnCell(field[currentColumn, i]))
-                placedCells.Add(new Vector2Int(currentColumn, i));
+        List<Vector2Int> placedCellsInEnd = new List<Vector2Int>();
+        if (fieldHeightOffset != 0) {
+            for (int i = 0; i < field.GetLength(0); i++) {
+                if (CanPlaceOnCell(field[currentColumn, i])) {
+                    placedCells.Add(new Vector2Int(currentColumn, i));
+                    bool isAddThisCellInEnd = true;
+                    for (int j = 0; j < field.GetLength(1); j++) {
+                        if (CantBecomeRow(field[j, i]) && j != currentColumn) {
+                            isAddThisCellInEnd = false;
+                            break;
+                        }
+                    }
+
+                    if (isAddThisCellInEnd)
+                        placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                }
+            }
+            
+            foreach (var endCell in placedCellsInEnd) {
+                placedCells.Add(endCell);
+            }
+            
+            placedCellsInEnd.Clear();
         }
+Debug.Log(fieldHeightOffset);
+        if (fieldLengthOffset != 0) {
+            for (int i = 0; i < field.GetLength(1); i++) {
+                if (CanPlaceOnCell(field[i, currentRow]) ||(i == currentColumn && fieldHeightOffset != 0))
+                    placedCells.Add(new Vector2Int(i, currentRow));
 
-        for (int i = 0; i < field.GetLength(1); i++) {
-            if (CanPlaceOnCell(field[i, currentRow]) || i == currentColumn)
-                placedCells.Add(new Vector2Int(i, currentRow));
+                bool isAddThisCellInEnd = true;
+                for (int j = 0; j < field.GetLength(0); j++) {
+                    if (CantBecomeRow(field[i, j]) && j != currentRow) {
+                        isAddThisCellInEnd = false;
+                        break;
+                    }
+                }
+
+                if (isAddThisCellInEnd)
+                    placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+            }
+            
+            foreach (var endCell in placedCellsInEnd) {
+                placedCells.Add(endCell);
+            }
         }
 
         if (maxStars - placedCells.Count > 0) {
@@ -175,15 +209,18 @@ public static class FieldUtils {
             else {
                 var ignoredCellsArray = placedCells;
                 ignoredCellsArray.Add(ignoredCell);
-                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, ignoredCellsArray);
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count-1, ignoredCellsArray);
             }
 
-            foreach (var cell in randomEmptyCells) {
-                placedCells.Add(cell);
-            }
+            if (randomEmptyCells != null)
+                foreach (var cell in randomEmptyCells) {
+                    placedCells.Add(cell);
+                }
         }
 
-        
+        foreach (var endCell in placedCellsInEnd) {
+            placedCells.Add(endCell);
+        }
         return placedCells;
     }
     
