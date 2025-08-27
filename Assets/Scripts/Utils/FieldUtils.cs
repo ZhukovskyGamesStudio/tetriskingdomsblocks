@@ -48,7 +48,17 @@ public static class FieldUtils {
         CellType.LockedMetaCell,
         CellType.GoldMine,
         CellType.CrystalMine,
-        CellType.Empty,
+       CellType.Empty
+    };
+    private static readonly List<CellType> DontCountInUltimateRowCells = new List<CellType>() {
+        CellType.LockedCoreCell,
+        CellType.LockedMetaCell,
+        CellType.GoldMine,
+        CellType.CrystalMine,
+        CellType.Box,
+        CellType.Ice,
+        CellType.Slime,
+        CellType.Empty
     };
     private static readonly List<CellType> CanBeHammeredOrExploded = new List<CellType>() {
         CellType.Wood,
@@ -110,8 +120,6 @@ public static class FieldUtils {
             }
         }
 
-        if (amount == 0)
-            return emptyCells;
         foreach (Vector2Int cell in pieceCells) {
             emptyCells.Remove(cell);
         }
@@ -162,7 +170,7 @@ public static class FieldUtils {
                     placedCells.Add(new Vector2Int(currentColumn, i));
                     bool isAddThisCellInEnd = true;
                     for (int j = 0; j < field.GetLength(1); j++) {
-                        if (CantBecomeRow(field[j, i]) && j != currentColumn) {
+                        if (DontCountInUltimateRow(field[j, i]) && j != currentColumn) {
                             isAddThisCellInEnd = false;
                             break;
                         }
@@ -179,7 +187,7 @@ public static class FieldUtils {
             
             placedCellsInEnd.Clear();
         }
-Debug.Log(fieldHeightOffset);
+        
         if (fieldLengthOffset != 0) {
             for (int i = 0; i < field.GetLength(1); i++) {
                 if (CanPlaceOnCell(field[i, currentRow]) ||(i == currentColumn && fieldHeightOffset != 0))
@@ -187,7 +195,7 @@ Debug.Log(fieldHeightOffset);
 
                 bool isAddThisCellInEnd = true;
                 for (int j = 0; j < field.GetLength(0); j++) {
-                    if (CantBecomeRow(field[i, j]) && j != currentRow) {
+                    if (DontCountInUltimateRow(field[i, j]) && j != currentRow) {
                         isAddThisCellInEnd = false;
                         break;
                     }
@@ -295,6 +303,7 @@ Debug.Log(fieldHeightOffset);
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
     public static bool CantBecomeRow(CellType cellType) => CantBecomeRowCells.Contains(cellType);
     public static bool CantDestroyInRow(CellType cellType) => CantDestroyInRowCells.Contains(cellType);
+    public static bool DontCountInUltimateRow(CellType cellType) => DontCountInUltimateRowCells.Contains(cellType);
     public static bool CanHammerOrExplode(CellType cellType) => CanBeHammeredOrExploded.Contains(cellType);
     public static bool IsResourceCell(CellType cellType) => ResourcesCells.Contains(cellType);
     
