@@ -118,6 +118,23 @@ public static class PieceUtils {
 
         return null;
     }
+    
+    public static List<Vector2Int> CanPlacedPieceWhenDestroyCells(CellType[,] field, PieceData piece) {
+        int fieldWidth = field.GetLength(0);
+        int fieldHeight = field.GetLength(1);
+        int pieceWidth = piece.Cells.GetLength(0);
+        int pieceHeight = piece.Cells.GetLength(1);
+
+        for (int x = 0; x <= fieldWidth - pieceWidth; x++) {
+            for (int y = 0; y <= fieldHeight - pieceHeight; y++) {
+                if (FieldUtils.CanDestroyCellsAndPlacePiece(field, piece, new Vector2Int(x, y))) {
+                    return FieldUtils.PlacedPieceCellsWithoutResource(field, piece, new Vector2Int(x, y));
+                }
+            }
+        }
+
+        return null;
+    }
 
     private static bool CanPlaceAt(CellType[,] field, bool[,] piece, int offsetX, int offsetY) {
         int pieceWidth = piece.GetLength(0);
