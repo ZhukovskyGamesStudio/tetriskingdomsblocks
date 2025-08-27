@@ -134,7 +134,7 @@ public static class FieldUtils {
         Vector2Int ignoredCell = -Vector2Int.one;
         if (pieceData.FormName == "ZRotated" || pieceData.FormName == "Z" || pieceData.FormName == "smallSquare"
             || pieceData.FormName == "S"|| pieceData.FormName == "SRotated") {
-            Vector2Int[] verticalDiractions = new Vector2Int[] { new(-1, -1), new(-1, 1), new(1, -1), new(1, 1) };
+            Vector2Int[] verticalDiractions = { new(-1, -1), new(-1, 1), new(1, -1), new(1, 1) };
 
             for (int i = fieldLengthOffset; i < field.GetLength(0) - fieldLengthOffset; i++) {
                 if (currentRow != 0)
@@ -232,6 +232,27 @@ public static class FieldUtils {
             }
         }
 
+        return placedCells;
+    }
+    
+    public static List<Vector2Int> PlacedPieceCellsWithoutResource(CellType[,] field, PieceData data, Vector2Int pos) {
+        if (pos.x < 0 || pos.y < 0)
+            return null;
+
+        if (pos.x + data.Cells.GetLength(0) - 1 >= field.GetLength(0))
+            return null;
+
+        if (pos.y + data.Cells.GetLength(1) - 1 >= field.GetLength(1))
+            return null;
+
+        List<Vector2Int> placedCells = new List<Vector2Int>();
+        for (int x = 0; x < data.Cells.GetLength(0); x++) {
+            for (int y = 0; y < data.Cells.GetLength(1); y++) {
+                if (data.Cells[x, y] && CanPlaceOnCell(field[pos.x + x, pos.y + y]) && CanPlaceOnCell(field[pos.x + x, pos.y + y]))
+                    placedCells.Add(new Vector2Int(pos.x + x, pos.y + y));
+            }
+        }
+//calculate need row with unbreckeable blocks and boxes
         return placedCells;
     }
     public static bool CanPlaceOnCell(CellType cellType) => CanPlaceOnCells.Contains(cellType);
