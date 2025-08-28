@@ -20,6 +20,8 @@ public class MainManager : MonoBehaviour {
 
     private int _currentRewardedCubes;
     private int _currentRewardedCoins;
+    
+    public static event Action<string, string, float, string> OnPaymentSucceed;
 
     public LevelConfig CurrentLevelConfig =>
         _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
@@ -123,6 +125,7 @@ public class MainManager : MonoBehaviour {
             else 
                 DialogsManager.Instance.CloseAllDialogs();
 
+           // OnPaymentSucceed.Invoke(InApsIds.InAps[data.Type], InAppsManager.Instance.InAppsProvider.GetPrice(data.Type), float price, string inapp_type);
             ShowOfferRewardDialog(data.Resources);
         });
 
@@ -314,6 +317,15 @@ public class MainManager : MonoBehaviour {
 
     public void RemoveHealthAndGoToMeta() {
         RemoveHealthAfterLose();
+        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
+            new Dictionary<string, object> {
+                { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+                { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+                { "level_count", StorageManager.GameDataMain.GamesCount },
+                { "level_diff", levelDiff },
+                { "result", "leave" }
+            });
         GoToMeta();
     }
 

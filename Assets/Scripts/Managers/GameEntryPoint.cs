@@ -50,15 +50,25 @@ public class GameEntryPoint : MonoBehaviour {
         BoostersManager.Instance.OnBoosterEndedWorking += CheckGameGoal;
         UltaManager.Instance.OnUltimateEndedWorking += CheckGameGoal;
         GameUI.Instance.HideNeededContainers();
-        
-      
+
         DragManager.IsDragDisabled = false;
         if (levelConfig.TutorialObject != null && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(levelConfig.TutorialObject, GameUI.Instance.BlackBgContainer);
+        } else {
+            string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_start",
+                new Dictionary<string, object> {
+                    { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+                    { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel+1}_level"},
+                    { "level_count", StorageManager.GameDataMain.GamesCount },
+                    { "level_diff", levelDiff}
+                });
         }
 
+        StorageManager.GameDataMain.GamesCount++;
         _spawnRandomNature.Generate();
        
+      
     }
 
     private void OnMoveEnded() {
@@ -139,12 +149,21 @@ public class GameEntryPoint : MonoBehaviour {
         AddMoves();
     }
 
-    public bool CheckWinWithAction()
-    {
+    public bool CheckWinWithAction() {
         if (CheckWin() && !_gameData.IsGameEnded) {
+            string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
+                new Dictionary<string, object> {
+                    { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+                    { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+                    { "level_count", StorageManager.GameDataMain.GamesCount },
+                    { "level_diff", levelDiff },
+                    { "result", "win" }
+                });
             DragManager.IsDragDisabled = true;
             UltaManager.Instance.UltimateActionEndRound(Win);
             _gameData.IsGameEnded = true;
+
             return true;
         }
 
@@ -200,6 +219,15 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void Lose() {
+        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
+            new Dictionary<string, object> {
+                { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+                { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+                { "level_count", StorageManager.GameDataMain.GamesCount },
+                { "level_diff", levelDiff },
+                { "result", "lose" }
+            });
         _gameData.IsGameEnded = true;
         StorageManager.GameDataMain.IsFirstAttemptWin = false;
         MainManager.Instance.RemoveHealthAfterLose();

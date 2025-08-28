@@ -44,6 +44,7 @@ public class ResourceMarkView : MonoBehaviour {
 
     public void CollectResources() {
         MetaFieldManager.Instance.CollectResourcesFromMark(markIndex, 1);
+        
         CollectAnimation();
     }
 

@@ -9,6 +9,7 @@ public class GameDataForSave {
     public bool IsTutorialComplete;
     public string CreatedVersion;
     public int CurMaxLevel;
+    public int GamesCount;
     public SerializedDictionary<ResourceType, float> ResourcesCount;
     public SerializedDictionary<ResourceType, bool> SeenResource;
 

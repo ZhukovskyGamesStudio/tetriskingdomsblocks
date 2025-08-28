@@ -22,6 +22,13 @@ public class BoxTutorial : TutorialObjectHidedAfterTap {
         }
 
         TutorialHoleHelper.SpawnHoles(boxPoses);
+        SendTutorialEventStep();
+    }
+    
+    private void SendTutorialEventStep() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("tutorial", new Dictionary<string, object> {
+            { "step_name", "_boxTutorial"  }
+        }, true);
     }
 
     private void CheckIceCells(Vector2Int coord, bool[,] needCells) {

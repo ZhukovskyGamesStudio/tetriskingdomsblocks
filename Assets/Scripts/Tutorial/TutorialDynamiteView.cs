@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class TutorialDynamiteView : BoosterTutorialView {
@@ -7,6 +8,12 @@ public class TutorialDynamiteView : BoosterTutorialView {
         if (BoostersManager.Instance != null) {
             GameUI.Instance.GameBoostersButtons.UpdateCounters(StorageManager.GameDataMain);
         }
+    }
+    
+    protected override void SendTutorialEventStep() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("tutorial", new Dictionary<string, object> {
+            { "step_name", "_dynamiteTutorial"  }
+        }, true);
     }
 
     protected override Button BoosterButton => GameUI.Instance.GameBoostersButtons._dinamyteButton;

@@ -61,10 +61,17 @@ namespace MadPixelAnalytics {
             AppsFlyer.startSDK();
 
             IronSourceEvents.onImpressionDataReadyEvent += LogAdPurchase;
+           // CollectAllDialog.OnCollectAllWithMultiplier += VideoAdsWatch;
+           // CollectAllDialog.OnCollectAllWithMultiplierFailed += VideoAdsWatch;
+           // MainManager.OnPaymentSucceed += PaymentSucceed;
         }
 
         private void OnDestroy() {
             IronSourceEvents.onImpressionDataReadyEvent -= LogAdPurchase;
+           // CollectAllDialog.OnCollectAllWithMultiplier -= VideoAdsWatch;
+          //  CollectAllDialog.OnCollectAllWithMultiplierFailed -= VideoAdsWatch;
+           // MainManager.OnPaymentSucceed -= PaymentSucceed;
+           MainManager.OnPaymentSucceed -= PaymentSucceed;
         }
 
         #endregion
@@ -163,8 +170,8 @@ namespace MadPixelAnalytics {
             AppsFlyer.sendEvent("video_ads_started", Event);
         }
 
-        public void VideoAdsWatch(string ad_type, string placement, string result, bool connection, int level_number, string level_name,
-            int level_count, string level_diff) {
+        public void VideoAdsWatch(string ad_type, string placement, string result, bool connection/*, int level_number, string level_name,
+            int level_count, string level_diff*/) {
 #if UNITY_EDITOR
             Debug.Log($"video_ads_watch{ad_type}");
 #endif
@@ -173,10 +180,10 @@ namespace MadPixelAnalytics {
             Event.Add("placement", placement);
             Event.Add("result", result);
             Event.Add("connection", connection.ToString());
-            Event.Add("level_number", level_number.ToString());
+           /* Event.Add("level_number", level_number.ToString());
             Event.Add("level_name", level_name);
             Event.Add("level_count", level_count.ToString());
-            Event.Add("level_diff", level_diff);
+            Event.Add("level_diff", level_diff);*/
             AppsFlyer.sendEvent("video_ads_watch", Event);
         }
 
@@ -191,18 +198,7 @@ namespace MadPixelAnalytics {
             Event.Add("inapp_type", inapp_type);
             AppsFlyer.sendEvent("payment_succeed", Event);
         }
-
-        public void RateUs(string show_reason, int rate_result) {
-#if UNITY_EDITOR
-            Debug.Log($"rate_us{show_reason}");
-#endif
-            Dictionary<string, string> Event = new Dictionary<string, string>();
-            Event.Add("show_reason", show_reason);
-            Event.Add("rate_result", rate_result.ToString());
-            AppsFlyer.sendEvent("rate_us", Event);
-        }
-
-        public void LevelStart(int level_number, string level_name, int level_count, string level_diff) {
+      /*  public void LevelStart(int level_number, string level_name, int level_count, string level_diff) {
 #if UNITY_EDITOR
             Debug.Log($"level_start{level_number}");
 #endif
@@ -212,7 +208,7 @@ namespace MadPixelAnalytics {
             Event.Add("level_count", level_count.ToString());
             Event.Add("level_diff", level_diff);
             AppsFlyer.sendEvent("level_start", Event);
-        }
+        }*/
 
         public void LevelFinish(int level_number, string level_name, int level_count, string level_diff, string result, int time, int progress,
             int _continue) {

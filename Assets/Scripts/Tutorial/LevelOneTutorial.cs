@@ -44,9 +44,14 @@ public class LevelOneTutorial : MonoBehaviour {
 #endif
     }
 
+    private void SendTutorialEventStep() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("tutorial", new Dictionary<string, object> {
+            { "step_name", $"{_tutorialStep}_firstLevelTutoial"  }
+        }, true);
+    }
     private void TrySkipStep() {
         if (_canSkipTutorial) {
-            if (_tutorialStep == 3)
+            if (_tutorialStep == 2)
                 HideThirdStepTutorial().Forget();
         }
     }
@@ -63,6 +68,7 @@ public class LevelOneTutorial : MonoBehaviour {
         TutorialHoleHelper.DestroyHoles();
         TutorialHoleHelper.SpawnHoles(_firstStepCells);
         HighlightCurrentPiece();
+        SendTutorialEventStep();
     }
 
     private GameObject _nextPiecesContainer;
@@ -97,10 +103,11 @@ public class LevelOneTutorial : MonoBehaviour {
     public void ShowThirdStepTutorial() {
         TutorialHoleHelper.HighlightObjects(new List<GameObject>(){GameUI.Instance.GoalView.gameObject});
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(GameUI.Instance.GoalView.transform, _step2Config);
-        _tutorialStep = 3;
+        _tutorialStep = 2;
         _canSkipTutorial = true;
         _goalViewContainer.transform.position = GameUI.Instance.GoalView.transform.position;
         _goalViewContainer.gameObject.SetActive(true);
+        SendTutorialEventStep();
     }
 
     public async UniTask HideThirdStepTutorial() {

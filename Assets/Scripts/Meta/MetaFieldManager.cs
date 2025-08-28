@@ -226,6 +226,9 @@ public class MetaFieldManager : FieldManager {
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseHammer);
         RecalculateCellGroupAfterDeletePiece(groupIndex+1);
         CalculateResourceCellsMultiplayers();
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
+            { "block_delete",cellType.ToString() }
+        }, true);
         return true;
     }
 
@@ -376,6 +379,10 @@ public class MetaFieldManager : FieldManager {
             newCell.UpgradeEnd(dragConfig, finY);
         }
 
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
+            { "block_upgrade",cellConfig.UpgradeCellType.ToString() }
+        }, true);
+        
         CloseCellUI();
     }
 
@@ -526,7 +533,9 @@ public class MetaFieldManager : FieldManager {
         if (StorageManager.GameDataMain.GetResource(ResourceType.MagicCube) <= lockedCellGroup.Count - 1) {
             return;
         }
-
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
+            { "zone_unlocked", groupIndex }
+        }, true);
         CanOpenLockedZones = false;
         CanDragCamera = false;
         UnmarkLockedGroup();
@@ -931,6 +940,10 @@ public class MetaFieldManager : FieldManager {
                 StorageManager.GameDataMain.GetResource(curResource), false, true, true, false);
             //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
         }
+        
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
+            { "resource_collect", $"{collectedResouces} {curResource.ToString()}"  }
+        }, true);
     }
 
     public override void SaveEnergyData() {
@@ -977,6 +990,10 @@ public class MetaFieldManager : FieldManager {
         SaveInventory();
         CalculateResourceCellsMultiplayers();
         SetFigureFormsInfoToData();
+        
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
+            { "block_placed", pieceData.Type.CellType }
+        }, true);
     }
 
     private void AddFigureFormToList(List<(int, int)> placedCells) {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -77,6 +78,10 @@ public class RealShopDialog : DialogBase {
     }
 
     public void BuyPieceForCoins() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("shop_open",
+            new Dictionary<string, object> {
+                { "Random piece", "Random piece" }
+            });
         _data.BuyPieceForCoins(_offersConfig.BuyPieceForCoinsCost);
     }
 

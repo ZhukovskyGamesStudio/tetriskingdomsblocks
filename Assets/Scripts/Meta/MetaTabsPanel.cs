@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,6 +62,12 @@ public class MetaTabsPanel : MonoBehaviour {
     }
 
     private void ChangeTab(MetaTab newTab) {
+        if (newTab == MetaTab.Shop) {
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("shop_open",
+                new Dictionary<string, object> {
+                    { "shop_open", true }
+                });
+        }
         _tabsButtons[SelectedTab].sizeDelta = _notActiveSize;
         _tabsButtons[SelectedTab].GetComponent<Image>().sprite = _notActiveSprite;
         _tabsButtons[newTab].sizeDelta = _activeSize;

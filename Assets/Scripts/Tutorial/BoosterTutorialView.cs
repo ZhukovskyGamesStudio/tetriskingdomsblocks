@@ -22,6 +22,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
         Init();
     }
 
+    protected abstract void SendTutorialEventStep();
     protected abstract void Init();
 
     protected abstract Button BoosterButton { get; }
@@ -39,6 +40,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(BoosterButton, _stepConfig, HideTutorial);
         SpotlightsManager.Instance.HideFinger();
         ShowFingerWithDelay().Forget();
+        SendTutorialEventStep();
     }
 
     private async UniTask ShowFingerWithDelay() {

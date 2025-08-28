@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using ScriptableObjects;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class TutorialObjectHidedAfterTap : MonoBehaviour {
     [SerializeField]
@@ -13,8 +14,13 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour {
         _tutorialHole.transform.SetParent(GameUI.Instance.HolesForBgContainer);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(GameUI.Instance.GoalView.transform, _step1Config);
         SpotlightsManager.Instance.HideFinger();
+        SendTutorialEventStep();
     }
-
+private void SendTutorialEventStep() {
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("tutorial", new Dictionary<string, object> {
+                { "step_name", $"Level{StorageManager.GameDataMain.CurMaxLevel+1}_Tutorial"  }
+            }, true);
+        }
     void Update() {
         if (Input.touchCount > 0) {
             Touch touch = Input.GetTouch(0);

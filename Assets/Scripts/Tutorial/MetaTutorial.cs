@@ -123,12 +123,19 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void ShowFirstStepTutorial() {
+       
         TutorialHoleHelper.DestroyHoles();
         TutorialHoleHelper.SpawnHoles(_openedCloudCells, false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _metaTutor0);
         SpotlightsManager.Instance.StartFingerClickAnimation((Vector2)Camera.main.WorldToScreenPoint(new Vector3(5f, 0, 5f)));
+        SendTutorialEventStep();
     }
 
+    private void SendTutorialEventStep() {
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("tutorial", new Dictionary<string, object> {
+            { "step_name", $"{_tutorialStep}_metaTutoial"  }
+        }, true);
+    }
     
 
     public void ShowSecondStepTutorial() {
@@ -138,6 +145,7 @@ public class MetaTutorial : MonoBehaviour {
         _tutorialStep = 2;
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaWorldCanvasView.Instance.UnlockFieldCellsView.UnlockButton,
             _metaTutor1, HideSecondStepTutorial);
+        SendTutorialEventStep();
     }
 
     public void HideSecondStepTutorial() {
@@ -164,6 +172,7 @@ public class MetaTutorial : MonoBehaviour {
             HideThirdStepTutorial);
         Invoke("LockFieldInteract", 0.1f);
         MetaUI.Instance.GetPieceButtonView.GetPieceButton.GetComponent<Button>().enabled = true;
+        SendTutorialEventStep();
     }
 
     private void LockFieldInteract() {
@@ -192,6 +201,7 @@ public class MetaTutorial : MonoBehaviour {
 
         MetaUI.Instance.BuildButton.enabled = true;
         _tutorialStep = 4;
+        SendTutorialEventStep();
     }
 
     private void HideFourthStepTutorial() {
@@ -210,6 +220,7 @@ public class MetaTutorial : MonoBehaviour {
         _holeImageBuildButton.gameObject.SetActive(true);
         _tutorialStep = 5;
         SetupInventoryCell();
+        SendTutorialEventStep();
     }
 
     private void SetupInventoryCell() {
@@ -229,7 +240,8 @@ public class MetaTutorial : MonoBehaviour {
     }
 
     private void ShowSixthStepTutorial(BaseEventData eventData) {
-        _tutorialStep = 5;
+        _tutorialStep = 6;
+        SendTutorialEventStep();
         MetaFieldManager.Instance.OnCellPlacedTrigger += HideSixthStepTutorial;
     }
 
@@ -243,7 +255,8 @@ public class MetaTutorial : MonoBehaviour {
     }
     
     private void ShowSeventhStepTutorial() {
-        _tutorialStep = 6;
+        _tutorialStep = 7;
+        SendTutorialEventStep();
         _holeTetraminesToBuild.gameObject.SetActive(false);
         _holeButtonExitInventory.gameObject.SetActive(true);
         _holeButtonExitInventory.transform.position = MetaUI.Instance.CloseInventoryButton.transform.position;
@@ -261,11 +274,12 @@ public class MetaTutorial : MonoBehaviour {
        // MetaUI.Instance.CloseInventoryButton.onClick.RemoveListener(HideSeventhStepTutorial);
         MetaUI.Instance.PlayButton.enabled = true;
         MetaUI.Instance.PlayButton.onClick.RemoveAllListeners();
-        ShowEighththStepTutorial();   
+        ShowEighthStepTutorial();   
     }
     
-    private void ShowEighththStepTutorial() {
-        _tutorialStep = 7;
+    private void ShowEighthStepTutorial() {
+        _tutorialStep = 8;
+        SendTutorialEventStep();
         _holeButtonPlay.gameObject.SetActive(true);
         MetaUI.Instance.PlayButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(MetaUI.Instance.PlayButton, _metaTutor6,HideEighthStepTutorial);      

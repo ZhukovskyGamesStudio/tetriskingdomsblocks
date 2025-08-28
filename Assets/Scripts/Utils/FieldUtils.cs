@@ -232,7 +232,8 @@ public static class FieldUtils {
                 
                 for (int i = 0; i < field.GetLength(1); i++) {
                   //  Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
-                    if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i))) {
+                    if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) 
+                        && !yIsMainDirection && !xIsMainDirection) {
                         placedCells.Add(new Vector2Int(i, currentRow));
 
                         bool isAddThisCellInEnd = true;
