@@ -37,7 +37,7 @@ public class ZhukovskyAdsManager : PreloadableSingleton<ZhukovskyAdsManager> {
         AdsProvider.CancelAds();
         AdsProvider.SetBanners(false);
     }
-
+    
     private void Update() {
         if (InterAdRunner == null) return;
         InterAdRunner.Update();
