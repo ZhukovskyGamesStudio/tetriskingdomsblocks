@@ -80,10 +80,13 @@ public class UltaManager : MonoBehaviour {
         _starsParticles.gameObject.SetActive(true);
         _starsParticles.Play();
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.StarsLong);
-        int maxStars = StorageManager.GameDataMain.CurMaxLevel == 2 ? 100 : _mainGameConfig.MaxUltimateCells;
+        int maxStars = _mainGameConfig.MaxUltimateCells;
         List<Vector2Int> pieceCells = GameFieldManager.Instance.CanPlaceAnyPieceForUltimate();
         List<Vector2Int> coordsToSpawn = new List<Vector2Int>();
-       if(pieceCells != null)
+        if (StorageManager.GameDataMain.CurMaxLevel == 2) {
+            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, 100,new List<Vector2Int>());
+        }
+      else if(pieceCells != null)
             coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, maxStars,pieceCells);
        else 
            coordsToSpawn = FieldUtils.GetCellsFromUltRows(maxStars);
