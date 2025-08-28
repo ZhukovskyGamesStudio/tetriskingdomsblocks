@@ -131,7 +131,7 @@ public static class FieldUtils {
 
     public static List<Vector2Int> GetCellsFromUltRows(int maxStars) {
         var pieceData = GameFieldManager.Instance.GetRandomCurrentPieceData();
-Debug.Log("new ult ..............................");
+//Debug.Log("new ult ..............................");
         
         var field = GameFieldManager.Instance._field;
         List<Vector2Int> placedCells = new List<Vector2Int>();
@@ -154,7 +154,7 @@ Debug.Log("new ult ..............................");
         foreach (var xPos in xPositions) {
             if (xPos.Value > 1) {
                  currentColumnToDestroy.Add(xPos.Key);
-                 Debug.Log("key"+xPos.Key+"value"+xPos.Value);
+              //   Debug.Log("key"+xPos.Key+"value"+xPos.Value);
             }
                
              
@@ -162,7 +162,7 @@ Debug.Log("new ult ..............................");
         foreach (var yPos in yPositions) {
             if (yPos.Value > 1) {
                 currentRowToDestroy.Add(yPos.Key);
-                Debug.Log("key" + yPos.Key + "value" + yPos.Value);
+            //    Debug.Log("key" + yPos.Key + "value" + yPos.Value);
             }
         }
 
@@ -209,7 +209,7 @@ Debug.Log("new ult ..............................");
                 placedCellsInEnd = new List<Vector2Int>();
             }
         }
-        Debug.Log("y main"+yIsMainDirection + " x main "+xIsMainDirection);
+      //  Debug.Log("y main"+yIsMainDirection + " x main "+xIsMainDirection);
         if ((!yIsMainDirection && !xIsMainDirection) || (yIsMainDirection && !xIsMainDirection)) {
             foreach (var currentRow in currentRowToDestroy) {
                 bool allCellIsCanPlaced = true;
@@ -231,7 +231,7 @@ Debug.Log("new ult ..............................");
                     continue;
                 
                 for (int i = 0; i < field.GetLength(1); i++) {
-                    Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
+                  //  Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
                     if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i))) {
                         placedCells.Add(new Vector2Int(i, currentRow));
 
@@ -260,13 +260,7 @@ Debug.Log("new ult ..............................");
 
         if (maxStars - placedCells.Count > 0) {
             var randomEmptyCells = new List<Vector2Int>();
-            if (ignoredCell == -Vector2Int.one)
-                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, placedCells);
-            else {
-                var ignoredCellsArray = placedCells;
-                ignoredCellsArray.Add(ignoredCell);
-                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count-1, ignoredCellsArray);
-            }
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, placedPiecePositions);
 
             if (randomEmptyCells != null)
                 foreach (var cell in randomEmptyCells) {
