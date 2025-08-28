@@ -310,9 +310,11 @@ public class MainManager : MonoBehaviour {
     }
 
     public void GoToMeta() {
-      //  if (StorageManager.GameDataMain.CurMaxLevel > 2)
+        if (StorageManager.GameDataMain.CurMaxLevel > 2) {
             SceneManager.LoadScene("MetaScene");
-            
+        } else {
+            SceneManager.LoadScene("GameScene");
+        }
     }
 
     public void RemoveHealthAndGoToMeta() {
