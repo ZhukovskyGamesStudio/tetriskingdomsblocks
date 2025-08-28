@@ -68,7 +68,7 @@ public class UltaManager : MonoBehaviour {
     }
 
     private async void UltimateAction() {
-        if (_gameData.IsGameEnded || FloatingResourcesManager.Instance._currentActiveAnimationsCount != 0) {
+        if (_gameData.IsGameEnded || FloatingResourcesManager.Instance._currentActiveAnimationsCount != 0 || DragManager.IsDraggingPiece) {
             return;
         }
 

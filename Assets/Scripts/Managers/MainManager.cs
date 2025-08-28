@@ -304,7 +304,7 @@ public class MainManager : MonoBehaviour {
         if (StorageManager.GameDataMain.HealthCount > 0)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         else {
-            SceneManager.LoadScene("MetaScene");
+            GoToMeta();
             //floating window with "watch ad and get health"
         }
     }

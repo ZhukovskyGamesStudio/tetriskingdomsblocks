@@ -292,7 +292,8 @@ public class MetaFieldManager : FieldManager {
                 CurrentLevel = 1, // TODO: убрать заглушку уровня
                 IsMaxLevel = cell.UpgradeCellType == CellType.Empty,
                 UpgradeCost = cell.UpgradeCost,
-                CanUpgrade = CanUpgrade
+                CanUpgrade = CanUpgrade,
+                CellsInFigureCount = _formGroupCellPositions[_formGroupCellIndex[cellPos.x, cellPos.y]].Cells.Count
             }
         };
         Vector2 needPosToCamera = Vector2.zero;
@@ -326,8 +327,10 @@ public class MetaFieldManager : FieldManager {
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
 
+        int multiplayer = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]].Cells.Count;
+
         foreach (var resourceToUpgrade in cellConfig.UpgradeCost) {
-            if (StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType) < resourceToUpgrade.Cost)
+            if (StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType) < resourceToUpgrade.Cost*multiplayer)
                 return false;
         }
 
@@ -337,6 +340,7 @@ public class MetaFieldManager : FieldManager {
     public void UpgradeResourceCell() {
         //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
         var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
+        int multiplayer = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]].Cells.Count;
         var cellConfig =
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
@@ -349,11 +353,11 @@ public class MetaFieldManager : FieldManager {
 
         foreach (var resourceToUpgrade in cellConfig.UpgradeCost) {
             if (resourceToUpgrade.ResourceType != ResourceType.Coins) {
-                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost, resourceToUpgrade.ResourceType,
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost*multiplayer, resourceToUpgrade.ResourceType,
                     MetaUI.Instance._openResourceTabButtonTransform.position, finalUiNeedPos, ChangeResorceText,
                     StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType), true, false, false, true);
             } else {
-                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost, ResourceType.Coins,
+                FloatingResourcesManager.Instance.FromPointToPointAnimation(resourceToUpgrade.Cost*multiplayer, ResourceType.Coins,
                     MetaUI.Instance.CountersPanelView.GetCoinsIconPosition, finalUiNeedPos, ChangeResorceText,
                     StorageManager.GameDataMain.GetResource(resourceToUpgrade.ResourceType), true, false, false, true);
             }

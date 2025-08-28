@@ -72,7 +72,7 @@ public class UpgradeTileDialog : DialogBase {
                 var upgradeInfoObject = _upgradeInfoObjects[i];
                 upgradeInfoObject.gameObject.SetActive(true);
                 upgradeInfoObject.Image.sprite = SpritesManager.Instance.GetSprite(dialogData.UpgradeCost[i].ResourceType);
-                upgradeInfoObject.Text.text = dialogData.UpgradeCost[i].Cost.ToString();
+                upgradeInfoObject.Text.text = (dialogData.UpgradeCost[i].Cost * dialogData.CellsInFigureCount).ToString();
             }
             else
                 _upgradeInfoObjects[i].gameObject.SetActive(false);
@@ -97,5 +97,6 @@ public class UpgradeTileDialog : DialogBase {
         public int CurrentLevel;
         public bool IsMaxLevel;
         public List<UpgradeInfo> UpgradeCost;
+        public int CellsInFigureCount;
     }
 }

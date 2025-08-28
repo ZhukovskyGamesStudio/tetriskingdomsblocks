@@ -166,6 +166,7 @@ public class MetaUI : MonoBehaviour {
 
     public void OpenResources() {
         Dictionary<ResourceType, float> resourcesInfo = MetaFieldManager.Instance.GetAllResourceInfoForDialog();
+      
         if (resourcesInfo.Count == 0) {
             return;
         }
@@ -179,15 +180,15 @@ public class MetaUI : MonoBehaviour {
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
                     new OverviewResourceInfo(ResourceType.Coins, (int)StorageManager.GameDataMain.GetResource(ResourceType.Coins),
-                        (int)resourcesInfo[ResourceType.Coins]),
+                        (int)(resourcesInfo[ResourceType.Coins] * 3600)),
                     new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.GetResource(ResourceType.Wood),
-                        (int)resourcesInfo[ResourceType.Wood]),
+                        (int)(resourcesInfo[ResourceType.Wood] * 3600)),
                     new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.GetResource(ResourceType.Rocks),
-                        (int)resourcesInfo[ResourceType.Rocks]),
+                        (int)(resourcesInfo[ResourceType.Rocks] * 3600)),
                     new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.GetResource(ResourceType.Food),
-                        (int)resourcesInfo[ResourceType.Food]),
+                        (int)(resourcesInfo[ResourceType.Food]) * 3600),
                     new OverviewResourceInfo(ResourceType.Metal, (int)StorageManager.GameDataMain.GetResource(ResourceType.Metal),
-                        (int)resourcesInfo[ResourceType.Metal])
+                        (int)(resourcesInfo[ResourceType.Metal] * 3600))
                 },
                 ShowResource = StorageManager.GameDataMain.SeenResource
             }

@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 public class DragManager : MonoBehaviour {
 
     public static bool IsDragDisabled = false;
+    public static bool IsDraggingPiece = false;
     
     public static void LerpToFinal(Transform _cellsContainer, Vector3 _finalPos, Vector3 _finalScale) {
         _cellsContainer.position =
@@ -84,6 +85,7 @@ public class DragManager : MonoBehaviour {
             }
         }
 
+        IsDraggingPiece = true;
         isDragging = true;
         finalScale = Vector3.one;
         markedCellsContainer.localScale = Vector3.one;
@@ -106,6 +108,7 @@ public class DragManager : MonoBehaviour {
             return;
         }
 
+        IsDraggingPiece = false;
         FieldManager cellManager = GetCurrentFieldManager();
        markedCellsContainer.gameObject.SetActive(false); 
         isDragging = false;

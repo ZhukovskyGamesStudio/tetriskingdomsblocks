@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class IconRendererManager : MonoBehaviour {
     [Header("Settings")]
     [SerializeField]
-    private int _textureSize = 64;
+    private int _textureSize = 128;
 
     [SerializeField]
     private LayerMask _renderLayer;
