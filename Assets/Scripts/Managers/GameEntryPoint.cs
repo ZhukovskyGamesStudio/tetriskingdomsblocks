@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,9 +24,11 @@ public class GameEntryPoint : MonoBehaviour {
 
     private GameData _gameData;
 
+    private DateTime _startTime;
 
     private void Start() {
         Instance = this;
+        _startTime = DateTime.Now;
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlightInstant();
         CameraScaleToBounds.Instance.Init();
         LevelConfig levelConfig = MainManager.Instance.CurrentLevelConfig;
@@ -52,20 +55,22 @@ public class GameEntryPoint : MonoBehaviour {
         GameUI.Instance.HideNeededContainers();
 
         DragManager.IsDragDisabled = false;
+        string levelType = "normal";
         if (levelConfig.TutorialObject != null && !AdminManager.Instance.IsSkipTutorials) {
             Instantiate(levelConfig.TutorialObject, GameUI.Instance.BlackBgContainer);
-        } else {
-            string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
-            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_start",
-                new Dictionary<string, object> {
-                    { "level_number", StorageManager.GameDataMain.CurMaxLevel },
-                    { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel+1}_level"},
-                    { "level_count", StorageManager.GameDataMain.GamesCount },
-                    { "level_diff", levelDiff}
-                });
+            levelType = "tutorial";
         }
-
         StorageManager.GameDataMain.GamesCount++;
+        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_start", new Dictionary<string, object> {
+            { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+            { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+            { "level_count", StorageManager.GameDataMain.GamesCount },
+            { "level_diff", levelDiff },
+            { "level_type", levelType }
+        });
+
+     
         _spawnRandomNature.Generate();
        
       
@@ -151,15 +156,7 @@ public class GameEntryPoint : MonoBehaviour {
 
     public bool CheckWinWithAction() {
         if (CheckWin() && !_gameData.IsGameEnded) {
-            string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
-            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
-                new Dictionary<string, object> {
-                    { "level_number", StorageManager.GameDataMain.CurMaxLevel },
-                    { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
-                    { "level_count", StorageManager.GameDataMain.GamesCount },
-                    { "level_diff", levelDiff },
-                    { "result", "win" }
-                });
+            SendLevelFinishEvent("win");
             DragManager.IsDragDisabled = true;
             UltaManager.Instance.UltimateActionEndRound(Win);
             _gameData.IsGameEnded = true;
@@ -168,6 +165,21 @@ public class GameEntryPoint : MonoBehaviour {
         }
 
         return false;
+    }
+
+    public static void SendLevelFinishEvent(string result) {
+        int timeInSeconds = (int)(DateTime.Now - Instance._startTime).TotalSeconds;
+
+        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish", new Dictionary<string, object> {
+            { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+            { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+            { "level_count", StorageManager.GameDataMain.GamesCount },
+            { "level_diff", levelDiff },
+            { "result", result },
+            { "time", timeInSeconds },
+            { "progress", TaskUtils.GetLevelProgress(Instance._gameData) }
+        });
     }
 
     private void AddMoves() {
@@ -219,15 +231,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     private void Lose() {
-        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
-        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
-            new Dictionary<string, object> {
-                { "level_number", StorageManager.GameDataMain.CurMaxLevel },
-                { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
-                { "level_count", StorageManager.GameDataMain.GamesCount },
-                { "level_diff", levelDiff },
-                { "result", "lose" }
-            });
+        SendLevelFinishEvent("lose");
         _gameData.IsGameEnded = true;
         StorageManager.GameDataMain.IsFirstAttemptWin = false;
         MainManager.Instance.RemoveHealthAfterLose();

@@ -327,14 +327,7 @@ public class MainManager : MonoBehaviour {
 
     public void RemoveHealthAndGoToMeta() {
         RemoveHealthAfterLose();
-        string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
-        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish", new Dictionary<string, object> {
-            { "level_number", StorageManager.GameDataMain.CurMaxLevel },
-            { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
-            { "level_count", StorageManager.GameDataMain.GamesCount },
-            { "level_diff", levelDiff },
-            { "result", "leave" }
-        });
+        GameEntryPoint.SendLevelFinishEvent("leave");
         GoToMeta();
     }
 

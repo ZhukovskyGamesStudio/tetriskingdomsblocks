@@ -22,6 +22,29 @@ public static class TaskUtils {
         }
     }
 
+    public static float GetLevelProgress(GameData gameData) {
+        if (gameData.CollectedResources.Count == 0) {
+            return 0;
+        }
+        
+        float average = 0;
+        
+        for (int i = 0; i < gameData.CurrentTasks.Count; i++) {
+            if (gameData.CurrentTasks[i].TaskInfo.TaskType != TaskInfo.TaskType.getResource) {
+                continue;
+            }
+
+            if (gameData.CurrentTasks[i].TaskInfo.NeedResource == ResourceType.None) {
+            } else if (gameData.CollectedResources.TryGetValue(gameData.CurrentTasks[i].TaskInfo.NeedResource, out int hasResource)) {
+                float percent = (float)hasResource / gameData.CurrentTasks[i].needCount;
+                average += Mathf.Clamp(percent,0,1);
+            }
+        }
+        average += gameData.CompletedTasksCount;
+        average/= (gameData.CurrentTasks.Count + gameData.CompletedTasksCount);
+        return average * 100;
+    }
+
     private static void TryCompleteTask(GameData gameData, int i, int hasResource) {
         var remainingResourceCount = Math.Max(gameData.CurrentTasks[i].needCount - hasResource, 0);
         gameData.CurrentTasks[i].TaskUIView.TaskInfoTextHelper.SetText(remainingResourceCount.ToString());
@@ -34,6 +57,7 @@ public static class TaskUtils {
         gameData.ResourceTypesForTasks.Remove(gameData.CurrentTasks[i].TaskInfo.NeedResource);
         gameData.CurrentTasks[i].TaskUIView.CompleteTask();
         gameData.CurrentTasks.RemoveAt(i);
+        gameData.CompletedTasksCount++;
         GameEntryPoint.Instance.CheckWinWithAction();
     }
 

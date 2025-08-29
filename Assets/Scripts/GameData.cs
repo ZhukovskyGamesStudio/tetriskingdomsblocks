@@ -9,6 +9,7 @@ public class GameData {
     public Dictionary<ResourceType, int> CollectedResources = new Dictionary<ResourceType, int>();
 
     public List<TaskInfoAndUI> CurrentTasks = new List<TaskInfoAndUI>();
+    public int CompletedTasksCount = 0;
     public List<ResourceType> ResourceTypesForTasks = new List<ResourceType>();
 
     //Game stats

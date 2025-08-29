@@ -91,7 +91,7 @@ public class RealShopDialog : DialogBase {
     public void BuyPieceForCoins() {
         ZhukovskyAnalyticsManager.Instance.SendCustomEvent("shop_open",
             new Dictionary<string, object> {
-                { "Random piece", "Random piece" }
+                { "Random piece", 1 }
             });
         _data.BuyPieceForCoins(_offersConfig.BuyPieceForCoinsCost);
     }
