@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Abstract;
 using Cysharp.Threading.Tasks;
 //using Localization;
@@ -19,7 +20,7 @@ namespace UI {
         protected RectTransform _shadowTransform, _shadowCenter, _headShift, _textBubble, _headFinPosAnchor;
 
         [SerializeField]
-        protected CanvasGroup _mainCanvasGroup,_textBubbleCanvas;
+        protected CanvasGroup _mainCanvasGroup, _textBubbleCanvas;
 
         private const string SHOW = "SpotlightShow";
         private const string HIDE = "SpotlightHide";
@@ -34,6 +35,9 @@ namespace UI {
             bool isHidingAfter = false) {
             _isHidingAfter = isHidingAfter;
             gameObject.SetActive(true);
+
+            RecreateToken();
+
             if (_isShown) {
                 JumpSpotlight(target.transform.position, animDataConfig);
             } else {
@@ -51,7 +55,7 @@ namespace UI {
             bool isHidingByAnyTap = true, bool isHidingAfter = false) {
             _isHidingAfter = isHidingAfter;
             gameObject.SetActive(true);
-
+            RecreateToken();
             /*if (_isShown) {
                 JumpSpotlight(target.transform.position, animDataConfig);
             } else {
@@ -95,7 +99,6 @@ namespace UI {
         }
 
         private async void JumpSpotlightFromVeryBig(Transform target, SpotlightAnimConfig config) {
-            RecreateToken();
             _headFinPosAnchor.position = target.transform.position;
             _shadowTransform.position = target.transform.position;
             _hintText.maxVisibleCharacters = 0;
@@ -109,6 +112,7 @@ namespace UI {
             if (_isHidingAfter) {
                 HideSpotlight();
             } else {
+                RecreateToken();
                 OnAnimationEnded?.Invoke();
             }
 
@@ -122,11 +126,10 @@ namespace UI {
             _headFinPosAnchor.position = targetPos;
             _headShift.anchoredPosition = _shadowTransform.anchoredPosition + config.HeadShift;
             _shadowCenter.sizeDelta = config.SpotlightSize;
-            RecreateToken();
             TypeText(_hintText, config.GetLocalizedText, _cts.Token).Forget();
             _animation.Play(SHOW);
             _isShown = true;
-        }   
+        }
 
         private void ChangeCenterBlockRaycast(bool isBlock) {
             _centerImageCanvasGroup.blocksRaycasts = isBlock;
@@ -159,8 +162,8 @@ namespace UI {
             await WaitForAnimationEnded(_cts.Token);
             _isShown = false;
         }
-        
-        public  void HideSpotlightInstant() {
+
+        public void HideSpotlightInstant() {
             _mainCanvasGroup.alpha = 0;
             _mainCanvasGroup.interactable = false;
             _mainCanvasGroup.blocksRaycasts = false;
@@ -232,7 +235,7 @@ namespace UI {
                 _textBubbleCanvas.alpha = Mathf.SmoothStep(1, 0, percent * 2f);
 
                 curTime += Time.deltaTime;
-                await UniTask.WaitForEndOfFrame();
+                await UniTask.WaitForEndOfFrame(_cts.Token);
             } while (curTime <= maxTime);
         }
 
@@ -252,12 +255,11 @@ namespace UI {
                 _textBubbleCanvas.alpha = Mathf.SmoothStep(0, 1, (percent - 0.5f) * 2f);
 
                 curTime += Time.deltaTime;
-                await UniTask.WaitForEndOfFrame();
+                await UniTask.WaitForEndOfFrame(_cts.Token);
             } while (curTime <= maxTime);
         }
 
         private async UniTask MoveHeadOnly(SpotlightAnimConfig config) {
-            RecreateToken();
             Vector2 headPos = _headShift.anchoredPosition;
             float curTime = 0;
             float maxTime = 0.5f;
@@ -269,7 +271,7 @@ namespace UI {
                 _textBubbleCanvas.alpha = Mathf.SmoothStep(1, 0, percent * 2f);
 
                 curTime += Time.deltaTime;
-                await UniTask.WaitForEndOfFrame();
+                await UniTask.WaitForEndOfFrame(_cts.Token);
             } while (curTime <= maxTime);
 
             _hintText.maxVisibleCharacters = 0;
@@ -292,7 +294,7 @@ namespace UI {
                 _textBubbleCanvas.alpha = Mathf.SmoothStep(0, 1, (percent - 0.5f) * 2f);
 
                 curTime += Time.deltaTime;
-                await UniTask.WaitForEndOfFrame();
+                await UniTask.WaitForEndOfFrame(_cts.Token);
             } while (curTime <= maxTime);
         }
 
@@ -305,7 +307,7 @@ namespace UI {
                 _headShift.anchoredPosition = Vector2.Lerp(headPos, _headFinPosAnchor.anchoredPosition + config.HeadShift,
                     Mathf.SmoothStep(0, 1, percent));
                 curTime += Time.deltaTime;
-                await UniTask.WaitForEndOfFrame();
+                await UniTask.WaitForEndOfFrame(_cts.Token);
             } while (curTime <= maxTime);
         }
     }

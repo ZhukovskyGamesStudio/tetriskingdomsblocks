@@ -54,11 +54,5 @@ namespace UI {
             OnAnimationEnded = null;
             _animation.Play(_hideAnimationClip.name);
         }
-        
-
-        protected override void OnDestroy() {
-            base.OnDestroy();
-            _cts?.Cancel();
-        }
     }
 }
