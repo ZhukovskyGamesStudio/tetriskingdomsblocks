@@ -188,11 +188,12 @@ public class MainManager : MonoBehaviour {
                     AddBoostersToInventory(startPosition, kvp);
                     break;
                 case ResourceType.Lootbox:
-                    for (int i = 0; i < kvp.Value; i++) {
-                        if (MetaFieldManager.Instance != null)
+                    if (MetaFieldManager.Instance != null) {
+                        for (int i = 0; i < kvp.Value; i++) {
                             MetaFieldManager.Instance.GenerateAndOpenLootbox();
-                        else
-                            GameFieldManager.Instance.GenerateAndOpenLootbox();
+                        }
+                    } else {
+                        StorageManager.GameDataMain.UncollectedLootboxes += kvp.Value;
                     }
 
                     break;

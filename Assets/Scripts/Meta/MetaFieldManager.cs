@@ -732,6 +732,17 @@ public class MetaFieldManager : FieldManager {
         }
     }
 
+    public void TryGiveUncollectedLootboxes() {
+        if (StorageManager.GameDataMain.UncollectedLootboxes > 0) {
+            for (int i = 0; i < StorageManager.GameDataMain.UncollectedLootboxes; i++) {
+                GenerateAndOpenLootbox();
+            }
+
+            StorageManager.GameDataMain.UncollectedLootboxes = 0;
+            StorageManager.SaveGame();
+        }
+    }
+    
     public void GenerateAndOpenLootbox(CellTypeInfo cell = null) {
         var pieceData = GenerateNewPiece(cell);
         MetaUI.Instance.OpenLootboxDialog(pieceData);

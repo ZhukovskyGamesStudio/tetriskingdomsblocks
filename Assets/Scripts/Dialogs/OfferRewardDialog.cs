@@ -24,9 +24,6 @@ public class OfferRewardDialog : DialogBase {
     }
 
     public void ClickDefaultClaim() {
-       
-        //TODO add flying resources from dialog to counters
-        //бустеры летят в кнопку плей, ресурсы в кнопку ресурсы, золото и хп - в каунтеры
         
         Hide().Forget();
         _clickDefaultClaim?.Invoke();
