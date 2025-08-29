@@ -21,7 +21,7 @@ public class SameCellsGroupCalculater {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (grid[i, j] == CellType.Empty || grid[i, j] == CellType.LockedMetaCell) {
+                if (grid[i, j] == CellType.Empty || grid[i, j] == CellType.LockedMetaCell ||grid[i, j] == CellType.BuildingPart  ) {
                     continue;
                 }
                 if (!visited[i, j] &&PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c => c.CellType == grid[i, j]).AfkResourceType != ResourceType.None) {
@@ -53,6 +53,7 @@ public class SameCellsGroupCalculater {
                     CellType cellType = grid[i, j];
                     var resourceType = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType)
                         .ResourcesForDestroy[0].ResourceType;
+                    if(resourceType == ResourceType.None)continue;
                     var group = BFSWithCoordinates(grid, visited, i, j, resourceType);
 
                     result.Add(group);

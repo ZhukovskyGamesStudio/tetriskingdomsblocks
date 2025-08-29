@@ -432,8 +432,9 @@ public class MetaFieldManager : FieldManager {
         MarkLockedGroup(groupIndex);
         var lockedCellGroup = LockedCellGroups[groupIndex];
         Vector3 uiPos = Vector3.zero;
-
+        Debug.Log("new lock group-------------------");
         foreach (var lockCellPos in lockedCellGroup) {
+            Debug.Log(lockCellPos + " lock group");
             uiPos += _cells[lockCellPos.x, lockCellPos.y].transform.position;
         }
 
