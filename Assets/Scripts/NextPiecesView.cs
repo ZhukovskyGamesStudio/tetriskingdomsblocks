@@ -33,10 +33,11 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     private Collider _tinyPortalCollider;
     
     [SerializeField]
-    private Material _tinyPortalActive, _tinyPortalInactive;
+    private Material _tinyPortalActive, _tinyPortalInactive, _tinyPortalSelected;
     
     private CancellationTokenSource _cts;
-
+    private Material _cur;
+    private bool _isEnabled = true;
     private void Awake() {
         Instance = this;
     }
@@ -44,10 +45,14 @@ public class NextPiecesView : MonoBehaviour, IResetable {
     public void SetTinyPortalActive(bool isActive) {
         _tinyPortalContainer.material = isActive ? _tinyPortalActive : _tinyPortalInactive;
         _tinyPortalCollider.enabled = isActive;
+        _isEnabled = isActive;
     }
-    
-    public async UniTask SetData(PieceData nextPiece) {
-        MetaFieldManager.Instance.AddPieceToInventory(nextPiece);
+
+    private void Update() {
+        if (_isEnabled) {
+            bool isSelected = DragManager.IsDraggingPiece && GameFieldManager.Instance.AdditionalPieceContainerUnderPiece();
+            _tinyPortalContainer.material = isSelected ? _tinyPortalSelected : _tinyPortalActive;
+        }
     }
 
     public void SetData(List<PieceData> nextPieces) {
