@@ -24,7 +24,7 @@ public class GameDataForSave {
     public bool FirstLaunch = true;
     
     public bool IsWonInThisSession = false;
-
+    public bool IsSpecialOfferBought = false;
     public bool WasRated = false;
     public bool HasNoAds = false;
     public bool IsIntersUnlocked = false;

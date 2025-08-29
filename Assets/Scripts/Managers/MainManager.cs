@@ -20,7 +20,7 @@ public class MainManager : MonoBehaviour {
 
     private int _currentRewardedCubes;
     private int _currentRewardedCoins;
-    
+
     public static event Action<string, string, float, string> OnPaymentSucceed;
 
     public LevelConfig CurrentLevelConfig =>
@@ -100,7 +100,6 @@ public class MainManager : MonoBehaviour {
         if (healthToAdd > 0) {
             StorageManager.GameDataMain.HealthCount = Mathf.Min(StorageManager.GameDataMain.HealthCount + healthToAdd, MAX_HEALTH_COUNT);
         }
-        
 
         if (StorageManager.GameDataMain.HealthCount != MAX_HEALTH_COUNT)
             StorageManager.GameDataMain.LastHealthRecoveryTime = StorageManager.GameDataMain.LastHealthRecoveryTimeDateTime
@@ -111,9 +110,9 @@ public class MainManager : MonoBehaviour {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
             if (MetaTabsPanel.Instance != null)
                 MetaTabsPanel.Instance.OpenRule();
-            else 
+            else
                 DialogsManager.Instance.CloseAllDialogs();
-            
+
             ShowOfferRewardDialog(new SerializedDictionary<ResourceType, int>() { { data.Resource, data.ResourceCount } });
         });
     }
@@ -122,34 +121,41 @@ public class MainManager : MonoBehaviour {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
             if (MetaTabsPanel.Instance != null)
                 MetaTabsPanel.Instance.OpenRule();
-            else 
+            else
                 DialogsManager.Instance.CloseAllDialogs();
 
-           // OnPaymentSucceed.Invoke(InApsIds.InAps[data.Type], InAppsManager.Instance.InAppsProvider.GetPrice(data.Type), float price, string inapp_type);
+            if (data.Type == InApsTypes.Special) {
+                StorageManager.GameDataMain.IsSpecialOfferBought = true;
+            }
+
             ShowOfferRewardDialog(data.Resources);
         });
-
     }
 
     public void BuyPiece(int cost) {
         if (StorageManager.GameDataMain.GetResource(ResourceType.Coins) >= cost) {
             StorageManager.GameDataMain.AddResource(ResourceType.Coins, -cost);
-            MetaTabsPanel.Instance.OpenRule();
-            MetaFieldManager.Instance.GenerateAndOpenLootbox();
+            if (MetaFieldManager.Instance == null) {
+                StorageManager.GameDataMain.UncollectedLootboxes++;
+                StorageManager.SaveGame();
+            } else {
+                MetaTabsPanel.Instance.OpenRule();
+                MetaFieldManager.Instance.GenerateAndOpenLootbox();
+            }
         }
     }
-    
-    private void ShowOfferRewardDialog(SerializedDictionary<ResourceType,int> rewards) {
+
+    private void ShowOfferRewardDialog(SerializedDictionary<ResourceType, int> rewards) {
         Vector2 startPosition = Vector2.zero;
         Debug.Log("Buy offer");
-        if(MetaUI.Instance != null)
+        if (MetaUI.Instance != null)
             startPosition = MetaUI.Instance._mainCanvas.transform.position;
-        else 
+        else
             startPosition = GameUI.Instance._mainCanvas.transform.position;
         var dialog = new DialogWithData {
             DialogType = typeof(OfferRewardDialog),
             Data = new OfferRewardDialog.Data {
-                ClickDefaultClaim = ()=>ClaimOfferRewards(rewards,startPosition),
+                ClickDefaultClaim = () => ClaimOfferRewards(rewards, startPosition),
                 OfflineResources = rewards
             }
         };
@@ -208,8 +214,8 @@ public class MainManager : MonoBehaviour {
     private void AddBoostersToInventory(Vector2 startPosition, KeyValuePair<ResourceType, int> kvp) {
         if (MetaFieldManager.Instance != null) {
             FloatingResourcesManager.Instance.FromPointToPointAnimation(kvp.Value, kvp.Key, startPosition,
-                MetaUI.Instance.PlayButton.transform.position, AddShopItemsInInventory,
-                StorageManager.GameDataMain.GetResource(kvp.Key), false, true, false, false);
+                MetaUI.Instance.PlayButton.transform.position, AddShopItemsInInventory, StorageManager.GameDataMain.GetResource(kvp.Key), false,
+                true, false, false);
         } else
             StorageManager.GameDataMain.AddResource(kvp.Key, kvp.Value);
     }
@@ -304,8 +310,7 @@ public class MainManager : MonoBehaviour {
     public void Restart() {
         if (StorageManager.GameDataMain.HealthCount > 0) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-        else {
+        } else {
             GoToMeta();
         }
     }
@@ -321,14 +326,13 @@ public class MainManager : MonoBehaviour {
     public void RemoveHealthAndGoToMeta() {
         RemoveHealthAfterLose();
         string levelDiff = StorageManager.GameDataMain.CurMaxLevel > 30 ? "hard" : "normal";
-        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish",
-            new Dictionary<string, object> {
-                { "level_number", StorageManager.GameDataMain.CurMaxLevel },
-                { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
-                { "level_count", StorageManager.GameDataMain.GamesCount },
-                { "level_diff", levelDiff },
-                { "result", "leave" }
-            });
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("level_finish", new Dictionary<string, object> {
+            { "level_number", StorageManager.GameDataMain.CurMaxLevel },
+            { "level_name", $"{StorageManager.GameDataMain.CurMaxLevel + 1}_level" },
+            { "level_count", StorageManager.GameDataMain.GamesCount },
+            { "level_diff", levelDiff },
+            { "result", "leave" }
+        });
         GoToMeta();
     }
 

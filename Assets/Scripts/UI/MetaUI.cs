@@ -262,7 +262,7 @@ public class MetaUI : MonoBehaviour {
                 BuyResource = MainManager.Instance.BuyMetaResource,
                 BuyOffer = MainManager.Instance.BuyBundleOffer,
                 BuyPieceForCoins = MainManager.Instance.BuyPiece,
-                OnPiece = onPiece
+                ScrollToBottom = onPiece
             }
         };
 

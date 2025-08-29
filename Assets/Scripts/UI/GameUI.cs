@@ -76,7 +76,9 @@ public class GameUI : MonoBehaviour {
                 ClickClose = ShowOutOfMovesDialog,
                 BuyResource = MainManager.Instance.BuyMetaResource,
                 BuyOffer = MainManager.Instance.BuyBundleOffer,
-                IsCore = true
+                BuyPieceForCoins = MainManager.Instance.BuyPiece,
+                IsCore = true,
+                ScrollToBottom = true
             }
         };
         

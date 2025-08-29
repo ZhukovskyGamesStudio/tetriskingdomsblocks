@@ -10,6 +10,9 @@ public class RealShopDialog : DialogBase {
     private TextMeshProUGUI _balanceText;
 
     [SerializeField]
+    private GameObject _specialOffersSection;
+    
+    [SerializeField]
     private Transform _specialOffersContainer, _bundleOffersContainers, _resourceOffersContainer, _buyPieceContainer;
 
     [SerializeField]
@@ -42,10 +45,16 @@ public class RealShopDialog : DialogBase {
 
         _clickClose = dialogData.ClickClose;
 
-        foreach (SpecialOfferData specialOffer in _offersConfig.SpecialOffers) {
-            RealShopOffer newOffer = Instantiate(specialOffer.Prefab, _specialOffersContainer);
-            newOffer.SetData(specialOffer, BuyOffer);
+        if (StorageManager.GameDataMain.IsSpecialOfferBought) {
+            _specialOffersSection.SetActive(false);
+        } else {
+            foreach (SpecialOfferData specialOffer in _offersConfig.SpecialOffers) {
+                RealShopOffer newOffer = Instantiate(specialOffer.Prefab, _specialOffersContainer);
+                newOffer.SetData(specialOffer, BuyOffer);
+            }
         }
+        
+       
 
         foreach (SpecialOfferData bundleOffer in _offersConfig.BundleOffers) {
             RealShopOffer newOffer = Instantiate(bundleOffer.Prefab, _bundleOffersContainers);
@@ -57,13 +66,15 @@ public class RealShopDialog : DialogBase {
             newOffer.SetData(resourceOffer, BuyResource);
         }
 
-        _buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
-        _buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost, BuyPieceForCoins);
-        
+        if (!dialogData.IsCore) {
+            _buyPieceOffer = Instantiate(_offersConfig.BuyPieceForCoinsOffer, _buyPieceContainer);
+            _buyPieceOffer.SetData(_offersConfig.BuyPieceForCoinsCost, BuyPieceForCoins);
+        }
+
     }
 
     public override UniTask Show(Action onClose) {
-        if (_data.OnPiece) {
+        if (_data.ScrollToBottom) {
             _scrollRect.normalizedPosition = Vector2.down;
         }
         return base.Show(onClose);
@@ -98,7 +109,7 @@ public class RealShopDialog : DialogBase {
         public Action<int> BuyPieceForCoins;
         public Action<SpecialOfferData> BuyOffer;
         public Action<ResourceOfferData> BuyResource;
-        public bool OnPiece;
+        public bool ScrollToBottom;
     }
 }
 
