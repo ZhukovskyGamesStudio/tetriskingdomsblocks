@@ -152,6 +152,8 @@ public class GameEntryPoint : MonoBehaviour {
 
         StorageManager.GameDataMain.AddResource(ResourceType.Coins, -900);
         AddMoves();
+        BoostersManager.Instance.CanUseBoosters = true;
+        DragManager.IsDragDisabled = false;
     }
 
     public bool CheckWinWithAction() {

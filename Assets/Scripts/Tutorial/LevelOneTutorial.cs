@@ -76,7 +76,7 @@ public class LevelOneTutorial : MonoBehaviour {
     private void HighlightCurrentPiece() {
         PieceView piece = FindAnyObjectByType<PieceView>();
         _nextPiecesContainer = piece._cellsContainer.gameObject;
-        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _nextPiecesContainer });
+        TutorialHoleHelper.HighlightObjects(new List<GameObject> { _nextPiecesContainer});
     }
 
     public void HideFirstStepTutorial(Vector2Int pos, bool[,] cells) {

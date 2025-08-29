@@ -25,6 +25,8 @@ public class BoostersManager : MonoBehaviour {
     private int _currentRotationY;
     private PieceView _currentPieceView;
 
+    public bool CanUseBoosters = true;
+
     public enum RotateBoosterStates {
         LockRotate,
         SelectPiece,
@@ -111,7 +113,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseRotatePiece() {
-        if (!CanRotate()) {
+        if (!CanRotate() || !CanUseBoosters) {
             return;
         }
 
@@ -125,7 +127,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseHammer() {
-        if (!CanHammer()) {
+        if (!CanHammer()|| !CanUseBoosters) {
             return;
         }
 
@@ -140,7 +142,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public async UniTask UseRandomField() {
-        if (!CanShuffle()) {
+        if (!CanShuffle()|| !CanUseBoosters) {
             return;
         }
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.UseShuffle);
@@ -194,7 +196,7 @@ public class BoostersManager : MonoBehaviour {
     }
 
     public void UseDynamite() {
-        if (!CanDynamite()) {
+        if (!CanDynamite()|| !CanUseBoosters) {
             return;
         }
 
