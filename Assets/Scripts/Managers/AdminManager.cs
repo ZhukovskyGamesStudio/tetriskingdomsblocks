@@ -139,6 +139,9 @@ public class AdminManager : MonoBehaviour {
 
     public void SetTutorialSkip(bool isSkipTutorialsBoosters) {
         IsSkipTutorials = !IsSkipTutorials;
+        if (IsSkipTutorials) {
+            StorageManager.GameDataMain.IsTutorialCompleted = true;
+        }
     }
 
     private bool _isDisabled;
