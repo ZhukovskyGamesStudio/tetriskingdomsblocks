@@ -22,6 +22,7 @@ public class LevelCrystalMinesTutorial : MonoBehaviour {
 
     private void ShowFirstStepTutorial() {
         GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(false);
         GameUI.Instance.GoalView.gameObject.SetActive(false);
         
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(SpotlightsManager.Instance.CenterScreenAnchor, _nearCrystalMineAnimConfig);
@@ -60,7 +61,7 @@ public class LevelCrystalMinesTutorial : MonoBehaviour {
     public void HideThirdStepTutorial() {
         GameUI.Instance.GoalView.ShowWitchWithAnimation();
         GameUI.Instance.GoalView.gameObject.SetActive(true);
-        
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(true);
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
         TutorialHoleHelper.DestroyHoles();
         GameFieldManager.Instance.OnCellPlaced -= HideFirstStepTutorial;

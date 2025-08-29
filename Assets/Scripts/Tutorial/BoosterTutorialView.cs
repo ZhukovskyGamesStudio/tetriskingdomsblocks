@@ -37,6 +37,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
     private void ShowBoosterStepTutorial() {
         DragManager.IsDragDisabled = true;
         GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlightOnButton(BoosterButton, _stepConfig, HideTutorial);
         SpotlightsManager.Instance.HideFinger();
         ShowFingerWithDelay().Forget();
@@ -60,6 +61,7 @@ public abstract class BoosterTutorialView : MonoBehaviour {
 
         await SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
         GameUI.Instance.GoalView.ShowWitchWithAnimation();
+        GameUI.Instance.GoalView.SettingsButton.gameObject.SetActive(true);
         DestroyTutorial();
     }
 
