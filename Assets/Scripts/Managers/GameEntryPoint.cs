@@ -72,7 +72,7 @@ public class GameEntryPoint : MonoBehaviour {
 
      
         _spawnRandomNature.Generate();
-       
+        BackgroundMusicManager.Instance.StopAndPlayEndlessMusic().Forget();
       
     }
 

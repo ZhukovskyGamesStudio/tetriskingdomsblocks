@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -7,14 +8,24 @@ public class BackgroundMusicManager : MonoBehaviour {
 
     public static BackgroundMusicManager Instance;
 
+    private CancellationTokenSource _cts;
+    private CancellationTokenSource _linkedCts;
+
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        _cts = new CancellationTokenSource();
     }
 
-    public async UniTaskVoid PlayEndlessMusic() {
-        while (true) {
-            await _audioQueueMixer.PlayNextBlended();
+    public async UniTaskVoid StopAndPlayEndlessMusic() {
+        if (_cts != null) {
+            _cts.Cancel();
+            _cts = new CancellationTokenSource();
+            _linkedCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy(), _cts.Token);
+        }
+
+        while (!_linkedCts.IsCancellationRequested) {
+            await _audioQueueMixer.PlayNextBlended(_linkedCts.Token);
         }
     }
 

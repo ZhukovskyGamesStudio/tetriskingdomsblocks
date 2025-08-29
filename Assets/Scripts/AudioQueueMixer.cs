@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -54,6 +55,7 @@ public class AudioQueueMixer : MonoBehaviour {
             newComp.priority = _audioSources[0].priority;
             newComp.playOnAwake = false;
             newComp.volume = _audioSources[0].volume;
+            newComp.outputAudioMixerGroup = _audioSources[0].outputAudioMixerGroup;
             _audioSources.Add(newComp);
         }
     }
@@ -68,7 +70,7 @@ public class AudioQueueMixer : MonoBehaviour {
         next.Stop();
     }
 
-    public async UniTask PlayNextBlended() {
+    public async UniTask PlayNextBlended(CancellationToken cancellationToken) {
         // Fade out предыдущий
         if (_currentPlaying != null && _currentPlaying.isPlaying) {
             float startVolume = _currentPlaying.volume;
@@ -76,7 +78,7 @@ public class AudioQueueMixer : MonoBehaviour {
             while (t < 0.5f) {
                 t += Time.unscaledDeltaTime;
                 _currentPlaying.volume = Mathf.Lerp(startVolume, 0f, t / 0.5f);
-                await UniTask.Yield(PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
             }
 
             _currentPlaying.Stop();
@@ -96,12 +98,12 @@ public class AudioQueueMixer : MonoBehaviour {
         while (tIn < 0.5f) {
             tIn += Time.unscaledDeltaTime;
             next.volume = Mathf.Lerp(0f, _needVolume, tIn / 0.5f) * VolumeMultiplier;
-            await UniTask.Yield(PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+            await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
         }
 
         next.volume = _needVolume * VolumeMultiplier;
 
-        await UniTask.WaitWhile(() => next.isPlaying, cancellationToken: this.GetCancellationTokenOnDestroy());
+        await UniTask.WaitWhile(() => next.isPlaying, cancellationToken: cancellationToken);
         next.Stop();
     }
 }
