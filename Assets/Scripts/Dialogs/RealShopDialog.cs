@@ -16,9 +16,6 @@ public class RealShopDialog : DialogBase {
     private Transform _specialOffersContainer, _bundleOffersContainers, _resourceOffersContainer, _buyPieceContainer;
 
     [SerializeField]
-    private RealShopOffer _specialOfferPrefab;
-
-    [SerializeField]
     private RealShopResourceOffer _resourceOfferPrefab;
 
     [SerializeField]
