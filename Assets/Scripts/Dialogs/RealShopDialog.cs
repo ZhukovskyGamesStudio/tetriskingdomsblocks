@@ -41,7 +41,10 @@ public class RealShopDialog : DialogBase {
 
         if (dialogData.IsCore) {
             _balanceText.text = dialogData.Balance.ToString();
-        } else _coreState.SetActive(false);
+        } else {
+            _coreState.SetActive(false);
+            MetaUI.Instance.SettingsButton.gameObject.SetActive(false);
+        }
 
         _clickClose = dialogData.ClickClose;
 
@@ -99,6 +102,7 @@ public class RealShopDialog : DialogBase {
     public void ClickClose() {
         Hide().Forget();
         _clickClose?.Invoke();
+        MetaUI.Instance.SettingsButton.gameObject.SetActive(true);
     }
 
     [Serializable]

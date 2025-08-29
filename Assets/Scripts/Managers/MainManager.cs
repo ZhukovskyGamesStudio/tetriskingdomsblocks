@@ -108,8 +108,9 @@ public class MainManager : MonoBehaviour {
 
     public void BuyMetaResource(ResourceOfferData data) {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
-            if (MetaTabsPanel.Instance != null)
+            if (MetaTabsPanel.Instance != null) {
                 MetaTabsPanel.Instance.OpenRule();
+            }
             else
                 DialogsManager.Instance.CloseAllDialogs();
 
@@ -119,8 +120,9 @@ public class MainManager : MonoBehaviour {
 
     public void BuyBundleOffer(SpecialOfferData data) {
         InAppsManager.Instance.InAppsProvider.Buy(data.Type, () => {
-            if (MetaTabsPanel.Instance != null)
+            if (MetaTabsPanel.Instance != null) {
                 MetaTabsPanel.Instance.OpenRule();
+            }
             else
                 DialogsManager.Instance.CloseAllDialogs();
 

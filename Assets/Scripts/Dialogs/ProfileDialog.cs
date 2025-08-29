@@ -9,6 +9,9 @@ public class ProfileDialog : DialogBase {
     private TextMeshProUGUI _winsText, _levelsText, _bestText, _builtText, _playerNameText;
 
     [SerializeField]
+    private TMP_InputField _playerNameInput;
+    
+    [SerializeField]
     private Image _avatarImage;
 
     private Action _clickEditAvatar;
@@ -25,6 +28,7 @@ public class ProfileDialog : DialogBase {
         _avatarImage.sprite = dialogData.AvatarSprite;
 
         _clickEditAvatar = dialogData.ClickEditAvatar;
+        _playerNameInput.SetTextWithoutNotify(dialogData.PlayerName);
     }
 
     public void ExitFromDialog() {
@@ -35,6 +39,16 @@ public class ProfileDialog : DialogBase {
         _clickEditAvatar.Invoke();
     }
 
+    public void OnNameChanged(string newName) {
+        if (string.IsNullOrWhiteSpace(newName)) {
+            _playerNameInput.SetTextWithoutNotify(_playerNameText.text);
+            return;
+        }
+        
+        _playerNameText.text = newName;
+        StorageManager.GameDataMain.PlayerName = newName;
+    }
+    
     [Serializable]
     public class Data {
         public int Wins;

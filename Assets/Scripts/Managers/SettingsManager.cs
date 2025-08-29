@@ -40,7 +40,7 @@ public class SettingsManager : MonoBehaviour {
                 IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
                 IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
                 IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn,
-                IsNotificationsOn = true,
+                IsNotificationsOn = false,
                 ClickSupport = () => throw new NotImplementedException(), // TODO: убрать заглушки
                 ClickTerms = () => Application.OpenURL("https://madpixel.dev/privacy.html")
             }

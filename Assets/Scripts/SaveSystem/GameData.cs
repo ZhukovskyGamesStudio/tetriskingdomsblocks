@@ -14,6 +14,7 @@ public class GameDataForSave {
 
     public List<int> RemainedLockedZones;
    
+    public string PlayerName = "PlayerName12345";
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
     public int GotPiecesCount;

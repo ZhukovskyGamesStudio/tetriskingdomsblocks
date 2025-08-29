@@ -48,6 +48,9 @@ public class MetaTabsPanel : MonoBehaviour {
     }
     
     public void OpenRule() {
+        if (SelectedTab == MetaTab.Shop) {
+            MetaUI.Instance.SettingsButton.gameObject.SetActive(true);
+        }
         if (SelectedTab == MetaTab.Rule) return;
         MetaFieldManager.Instance.CanDragCamera = true;
         MetaFieldManager.Instance.CanOpenLockedZones = true;

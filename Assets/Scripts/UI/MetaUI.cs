@@ -135,7 +135,7 @@ public class MetaUI : MonoBehaviour {
                 Levels = StorageManager.GameDataMain.CurMaxLevel,
                 WeeksBest = 123, // TODO: убрать заглушки
                 Wins = StorageManager.GameDataMain.FirstAttemptWinLevelsCount,
-                PlayerName = "PlayerName12345",
+                PlayerName = StorageManager.GameDataMain.PlayerName,
                 ClickEditAvatar = OpenEditAvatar,
                 AvatarSprite = _avatarsConfig.PossibleAvatars[StorageManager.GameDataMain.ProfileAvatar]
             }
@@ -148,7 +148,7 @@ public class MetaUI : MonoBehaviour {
         var dialog = new DialogWithData {
             DialogType = typeof(EditAvatarDialog),
             Data = new EditAvatarDialog.Data {
-                PlayerName = "PlayerName12345",
+                PlayerName = StorageManager.GameDataMain.PlayerName,
                 ClickClose = OpenProfile,
                 ClickChangeAvatar = SetAvatar,
                 PossibleAvatars = _avatarsConfig.PossibleAvatars,
