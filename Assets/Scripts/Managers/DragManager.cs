@@ -107,8 +107,7 @@ public class DragManager : MonoBehaviour {
         if (!isDragging) {
             return;
         }
-
-        IsDraggingPiece = false;
+    
         FieldManager cellManager = GetCurrentFieldManager();
        markedCellsContainer.gameObject.SetActive(false); 
         isDragging = false;
@@ -141,5 +140,6 @@ public class DragManager : MonoBehaviour {
         }
 
         ReplaceMaterialInChildren(_pieceGameObject.transform, MainManager.Instance._mainConfig._normal, false);
+        IsDraggingPiece = false;
     }
 }
