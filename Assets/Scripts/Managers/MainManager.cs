@@ -141,6 +141,7 @@ public class MainManager : MonoBehaviour {
             } else {
                 MetaTabsPanel.Instance.OpenRule();
                 MetaFieldManager.Instance.GenerateAndOpenLootbox();
+                MetaUI.Instance.CountersPanelView.SetGold((int)StorageManager.GameDataMain.GetResource(ResourceType.Coins));
             }
         }
     }
