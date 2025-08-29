@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -69,10 +70,11 @@ public class UpgradeTileDialog : DialogBase {
 
         for (int i = 0; i < _upgradeInfoObjects.Length; i++) {
             if (dialogData.UpgradeCost.Count > i) {
+                var kvp = dialogData.UpgradeCost.ElementAt(i);
                 var upgradeInfoObject = _upgradeInfoObjects[i];
                 upgradeInfoObject.gameObject.SetActive(true);
-                upgradeInfoObject.Image.sprite = SpritesManager.Instance.GetSprite(dialogData.UpgradeCost[i].ResourceType);
-                upgradeInfoObject.Text.text = (dialogData.UpgradeCost[i].Cost * dialogData.CellsInFigureCount).ToString();
+                upgradeInfoObject.Image.sprite = SpritesManager.Instance.GetSprite(kvp.Key);
+                upgradeInfoObject.Text.text = (kvp.Value * dialogData.CellsInFigureCount).ToString();
             }
             else
                 _upgradeInfoObjects[i].gameObject.SetActive(false);
@@ -96,7 +98,7 @@ public class UpgradeTileDialog : DialogBase {
         public string TileName;
         public int CurrentLevel;
         public bool IsMaxLevel;
-        public List<UpgradeInfo> UpgradeCost;
+        public AYellowpaper.SerializedCollections.SerializedDictionary<ResourceType,int> UpgradeCost;
         public int CellsInFigureCount;
     }
 }

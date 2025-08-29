@@ -8,9 +8,8 @@ public class MainMetaConfig : ScriptableObject {
 
     public int FieldSize;
 
-    public float[] ResourceMultipliers;
-
     public float resourceMarksUpdateCouldown;
+    public float SawmillMultiplier = 1.3f;
 
     public float CameraDragSpeed;
     public CellType[] CellsToSpawn;

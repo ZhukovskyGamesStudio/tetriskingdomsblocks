@@ -174,21 +174,21 @@ public class MetaUI : MonoBehaviour {
         resourcesInfo.TryAdd(ResourceType.Wood, 0);
         resourcesInfo.TryAdd(ResourceType.Rocks, 0);
         resourcesInfo.TryAdd(ResourceType.Food, 0);
-        resourcesInfo.TryAdd(ResourceType.Metal, 0);
+        //resourcesInfo.TryAdd(ResourceType.Metal, 0);
         var dialog = new DialogWithData {
             DialogType = typeof(OverviewDialog),
             Data = new OverviewDialog.Data {
                 Resources = new List<OverviewResourceInfo> {
                     new OverviewResourceInfo(ResourceType.Coins, (int)StorageManager.GameDataMain.GetResource(ResourceType.Coins),
-                        (int)(resourcesInfo[ResourceType.Coins] * 3600)),
+                        (int)(resourcesInfo[ResourceType.Coins])),
                     new OverviewResourceInfo(ResourceType.Wood, (int)StorageManager.GameDataMain.GetResource(ResourceType.Wood),
-                        (int)(resourcesInfo[ResourceType.Wood] * 3600)),
+                        (int)(resourcesInfo[ResourceType.Wood])),
                     new OverviewResourceInfo(ResourceType.Rocks, (int)StorageManager.GameDataMain.GetResource(ResourceType.Rocks),
-                        (int)(resourcesInfo[ResourceType.Rocks] * 3600)),
+                        (int)(resourcesInfo[ResourceType.Rocks])),
                     new OverviewResourceInfo(ResourceType.Food, (int)StorageManager.GameDataMain.GetResource(ResourceType.Food),
-                        (int)(resourcesInfo[ResourceType.Food]) * 3600),
-                    new OverviewResourceInfo(ResourceType.Metal, (int)StorageManager.GameDataMain.GetResource(ResourceType.Metal),
-                        (int)(resourcesInfo[ResourceType.Metal] * 3600))
+                        (int)(resourcesInfo[ResourceType.Food])),
+                    /*new OverviewResourceInfo(ResourceType.Metal, (int)StorageManager.GameDataMain.GetResource(ResourceType.Metal),
+                        (int)(resourcesInfo[ResourceType.Metal]))*/
                 },
                 ShowResource = StorageManager.GameDataMain.SeenResource
             }

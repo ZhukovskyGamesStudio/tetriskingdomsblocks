@@ -6,15 +6,14 @@ using UnityEngine;
 
 [Serializable]
 public class GameDataForSave {
-    public bool IsTutorialComplete;
-    public string CreatedVersion;
+    public bool IsTutorialCompleted;
     public int CurMaxLevel;
     public int GamesCount;
     public SerializedDictionary<ResourceType, float> ResourcesCount;
     public SerializedDictionary<ResourceType, bool> SeenResource;
 
     public List<int> RemainedLockedZones;
-    public bool FieldSaveIsCreated; //change code with this bool
+   
     public int HealthCount;
     public int PlacedInMetaPiecesCount;
     public int GotPiecesCount;
@@ -90,7 +89,6 @@ public class GameDataForSave {
             14,
             15
         };
-        CreatedVersion = Application.version;
         ProfileAvatar = 0;
     }
 

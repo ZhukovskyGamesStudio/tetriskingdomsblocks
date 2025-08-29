@@ -20,9 +20,18 @@ MonoBehaviour:
   AfkResourceType: 1
   MaxAfkCapacity: 100
   AfkProduceCountPerSecond: 0.01389
+  AfkProduceCountPerHour: 50
+  IsCellsCountAffectCapacityAndProduction: 1
+  IsCellsCountAffectCost: 1
   UpgradeCellType: 302
   UpgradeCost:
   - ResourceType: 3
     Cost: 100
   - ResourceType: 2
     Cost: 200
+  UpgradeCostDict:
+    _serializedList:
+    - Key: 2
+      Value: 200
+    - Key: 3
+      Value: 100

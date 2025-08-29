@@ -18,8 +18,11 @@ MonoBehaviour:
   CellName: Village
   ChanceToSpawn: 0
   AfkResourceType: 13
-  MaxAfkCapacity: 100
+  MaxAfkCapacity: 500
   AfkProduceCountPerSecond: 0.0278
+  AfkProduceCountPerHour: 100
+  IsCellsCountAffectCapacityAndProduction: 0
+  IsCellsCountAffectCost: 0
   UpgradeCellType: 305
   UpgradeCost:
   - ResourceType: 3
@@ -28,3 +31,11 @@ MonoBehaviour:
     Cost: 300
   - ResourceType: 1
     Cost: 500
+  UpgradeCostDict:
+    _serializedList:
+    - Key: 1
+      Value: 500
+    - Key: 2
+      Value: 300
+    - Key: 3
+      Value: 200

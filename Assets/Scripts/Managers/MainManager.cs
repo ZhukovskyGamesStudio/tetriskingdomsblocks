@@ -301,11 +301,11 @@ public class MainManager : MonoBehaviour {
     }
 
     public void Restart() {
-        if (StorageManager.GameDataMain.HealthCount > 0)
+        if (StorageManager.GameDataMain.HealthCount > 0) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
         else {
             GoToMeta();
-            //floating window with "watch ad and get health"
         }
     }
 

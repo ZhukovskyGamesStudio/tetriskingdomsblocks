@@ -17635,6 +17635,7 @@ MonoBehaviour:
   _additionalContainerMask:
     serializedVersion: 2
     m_Bits: 512
+  <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
   _placeCellEffect: {fileID: 675066707444398792, guid: ac875c33a2464264b9ba9ff3ad43ce19, type: 3}
   _mmfPlayer: {fileID: 1984839918}
   _gameAudio: {fileID: 1005776668}
@@ -17645,7 +17646,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _villageStuffConfig: {fileID: 11400000, guid: 9ac4b5827b79db44a8a47b50db72682a, type: 2}
-  <MainMetaConfig>k__BackingField: {fileID: 11400000, guid: 479ef4ff36ddc7a49ab114e49c0fc0c5, type: 2}
   _inventoryCellPrefab: {fileID: 5840542220916797315, guid: c023b817157905d41826e5c3aed3752c, type: 3}
   _inventoryCellsContainer: {fileID: 596523684}
   _cameraMin: {fileID: 1372868448}
@@ -17669,6 +17669,7 @@ MonoBehaviour:
   _addPieceButton: {fileID: 612089817}
   CanOpenLockedZones: 1
   CanDragCamera: 1
+  DraggingInventoryScroll: 0
 --- !u!4 &1910540965
 Transform:
   m_ObjectHideFlags: 0

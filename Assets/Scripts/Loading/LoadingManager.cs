@@ -15,6 +15,9 @@ public class LoadingManager : MonoBehaviour {
     [SerializeField]
     private float _fakeWaitSeconds = 0.1f;
 
+    [SerializeField]
+    private MainMetaConfig _mainMetaConfig;
+
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
@@ -32,9 +35,13 @@ public class LoadingManager : MonoBehaviour {
     }
 
     private void InitManagers() {
-        if (StorageManager.IsNewPlayer()) {
-            Debug.Log("Tutorial is not completed, recreating save");
-            StorageManager.CreateNewSaveData();
+        if (!StorageManager.HasSavedGame()) {
+            StorageManager.CreateNewSaveData(_mainMetaConfig);
+        } else {
+            StorageManager.LoadGame();
+            if (!StorageManager.GameDataMain.IsTutorialCompleted) {
+                StorageManager.CreateNewSaveData(_mainMetaConfig);
+            }
         }
 
         StorageManager.GameDataMain.IsWonInThisSession = false;
@@ -69,7 +76,6 @@ public class LoadingManager : MonoBehaviour {
 
         await UniTask.Delay(TimeSpan.FromSeconds(_fakeWaitSeconds));
 
-        StorageManager.LoadGame();
         if (StorageManager.GameDataMain.CurMaxLevel >= 3) {
             FirstLoad = true;
             await SceneManager.LoadSceneAsync("MetaScene");

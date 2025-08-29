@@ -268,7 +268,7 @@ public class MetaTutorial : MonoBehaviour {
     private void HideSeventhStepTutorial() {
         MetaUI.Instance.BuildButton.enabled = false;
         MetaUI.Instance.GetPieceButtonView.GetPieceButton.enabled = false;
-        StorageManager.GameDataMain.IsTutorialComplete = true;
+        StorageManager.GameDataMain.IsTutorialCompleted = true;
         StorageManager.SaveGame();
      //   SpotlightsManager.Instance.SpotlightWithText.HideSpotlight();
        // MetaUI.Instance.CloseInventoryButton.onClick.RemoveListener(HideSeventhStepTutorial);

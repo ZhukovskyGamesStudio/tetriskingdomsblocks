@@ -6,8 +6,9 @@ public static class StorageManager {
     public static GameDataForSave GameDataMain = new GameDataForSave();
 
 
-    public static void CreateNewSaveData() {
+    public static void CreateNewSaveData(MainMetaConfig mainMetaConfig) {
         GameDataMain = new GameDataForSave();
+        MetaFieldManager.CreateLockedMetaField(mainMetaConfig.FieldSize);
         SaveGame();
     }
     public static void SaveGame() {
@@ -16,25 +17,13 @@ public static class StorageManager {
     }
 
     public static void LoadGame() {
-        if (!PlayerPrefs.HasKey(SaveKey)) {
-            CreateNewSaveData();
-            return;
-        }
         string json = PlayerPrefs.GetString(SaveKey);
         Debug.Log(json);
       
         GameDataMain = JsonUtility.FromJson<GameDataForSave>(json);
-
-        if (!GameDataMain.IsTutorialComplete) {
-            CreateNewSaveData();
-        }
     }
 
-    public static bool IsNewPlayer() {
-        return !PlayerPrefs.HasKey(SaveKey);
-    }
-    
-    public static bool IsTutorialCompleted() {
-        return GameDataMain is { CurMaxLevel: >= 1 };
+    public static bool HasSavedGame() {
+        return PlayerPrefs.HasKey(SaveKey);
     }
 }

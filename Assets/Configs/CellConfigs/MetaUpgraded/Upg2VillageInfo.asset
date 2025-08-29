@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0d8561a07e34c21ad6f8d07465c45cd, type: 3}
-  m_Name: VillageLevel2Info
+  m_Name: Upg2VillageInfo
   m_EditorClassIdentifier: 
   CellType: 305
   CellForm: {fileID: 11400000, guid: 0d07f94861fd637448f9f0b0516302cd, type: 2}
@@ -18,7 +18,12 @@ MonoBehaviour:
   CellName: Big village
   ChanceToSpawn: 0
   AfkResourceType: 13
-  MaxAfkCapacity: 200
+  MaxAfkCapacity: 1500
   AfkProduceCountPerSecond: 0.0556
-  UpgradeCost: 0
+  AfkProduceCountPerHour: 200
+  IsCellsCountAffectCapacityAndProduction: 0
+  IsCellsCountAffectCost: 0
   UpgradeCellType: 0
+  UpgradeCost: []
+  UpgradeCostDict:
+    _serializedList: []
