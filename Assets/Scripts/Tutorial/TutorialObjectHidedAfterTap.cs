@@ -12,6 +12,7 @@ public class TutorialObjectHidedAfterTap : MonoBehaviour {
 
     private void Start() {
         _tutorialHole.transform.SetParent(GameUI.Instance.HolesForBgContainer);
+        GameUI.Instance.GoalView.Witch.gameObject.SetActive(false);
         SpotlightsManager.Instance.SpotlightWithText.ShowSpotlight(GameUI.Instance.GoalView.transform, _step1Config);
         SpotlightsManager.Instance.HideFinger();
         SendTutorialEventStep();
@@ -42,7 +43,7 @@ private void SendTutorialEventStep() {
     protected virtual void HideAndDestroy() {
         SpotlightsManager.Instance.SpotlightWithText.HideSpotlight().Forget();
         Destroy(gameObject);
-
+        GameUI.Instance.GoalView.ShowWitchWithAnimation().Forget();
         //GameEntryPoint.Instance.Win();
     }
 }

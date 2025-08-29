@@ -8,6 +8,7 @@ public class MetaEntryPoint : MonoBehaviour {
 
     private void Start() {
         InitScene().Forget();
+        BackgroundMusicManager.Instance.StopAndPlayEndlessMusic().Forget();
     }
 
     private async UniTask InitScene() {
