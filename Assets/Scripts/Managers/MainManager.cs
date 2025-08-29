@@ -276,12 +276,13 @@ public class MainManager : MonoBehaviour {
     }
 
     private void OnApplicationPause(bool pauseStatus) {
+#if !UNITY_EDITOR
         if (pauseStatus) {
             StorageManager.SaveGame();
         } else {
-            StorageManager.LoadGame();
             CalculateOfflineHealth();
         }
+#endif
     }
 
     private TimeSpan GetTimeUntilNextHealth() {

@@ -162,8 +162,8 @@ public class MetaFieldManager : FieldManager {
             Vector3 needPosition = CameraContainer.position + delta;
             needPosition.x = Mathf.Clamp(needPosition.x, _cameraMin.position.x, _cameraMax.position.x);
             needPosition.z = Mathf.Clamp(needPosition.z, _cameraMin.position.z, _cameraMax.position.z);
-
-            CameraContainer.position = new Vector3(needPosition.x, needPosition.y, needPosition.z);
+          
+            CameraContainer.position = new Vector3(needPosition.x, CameraContainer.position.y, needPosition.z);
 
             _dragStartPosition = Input.mousePosition;
         }
@@ -563,6 +563,11 @@ public class MetaFieldManager : FieldManager {
         CloseCellUI();
         GameAudio.Instance.PlayNextSound(GameAudio.Instance.CubesStart);
         //  CameraContainer.transform.DOMove(finalCameraPos, 0.3f).SetEase(Ease.InOutQuad);
+        foreach (var lockCellPos in lockedCellGroup) {
+            StorageManager.GameDataMain.FieldRows[lockCellPos.x].RowCells[lockCellPos.y] = new CellTypeAndCountData(CellType.Empty, 0);
+        }
+        StorageManager.SaveGame();
+        
         await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
         foreach (var lockCellPos in lockedCellGroup) {
             _cells[lockCellPos.x, lockCellPos.y].DestroyCell();
@@ -570,8 +575,6 @@ public class MetaFieldManager : FieldManager {
             _cells[lockCellPos.x, lockCellPos.y] = null;
             _field[lockCellPos.x, lockCellPos.y] = CellType.Empty;
             _groupCellIndex[lockCellPos.x, lockCellPos.y] = 0;
-            StorageManager.GameDataMain.FieldRows[lockCellPos.x].RowCells[lockCellPos.y] =
-                new CellTypeAndCountData(_field[lockCellPos.x, lockCellPos.y], 0);
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
 
