@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using TMPro;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
@@ -125,6 +126,8 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void CheckDragCamera() {
+        
+        
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) {
             _dragStartPosition = Input.mousePosition;
             _dragStartPositionForUICheck = Input.mousePosition;
@@ -146,7 +149,6 @@ public class MetaFieldManager : FieldManager {
 
             _nowCellUnlockUIWasClose = false;
         }
-
         if (Input.GetMouseButton(0) && !DraggingInventoryScroll && CanDragCamera && _isDragging && _currentDraggedPieceButton == null) {
             DragCamera();
         }
@@ -410,7 +412,7 @@ public class MetaFieldManager : FieldManager {
             foreach (var lockedCell in lockedCells) {
                 var cellsAround = FieldUtils.GetCellsAround(_field, lockedCell);
                 foreach (var checkedCell in cellsAround) {
-                    if (_field[checkedCell.x, checkedCell.y] == CellType.Empty) {
+                    if (_field[checkedCell.x, checkedCell.y] != CellType.LockedMetaCell) {
                         hasEmptyCellAround = true;
                         break;
                     }

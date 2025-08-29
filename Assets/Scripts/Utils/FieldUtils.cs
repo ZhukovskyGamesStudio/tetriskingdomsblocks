@@ -210,7 +210,7 @@ public static class FieldUtils {
             }
         }
       //  Debug.Log("y main"+yIsMainDirection + " x main "+xIsMainDirection);
-        if ((!yIsMainDirection && !xIsMainDirection) || (yIsMainDirection && !xIsMainDirection)) {
+        if (!xIsMainDirection) {
             foreach (var currentRow in currentRowToDestroy) {
                 bool allCellIsCanPlaced = true;
                 bool isAllRowIsFull = true;
@@ -233,7 +233,7 @@ public static class FieldUtils {
                 for (int i = 0; i < field.GetLength(1); i++) {
                   //  Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
                     if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) 
-                        && !yIsMainDirection && !xIsMainDirection) {
+                        && !yIsMainDirection) {
                         placedCells.Add(new Vector2Int(i, currentRow));
 
                         bool isAddThisCellInEnd = true;
