@@ -95,6 +95,7 @@ public class UltaManager : MonoBehaviour {
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
             await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
+          
         }
 
         await UniTask.WhenAll(list);
@@ -125,7 +126,7 @@ public class UltaManager : MonoBehaviour {
         var pieceData = GetRandomCellType();
 
         var config = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == pieceData.Type.CellType);
-        var cellView =  GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
+        var cellView = GameFieldManager.Instance.PlaceOneSizePiece(config, new Vector2Int(placedCellPosition.x, placedCellPosition.y), false);
         var finPos = new Vector3(cellView.transform.position.x, 0.55f, cellView.transform.position.z);
         cellView.transform.position = finPos + _startDropStartPos;
         cellView.transform.localScale = Vector3.zero;
@@ -158,6 +159,9 @@ public class UltaManager : MonoBehaviour {
             GameFieldManager.Instance.CollectResourcesOnPlace(pieceData, new []{ cellView});
             GameFieldManager.Instance.ExplodeCellsInRows();
         }
+        
+        
+        
        if(GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y] != CellType.Empty) 
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
        else 

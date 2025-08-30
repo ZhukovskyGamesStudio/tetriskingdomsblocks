@@ -193,8 +193,22 @@ public static class FieldUtils {
 
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
-                    } else if (field[currentColumn, i] == CellType.Box)
-                        placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                    } else if (field[currentColumn, i] == CellType.Box) {
+                        for (int j = i; j > -2; j--) {
+                            if (j == -1) {
+                                if (placedCellsInEnd.Count != 0)
+                                    placedCellsInEnd.Insert(placedCellsInEnd.Count - (i - (j + 1)), new Vector2Int(currentColumn, i));
+                                else
+                                    placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+
+                                break;
+                            } else if (field[currentColumn, j] != CellType.Box) {
+                                placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                                break;
+                            }
+                        }
+                    }
+                        
                 }
 
                 foreach (var endCell in placedCellsInEnd) {
@@ -226,8 +240,8 @@ public static class FieldUtils {
                     continue;
                 
                 for (int i = 0; i < field.GetLength(1); i++) {
-                    if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) 
-                        && !yIsMainDirection) {
+                    if (CanPlaceOnCell(field[i, currentRow]) ||
+                        (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) && !yIsMainDirection) {
                         placedCells.Add(new Vector2Int(i, currentRow));
 
                         bool isAddThisCellInEnd = true;
@@ -240,8 +254,28 @@ public static class FieldUtils {
 
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(i, currentRow));
-                    } else if (field[i, currentRow] == CellType.Box)
-                        placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+                    } else if (field[i, currentRow] == CellType.Box) {
+                        for (int j = i; j > -2; j--) {
+                            if (j == -1 || field[j, currentRow] != CellType.Box) {
+                                if (placedCellsInEnd.Count != 0)
+                                    placedCellsInEnd.Insert(placedCellsInEnd.Count - (i - (j + 1)), new Vector2Int(i, currentRow));
+                                else
+                                    placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+
+                                break;
+                            } 
+                            else if (field[j, currentRow] != CellType.Box) { 
+                                placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+                                break;
+                            }
+                               
+                        } 
+                         
+                    }
+                    
+                    //if (field[i, currentRow] == CellType.Box)
+                    //   
+                   
                 }
 
                 foreach (var endCell in placedCellsInEnd) {

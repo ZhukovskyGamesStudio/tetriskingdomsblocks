@@ -511,9 +511,9 @@ public class GameFieldManager : FieldManager {
             var cellType = _field[coordAround.x, coordAround.y];
             switch (cellType) {
                 case CellType.Box:
-                    CoreCellTypeInfo configBox = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
+                    CoreCellTypeInfo configBox = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == CellType.Box);
                     TryAddResourceForCell(configBox, coordAround);
-
+                    
                     _gameAudio.PlayNextSound(_gameAudio.BoxBreaks);
                     DestroyCell(coordAround);
 
