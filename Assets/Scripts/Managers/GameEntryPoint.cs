@@ -157,7 +157,7 @@ public class GameEntryPoint : MonoBehaviour {
     }
 
     public bool CheckWinWithAction() {
-        if (CheckWin() && !_gameData.IsGameEnded) {
+        if (CheckWin() && !_gameData.IsGameEnded && !UltaManager.Instance._ultimateIsActive) {
             SendLevelFinishEvent("win");
             DragManager.IsDragDisabled = true;
             UltaManager.Instance.UltimateActionEndRound(Win);
