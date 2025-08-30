@@ -725,8 +725,8 @@ public class GameFieldManager : FieldManager {
         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
         go.SetSeed(Guid.NewGuid());
-        go.transform.localPosition = new Vector3(pos.x, -0.2f, pos.y);
-        poses.Add(new Vector3(pos.x, -0.2f, pos.y));
+        go.transform.localPosition = new Vector3(pos.x, -0.3f, pos.y);
+        poses.Add(new Vector3(pos.x, -0.3f, pos.y));
         if (setNewInfo) {
             _field[pos.x, pos.y] = cellInfo.CellType;
             _cells[pos.x, pos.y] = go;
