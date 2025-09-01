@@ -54,5 +54,14 @@ public class RedactorMetaFieldButton : MonoBehaviour
         { 13, Color.magenta },
         { 14, Color.green },
         { 15, Color.grey },
+        { 16, Color.green },
+        { 17, Color.grey },
+        { 18, Color.cyan },
+        { 19, Color.white },
+        { 20,Color.red },
+        { 21, Color.blue  },
+        { 22,  Color.yellow  },
+        { 23, Color.magenta },
+        { 24, Color.green },
     };
 }

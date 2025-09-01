@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public class StartFieldCustomRedactor : MonoBehaviour {
     private RedactorFieldButton[,] _fieldButtons;
     private RedactorMetaFieldButton[,] _metaFieldButtons;
+    [SerializeField]
+    private MetaStartLockedCellsFieldConfig _metaStartLockedCellsFieldConfig;
     
     private CellType[,] _fieldCellTypes;
     private int[,] _metaFieldLockedCellTypes;
@@ -45,6 +47,20 @@ public class StartFieldCustomRedactor : MonoBehaviour {
     private TMP_InputField _metaCellsInputPrefab;
 
     public void Start() {
+        int[,] startMetaField = new int[12, 12];
+        foreach (var VARIABLE in _metaStartLockedCellsFieldConfig.LockedCellsGroups) {
+            startMetaField[VARIABLE.position.x, VARIABLE.position.y] = VARIABLE.index;
+        }
+string newString = "";
+        for (int i = 0; i < startMetaField.GetLength(0); i++) {
+            
+            for (int j = 0; j < startMetaField.GetLength(1); j++) {
+                newString += startMetaField[i, j] + " ,";
+            }
+
+            newString += "\n";
+        }
+         Debug.Log(newString);
         SetRedactButtons();
         SetFieldButtons();
         SetMetaCellsParents();

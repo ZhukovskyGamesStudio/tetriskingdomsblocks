@@ -1249,8 +1249,10 @@ public class MetaFieldManager : FieldManager {
         }
 
         foreach (var zoneIndex in StorageManager.GameDataMain.RemainedLockedZones) {
-            var lockedCells = LockedCellGroups[zoneIndex];
+            var lockedCells = LockedCellGroups[zoneIndex]; 
+            Debug.Log(zoneIndex+"zoneIndex " + lockedCells.Count + " cells count");
             foreach (var cellPos in lockedCells) {
+            
                 _groupCellIndex[cellPos.x, cellPos.y] = zoneIndex + 1000;
             }
         }
