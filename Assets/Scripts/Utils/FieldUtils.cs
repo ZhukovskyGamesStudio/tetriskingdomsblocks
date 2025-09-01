@@ -170,14 +170,17 @@ public static class FieldUtils {
             foreach (var currentColumn in currentColumnToDestroy) {
                 
                 bool allCellIsCanPlaced = true;
+                bool isAllRowIsFull = true;
                 for (int i = 0; i < field.GetLength(0); i++) {
                     if (!CanPlaceOnCell(field[currentColumn, i])) {
                         allCellIsCanPlaced = false;
-                        break;
+                    }
+                    else if (CantBecomeRow(field[currentColumn, i])) {
+                        isAllRowIsFull = false;
                     }
                 }
 
-                if (allCellIsCanPlaced)
+                if (allCellIsCanPlaced || isAllRowIsFull)
                     continue;
                 
                 for (int i = 0; i < field.GetLength(0); i++) {
@@ -226,13 +229,9 @@ public static class FieldUtils {
                 for (int i = 0; i < field.GetLength(1); i++) {
                     if (!CanPlaceOnCell(field[i, currentRow])) {
                         allCellIsCanPlaced = false;
-                        if(!isAllRowIsFull)
-                            break;
                     }
-                    else if (!currentColumnToDestroy.Contains(i)) {
+                    else if (CantBecomeRow(field[i, currentRow]) && !currentColumnToDestroy.Contains(i)) {
                         isAllRowIsFull = false;
-                        if(!allCellIsCanPlaced)
-                            break;
                     }
                 }
 
@@ -287,9 +286,9 @@ public static class FieldUtils {
         }
          
 
-        if (maxStars - placedCells.Count > 0) {
+        if (maxStars - placedPiecePositions.Count > 0) {
             var randomEmptyCells = new List<Vector2Int>();
-                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, placedPiecePositions);
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedPiecePositions.Count, placedPiecePositions);
 
             if (randomEmptyCells != null)
                 foreach (var cell in randomEmptyCells) {

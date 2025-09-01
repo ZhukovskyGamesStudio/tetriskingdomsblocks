@@ -84,18 +84,16 @@ public class UltaManager : MonoBehaviour {
         List<Vector2Int> pieceCells = GameFieldManager.Instance.CanPlaceAnyPieceForUltimate();
         List<Vector2Int> coordsToSpawn = new List<Vector2Int>();
         if (StorageManager.GameDataMain.CurMaxLevel == 2) {
-            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, 100,new List<Vector2Int>());
-        }
-      else if(pieceCells != null)
-            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, maxStars,pieceCells);
-       else 
-           coordsToSpawn = FieldUtils.GetCellsFromUltRows(maxStars);
-       
-       var list = new List<UniTask>();
+            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, 100, new List<Vector2Int>());
+        } else if (pieceCells != null)
+            coordsToSpawn = FieldUtils.GetRandomEmptyCellsWithoutSomeCells(GameFieldManager.Instance._field, maxStars, pieceCells);
+        else
+            coordsToSpawn = FieldUtils.GetCellsFromUltRows(maxStars);
+
+        var list = new List<UniTask>();
         foreach (var pos in coordsToSpawn) {
             list.Add(SpawnNewCellFromUltimate(pos));
             await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
-          
         }
 
         await UniTask.WhenAll(list);
