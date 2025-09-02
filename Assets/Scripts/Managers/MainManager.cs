@@ -24,15 +24,16 @@ public class MainManager : MonoBehaviour {
     public static event Action<string, string, float, string> OnPaymentSucceed;
 
     public LevelConfig CurrentLevelConfig =>
-        _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
-
+    //    _mainConfig.Levels[Math.Min(_mainConfig.Levels.Length - 1, StorageManager.GameDataMain.CurMaxLevel)];
+    _mainConfig.Levels[StorageManager.GameDataMain.CurMaxLevel <_mainConfig.Levels.Length?
+        StorageManager.GameDataMain.CurMaxLevel:((StorageManager.GameDataMain.CurMaxLevel-30)%(_mainConfig.Levels.Length-30) + 30)];
     private NetworkTimeAPI _networkTimeAPI;
 
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
         SetupTime();
-
+       Debug.Log(((71-30)%(_mainConfig.Levels.Length-30) + 30) + " need level"); 
         Application.targetFrameRate = 144;
     }
 
@@ -335,8 +336,5 @@ public class MainManager : MonoBehaviour {
 
     public void IncreaseMaxLevel() {
         StorageManager.GameDataMain.CurMaxLevel++;
-        if (StorageManager.GameDataMain.CurMaxLevel >= _mainConfig.Levels.Length) {
-            StorageManager.GameDataMain.CurMaxLevel = 0;
-        }
     }
 }

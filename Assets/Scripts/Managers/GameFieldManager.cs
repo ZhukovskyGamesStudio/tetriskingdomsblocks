@@ -511,9 +511,9 @@ public class GameFieldManager : FieldManager {
             var cellType = _field[coordAround.x, coordAround.y];
             switch (cellType) {
                 case CellType.Box:
-                    CoreCellTypeInfo configBox = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == cellType);
+                    CoreCellTypeInfo configBox = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == CellType.Box);
                     TryAddResourceForCell(configBox, coordAround);
-
+                    
                     _gameAudio.PlayNextSound(_gameAudio.BoxBreaks);
                     DestroyCell(coordAround);
 
@@ -725,8 +725,8 @@ public class GameFieldManager : FieldManager {
         var prefab = PiecesViewTable.Instance.CellsViewList.GetCellByType(cellInfo.CellType);
         CellView go = Instantiate(prefab, FieldContainers.Instance.FieldContainer);
         go.SetSeed(Guid.NewGuid());
-        go.transform.localPosition = new Vector3(pos.x, -0.2f, pos.y);
-        poses.Add(new Vector3(pos.x, -0.2f, pos.y));
+        go.transform.localPosition = new Vector3(pos.x, -0.3f, pos.y);
+        poses.Add(new Vector3(pos.x, -0.3f, pos.y));
         if (setNewInfo) {
             _field[pos.x, pos.y] = cellInfo.CellType;
             _cells[pos.x, pos.y] = go;

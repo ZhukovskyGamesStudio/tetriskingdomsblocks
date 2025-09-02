@@ -73,7 +73,8 @@ public class GameEntryPoint : MonoBehaviour {
      
         _spawnRandomNature.Generate();
         BackgroundMusicManager.Instance.StopAndPlayEndlessMusic().Forget();
-      
+        if(DialogsManager.Instance.IsDialogActive)
+            DialogsManager.Instance.CloseAllDialogs();
     }
 
     private void OnMoveEnded() {
@@ -152,10 +153,12 @@ public class GameEntryPoint : MonoBehaviour {
 
         StorageManager.GameDataMain.AddResource(ResourceType.Coins, -900);
         AddMoves();
+        BoostersManager.Instance.CanUseBoosters = true;
+        DragManager.IsDragDisabled = false;
     }
 
     public bool CheckWinWithAction() {
-        if (CheckWin() && !_gameData.IsGameEnded) {
+        if (CheckWin() && !_gameData.IsGameEnded && !UltaManager.Instance._ultimateIsActive) {
             SendLevelFinishEvent("win");
             DragManager.IsDragDisabled = true;
             UltaManager.Instance.UltimateActionEndRound(Win);

@@ -199,8 +199,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u0412\u0432\u0435\u0434\u0438 \u0438\u043C\u044F \u043A\u043E\u043D\u0444\u0438\u0433\u0430(\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa08fff1716a04db18700207b6c202e5, type: 2}
+  m_sharedMaterial: {fileID: 7908499825950019370, guid: fa08fff1716a04db18700207b6c202e5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -740,13 +740,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75d4563eda44ff74dacedd300038d388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _metaStartLockedCellsFieldConfig: {fileID: 11400000, guid: 9d99c01018f6f8943bcae57db32774eb, type: 2}
   ButtonPrefab: {fileID: 7711520442955906499, guid: 28b7c2c5c74a13d44b5f6a0e1754e8f2, type: 3}
   FieldButtonPrefab: {fileID: 5949105689451531532, guid: fa5310b5276126e4fa27f127fe62a461, type: 3}
   MetaFieldButtonPrefab: {fileID: 23896456502003700, guid: 61ba42866aca3c8429d956f0fb84d859, type: 3}
   GameFieldSize: 8
-  MetaFieldSize: 12
+  MetaFieldSize: 15
   CellTypesToRedactor: 00000000ca000000cb000000c9000000c8000000cd000000010000000200000069000000ce000000
-  MetaCellTypesToRedactor: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000
+  MetaCellTypesToRedactor: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000
   CurrentCellType: 0
   CurrentMetaCellType: 1
   CurrentCellTypeText: {fileID: 1434607568}

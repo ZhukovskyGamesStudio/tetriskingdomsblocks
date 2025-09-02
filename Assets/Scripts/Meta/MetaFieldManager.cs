@@ -707,7 +707,7 @@ public class MetaFieldManager : FieldManager {
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
 
-    public void Play() {
+    public void PlayCoreGame() {
         if (StorageManager.GameDataMain.HealthCount > 0) {
             StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
             StorageManager.SaveGame();
@@ -1249,8 +1249,10 @@ public class MetaFieldManager : FieldManager {
         }
 
         foreach (var zoneIndex in StorageManager.GameDataMain.RemainedLockedZones) {
-            var lockedCells = LockedCellGroups[zoneIndex];
+            var lockedCells = LockedCellGroups[zoneIndex]; 
+            Debug.Log(zoneIndex+"zoneIndex " + lockedCells.Count + " cells count");
             foreach (var cellPos in lockedCells) {
+            
                 _groupCellIndex[cellPos.x, cellPos.y] = zoneIndex + 1000;
             }
         }

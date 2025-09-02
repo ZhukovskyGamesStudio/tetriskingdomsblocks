@@ -131,7 +131,6 @@ public static class FieldUtils {
 
     public static List<Vector2Int> GetCellsFromUltRows(int maxStars) {
         var pieceData = GameFieldManager.Instance.GetRandomCurrentPieceData();
-//Debug.Log("new ult ..............................");
         
         var field = GameFieldManager.Instance._field;
         List<Vector2Int> placedCells = new List<Vector2Int>();
@@ -152,18 +151,14 @@ public static class FieldUtils {
         }
 
         foreach (var xPos in xPositions) {
-            if (xPos.Value > 1) {
+            if (xPos.Value > 1) 
                  currentColumnToDestroy.Add(xPos.Key);
-              //   Debug.Log("key"+xPos.Key+"value"+xPos.Value);
-            }
                
              
         }
         foreach (var yPos in yPositions) {
-            if (yPos.Value > 1) {
+            if (yPos.Value > 1) 
                 currentRowToDestroy.Add(yPos.Key);
-            //    Debug.Log("key" + yPos.Key + "value" + yPos.Value);
-            }
         }
 
         List<Vector2Int> placedCellsInEnd = new List<Vector2Int>();
@@ -175,14 +170,17 @@ public static class FieldUtils {
             foreach (var currentColumn in currentColumnToDestroy) {
                 
                 bool allCellIsCanPlaced = true;
+                bool isAllRowIsFull = true;
                 for (int i = 0; i < field.GetLength(0); i++) {
                     if (!CanPlaceOnCell(field[currentColumn, i])) {
                         allCellIsCanPlaced = false;
-                        break;
+                    }
+                    else if (CantBecomeRow(field[currentColumn, i])) {
+                        isAllRowIsFull = false;
                     }
                 }
 
-                if (allCellIsCanPlaced)
+                if (allCellIsCanPlaced || isAllRowIsFull)
                     continue;
                 
                 for (int i = 0; i < field.GetLength(0); i++) {
@@ -198,8 +196,22 @@ public static class FieldUtils {
 
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
-                    } else if (field[currentColumn, i] == CellType.Box)
-                        placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                    } else if (field[currentColumn, i] == CellType.Box) {
+                        for (int j = i; j > -2; j--) {
+                            if (j == -1) {
+                                if (placedCellsInEnd.Count != 0)
+                                    placedCellsInEnd.Insert(placedCellsInEnd.Count - (i - (j + 1)), new Vector2Int(currentColumn, i));
+                                else
+                                    placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+
+                                break;
+                            } else if (field[currentColumn, j] != CellType.Box) {
+                                placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
+                                break;
+                            }
+                        }
+                    }
+                        
                 }
 
                 foreach (var endCell in placedCellsInEnd) {
@@ -209,7 +221,7 @@ public static class FieldUtils {
                 placedCellsInEnd = new List<Vector2Int>();
             }
         }
-      //  Debug.Log("y main"+yIsMainDirection + " x main "+xIsMainDirection);
+      
         if (!xIsMainDirection) {
             foreach (var currentRow in currentRowToDestroy) {
                 bool allCellIsCanPlaced = true;
@@ -217,13 +229,9 @@ public static class FieldUtils {
                 for (int i = 0; i < field.GetLength(1); i++) {
                     if (!CanPlaceOnCell(field[i, currentRow])) {
                         allCellIsCanPlaced = false;
-                        if(!isAllRowIsFull)
-                            break;
                     }
-                    else if (!currentColumnToDestroy.Contains(i)) {
+                    else if (CantBecomeRow(field[i, currentRow]) && !currentColumnToDestroy.Contains(i)) {
                         isAllRowIsFull = false;
-                        if(!allCellIsCanPlaced)
-                            break;
                     }
                 }
 
@@ -231,9 +239,8 @@ public static class FieldUtils {
                     continue;
                 
                 for (int i = 0; i < field.GetLength(1); i++) {
-                  //  Debug.Log(currentColumnToDestroy.Contains(i) + "   " + i + "," + currentRow);
-                    if (CanPlaceOnCell(field[i, currentRow]) || (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) 
-                        && !yIsMainDirection) {
+                    if (CanPlaceOnCell(field[i, currentRow]) ||
+                        (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) && !yIsMainDirection) {
                         placedCells.Add(new Vector2Int(i, currentRow));
 
                         bool isAddThisCellInEnd = true;
@@ -246,8 +253,28 @@ public static class FieldUtils {
 
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(i, currentRow));
-                    } else if (field[i, currentRow] == CellType.Box)
-                        placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+                    } else if (field[i, currentRow] == CellType.Box) {
+                        for (int j = i; j > -2; j--) {
+                            if (j == -1 || field[j, currentRow] != CellType.Box) {
+                                if (placedCellsInEnd.Count != 0)
+                                    placedCellsInEnd.Insert(placedCellsInEnd.Count - (i - (j + 1)), new Vector2Int(i, currentRow));
+                                else
+                                    placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+
+                                break;
+                            } 
+                            else if (field[j, currentRow] != CellType.Box) { 
+                                placedCellsInEnd.Add(new Vector2Int(i, currentRow));
+                                break;
+                            }
+                               
+                        } 
+                         
+                    }
+                    
+                    //if (field[i, currentRow] == CellType.Box)
+                    //   
+                   
                 }
 
                 foreach (var endCell in placedCellsInEnd) {
@@ -259,9 +286,9 @@ public static class FieldUtils {
         }
          
 
-        if (maxStars - placedCells.Count > 0) {
+        if (maxStars - placedPiecePositions.Count > 0) {
             var randomEmptyCells = new List<Vector2Int>();
-                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedCells.Count, placedPiecePositions);
+                randomEmptyCells = GetRandomEmptyCellsWithoutSomeCells(field, maxStars - placedPiecePositions.Count, placedPiecePositions);
 
             if (randomEmptyCells != null)
                 foreach (var cell in randomEmptyCells) {

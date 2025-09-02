@@ -38,9 +38,20 @@ public class LoadingManager : MonoBehaviour {
         if (!StorageManager.HasSavedGame()) {
             StorageManager.CreateNewSaveData(_mainMetaConfig);
         } else {
+            
             StorageManager.LoadGame();
+            Debug.Log(StorageManager.GameDataMain.LastLaunchGameVersion != Application.version);
             if (!StorageManager.GameDataMain.IsTutorialCompleted) {
                 StorageManager.CreateNewSaveData(_mainMetaConfig);
+            }
+            else if (StorageManager.GameDataMain.LastLaunchGameVersion != Application.version) {
+                 StorageManager.GameDataMain.LastLaunchGameVersion = Application.version;
+                 if (!StorageManager.GameDataMain.RemainedLockedZones.Contains(20)) {
+                     for (int i = 16; i < 25; i++) {
+                         StorageManager.GameDataMain.RemainedLockedZones.Add(i);
+                     }
+                     
+                 }
             }
         }
 

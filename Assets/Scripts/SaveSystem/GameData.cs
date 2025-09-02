@@ -23,6 +23,7 @@ public class GameDataForSave {
     public int FirstAttemptWinLevelsCount;
 
     public bool FirstLaunch = true;
+    public string LastLaunchGameVersion;
     
     public bool IsWonInThisSession = false;
     public bool IsSpecialOfferBought = false;
@@ -52,6 +53,7 @@ public class GameDataForSave {
     public SettingsData SettingsData;
 
     public GameDataForSave() {
+        LastLaunchGameVersion = Application.version;
         HealthCount = 5;
         ResourcesCount = new SerializedDictionary<ResourceType, float>() {
             { ResourceType.Wood, 0 },
@@ -89,7 +91,16 @@ public class GameDataForSave {
             12,
             13,
             14,
-            15
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
         };
         ProfileAvatar = 0;
     }

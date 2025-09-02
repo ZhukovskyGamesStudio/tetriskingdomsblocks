@@ -86,6 +86,8 @@ public class GameUI : MonoBehaviour {
     }
 
     public void ShowOutOfMovesDialog() {
+        BoostersManager.Instance.CanUseBoosters = false;
+        DragManager.IsDragDisabled = true;
         var outOfMovesData = new DialogWithData {
             DialogType = typeof(OutOfMovesDialog),
             Data = new OutOfMovesDialog.Data {
