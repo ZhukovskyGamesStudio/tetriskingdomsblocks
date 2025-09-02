@@ -295,7 +295,7 @@ public class MetaTutorial : MonoBehaviour {
 
     public void DestroyTutorial() {
         MetaFieldManager.Instance.CanOpenLockedZones = true;
-        MetaFieldManager.Instance.Play();
+        MetaFieldManager.Instance.PlayCoreGame();
         Destroy(gameObject);
     }
 }

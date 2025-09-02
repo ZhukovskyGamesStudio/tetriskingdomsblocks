@@ -73,7 +73,8 @@ public class GameEntryPoint : MonoBehaviour {
      
         _spawnRandomNature.Generate();
         BackgroundMusicManager.Instance.StopAndPlayEndlessMusic().Forget();
-      
+        if(DialogsManager.Instance.IsDialogActive)
+            DialogsManager.Instance.CloseAllDialogs();
     }
 
     private void OnMoveEnded() {

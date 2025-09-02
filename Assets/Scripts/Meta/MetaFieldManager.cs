@@ -707,7 +707,7 @@ public class MetaFieldManager : FieldManager {
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
 
-    public void Play() {
+    public void PlayCoreGame() {
         if (StorageManager.GameDataMain.HealthCount > 0) {
             StorageManager.GameDataMain.LastExitTime = MainManager.Instance._currentGameTime.ToString(CultureInfo.InvariantCulture);
             StorageManager.SaveGame();
