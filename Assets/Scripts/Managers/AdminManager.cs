@@ -17,9 +17,6 @@ public class AdminManager : MonoBehaviour {
     private GameObject _objectToTotalDisable;
 
     [SerializeField]
-    private Toggle _infiniteHpToggle;
-
-    [SerializeField]
     private MainManagerConfig _mainManagerConfig;
 
     [SerializeField]
