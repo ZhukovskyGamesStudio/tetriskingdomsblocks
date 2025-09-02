@@ -22,22 +22,14 @@ public class AdminManager : MonoBehaviour {
     [SerializeField]
     private TextMeshProUGUI _versionText;
 
-    public static bool IsInfiniteHealth = true;
-
-    [SerializeField]
-    private Toggle _infiniteBoostersToggle;
-
-    public bool IsInfiniteBoosters = true;
-
     [SerializeField]
     private Toggle _skipTutorialsToggle;
 
-    public bool IsSkipTutorials = false;
+    public bool IsSkipTutorials;
+    private bool _isDisabled;
 
     private void Awake() {
         Instance = this;
-        _infiniteHpToggle.SetIsOnWithoutNotify(IsInfiniteHealth);
-        _infiniteBoostersToggle.SetIsOnWithoutNotify(IsInfiniteBoosters);
         _versionText.text = $"v{Application.version}";
         //_skipTutorialsToggle.SetIsOnWithoutNotify(IsSkipTutorials);
         DontDestroyOnLoad(this);
@@ -80,8 +72,15 @@ public class AdminManager : MonoBehaviour {
         SceneManager.LoadScene("MetaScene");
     }
 
+    public void AddOneHealthAdminButton() {
+        MainManager.Instance.SetHealthCount(StorageManager.GameDataMain.HealthCount + 1);
+    }
+
     public void RemoveOneHealthAdminButton() {
-        if (StorageManager.GameDataMain.HealthCount <= 0) return;
+        if (StorageManager.GameDataMain.HealthCount <= 0) {
+            return;
+        }
+
         MainManager.Instance.RemoveHealthAfterLose();
     }
 
@@ -129,22 +128,12 @@ public class AdminManager : MonoBehaviour {
         SceneManager.LoadScene("GameScene");
     }
 
-    public void SetInfinite(bool isInfinite) {
-        IsInfiniteHealth = isInfinite;
-    }
-
-    public void SetInfiniteBoosters(bool isInfiniteBoosters) {
-        IsInfiniteBoosters = isInfiniteBoosters;
-    }
-
     public void SetTutorialSkip(bool isSkipTutorialsBoosters) {
         IsSkipTutorials = !IsSkipTutorials;
         if (IsSkipTutorials) {
             StorageManager.GameDataMain.IsTutorialCompleted = true;
         }
     }
-
-    private bool _isDisabled;
 
     public void SetUICanvasDisabled(bool isDisabled) {
         _isDisabled = isDisabled;

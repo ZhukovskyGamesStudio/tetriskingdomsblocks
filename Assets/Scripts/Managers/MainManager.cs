@@ -298,7 +298,7 @@ public class MainManager : MonoBehaviour {
         return TimeSpan.FromMinutes(minutesUntilNext);
     }
 
-    public void ChangeHealthCount(int healthCount) {
+    public void SetHealthCount(int healthCount) {
         StorageManager.GameDataMain.HealthCount = healthCount;
         if (MetaUI.Instance != null) MetaUI.Instance.HealthView.SetHealthCountText(StorageManager.GameDataMain.HealthCount);
     }
