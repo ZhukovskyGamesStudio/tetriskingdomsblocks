@@ -14,6 +14,9 @@ public class AdminManager : MonoBehaviour {
     public Toggle AdminToggle;
 
     [SerializeField]
+    private GameObject _objectToTotalDisable;
+
+    [SerializeField]
     private Toggle _infiniteHpToggle;
 
     [SerializeField]
@@ -34,6 +37,10 @@ public class AdminManager : MonoBehaviour {
         //_skipTutorialsToggle.SetIsOnWithoutNotify(IsSkipTutorials);
         DontDestroyOnLoad(this);
         SetupLevelButtons();
+
+#if ADMIN_PANEL_DISABLED
+        _objectToTotalDisable.SetActive(false);
+#endif
     }
 
     public void ResetFreeCellTime() {

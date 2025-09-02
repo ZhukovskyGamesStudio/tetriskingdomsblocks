@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: MadPixel GooglePlay
+  m_Name: MadPixel GooglePlay Test
   m_EditorClassIdentifier: 
   m_AssetVersion: 1
   m_BuildTarget: 13
@@ -23,7 +23,6 @@ MonoBehaviour:
   m_ScriptingDefines:
   - MADPIXEL
   - MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED
-  - ADMIN_PANEL_DISABLED
   m_PlayerSettingsYaml:
     m_Settings:
     - line: '| PlayerSettings:'
@@ -191,7 +190,7 @@ MonoBehaviour:
     - line: '|   androidMaxAspectRatio: 2.4'
     - line: '|   androidMinAspectRatio: 1'
     - line: '|   applicationIdentifier:'
-    - line: '|     Android: blast.merge.match.tycoon'
+    - line: '|     Android: blast.merge.match.tycoon.test'
     - line: '|     Standalone: com.DefaultCompany.2D-Project'
     - line: '|   buildNumber:'
     - line: '|     Standalone: 0'
@@ -319,7 +318,7 @@ MonoBehaviour:
     - line: '|   - m_BuildTarget: '
     - line: '|     m_Icons:'
     - line: '|     - serializedVersion: 2'
-    - line: '|       m_Icon: {fileID: 2800000, guid: 83f6a0d9461b05d4a82c9f77025040c9,
+    - line: '|       m_Icon: {fileID: 2800000, guid: b2e466bf16f0d0547a2b372c481518a1,
         type: 3}'
     - line: '|       m_Width: 128'
     - line: '|       m_Height: 128'
@@ -1039,6 +1038,6 @@ MonoBehaviour:
         m_DebugSymbolFormat: 5
         m_CurrentDeploymentTargetId: __builtin__target_default
         m_BuildType: 2
-        m_BuildAppBundle: 1
+        m_BuildAppBundle: 0
         m_IPAddressToConnect: 
         m_SymlinkSources: 0
