@@ -315,9 +315,6 @@ public class MetaFieldManager : FieldManager {
             };
             foreach (var cellPosForBoost in checkedCellsPositions) {
                 var markCellPos = new Vector3(cellPosForBoost.x + cellPos.x, -0.3f, cellPosForBoost.y + cellPos.y);
-                // var markedCell = PiecesViewTable.Instance.MarkedCell;
-                // var markCell = Instantiate(markedCell);
-                //   markCell.transform.position = new Vector3(markCellPos.x, 0, markCellPos.y);
 
                 CreateMarkedCellOnField(markCellPos);
             }
@@ -330,9 +327,10 @@ public class MetaFieldManager : FieldManager {
         var cellConfig =
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
-
-        int multiplayer = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]].Cells.Count;
-
+//
+        int multiplayer = cellConfig.IsCellsCountAffectCapacityAndProduction
+            ? _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] ].Cells.Count: 1;
+        
         foreach (var kvp in cellConfig.UpgradeCostDict) {
             if (StorageManager.GameDataMain.GetResource(kvp.Key) < kvp.Value * multiplayer)
                 return false;
@@ -342,12 +340,13 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void UpgradeResourceCell() {
-        //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
-        var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
-        int multiplayer = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]].Cells.Count;
         var cellConfig =
             PiecesViewTable.Instance.CellsList.MetaCellsConfigs.First(c =>
                 c.CellType == _field[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]);
+        //   int groupIndex = _groupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] - 1;
+        var cellsToUpgrade = _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y]];
+        int multiplayer = cellConfig.IsCellsCountAffectCapacityAndProduction
+            ? _formGroupCellPositions[_formGroupCellIndex[_currentMarkedFieldCell.x, _currentMarkedFieldCell.y] ].Cells.Count: 1;
         //  Vector3 uiPos = Vector3.zero;
         Vector3 finalUiNeedPos = Vector3.zero;
         foreach (var cellPos in cellsToUpgrade.Cells)
@@ -927,6 +926,7 @@ public class MetaFieldManager : FieldManager {
     }
 
     public void CollectResourcesFromMark(int index, float multiplayerResources, Vector2 floatingResourceSpawnPosition = new Vector2()) {
+        if (MainManager.Instance._currentGameTime == DateTime.MinValue) return;
         float collectedResouces = 0;
         Vector3 startPosition = new Vector3();
         ResourceType curResource = ResourceType.None;
@@ -960,9 +960,8 @@ public class MetaFieldManager : FieldManager {
             //   StorageManager.GameDataMain.AddResource(ResourceType.Coins, finalResourceCount);
         }
 
-        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village", new Dictionary<string, object> {
-            { "resource_collect", $"{collectedResouces} {curResource.ToString()}" }
-        }, true);
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("meta_village",
+            new Dictionary<string, object> { { "resource_collect", $"{collectedResouces} {curResource.ToString()}" } }, true);
     }
 
     public override void SaveEnergyData() {
