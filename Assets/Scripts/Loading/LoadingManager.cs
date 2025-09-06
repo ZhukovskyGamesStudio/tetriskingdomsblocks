@@ -46,12 +46,11 @@ public class LoadingManager : MonoBehaviour {
             }
             else if (StorageManager.GameDataMain.LastLaunchGameVersion != Application.version) {
                  StorageManager.GameDataMain.LastLaunchGameVersion = Application.version;
-                 if (!StorageManager.GameDataMain.RemainedLockedZones.Contains(20)) {
+                /* if (!StorageManager.GameDataMain.RemainedLockedZones.Contains(20)) {
                      for (int i = 16; i < 25; i++) {
                          StorageManager.GameDataMain.RemainedLockedZones.Add(i);
                      }
-                     
-                 }
+                 }*/
             }
         }
 

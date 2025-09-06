@@ -766,7 +766,10 @@ public class MetaFieldManager : FieldManager {
         _field = new CellType[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         _cells = new CellView[MainMetaConfig.FieldSize, MainMetaConfig.FieldSize];
         CalculateFiguresSpawnChances();
-
+        
+        if (MainMetaConfig.FieldSize != StorageManager.GameDataMain.FieldRows.Length) 
+            IncreaseFieldSizeInStorage();
+        
         _field = new CellType[StorageManager.GameDataMain.FieldRows.Length, StorageManager.GameDataMain.FieldRows[0].RowCells.Length];
         for (int i = 0; i < _field.GetLength(0); i++) {
             for (int j = 0; j < _field.GetLength(1); j++) {
@@ -818,6 +821,47 @@ public class MetaFieldManager : FieldManager {
 
         GetInventoryFromSave().Forget();
         base.SetupGame();
+    }
+
+    private void IncreaseFieldSizeInStorage() {
+        var newMetaFieldForSave = new MetaFieldData[MainMetaConfig.FieldSize];
+
+        for (int i = 0; i < newMetaFieldForSave.Length; i++) {
+            if (StorageManager.GameDataMain.FieldRows.Length > i) {
+                newMetaFieldForSave[i].RowCells = new CellTypeAndCountData[MainMetaConfig.FieldSize];
+
+                for (int j = 0; j < MainMetaConfig.FieldSize; j++) {
+                    if (StorageManager.GameDataMain.FieldRows[i].RowCells.Length > j)
+                        newMetaFieldForSave[i].RowCells[j] = StorageManager.GameDataMain.FieldRows[i].RowCells[j];
+                    else
+                        newMetaFieldForSave[i].RowCells[j] = new CellTypeAndCountData(CellType.Empty, 0);
+                }
+            } else {
+                newMetaFieldForSave[i].RowCells = new CellTypeAndCountData[MainMetaConfig.FieldSize];
+                for (int j = 0; j < MainMetaConfig.FieldSize; j++) {
+                    newMetaFieldForSave[i].RowCells[j] = new CellTypeAndCountData(CellType.Empty, 0);
+                }
+            }
+        }
+
+        Dictionary<int, List<Vector2Int>> _lockedZones = new Dictionary<int, List<Vector2Int>>();
+        foreach (var needCell in MainMetaConfig.LockedCellsFieldConfig.LockedCellsGroups) {
+            _lockedZones.TryAdd(needCell.index, new List<Vector2Int>());
+            _lockedZones[needCell.index].Add(needCell.position);
+        }
+
+        foreach (var lockedZoneIndex in StorageManager.GameDataMain.RemainedLockedZones) {
+            if (_lockedZones[lockedZoneIndex][0].x >= StorageManager.GameDataMain.FieldRows.Length ||
+                _lockedZones[lockedZoneIndex][0].y >= StorageManager.GameDataMain.FieldRows.Length) {
+                StorageManager.GameDataMain.FigureFormsData.Add(new FormPositionsData(_lockedZones[lockedZoneIndex].ToArray()));
+            }
+
+            foreach (var lockedCell in _lockedZones[lockedZoneIndex]) {
+                newMetaFieldForSave[lockedCell.x].RowCells[lockedCell.y] = new CellTypeAndCountData(CellType.LockedMetaCell, 0);
+            }
+        }
+
+        StorageManager.GameDataMain.FieldRows = newMetaFieldForSave;
     }
 
     public static void CreateLockedMetaField(int fieldSize) {
@@ -1248,6 +1292,7 @@ public class MetaFieldManager : FieldManager {
         }
 
         foreach (var zoneIndex in StorageManager.GameDataMain.RemainedLockedZones) {
+            if(zoneIndex >= LockedCellGroups.Count)continue;
             var lockedCells = LockedCellGroups[zoneIndex]; 
             Debug.Log(zoneIndex+"zoneIndex " + lockedCells.Count + " cells count");
             foreach (var cellPos in lockedCells) {
