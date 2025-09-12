@@ -896,6 +896,8 @@ public class MetaFieldManager : FieldManager {
             }
         };
 
+        CanDragCamera = false;
+        CanOpenLockedZones = false;
         DialogsManager.Instance.ShowDialogWithData(dialog);
     }
 
@@ -1023,11 +1025,15 @@ public class MetaFieldManager : FieldManager {
     }
 
     private void CollectDoubleResourcesFromAllMarks() {
+        CanDragCamera = true;
+        CanOpenLockedZones = true;
         ZhukovskyAdsManager.Instance.AdsProvider.ShowRewardedAd(AdsIds.AdsTypesIds[AdsTypes.DoubleAfkResources],
             () => { CollectResourcesFromAllMarks(2); }, () => { CollectResourcesFromAllMarks(1); });
     }
 
     private void CollectDefaultResourcesFromAllMarks() {
+        CanDragCamera = true;
+        CanOpenLockedZones = true;
         CollectResourcesFromAllMarks(1);
     }
 
