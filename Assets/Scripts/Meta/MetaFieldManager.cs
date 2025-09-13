@@ -446,9 +446,10 @@ public class MetaFieldManager : FieldManager {
 
     private void MarkLockedGroup(int groupIndex) {
         UnmarkLockedGroup();
-
+Debug.Log(LockedCellGroups[groupIndex].Count + "LockedCellGroups[groupIndex].Count ");
         foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
             CreateMarkedCellOnField(_cells[cell.x, cell.y].transform.position);
+            Debug.Log(" cell "+_cells[cell.x, cell.y].transform.position);
         }
     }
 
@@ -789,12 +790,19 @@ public class MetaFieldManager : FieldManager {
                 _cells[i, j] = go;
 
                 go.SetSeed(Guid.NewGuid());
-                if (FieldUtils.IsVillageCell(cellType) || FieldUtils.IsSawmillCell(cellType)) {
+                if (FieldUtils.IsSawmillCell(cellType)) {
                     Vector2Int villagePosition = new Vector2Int(i, j);
 
                     _cells[i + 1, j] = _cells[villagePosition.x, villagePosition.y];
                     _cells[i + 1, j - 1] = _cells[villagePosition.x, villagePosition.y];
                     _cells[i, j - 1] = _cells[villagePosition.x, villagePosition.y];
+                }
+                else if (FieldUtils.IsVillageCell(cellType)) {
+                    Vector2Int villagePosition = new Vector2Int(i, j);
+                    
+                    _cells[i + 1, j] = _cells[villagePosition.x, villagePosition.y];
+                    _cells[i + 1, j + 1] = _cells[villagePosition.x, villagePosition.y];
+                    _cells[i, j + 1] = _cells[villagePosition.x, villagePosition.y];
                 }
             }
         }
@@ -1071,6 +1079,7 @@ public class MetaFieldManager : FieldManager {
 
         List<Vector2Int> cells = new List<Vector2Int>();
         foreach (var placedCell in placedCells) {
+            Debug.Log(currentIndex + "   "+new Vector2Int(placedCell.Item1, placedCell.Item2));
             cells.Add(new Vector2Int(placedCell.Item1, placedCell.Item2));
             _formGroupCellIndex[placedCell.Item1, placedCell.Item2] = currentIndex;
         }
@@ -1293,6 +1302,7 @@ public class MetaFieldManager : FieldManager {
 
         LockedCellGroups = new Dictionary<int, List<Vector2Int>>();
         foreach (var needCell in MainMetaConfig.LockedCellsFieldConfig.LockedCellsGroups) {
+            
             LockedCellGroups.TryAdd(needCell.index, new List<Vector2Int>());
             LockedCellGroups[needCell.index].Add(needCell.position);
         }
