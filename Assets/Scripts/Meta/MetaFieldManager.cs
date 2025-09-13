@@ -431,9 +431,9 @@ public class MetaFieldManager : FieldManager {
         MarkLockedGroup(groupIndex);
         var lockedCellGroup = LockedCellGroups[groupIndex];
         Vector3 uiPos = Vector3.zero;
-        Debug.Log("new lock group-------------------");
+     //   Debug.Log("new lock group-------------------");
         foreach (var lockCellPos in lockedCellGroup) {
-            Debug.Log(lockCellPos + " lock group");
+         //   Debug.Log(lockCellPos + " lock group");
             uiPos += _cells[lockCellPos.x, lockCellPos.y].transform.position;
         }
 
@@ -1300,7 +1300,7 @@ public class MetaFieldManager : FieldManager {
         foreach (var zoneIndex in StorageManager.GameDataMain.RemainedLockedZones) {
             if(zoneIndex >= LockedCellGroups.Count)continue;
             var lockedCells = LockedCellGroups[zoneIndex]; 
-            Debug.Log(zoneIndex+"zoneIndex " + lockedCells.Count + " cells count");
+           // Debug.Log(zoneIndex+"zoneIndex " + lockedCells.Count + " cells count");
             foreach (var cellPos in lockedCells) {
             
                 _groupCellIndex[cellPos.x, cellPos.y] = zoneIndex + 1000;

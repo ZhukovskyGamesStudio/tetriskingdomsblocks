@@ -32,7 +32,6 @@ public class RateUsDialog : DialogBase {
 
     private async UniTask LaunchReviewFlow() {
         await RateUsManager.Instance.Provider.Show();
-
         HideByButton();
     }
 
@@ -41,6 +40,7 @@ public class RateUsDialog : DialogBase {
             { "show_reason", RateUsManager.Instance.RateUsSource },
             { "rate_result", rateResult }
         });
+        MetaFieldManager.Instance.CanInteractWithField(true);
         RateUsManager.Instance.RateUsSource = null;
     }
 }

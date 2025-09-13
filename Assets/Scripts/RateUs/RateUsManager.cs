@@ -25,6 +25,8 @@ public class RateUsManager : PreloadableSingleton<RateUsManager> {
 	    var wasRated =  StorageManager.GameDataMain.WasRated;
 	    if (wasRated) return;
 	    if ((DateTime.Now - lastRateUsShowed).Days < RateUsCooldown) return;
+	    Debug.Log("RateUsSource");
+	    MetaFieldManager.Instance.CanInteractWithField(false);
 	    RateUsSource = rateUsSource;
         DialogsManager.Instance.ShowDialog(typeof(RateUsDialog));
     }
