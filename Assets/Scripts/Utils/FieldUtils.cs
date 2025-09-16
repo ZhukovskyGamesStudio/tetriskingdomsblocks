@@ -59,7 +59,7 @@ public static class FieldUtils {
         CellType.Ice,
         CellType.Slime,
         CellType.Crystal,
-        CellType.Empty
+        CellType.Empty,
     };
     private static readonly List<CellType> CanBeHammeredOrExploded = new List<CellType>() {
         CellType.Wood,
@@ -188,11 +188,12 @@ public static class FieldUtils {
                         placedCells.Add(new Vector2Int(currentColumn, i));
                         bool isAddThisCellInEnd = true;
                         for (int j = 0; j < field.GetLength(1); j++) {
-                            if (DontCountInUltimateRow(field[j, i]) && j != currentColumn) {
+                            if (CanPlaceOnCell(field[j, i]) && j != currentColumn) {
                                 isAddThisCellInEnd = false;
                                 break;
                             }
                         }
+                    Debug.Log(isAllRowIsFull + "isAllColumnIsFull"+ currentColumn);
 
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(currentColumn, i));
@@ -234,10 +235,10 @@ public static class FieldUtils {
                         isAllRowIsFull = false;
                     }
                 }
-
+                Debug.Log(isAllRowIsFull + "isAllRowIsFull"+ currentRow);
                 if (allCellIsCanPlaced || isAllRowIsFull)
                     continue;
-                
+
                 for (int i = 0; i < field.GetLength(1); i++) {
                     if (CanPlaceOnCell(field[i, currentRow]) ||
                         (currentColumnToDestroy.Count != 0 && currentColumnToDestroy.Contains(i)) && !yIsMainDirection) {
@@ -245,15 +246,17 @@ public static class FieldUtils {
 
                         bool isAddThisCellInEnd = true;
                         for (int j = 0; j < field.GetLength(0); j++) {
-                            if (DontCountInUltimateRow(field[i, j]) && j != currentRow) {
+                            if (CanPlaceOnCell(field[i, j]) && j != currentRow) {
                                 isAddThisCellInEnd = false;
                                 break;
                             }
                         }
 
+                       
                         if (isAddThisCellInEnd)
                             placedCellsInEnd.Add(new Vector2Int(i, currentRow));
-                    } else if (field[i, currentRow] == CellType.Box) {
+                    }
+                    else if (field[i, currentRow] == CellType.Box) {
                         for (int j = i; j > -2; j--) {
                             if (j == -1 || field[j, currentRow] != CellType.Box) {
                                 if (placedCellsInEnd.Count != 0)
@@ -262,19 +265,15 @@ public static class FieldUtils {
                                     placedCellsInEnd.Add(new Vector2Int(i, currentRow));
 
                                 break;
-                            } 
-                            else if (field[j, currentRow] != CellType.Box) { 
+                            } else if (field[j, currentRow] != CellType.Box) {
                                 placedCellsInEnd.Add(new Vector2Int(i, currentRow));
                                 break;
                             }
-                               
-                        } 
-                         
+                        }
                     }
-                    
+
                     //if (field[i, currentRow] == CellType.Box)
                     //   
-                   
                 }
 
                 foreach (var endCell in placedCellsInEnd) {
