@@ -531,6 +531,7 @@ public class GameFieldManager : FieldManager {
                     MineCellAnimation(_cells[coordAround.x, coordAround.y].transform);
                     var randomPos = GetRandomEmptyCell();
                     if (randomPos == new Vector2(-1, -1)) return;
+                    if(_cells[randomPos.x, randomPos.y] != null)return;
                     var configCrystal = PiecesViewTable.Instance.CellsList.CoreCellsConfigs.First(c => c.CellType == CellType.Crystal);
                     PlaceOneSizePiece(configCrystal, new Vector2Int(randomPos.x, randomPos.y), true);
                     CrystalCellAnimation(randomPos, coordAround);
