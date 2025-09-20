@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections.Generic;
-using MadPixel;
 [Obsolete]
 public class CollectAllDialog : DialogBase {
     public void CollectAll() {
