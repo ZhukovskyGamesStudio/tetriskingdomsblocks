@@ -141,6 +141,11 @@ public class UltaManager : MonoBehaviour {
         await DOTween.Sequence().Append(star.gameObject.transform.DOMoveX(finPos.x, _starDropDuration).SetEase(_animationCurveX))
             .Join(star.gameObject.transform.DOMoveY(finPos.y, _starDropDuration).SetEase(_animationCurveY))
             .Join(star.gameObject.transform.DOMoveZ(finPos.z, _starDropDuration).SetEase(_animationCurveZ)).AsyncWaitForCompletion();
+        if (!FieldUtils.CanPlaceOnCell(GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y])) {
+            cellView.gameObject.SetActive(false);
+            star.ShowBoom(_starsParticles.transform.parent);
+            Destroy(star.gameObject);
+        }
         cellView.transform.position = star.transform.position;
         cellView.gameObject.SetActive(true);
         VibrationsManager.Instance.SpawnVibration(VibrationType.AllRow);
@@ -160,7 +165,7 @@ public class UltaManager : MonoBehaviour {
         
         
         
-       if(GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y] != CellType.Empty) 
+       if(!FieldUtils.CanPlaceOnCell( GameFieldManager.Instance._field[placedCellPosition.x, placedCellPosition.y])) 
         cellView.gameObject.transform.DOScale(Vector3.one, 0.5f);
        else 
            cellView.gameObject.transform.localScale = Vector3.one;
