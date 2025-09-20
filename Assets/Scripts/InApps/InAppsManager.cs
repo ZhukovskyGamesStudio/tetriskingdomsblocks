@@ -1,5 +1,6 @@
 ﻿using Abstract;
 
+
 public class InAppsManager : PreloadableSingleton<InAppsManager> {
     public IInAppsProvider InAppsProvider { get; private set; }
 
@@ -7,8 +8,8 @@ public class InAppsManager : PreloadableSingleton<InAppsManager> {
     {
         base.OnFirstInit();
 
-#if MADPIXEL
-        InAppsProvider = new MadPixelInAppProvider();
+#if GOOGLE_PLAY
+        InAppsProvider = new GooglePlayInAppsProvider();
 #else
         InAppsProvider = new InAppsProviderMock();
 #endif

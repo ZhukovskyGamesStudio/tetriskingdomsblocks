@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Abstract;
 using Cysharp.Threading.Tasks;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZhukovskyGamesPlugin;
@@ -63,6 +64,8 @@ public class LoadingManager : MonoBehaviour {
         CustomMonoBehaviour[] preloadedManagers = FindObjectsByType<CustomMonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
             .OrderBy(m => m.InitPriority).ToArray();
 
+        await InitUgs();
+        
         foreach (CustomMonoBehaviour manager in preloadedManagers) {
             if (manager is IPreloadable preloadable) {
                 preloadable.Init();
@@ -70,6 +73,14 @@ public class LoadingManager : MonoBehaviour {
         }
 
         await UniTask.WaitUntil(() => ZhukovskyAdsManager.Instance.AdsProvider.IsAdsReady());
+    }
+    //TODO refactor
+    private async UniTask InitUgs()
+    {
+        if (UnityServices.State == ServicesInitializationState.Uninitialized)
+        {
+            await UnityServices.InitializeAsync();
+        }
     }
 
     private static void SendFirstLaunchEvent() {
