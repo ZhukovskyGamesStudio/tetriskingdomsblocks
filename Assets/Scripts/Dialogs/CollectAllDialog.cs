@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
+
 [Obsolete]
 public class CollectAllDialog : DialogBase {
     public void CollectAll() {
@@ -15,6 +17,7 @@ public class CollectAllDialog : DialogBase {
 
     private void CollectAllWithMultiplier() {
         CollectResources(MetaFieldManager.Instance.MainMetaConfig.CollectWithAdsMultiplier);
+        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("rv_finish", new Dictionary<string, object>());
     }
 
     private void CollectResources(float multiplier) {

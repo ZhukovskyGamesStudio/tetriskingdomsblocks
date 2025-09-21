@@ -74,6 +74,16 @@ public class GooglePlayInAppsProvider : IInAppsProvider, IDetailedStoreListener 
         string id = args.purchasedProduct.definition.id;
         Debug.Log($"ProcessPurchase: PASS. Product: {id}");
         if (OnSucess.TryGetValue(id, out var action)) {
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("af_purchase", new Dictionary<string, object>() {
+                {"af_currency", args.purchasedProduct.metadata.isoCurrencyCode},
+                {"af_revenue", args.purchasedProduct.metadata.localizedPriceString}
+            });
+
+            if (!StorageManager.GameDataMain.IsFirstPaymentLogged) {
+                StorageManager.GameDataMain.IsFirstPaymentLogged = true;
+                StorageManager.SaveGame();
+                ZhukovskyAnalyticsManager.Instance.SendCustomEvent("unique_pu", new Dictionary<string, object>() { });
+            }
             action?.Invoke();
             OnSucess.Remove(id);
         } else {

@@ -31,7 +31,11 @@ public class GameDataForSave {
     public bool HasNoAds = false;
     public bool IsIntersUnlocked = false;
     public int UncollectedLootboxes = 0;
+    public bool IsFirstPaymentLogged = false;
 
+    public float SessionSeconds;
+    public int SessionMinutes;
+    
     public string LastTimeRateUsShowed = DateTime.MinValue.ToString(CultureInfo.InvariantCulture);
     public DateTime LastTimeRateUsShowedDateTime => DateTime.Parse(LastTimeRateUsShowed, CultureInfo.InvariantCulture);
 
