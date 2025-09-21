@@ -23,6 +23,7 @@ MonoBehaviour:
   m_ScriptingDefines:
   - MOREMOUNTAINS_NICEVIBRATIONS_INSTALLED
   - GOOGLE_PLAY
+  - APPSFLYER
   m_PlayerSettingsYaml:
     m_Settings:
     - line: '| PlayerSettings:'
@@ -165,7 +166,7 @@ MonoBehaviour:
     - line: '|   loadStoreDebugModeEnabled: 0'
     - line: '|   visionOSBundleVersion: 1.0'
     - line: '|   tvOSBundleVersion: 1.0'
-    - line: '|   bundleVersion: 0.86'
+    - line: '|   bundleVersion: 0.88'
     - line: '|   preloadedAssets:'
     - line: '|   - {fileID: 11400000, guid: b01724a418d95e548891b71904debb28, type:
         2}'
@@ -198,7 +199,7 @@ MonoBehaviour:
     - line: '|     iPhone: 0'
     - line: '|     tvOS: 0'
     - line: '|   overrideDefaultApplicationIdentifier: 1'
-    - line: '|   AndroidBundleVersionCode: 86'
+    - line: '|   AndroidBundleVersionCode: 88'
     - line: '|   AndroidMinSdkVersion: 24'
     - line: '|   AndroidTargetSdkVersion: 36'
     - line: '|   AndroidPreferredInstallLocation: 1'
@@ -1031,7 +1032,7 @@ MonoBehaviour:
         m_ExplicitArrayBoundsChecks: 0
         m_CompressionType: 2
         m_InstallInBuildFolder: 0
-        m_BuildSubtarget: 0
+        m_BuildSubtarget: 5
         m_BuildSystem: 1
         m_ExportAsGoogleAndroidProject: 0
         m_DebugSymbolLevel: 1

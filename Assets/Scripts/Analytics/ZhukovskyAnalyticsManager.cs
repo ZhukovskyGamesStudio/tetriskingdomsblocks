@@ -2,19 +2,22 @@
 using Abstract;
 
 public class ZhukovskyAnalyticsManager : PreloadableSingleton<ZhukovskyAnalyticsManager> {
-	
-	public IAnalyticsProvider AnalyticProvider { get; private set; }
-	protected override void OnFirstInit() {
-		base.OnFirstInit();
-#if MADPIXEL
-		AnalyticProvider = new MadPixelAnalyticsProvider();
-#else		
-		AnalyticProvider = new AnalyticsProviderMock();
-#endif	
-	}
+    private List<IAnalyticsProvider> AnalyticProviders { get; set; } = new();
 
+    protected override void OnFirstInit() {
+        base.OnFirstInit();
 
-	public void SendCustomEvent(string eventName, Dictionary<string, object> data, bool bSendEventBuffer = false) {
-		AnalyticProvider.SendEvent(eventName, data, bSendEventBuffer);
-	}
+#if UNITY_EDITOR
+        AnalyticProviders.Add(new AnalyticsProviderMock());
+#endif
+#if APPSFLYER
+        AnalyticProviders.Add(new AppsflyerAnalyticsProvider());
+#endif
+    }
+
+    public void SendCustomEvent(string eventName, Dictionary<string, object> data, bool bSendEventBuffer = false) {
+        foreach (IAnalyticsProvider provider in AnalyticProviders) {
+            provider.SendEvent(eventName, data, bSendEventBuffer);
+        }
+    }
 }
