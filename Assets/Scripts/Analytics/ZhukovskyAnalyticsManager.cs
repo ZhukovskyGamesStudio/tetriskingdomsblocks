@@ -13,6 +13,9 @@ public class ZhukovskyAnalyticsManager : PreloadableSingleton<ZhukovskyAnalytics
 #if APPSFLYER
         AnalyticProviders.Add(new AppsflyerAnalyticsProvider());
 #endif
+#if APPMETRICA
+        AnalyticProviders.Add(new AppmetricaAnalyticsProvider());
+#endif
     }
 
     public void SendCustomEvent(string eventName, Dictionary<string, object> data, bool bSendEventBuffer = false) {

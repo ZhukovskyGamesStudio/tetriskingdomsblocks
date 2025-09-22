@@ -488,11 +488,12 @@ public class GameFieldManager : FieldManager {
           //      _gameData.CollectedResources[resourceType] += count;
           //  }
 
+          /*
             if (fullSameResourcesColumn) {
                 //fix this if on destroy resources types be more than 1;
                 bonusResourcesOnDestroyLine += config.ResourcesForDestroy[i].ResourceCount;
                 currentBonusResourceType = resourceType;
-            }
+            }*/
 
             if (!TaskUtils.IsResourceNeededForTasks(_gameData, resourceType)) {
                 continue;

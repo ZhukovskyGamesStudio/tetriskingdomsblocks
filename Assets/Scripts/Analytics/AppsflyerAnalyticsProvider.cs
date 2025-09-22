@@ -1,3 +1,4 @@
+#if APPSFLYER
 using System.Collections.Generic;
 using AppsFlyerSDK;
 
@@ -19,3 +20,4 @@ public class AppsflyerAnalyticsProvider : IAnalyticsProvider {
         AppsFlyer.sendEvent(eventName, sentData);
     }
 }
+#endif
