@@ -9,8 +9,8 @@ public class ZhukovskyAdsManager : PreloadableSingleton<ZhukovskyAdsManager> {
 
     protected override void OnFirstInit() {
         base.OnFirstInit();
-#if MADPIXEL
-        AdsProvider = new MadPixelAdsProvider();
+#if APPODEAL
+        AdsProvider = new AppodealAdsProvider();
 #elif YG_PLATFORM
         AdsProvider = new YGAdsProvider();
 #else
