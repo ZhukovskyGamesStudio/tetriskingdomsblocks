@@ -146,4 +146,8 @@ public class AdminManager : MonoBehaviour {
     private void Update() {
         GameObject.FindGameObjectsWithTag("UICanvas").ToList().ForEach(obj => obj.GetComponent<CanvasGroup>().alpha = _isDisabled ? 0 : 1);
     }
+    
+    public void ShowRewardedAd() {
+        ZhukovskyAdsManager.Instance.AdsProvider.ShowRewardedAd("admin_panel", AddResources, () => {Debug.LogError("Rewarded show fail"); });
+    }
 }

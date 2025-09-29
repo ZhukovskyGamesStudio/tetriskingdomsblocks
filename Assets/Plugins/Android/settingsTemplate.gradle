@@ -19,19 +19,13 @@ dependencyResolutionManagement {
 // Android Resolver Repos Start
         def unityProjectPath = $/file:///**DIR_UNITYPROJECT**/$.replace("\\", "/")
         maven {
+            url "https://artifactory.appodeal.com/appodeal" // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:25
+        }
+        maven {
+            url "https://artifactory.bidon.org/bidon" // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:25
+        }
+        maven {
             url (unityProjectPath + "/Assets/GeneratedLocalRepo/Firebase/m2repository") // Assets/Firebase/Editor/AnalyticsDependencies.xml:18, Assets/Firebase/Editor/AppDependencies.xml:22
-        }
-        maven {
-            url "https://maven.google.com/" // Assets/LevelPlay/Editor/ISAdMobAdapterDependencies.xml:8, Assets/GoogleMobileAds/Editor/GoogleMobileAdsDependencies.xml:12, Assets/GoogleMobileAds/Editor/GoogleUmpDependencies.xml:7, Assets/LevelPlay/Editor/IronSourceSDKDependencies.xml:12, Assets/LevelPlay/Editor/ISAppLovinAdapterDependencies.xml:12, Assets/LevelPlay/Editor/ISFacebookAdapterDependencies.xml:8, Assets/LevelPlay/Editor/ISInMobiAdapterDependencies.xml:16, Assets/LevelPlay/Editor/ISMintegralAdapterDependencies.xml:15, Assets/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml:12
-        }
-        maven {
-            url "https://repo.maven.apache.org/maven2/" // Assets/LevelPlay/Editor/ISFyberAdapterDependencies.xml:8
-        }
-        maven {
-            url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea/" // Assets/LevelPlay/Editor/ISMintegralAdapterDependencies.xml:8
-        }
-        maven {
-            url "https://artifact.bytedance.com/repository/pangle/" // Assets/LevelPlay/Editor/ISPangleAdapterDependencies.xml:12
         }
         mavenLocal()
 // Android Resolver Repos End

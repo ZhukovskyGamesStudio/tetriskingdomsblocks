@@ -446,10 +446,8 @@ public class MetaFieldManager : FieldManager {
 
     private void MarkLockedGroup(int groupIndex) {
         UnmarkLockedGroup();
-Debug.Log(LockedCellGroups[groupIndex].Count + "LockedCellGroups[groupIndex].Count ");
         foreach (Vector2Int cell in LockedCellGroups[groupIndex]) {
             CreateMarkedCellOnField(_cells[cell.x, cell.y].transform.position);
-            Debug.Log(" cell "+_cells[cell.x, cell.y].transform.position);
         }
     }
 

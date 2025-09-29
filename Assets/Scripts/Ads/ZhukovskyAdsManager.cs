@@ -1,6 +1,4 @@
 ﻿using Abstract;
-using UI;
-using UnityEngine.SceneManagement;
 
 public class ZhukovskyAdsManager : PreloadableSingleton<ZhukovskyAdsManager> {
     public float GameInterAdCooldown;

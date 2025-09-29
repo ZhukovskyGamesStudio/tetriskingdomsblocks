@@ -24,7 +24,9 @@ namespace AnalyticsSessionTime {
 
         private void Start() {
             _sessionTime = SavedSessionTime;
-            DontDestroyOnLoad(gameObject);
+            if (transform.parent == null) {
+                DontDestroyOnLoad(gameObject);
+            }
         }
 
         private void Update() {
