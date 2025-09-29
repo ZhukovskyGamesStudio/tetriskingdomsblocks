@@ -11,14 +11,14 @@ public class AppodealAdsProvider : IAdsProvider {
     private bool _isInited;
 
     public AppodealAdsProvider() {
-        int adTypes = AppodealShowStyle.RewardedVideo;
+        int adTypes = AppodealAdType.RewardedVideo;
 
-        _appodealListener = Object.Instantiate(new GameObject("AppodealListener")).AddComponent<AppodealListener>();
+        _appodealListener = new GameObject("AppodealListener").AddComponent<AppodealListener>();
         _appodealListener.Init(OnInit);
         Object.DontDestroyOnLoad(_appodealListener.gameObject);
         Appodeal.SetTesting(true);
-        Appodeal.SetLogLevel( AppodealLogLevel.Verbose);
-        Appodeal.SetAutoCache(AppodealAdType.RewardedVideo, true);
+        Appodeal.SetLogLevel(AppodealLogLevel.Verbose);
+        Appodeal.SetAutoCache(adTypes, true);
         Appodeal.Initialize(_appKey, adTypes, _appodealListener);
         Appodeal.SetRewardedVideoCallbacks(_appodealListener);
     }
@@ -30,6 +30,7 @@ public class AppodealAdsProvider : IAdsProvider {
 
     public void ShowRewardedAd(string placeId, Action onSuccess, Action onFail) {
         _appodealListener.SetEvents(onSuccess, onFail);
+        Debug.Log("Appodeal try show rewarded ad");
         Appodeal.Show(AppodealShowStyle.RewardedVideo);
     }
 

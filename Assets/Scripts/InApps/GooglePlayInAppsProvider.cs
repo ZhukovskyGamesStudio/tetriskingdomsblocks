@@ -53,7 +53,6 @@ public class GooglePlayInAppsProvider : IInAppsProvider, IDetailedStoreListener 
 
     // IStoreListener callbacks
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions) {
-        Debug.Log("OnInitialized: PASS");
         this.controller = controller;
         this.extensions = extensions;
     }

@@ -39,19 +39,11 @@ public class LoadingManager : MonoBehaviour {
         if (!StorageManager.HasSavedGame()) {
             StorageManager.CreateNewSaveData(_mainMetaConfig);
         } else {
-            
             StorageManager.LoadGame();
-            Debug.Log(StorageManager.GameDataMain.LastLaunchGameVersion != Application.version);
             if (!StorageManager.GameDataMain.IsTutorialCompleted) {
                 StorageManager.CreateNewSaveData(_mainMetaConfig);
-            }
-            else if (StorageManager.GameDataMain.LastLaunchGameVersion != Application.version) {
-                 StorageManager.GameDataMain.LastLaunchGameVersion = Application.version;
-                /* if (!StorageManager.GameDataMain.RemainedLockedZones.Contains(20)) {
-                     for (int i = 16; i < 25; i++) {
-                         StorageManager.GameDataMain.RemainedLockedZones.Add(i);
-                     }
-                 }*/
+            } else {
+                StorageManager.GameDataMain.LastLaunchGameVersion = Application.version;
             }
         }
 
@@ -65,7 +57,7 @@ public class LoadingManager : MonoBehaviour {
             .OrderBy(m => m.InitPriority).ToArray();
 
         await InitUgs();
-        
+
         foreach (CustomMonoBehaviour manager in preloadedManagers) {
             if (manager is IPreloadable preloadable) {
                 preloadable.Init();
@@ -74,11 +66,10 @@ public class LoadingManager : MonoBehaviour {
 
         await UniTask.WaitUntil(() => ZhukovskyAdsManager.Instance.AdsProvider.IsAdsReady());
     }
+
     //TODO refactor
-    private async UniTask InitUgs()
-    {
-        if (UnityServices.State == ServicesInitializationState.Uninitialized)
-        {
+    private async UniTask InitUgs() {
+        if (UnityServices.State == ServicesInitializationState.Uninitialized) {
             await UnityServices.InitializeAsync();
         }
     }

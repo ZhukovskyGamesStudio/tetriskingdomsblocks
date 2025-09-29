@@ -33,7 +33,6 @@ public class MainManager : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(gameObject);
         SetupTime();
-       Debug.Log(((71-30)%(_mainConfig.Levels.Length-30) + 30) + " need level"); 
         Application.targetFrameRate = 144;
     }
 
