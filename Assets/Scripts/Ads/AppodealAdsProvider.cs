@@ -16,9 +16,9 @@ public class AppodealAdsProvider : IAdsProvider {
         _appodealListener = new GameObject("AppodealListener").AddComponent<AppodealListener>();
         _appodealListener.Init(OnInit);
         Object.DontDestroyOnLoad(_appodealListener.gameObject);
-        Appodeal.SetTesting(true);
         Appodeal.SetLogLevel(AppodealLogLevel.Verbose);
         Appodeal.SetAutoCache(adTypes, true);
+
         Appodeal.Initialize(_appKey, adTypes, _appodealListener);
         Appodeal.SetRewardedVideoCallbacks(_appodealListener);
     }

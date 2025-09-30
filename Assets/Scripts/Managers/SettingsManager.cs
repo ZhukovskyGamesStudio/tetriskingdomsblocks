@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour {
+
+    private const string _privacy_url = "https://eightforce.com/privacy/";
+    
     public static SettingsManager Instance;
 
     private void Awake() {
@@ -36,13 +39,13 @@ public class SettingsManager : MonoBehaviour {
                 ChangeMusic = ChangeToggleMusic,
                 ChangeSound = ChangeToggleSound,
                 ChangeVibration = ChangeToggleVibration,
-                ChangeNotifications = (bool isOn) => print("notifications: " + isOn),
+                ChangeNotifications = isOn => print("notifications: " + isOn),
                 IsMusicOn = StorageManager.GameDataMain.SettingsData.IsMusicOn,
                 IsSoundOn = StorageManager.GameDataMain.SettingsData.IsSoundOn,
                 IsVibrationOn = StorageManager.GameDataMain.SettingsData.IsVibrationOn,
                 IsNotificationsOn = false,
                 ClickSupport = () => throw new NotImplementedException(), // TODO: убрать заглушки
-                ClickTerms = () => Application.OpenURL("https://madpixel.dev/privacy.html")
+                ClickTerms = () => Application.OpenURL(_privacy_url)
             }
         };
 
