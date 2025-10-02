@@ -17,7 +17,6 @@ public class CollectAllDialog : DialogBase {
 
     private void CollectAllWithMultiplier() {
         CollectResources(MetaFieldManager.Instance.MainMetaConfig.CollectWithAdsMultiplier);
-        ZhukovskyAnalyticsManager.Instance.SendCustomEvent("rv_finish", new Dictionary<string, object>());
     }
 
     private void CollectResources(float multiplier) {

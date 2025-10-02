@@ -50,8 +50,10 @@ public class AppodealListener : MonoBehaviour, IAppodealInitializationListener, 
     public void OnRewardedVideoClosed(bool finished) {
         Debug.Log("Appodeal OnRewardedVideoClosed, finished: " + finished);
         if (finished) {
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("rv_finish", new Dictionary<string, object>());
             _onSuccess?.Invoke();
         } else {
+            ZhukovskyAnalyticsManager.Instance.SendCustomEvent("rv_finish_failed", new Dictionary<string, object>());
             _onFail?.Invoke();
         }
     }

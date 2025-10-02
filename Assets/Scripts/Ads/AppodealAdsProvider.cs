@@ -25,7 +25,7 @@ public class AppodealAdsProvider : IAdsProvider {
 
     private void OnInit() {
         _isInited = true;
-        Appodeal.ShowMediationDebugger();
+        //Appodeal.ShowMediationDebugger();
     }
 
     public void ShowRewardedAd(string placeId, Action onSuccess, Action onFail) {

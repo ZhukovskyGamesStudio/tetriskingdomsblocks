@@ -11,11 +11,32 @@ dependencies {
     implementation 'com.android.support:cardview-v7:25.3.1' // Facebook.Unity.Editor.AndroidSupportLibraryResolver.addSupportLibraryDependency
     implementation 'com.android.support:customtabs:25.3.1' // Facebook.Unity.Editor.AndroidSupportLibraryResolver.addSupportLibraryDependency
     implementation 'com.android.support:support-v4:25.3.1' // Facebook.Unity.Editor.AndroidSupportLibraryResolver.addSupportLibraryDependency
-    implementation 'com.appodeal.ads.sdk.networks:bidmachine:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:17
-    implementation 'com.appodeal.ads.sdk.networks:bidon:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:18
-    implementation 'com.appodeal.ads.sdk.networks:iab:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:19
-    implementation 'com.appodeal.ads.sdk.services:sentry_analytics:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:20
-    implementation 'com.appodeal.ads.sdk:core:3.10.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:16
+    implementation 'com.appodeal.ads.sdk.networks:amazon:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:51
+    implementation 'com.appodeal.ads.sdk.networks:applovin:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:52
+    implementation 'com.appodeal.ads.sdk.networks:bidmachine:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:54
+    implementation 'com.appodeal.ads.sdk.networks:bidon:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:55
+    implementation 'com.appodeal.ads.sdk.networks:bigo_ads:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:56
+    implementation 'com.appodeal.ads.sdk.networks:dt_exchange:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:57
+    implementation 'com.appodeal.ads.sdk.networks:iab:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:59
+    implementation 'com.appodeal.ads.sdk.networks:inmobi:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:60
+    implementation 'com.appodeal.ads.sdk.networks:ironsource:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:61
+    implementation 'com.appodeal.ads.sdk.networks:meta:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:62
+    implementation 'com.appodeal.ads.sdk.networks:mintegral:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:63
+    implementation 'com.appodeal.ads.sdk.networks:mobilefuse:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:64
+    implementation 'com.appodeal.ads.sdk.networks:moloco:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:65
+    implementation 'com.appodeal.ads.sdk.networks:my_target:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:66
+    implementation 'com.appodeal.ads.sdk.networks:ogury:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:67
+    implementation 'com.appodeal.ads.sdk.networks:pangle:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:68
+    implementation 'com.appodeal.ads.sdk.networks:pubmatic:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:69
+    implementation 'com.appodeal.ads.sdk.networks:smaato:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:71
+    implementation 'com.appodeal.ads.sdk.networks:unity_ads:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:72
+    implementation 'com.appodeal.ads.sdk.networks:verve:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:73
+    implementation 'com.appodeal.ads.sdk.networks:vungle:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:74
+    implementation 'com.appodeal.ads.sdk.networks:yandex:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:75
+    implementation 'com.appodeal.ads.sdk.services:appsflyer:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:53
+    implementation 'com.appodeal.ads.sdk.services:firebase:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:58
+    implementation 'com.appodeal.ads.sdk.services:sentry_analytics:3.10.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:70
+    implementation 'com.appodeal.ads.sdk:core:3.10.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:50
     implementation 'com.appsflyer:af-android-sdk:6.15.0' // Packages/appsflyer-unity-plugin/Editor/AppsFlyerDependencies.xml:6
     implementation 'com.appsflyer:af-purchaseconnector-unity:2.1.0' // Assets/AppsFlyer/Editor/AppsFlyerPurchaseConnectorDependencies.xml:5
     implementation 'com.appsflyer:purchase-connector:2.1.0' // Assets/AppsFlyer/Editor/AppsFlyerPurchaseConnectorDependencies.xml:6
@@ -34,7 +55,26 @@ dependencies {
     implementation 'com.google.firebase:firebase-common:21.0.0' // Assets/Firebase/Editor/AppDependencies.xml:13
     implementation 'com.parse.bolts:bolts-android:1.4.0' // Assets/FacebookSDK/Plugins/Editor/Dependencies.xml:4
     implementation 'io.appmetrica.analytics:analytics:7.11.0' // Packages/io.appmetrica.analytics/Editor/AppMetricaDependencies.xml:4
-    implementation 'org.bidon:bidmachine-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:21
+    implementation 'io.bidmachine:ads.networks.amazon:3.4.0.18' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:76
+    implementation 'io.bidmachine:ads.networks.meta_audience:3.4.0.17' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:77
+    implementation 'io.bidmachine:ads.networks.mintegral:3.4.0.14' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:78
+    implementation 'io.bidmachine:ads.networks.my_target:3.4.0.19' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:79
+    implementation 'io.bidmachine:ads.networks.pangle:3.4.0.13' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:80
+    implementation 'io.bidmachine:ads.networks.vungle:3.4.0.9' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:81
+    implementation 'org.bidon:amazon-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:82
+    implementation 'org.bidon:bidmachine-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:83
+    implementation 'org.bidon:bigoads-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:84
+    implementation 'org.bidon:chartboost-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:85
+    implementation 'org.bidon:dtexchange-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:86
+    implementation 'org.bidon:inmobi-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:87
+    implementation 'org.bidon:meta-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:88
+    implementation 'org.bidon:mintegral-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:89
+    implementation 'org.bidon:mobilefuse-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:90
+    implementation 'org.bidon:moloco-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:91
+    implementation 'org.bidon:unityads-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:93
+    implementation 'org.bidon:vkads-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:92
+    implementation 'org.bidon:vungle-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:94
+    implementation 'org.bidon:yandex-adapter:0.11.0.0' // Assets/Appodeal/Editor/Dependencies/AppodealDependencies.xml:95
 // Android Resolver Dependencies End
 **DEPS**}
 
